@@ -8,6 +8,6 @@
     <!-- findAllRow --> 
 
     <select id="findAllRow" resultType="com.multipjt.multi_pjt.user.domain.UserResponseDTO">
-    SELECT * FROM TEST_DB;
+    SELECT * FROM member;
     </select>
 </mapper>
