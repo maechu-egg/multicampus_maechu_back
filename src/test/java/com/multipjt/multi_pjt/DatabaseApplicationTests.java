@@ -17,7 +17,7 @@ public class DatabaseApplicationTests {
     private SqlSessionFactory factory;
 
     @Test
-    @DisplayName("SqlSessionFactory 빈 주입 성공 테스트")
+    @DisplayName("00 : SqlSessionFactory 빈 주입 성공 테스트")
     public void givenSqlSessionFactory_whenInjected_thenFactoryShouldNotBeNull() {
        
         // When: factory 객체가 정상적으로 생성되었는지 확인

@@ -14,8 +14,5 @@ public class UserService {
     @Autowired
     private UserMapper userMapper;
 
-    public List<UserResponseDTO> findAll() {
-        System.out.println("debug >>> service findAll" + userMapper);
-        return userMapper.findAllRow();
-    }
+   
 }
