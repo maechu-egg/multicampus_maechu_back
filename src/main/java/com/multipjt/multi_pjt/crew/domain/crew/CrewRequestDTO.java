@@ -1,8 +1,10 @@
 package com.multipjt.multi_pjt.crew.domain.crew;
 
+import lombok.Builder;
 import lombok.Data;
 
 @Data
+@Builder
 public class CrewRequestDTO {
     private int crew_id;
     private String crew_name;

@@ -6,8 +6,8 @@
     <!-- createCrew --> 
 
     <insert id="createCrew"
-            parameterType="crewRequestDTO">
-        INSERT INTO CREW(
+            parameterType="com.multipjt.multi_pjt.crew.domain.crew.CrewRequestDTO">
+        INSERT INTO Crew(
             crew_id,
             member_id,
             crew_name,
@@ -20,17 +20,17 @@
             crew_age,
             crew_date
         ) VALUES (
-            #{crewId},
-            #{memberId},
-            #{crewName},
-            #{crewGoal},
-            #{crewTitle},
-            #{crewLocation},
-            #{crewSport},
-            #{crewGender},
-            #{crewFrequency},
-            #{crewAge},
-            #{crewDate}
+            #{crew_id},
+            #{member_id},
+            #{crew_name},
+            #{crew_goal},
+            #{crew_title},
+            #{crew_location},
+            #{crew_sport},
+            #{crew_gender},
+            #{crew_frequency},
+            #{crew_age},
+            #{crew_date}
             );
     </insert>
     
