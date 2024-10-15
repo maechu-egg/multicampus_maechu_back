@@ -1,5 +1,37 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.multipjt.multi_pjt.crew.dao">
+<mapper namespace="com.multipjt.multi_pjt.crew.dao.CrewMapper">
+
+    <!-- createCrew --> 
+
+    <insert id="createCrew"
+            parameterType="crewRequestDTO">
+        INSERT INTO CREW(
+            crew_id,
+            member_id,
+            crew_name,
+            crew_goal,
+            crew_title,
+            crew_location,
+            crew_sport,
+            crew_gender,
+            crew_frequency,
+            crew_age,
+            crew_date
+        ) VALUES (
+            #{crewId},
+            #{memberId},
+            #{crewName},
+            #{crewGoal},
+            #{crewTitle},
+            #{crewLocation},
+            #{crewSport},
+            #{crewGender},
+            #{crewFrequency},
+            #{crewAge},
+            #{crewDate}
+            );
+    </insert>
+    
 </mapper>
