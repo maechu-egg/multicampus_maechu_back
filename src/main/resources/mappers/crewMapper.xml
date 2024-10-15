@@ -3,12 +3,44 @@
 
 <mapper namespace="com.multipjt.multi_pjt.crew.dao.CrewMapper">
 
+<<<<<<< HEAD
     <!-- saveCrewBattleRow --> 
 
     <insert id="saveCrewBattleRow"
             parameterType="com.multipjt.multi_pjt.crew.domain.battle.CrewBattleRequestDTO">
         INSERT INTO CrewBattle(battle_id, battle_name, battle_goal, battle_end_recruitment, battle_end_date, battle_content, battle_state, crew_id)
         VALUES(#{battle_id}, #{battle_name}, #{battle_goal}, #{battle_end_recruitment}, #{battle_end_date}, #{battle_content}, #{battle_state}, #{crew_id})
+=======
+    <!-- createCrew --> 
+
+    <insert id="createCrew"
+            parameterType="com.multipjt.multi_pjt.crew.domain.crew.CrewRequestDTO">
+        INSERT INTO Crew(
+            crew_id,
+            member_id,
+            crew_name,
+            crew_goal,
+            crew_title,
+            crew_location,
+            crew_sport,
+            crew_gender,
+            crew_frequency,
+            crew_age,
+            crew_date
+        ) VALUES (
+            #{crew_id},
+            #{member_id},
+            #{crew_name},
+            #{crew_goal},
+            #{crew_title},
+            #{crew_location},
+            #{crew_sport},
+            #{crew_gender},
+            #{crew_frequency},
+            #{crew_age},
+            #{crew_date}
+            );
+>>>>>>> fc9875a7fde187f9b2db14538509a5456749f57b
     </insert>
     
 </mapper>
