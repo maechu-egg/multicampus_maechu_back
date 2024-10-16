@@ -6,24 +6,20 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import com.multipjt.multi_pjt.crew.domain.battle.CrewBattleRequestDTO;
 
-
 import org.springframework.transaction.annotation.Transactional;
-
-import com.multipjt.multi_pjt.crew.dao.CrewMapper;
-import com.multipjt.multi_pjt.crew.domain.crew.CrewRequestDTO;
+import com.multipjt.multi_pjt.crew.dao.CrewBattleMapper;
 
 @SpringBootTest
 @Transactional
-
 public class MybatisApplicationTests {
     
     @Autowired
-    private CrewMapper crewMapper;
+    private CrewBattleMapper crewBattleMapper;
 
     @Test
 
     public void saveCrewBattleRowTest() {
-        System.out.println("debug mapper >>>>> " + crewMapper);
+        System.out.println("debug mapper >>>>> " + crewBattleMapper);
         CrewBattleRequestDTO request = CrewBattleRequestDTO.builder()
                                             .battle_id(1)
                                             .battle_name("1번째 배틀")
@@ -34,7 +30,7 @@ public class MybatisApplicationTests {
                                             .battle_state(1)
                                             .crew_id(1)
                                             .build();
-        crewMapper.saveCrewBattleRow(request);
+        crewBattleMapper.saveCrewBattleRow(request);
         System.out.println("debug >>> save success!!!");
     }    
 }
