@@ -1,4 +1,4 @@
-package com.multipjt.multi_pjt.crew.dao;
+package com.multipjt.multi_pjt.crew.dao.crew;
 
 import org.apache.ibatis.annotations.Mapper;
 

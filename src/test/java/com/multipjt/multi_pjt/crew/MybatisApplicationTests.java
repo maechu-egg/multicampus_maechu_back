@@ -1,11 +1,11 @@
-package com.multipjt.multi_pjt;
+package com.multipjt.multi_pjt.crew;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.multipjt.multi_pjt.crew.dao.CrewMapper;
+import com.multipjt.multi_pjt.crew.dao.crew.CrewMapper;
 import com.multipjt.multi_pjt.crew.domain.crew.CrewRequestDTO;
 
 @SpringBootTest
@@ -19,7 +19,7 @@ public class MybatisApplicationTests {
     public void createCrewTest(){
         //given : 크루 생성에 필요한 크루 정보
         CrewRequestDTO request = CrewRequestDTO.builder()
-                                    .crew_id(2)
+                                    .crew_id(3)
                                     .member_id("testuser")
                                     .crew_name("testCrew")
                                     .crew_goal("다이어트")
@@ -31,6 +31,7 @@ public class MybatisApplicationTests {
                                     .crew_age("20대")
                                     .crew_date("2024-10-15 17:25:10")
                                     .build();
+        //then : 크루 
         crewMapper.createCrew(request);
     }
 }
