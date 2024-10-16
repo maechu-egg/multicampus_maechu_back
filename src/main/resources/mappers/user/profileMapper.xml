@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.multipjt.multi_pjt.user.dao.ProfileMapper">
+
+
+
+
+    <!-- registerProfile --> 
+
+    <insert id="registerProfile"  parameterType="com.multipjt.multi_pjt.user.domain.mypage.ProfileRequestDTO">
+    INSERT INTO UserProfile (
+            profile_id,
+            profile_gender,
+            profile_age,
+            profile_region,
+            profile_weight,
+            profile_height,
+            profile_goal,
+            profile_time,
+            member_id,
+            profile_allergy,
+            profile_diet_goal,
+            profile_sport1,
+            profile_sport2,
+            profile_sport3,
+            profile_workout_frequency
+        ) VALUES (
+            #{profile_id},
+            #{profile_gender},
+            #{profile_age},
+            #{profile_region},
+            #{profile_weight},
+            #{profile_height},
+            #{profile_goal},
+            #{profile_time},
+            #{member_id},
+            #{profile_allergy},
+            #{profile_diet_goal},
+            #{profile_sport1},
+            #{profile_sport2},
+            #{profile_sport3},
+            #{profile_workout_frequency}
+        );
+    </insert>
+
+    <!-- getUserById --> 
+
+    <select id="getUserById" parameterType="String" resultType="com.multipjt.multi_pjt.user.domain.mypage.ProfileResponseDTO">
+        SELECT * FROM UserProfile WHERE member_id = #{member_id};
+    </select>
+    
+    <!-- 프로필 수정 -->
+    <update id="updateProfile" parameterType="com.multipjt.multi_pjt.user.domain.mypage.ProfileRequestDTO">
+        UPDATE UserProfile
+        SET
+            profile_gender = #{profile_gender},
+            profile_age = #{profile_age},
+            profile_region =  #{profile_region},
+            profile_weight = #{profile_weight},
+            profile_height = #{profile_height},
+            profile_goal = #{profile_goal},
+            profile_time =  #{profile_time},
+            profile_allergy =  #{profile_allergy},
+            profile_diet_goal =   #{profile_diet_goal},
+            profile_sport1 =  #{profile_sport1},
+            profile_sport2 =  #{profile_sport2},
+            profile_sport3 =  #{profile_sport3},
+            profile_workout_frequency =  #{profile_workout_frequency}
+        WHERE
+            member_id = #{member_id}
+    </update>
+    
+    
+
+    <!-- deleteProfileByMemberId --> 
+    <delete id="deleteProfileByMemberId" parameterType="String">
+    DELETE FROM UserProfile WHERE member_id = #{memberId}
+    </delete> 
+      
+    </mapper>

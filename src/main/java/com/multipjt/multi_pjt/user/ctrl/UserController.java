@@ -21,18 +21,6 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @GetMapping("/index")
-    public ResponseEntity<Object>  test() {
-        System.out.println("client endpoint : /user/index" + userService);
-        List<UserResponseDTO> list = userService.findAll();
-       System.out.println("result size = " + list.size());
-        if( list.size() == 0) {
-            Map<String, String> map = new HashMap<>();
-            map.put("info", "저장된 데이터가 존재하지 않습니다. ");
-            return new ResponseEntity<>(list, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(list, HttpStatus.OK);
-        }
-    }
+  
     
 }

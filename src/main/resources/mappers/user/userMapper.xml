@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.multipjt.multi_pjt.user.dao.UserMapper">
+
+
+    <!-- 사용자 등록 -->
+    <insert id="registerUser" parameterType="com.multipjt.multi_pjt.user.domain.UserRequestDTO">
+        INSERT INTO Member (
+            member_id, 
+            member_img, 
+            member_nickname, 
+            member_password, 
+            member_email, 
+            member_phone, 
+            member_type
+        ) VALUES (
+            #{member_id}, 
+            #{member_img}, 
+            #{member_nickname}, 
+            #{member_password}, 
+            #{member_email}, 
+            #{member_phone}, 
+            #{member_type}
+        );
+    </insert>
+
+<!-- 회원 정보 수정 쿼리 -->
+    <update id="updateUser" parameterType="com.multipjt.multi_pjt.user.domain.UserRequestDTO">
+        UPDATE Member
+        SET
+            member_nickname = #{member_nickname},
+            member_password = #{member_password},
+            member_email = #{member_email},
+            member_phone = #{member_phone},
+            member_img = #{member_img}
+        WHERE
+            member_id = #{member_id}
+    </update>
+
+    <!-- ID로 사용자 조회 -->
+    <select id="getUserById" parameterType="String" resultType="com.multipjt.multi_pjt.user.domain.UserResponseDTO">
+        SELECT * FROM Member WHERE member_id = #{member_id};
+    </select>
+
+    <!-- 회원 삭제 -->
+<delete id="deleteUser" parameterType="String">
+    DELETE FROM Member 
+    WHERE member_id = #{memberId};
+</delete>
+
+
+</mapper>
