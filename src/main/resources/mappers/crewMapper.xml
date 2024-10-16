@@ -5,7 +5,7 @@
 
     <!-- createCrew --> 
 
-    <insert id="createCrew"
+    <insert id="createCrewRow"
             parameterType="com.multipjt.multi_pjt.crew.domain.crew.CrewRequestDTO">
         INSERT INTO Crew(
             crew_id,
@@ -33,5 +33,12 @@
             #{crew_date}
             );
     </insert>
-    
+
+    <!-- selectCrewRow --> 
+
+    <select id="selectCrewRow"
+            resultType="com.multipjt.multi_pjt.crew.domain.crew.CrewResponseDTO">
+        SELECT *
+        FROM Crew
+    </select>    
 </mapper>
