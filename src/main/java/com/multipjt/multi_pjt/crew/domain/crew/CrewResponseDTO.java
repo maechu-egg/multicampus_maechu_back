@@ -14,5 +14,5 @@ public class CrewResponseDTO {
     private String crew_frequency;
     private String crew_age;
     private String crew_date;
-    private String member_id;
+    private int member_id;
 } 

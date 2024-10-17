@@ -41,4 +41,20 @@
         SELECT *
         FROM Crew
     </select>    
+
+    <!-- selectCrewSportRow --> 
+
+    <select id="selectCrewSportRow"
+            resultType="com.multipjt.multi_pjt.crew.domain.crew.CrewResponseDTO">
+        SELECT *
+        FROM Crew
+        WHERE crew_sport = #{crew_sport};
+    </select>
+
+    <!-- selectCrewInfoRow --> 
+
+    <select id="selectCrewInfoRow"
+            resultType="com.multipjt.multi_pjt.crew.domain.crew.CrewResponseDTO">
+
+    </select>
 </mapper>
