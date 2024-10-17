@@ -4,7 +4,7 @@ import lombok.Data;
 
 @Data
 public class ProfileRequestDTO {
-    private String profile_id;
+    //private int profile_id;
     private String profile_gender;
     private int profile_age;
     private String profile_region;
@@ -12,7 +12,7 @@ public class ProfileRequestDTO {
     private float profile_height;
     private String profile_goal;
     private String profile_time;
-    private String member_id; // 외래키
+    private int member_id; // 외래키
     private String profile_allergy;
     private String profile_diet_goal;
     private String profile_sport1;
