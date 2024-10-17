@@ -8,7 +8,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import com.multipjt.multi_pjt.badge.dao.MemberBadgeMapper;
 
+import jakarta.transaction.Transactional;
+
 @SpringBootTest
+@Transactional
 public class MemberBadgeMapperTest {
 
     @Autowired
