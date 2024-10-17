@@ -6,12 +6,13 @@ import java.util.List;
 import java.util.Map;
 
 import com.multipjt.multi_pjt.crew.domain.crew.CrewMemberRequestDTO;
-import com.multipjt.multi_pjt.crew.domain.crew.CrewMemberResponseDTO;
 import com.multipjt.multi_pjt.crew.domain.crew.CrewRequestDTO;
 import com.multipjt.multi_pjt.crew.domain.crew.CrewResponseDTO;
 
 @Mapper
 public interface CrewMapper {
+    // --------- 크루 찾기 ---------
+
     // 크루 생성
     public void createCrewRow(CrewRequestDTO param);
 
@@ -26,4 +27,9 @@ public interface CrewMapper {
 
     // 크루원 신청
     public void insertCrewMemberRow(CrewMemberRequestDTO param);
+
+    // --------- 크루 소개 ---------
+
+    //크루 소개 수정
+    public void updateCrewIntroRow(CrewRequestDTO pamram);
 }

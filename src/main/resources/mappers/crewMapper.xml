@@ -68,4 +68,13 @@
         INSERT INTO CrewMember(crew_id, member_id, crew_member_state, battle_wins)
         VALUES(#{crew_id}, #{member_id},#{crew_member_state},#{battle_wins});
     </insert>
+
+    <!-- updateCrewIntroRow --> 
+
+    <update id="updateCrewIntroRow"
+            parameterType="com.multipjt.multi_pjt.crew.domain.crew.CrewRequestDTO">
+        UPDATE Crew
+        SET crew_intro_post = #{crew_intro_post}, crew_intro_img = #{crew_intro_img}, crew_name = #{crew_name}
+        WHERE crew_id = #{crew_id}
+    </update>
 </mapper>

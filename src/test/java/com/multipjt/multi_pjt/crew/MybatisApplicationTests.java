@@ -86,7 +86,7 @@ public class MybatisApplicationTests {
     public void insertNewMemberTest(){
         CrewMemberRequestDTO Member1 = CrewMemberRequestDTO.builder()
                                     .crew_id(1)
-                                    .member_id(1)
+                                    .member_id(16)
                                     .crew_member_state(0)
                                     .battle_wins(0)
                                     .build();
@@ -94,4 +94,28 @@ public class MybatisApplicationTests {
         System.out.println("크루원 신청 테스트 성공");
     }
 
+    @Test
+    @DisplayName("006 : 크루 소개 수정")
+    public void updateCrewIntroTest(){
+        CrewRequestDTO intro = CrewRequestDTO.builder()
+                                .crew_id(1)
+                                .crew_name("up-crew1")
+                                .crew_intro_img("img1")
+                                .crew_intro_post("post1")
+                                .build();
+        crewMapper.updateCrewIntroRow(intro);
+        System.out.println("크루 소개 수정 완료");
+    }
+
+    // @Test
+    // @DisplayName("007 : 크루 관리 수정")
+    // public void updateCrewInfoTest(){
+    //     CrewRequestDTO info = CrewRequestDTO.builder()
+    //                             .crew_id(1)
+    //                             .crew_name("up-crew1")
+    //                             .crew
+    //                             .build();
+    //     crewMapper.updateCrewInfoRow(info);
+    //     System.out.println("크루 관리 수정 완료");
+    // }
 }
