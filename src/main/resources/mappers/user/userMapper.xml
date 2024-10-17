@@ -8,41 +8,27 @@
     <!-- 사용자 등록 -->
     <insert id="registerUser" parameterType="com.multipjt.multi_pjt.user.domain.UserRequestDTO">
         INSERT INTO Member (
-            member_id, 
-            member_img, 
-            member_nickname, 
-            member_password, 
-            member_email, 
-            member_phone, 
-            member_type
+            member_img, nickname, password, email, phone, 
+            verified, sns_provider, regDate
         ) VALUES (
-            #{member_id}, 
-            #{member_img}, 
-            #{member_nickname}, 
-            #{member_password}, 
-            #{member_email}, 
-            #{member_phone}, 
-            #{member_type}
-        );
+            #{member_img}, #{nickname}, #{password}, #{email}, 
+            #{phone}, #{verified}, #{snsProvider}, NOW()
+        )
     </insert>
 
 <!-- 회원 정보 수정 쿼리 -->
     <update id="updateUser" parameterType="com.multipjt.multi_pjt.user.domain.UserRequestDTO">
         UPDATE Member
-        SET
-            member_nickname = #{member_nickname},
-            member_password = #{member_password},
-            member_email = #{member_email},
-            member_phone = #{member_phone},
-            member_img = #{member_img}
-        WHERE
-            member_id = #{member_id}
+         SET 
+        member_img = #{member_img}, 
+        nickname = #{nickname}, 
+        password = #{password}, 
+        phone = #{phone}, 
+        verified = #{verified}, 
+        sns_provider = #{snsProvider}
+    WHERE email = #{email}
     </update>
 
-    <!-- ID로 사용자 조회 -->
-    <select id="getUserById" parameterType="String" resultType="com.multipjt.multi_pjt.user.domain.UserResponseDTO">
-        SELECT * FROM Member WHERE member_id = #{member_id};
-    </select>
 
     <!-- 회원 삭제 -->
 <delete id="deleteUser" parameterType="String">
@@ -51,4 +37,29 @@
 </delete>
 
 
-</mapper>
+
+     <!-- 이메일로 사용자 조회 -->
+    <select id="getUserByEmail" parameterType="String" resultType="com.multipjt.multi_pjt.user.domain.UserResponseDTO">
+        SELECT 
+            member_id, member_img, nickname, email, phone, 
+            verified, sns_provider, regDate
+        FROM Member
+        WHERE email = #{email}
+    </select>
+
+    <!-- getUserById --> 
+
+    <select id="getUserById" parameterType="int" resultType="com.multipjt.multi_pjt.user.domain.UserResponseDTO">
+    SELECT member_id, member_img, nickname, email, phone, verified, sns_provider
+        FROM Member
+        WHERE member_id = #{memberId}
+    </select>
+
+    <!-- deleteUserById --> 
+
+    <delete id="deleteUserById" parameterType="int">
+        DELETE FROM Member WHERE member_id = #{member_id}
+    </delete> 
+    
+    
+    </mapper>

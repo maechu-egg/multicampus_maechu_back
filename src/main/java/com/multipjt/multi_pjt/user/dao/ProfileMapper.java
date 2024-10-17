@@ -13,11 +13,11 @@ public interface ProfileMapper {
     int registerProfile(ProfileRequestDTO userprofile);
 
     // ID로 사용자 프로필 조회
-    ProfileResponseDTO getUserById(@Param("member_id") String memberId);
+    ProfileResponseDTO getUserById(@Param("member_id") int memberId);
 
      //회원 프로필 수정
     int updateProfile(ProfileRequestDTO userprofile);
 
     // 회원 탈퇴 시 프로필 삭제
-    int deleteProfileByMemberId(String memberId);
+    int deleteProfileByMemberId(int memberId);
 }

@@ -11,7 +11,6 @@
 
     <insert id="registerProfile"  parameterType="com.multipjt.multi_pjt.user.domain.mypage.ProfileRequestDTO">
     INSERT INTO UserProfile (
-            profile_id,
             profile_gender,
             profile_age,
             profile_region,
@@ -27,7 +26,6 @@
             profile_sport3,
             profile_workout_frequency
         ) VALUES (
-            #{profile_id},
             #{profile_gender},
             #{profile_age},
             #{profile_region},
@@ -47,7 +45,7 @@
 
     <!-- getUserById --> 
 
-    <select id="getUserById" parameterType="String" resultType="com.multipjt.multi_pjt.user.domain.mypage.ProfileResponseDTO">
+    <select id="getUserById" parameterType="int" resultType="com.multipjt.multi_pjt.user.domain.mypage.ProfileResponseDTO">
         SELECT * FROM UserProfile WHERE member_id = #{member_id};
     </select>
     
@@ -75,7 +73,7 @@
     
 
     <!-- deleteProfileByMemberId --> 
-    <delete id="deleteProfileByMemberId" parameterType="String">
+    <delete id="deleteProfileByMemberId" parameterType="int">
     DELETE FROM UserProfile WHERE member_id = #{memberId}
     </delete> 
       
