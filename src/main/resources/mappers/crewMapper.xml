@@ -3,7 +3,7 @@
 
 <mapper namespace="com.multipjt.multi_pjt.crew.dao.crew.CrewMapper">
 
-    <!-- createCrew --> 
+    <!-- 크루 생성 --> 
 
     <insert id="createCrewRow"
             parameterType="com.multipjt.multi_pjt.crew.domain.crew.CrewRequestDTO">
@@ -34,7 +34,7 @@
             );
     </insert>
 
-    <!-- selectCrewRow --> 
+    <!-- 전체 크루 리스트 조회 --> 
 
     <select id="selectCrewRow"
             resultType="com.multipjt.multi_pjt.crew.domain.crew.CrewResponseDTO">
@@ -42,7 +42,7 @@
         FROM Crew
     </select>    
 
-    <!-- selectCrewSportRow --> 
+    <!-- 특정 크루 리스트 조회 (종목) --> 
 
     <select id="selectCrewSportRow"
             resultType="com.multipjt.multi_pjt.crew.domain.crew.CrewResponseDTO">
@@ -51,10 +51,22 @@
         WHERE crew_sport = #{crew_sport};
     </select>
 
-    <!-- selectCrewInfoRow --> 
+    <!-- 특정 크루 정보 조회 --> 
 
     <select id="selectCrewInfoRow"
+            parameterType="java.util.HashMap"
             resultType="com.multipjt.multi_pjt.crew.domain.crew.CrewResponseDTO">
-
+        SELECT *
+        FROM Crew
+        WHERE crew_id = #{crew_id};
     </select>
+
+    <!-- 크루원 신청 --> 
+
+    <insert id="insertCrewMember"
+            parameterType="com.multipjt.multi_pjt.crew.domain.crew.CrewRequestDTO"
+            resultType="com.multipjt.multi_pjt.crew.domain.crew.CrewResponseDTO">
+        INSERT INTO CrewMember (crew_id, member_id, crew_member_state, battle_wins)
+        VALUES(#{crew_id}, #{member_id}, #{crew_member_state}, #{battle_wins})
+    </insert>
 </mapper>
