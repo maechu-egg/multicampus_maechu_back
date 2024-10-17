@@ -23,7 +23,7 @@ public class DietMapperApplicationTest {
 
     @Test
     @DisplayName("001 : 식단 기입 테스트")
-    public void testDietRecord(){
+    public Long testDietRecord(){
 
          //given : DietRequestDTO에 임의 값 입력
         DietRequestDTO dietRequestDTO = new DietRequestDTO();
@@ -35,7 +35,7 @@ public class DietMapperApplicationTest {
         //then : sql 쿼리 결과 반환
         Assertions.assertThat(diet).isEqualTo(1);
         
-        //given : member 1이 2024-10-18 아침에 먹은 식단 기록하기 위한 환경 조성
+        //given : member 1이 테스트하는 날짜의 아침에 먹은 식단 기록하기 위한 환경 조성
         dietRequestDTO.setRecordDate(LocalDate.of(2024,10,18));
         Long dietNumber = dietMapper.findDietNumber(dietRequestDTO);
 
@@ -54,6 +54,19 @@ public class DietMapperApplicationTest {
 
         //then : sql 쿼리 결과 반환
         Assertions.assertThat(item).isEqualTo(1);
+    
+        return dietNumber;
+    }
+
+    @Test
+    @DisplayName("식단 전체 삭제")
+    public void testDietDelete(){
+    
+        Long dietNumber = testDietRecord();
+
+        int deletRow = dietMapper.dietDelete(dietNumber);
+
+        Assertions.assertThat(deletRow).isEqualTo(1);
     }
 
 }

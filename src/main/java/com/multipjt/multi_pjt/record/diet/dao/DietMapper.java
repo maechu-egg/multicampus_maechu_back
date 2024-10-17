@@ -13,4 +13,6 @@ public interface DietMapper {
     public int itemInsert(ItemRequestDTO requestDTO);
  
     public Long findDietNumber(DietRequestDTO requestDTO);
+
+    public int dietDelete(Long dietId);
 }
