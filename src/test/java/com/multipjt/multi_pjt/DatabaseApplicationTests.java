@@ -18,6 +18,7 @@ public class DatabaseApplicationTests {
     private SqlSessionFactory factory;
 
     @Test
+    @DisplayName("00 : SqlSessionFactory 빈 주입 성공 테스트")
     @DisplayName("SqlSessionFactory 빈 주입 성공 테스트")
     public void givenSqlSessionFactory_whenInjected_thenFactoryShouldNotBeNull() {
        
@@ -33,3 +34,4 @@ public class DatabaseApplicationTests {
         assertThat(factory).isNotNull();
     }
 }
+
