@@ -25,11 +25,14 @@ public interface CrewMapper {
     // 특정 크루 정보 조회
     public CrewResponseDTO selectCrewInfoRow(Map<String, Integer> map);
 
-    // 크루원 신청
+    // 크루원 추가
     public void insertCrewMemberRow(CrewMemberRequestDTO param);
 
     // --------- 크루 소개 ---------
 
-    //크루 소개 수정
+    // 크루 소개 수정
     public void updateCrewIntroRow(CrewRequestDTO pamram);
+
+    // 크루 관리 수정
+    public void updateCrewInfoRow(CrewRequestDTO param);
 }

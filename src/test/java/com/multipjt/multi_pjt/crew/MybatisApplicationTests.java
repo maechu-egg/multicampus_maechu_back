@@ -7,6 +7,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import com.multipjt.multi_pjt.crew.dao.crew.CrewMapper;
 import com.multipjt.multi_pjt.crew.domain.crew.CrewMemberRequestDTO;
+import com.multipjt.multi_pjt.crew.domain.crew.CrewPostRequestDTO;
 import com.multipjt.multi_pjt.crew.domain.crew.CrewRequestDTO;
 import com.multipjt.multi_pjt.crew.domain.crew.CrewResponseDTO;
 
@@ -24,6 +25,7 @@ public class MybatisApplicationTests {
     @Autowired
     private CrewMapper crewMapper;
 
+    // --------- 크루 찾기 ---------
     @Test
     @DisplayName("001 : 크루 생성 테스트")
     public void createCrewTest(){
@@ -82,7 +84,7 @@ public class MybatisApplicationTests {
     }
 
     @Test
-    @DisplayName("005 : 크루원 신청")
+    @DisplayName("005 : 크루원 추가")
     public void insertNewMemberTest(){
         CrewMemberRequestDTO Member1 = CrewMemberRequestDTO.builder()
                                     .crew_id(1)
@@ -94,6 +96,7 @@ public class MybatisApplicationTests {
         System.out.println("크루원 신청 테스트 성공");
     }
 
+    // --------- 크루 소개 ---------
     @Test
     @DisplayName("006 : 크루 소개 수정")
     public void updateCrewIntroTest(){
@@ -107,15 +110,37 @@ public class MybatisApplicationTests {
         System.out.println("크루 소개 수정 완료");
     }
 
+    @Test
+    @DisplayName("007 : 크루 관리 수정")
+    public void updateCrewInfoTest(){
+        CrewRequestDTO info = CrewRequestDTO.builder()
+                                .crew_id(1)
+                                .crew_name("up-crew2")
+                                .crew_goal("크루 목표")
+                                .crew_title("크루 제목")
+                                .crew_location("활동 지역")
+                                .crew_sport("운동 종목")
+                                .crew_gender("혼성")
+                                .crew_frequency("주 3회")
+                                .crew_age("20대")
+                                .build();
+        crewMapper.updateCrewInfoRow(info);
+        System.out.println("크루 관리 수정 완료");
+    }
+
+    // --------- 크루원 정보 ---------
+
+    // --------- 크루 ---------
     // @Test
-    // @DisplayName("007 : 크루 관리 수정")
-    // public void updateCrewInfoTest(){
-    //     CrewRequestDTO info = CrewRequestDTO.builder()
-    //                             .crew_id(1)
-    //                             .crew_name("up-crew1")
-    //                             .crew
-    //                             .build();
-    //     crewMapper.updateCrewInfoRow(info);
-    //     System.out.println("크루 관리 수정 완료");
+    // @DisplayName("008 : 크루 게시판 게시물 등록")
+    // public void insertCrewPostTest(){
+    //     CrewPostRequestDTO post = CrewPostRequestDTO.builder()
+    //                                 .crew_post_title("게시글 제목")
+    //                                 .crew_post_contennt("게시글 내용")
+    //                                 .crew_post_img("게시글 img")
+    //                                 .crew_post_like(2)
+    //                                 .crew_post_state(2)
+    //                                 .
+    //                                 .build();
     // }
 }

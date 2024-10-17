@@ -61,7 +61,7 @@
         WHERE crew_id = #{crew_id};
     </select>
 
-    <!-- insertCrewMemberRow --> 
+    <!-- 크루원 추가 --> 
 
     <insert id="insertCrewMemberRow"
             parameterType="com.multipjt.multi_pjt.crew.domain.crew.CrewRequestDTO">
@@ -69,12 +69,30 @@
         VALUES(#{crew_id}, #{member_id},#{crew_member_state},#{battle_wins});
     </insert>
 
-    <!-- updateCrewIntroRow --> 
+    <!-- 크루 소개 수정 --> 
 
     <update id="updateCrewIntroRow"
             parameterType="com.multipjt.multi_pjt.crew.domain.crew.CrewRequestDTO">
         UPDATE Crew
-        SET crew_intro_post = #{crew_intro_post}, crew_intro_img = #{crew_intro_img}, crew_name = #{crew_name}
+        SET crew_intro_post = #{crew_intro_post},
+            crew_intro_img = #{crew_intro_img},
+            crew_name = #{crew_name}
         WHERE crew_id = #{crew_id}
+    </update>
+
+    <!-- 크루 관리 수정 --> 
+
+    <update id="updateCrewInfoRow"
+            parameterType="com.multipjt.multi_pjt.crew.domain.crew.CrewRequestDTO">
+        UPDATE Crew
+        SET crew_name = #{crew_name},
+            crew_goal = #{crew_goal},
+            crew_title = #{crew_title},
+            crew_location = #{crew_location},
+            crew_sport = #{crew_sport},
+            crew_gender = #{crew_gender},
+            crew_frequency = #{crew_frequency},
+            crew_age = #{crew_age}
+        WHERE crew_id = #{crew_id};
     </update>
 </mapper>
