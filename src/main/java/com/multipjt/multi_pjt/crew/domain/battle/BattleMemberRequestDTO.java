@@ -8,5 +8,5 @@ import lombok.Data;
 public class BattleMemberRequestDTO {
     private int participant_id;
     private int battle_id;
-    private String member_id;
+    private int member_id;
 }

@@ -53,7 +53,7 @@ public class CrewBattleTest {
         BattleMemberRequestDTO request = BattleMemberRequestDTO.builder()
                                             .participant_id(3)
                                             .battle_id(1)
-                                            .member_id("testuser2")
+                                            .member_id(1)
                                             .build();
         crewBattleMapper.saveBattleMemberRow(request);
     }
@@ -98,7 +98,7 @@ public class CrewBattleTest {
                                         .vote_id(2)
                                         .battle_id(1)
                                         .participant_id(1)
-                                        .member_id("testuser2")
+                                        .member_id(1)
                                         .build();
         crewBattleMapper.saveVoteRow(request);
     }
