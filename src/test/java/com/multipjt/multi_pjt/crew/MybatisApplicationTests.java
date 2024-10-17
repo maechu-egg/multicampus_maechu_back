@@ -90,7 +90,7 @@ public class MybatisApplicationTests {
                                     .crew_member_state(0)
                                     .battle_wins(0)
                                     .build();
-        crewMapper.insertCrewMember(Member1);
+        crewMapper.insertCrewMemberRow(Member1);
         System.out.println("크루원 신청 테스트 성공");
     }
 

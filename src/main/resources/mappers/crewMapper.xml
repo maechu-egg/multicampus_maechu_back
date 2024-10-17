@@ -60,4 +60,12 @@
         FROM Crew
         WHERE crew_id = #{crew_id};
     </select>
+
+    <!-- insertCrewMemberRow --> 
+
+    <insert id="insertCrewMemberRow"
+            parameterType="com.multipjt.multi_pjt.crew.domain.crew.CrewRequestDTO">
+        INSERT INTO CrewMember(crew_id, member_id, crew_member_state, battle_wins)
+        VALUES(#{crew_id}, #{member_id},#{crew_member_state},#{battle_wins});
+    </insert>
 </mapper>
