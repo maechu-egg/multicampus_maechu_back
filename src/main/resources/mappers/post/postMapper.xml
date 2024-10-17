@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.multipjt.multi_pjt.community.dao.PostMapper">
+
+    <!-- 게시물 등록 -->
+    <insert id="postInsert"  parameterType="com.multipjt.multi_pjt.community.domain.posts.PostRequestDTO">
+        INSERT INTO Posts (
+            post_title,
+            post_contents,
+            post_sport,
+            post_sports_keyword,
+            member_id
+            <if test="post_hashtag != null and post_hashtag != ''">
+                , post_hashtag
+            </if>
+            <if test="post_img1 != null and post_img1 != ''">
+                , post_img1
+            </if>
+            <if test="post_img2 != null and post_img2 != ''">
+                , post_img2
+            </if>
+          
+        ) VALUES (
+            #{post_title},
+            #{post_contents},
+            #{post_sport},
+            #{post_sports_keyword},
+            #{member_id}
+            <if test="post_hashtag != null and post_hashtag != ''">
+                , #{post_hashtag}
+            </if>
+            <if test="post_img1 != null and post_img1 != ''">
+                , #{post_img1}
+            </if>
+            <if test="post_img2 != null and post_img2 != ''">
+                , #{post_img2}
+            </if>
+        );
+    </insert>
+
+    <!-- 게시글 member_id로 조회 -->
+    <select id ="getMemberById" parameterType="int"  resultType="com.multipjt.multi_pjt.community.domain.posts.PostResponseDTO">
+        SELECT * 
+        FROM Posts 
+        WHERE member_id= #{member_id}
+    </select>
+
+
+      
+</mapper>
