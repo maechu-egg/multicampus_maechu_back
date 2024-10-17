@@ -51,7 +51,7 @@
         WHERE crew_sport = #{crew_sport};
     </select>
 
-    <!-- 특정 크루 정보 조회 --> 
+    <!-- 특정 크루 정보 조회  -->
 
     <select id="selectCrewInfoRow"
             parameterType="java.util.HashMap"
@@ -60,13 +60,4 @@
         FROM Crew
         WHERE crew_id = #{crew_id};
     </select>
-
-    <!-- 크루원 신청 --> 
-
-    <insert id="insertCrewMember"
-            parameterType="com.multipjt.multi_pjt.crew.domain.crew.CrewRequestDTO"
-            resultType="com.multipjt.multi_pjt.crew.domain.crew.CrewResponseDTO">
-        INSERT INTO CrewMember (crew_id, member_id, crew_member_state, battle_wins)
-        VALUES(#{crew_id}, #{member_id}, #{crew_member_state}, #{battle_wins})
-    </insert>
 </mapper>

@@ -25,5 +25,5 @@ public interface CrewMapper {
     public CrewResponseDTO selectCrewInfoRow(Map<String, Integer> map);
 
     // 크루원 신청
-    public CrewMemberResponseDTO insertCrewMember(CrewMemberRequestDTO param);
+    public void insertCrewMemberRow(CrewMemberRequestDTO param);
 }
