@@ -49,6 +49,9 @@ dependencies {
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter-test:3.0.3'
+	testImplementation 'org.assertj:assertj-core:3.19.0'
+	testImplementation 'org.junit.jupiter:junit-jupiter:5.7.1'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
 	// Swagger + spring 3.x

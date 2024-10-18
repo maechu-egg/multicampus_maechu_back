@@ -28,9 +28,24 @@
 
     <!-- dietDelete --> 
 
-    <delete id="dietDelete">
+    <delete id="dietDelete" parameterType="java.lang.Long">
         delete from DietRecords
         where diet_id = #{dietId};
     </delete>
+
+    <!-- itemDelete --> 
+
+    <delete id="itemDelete" parameterType="java.lang.Long">
+        delete from DietItems
+        where item_id = #{itemId};
+    </delete>    
+
+    <!-- itemFindAll --> 
+
+    <select id="itemFindAll" parameterType="java.lang.Long" resultType="com.multipjt.multi_pjt.record.diet.domain.ItemResponseDTO">
+        select item_id, item_name, quantity, carbs, protein, fat, calories, diet_id 
+        from DietItems
+        where diet_id = #{dietId};
+    </select>
     
-    </mapper>
+</mapper>
