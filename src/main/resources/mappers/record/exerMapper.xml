@@ -10,4 +10,12 @@
         insert into ExerciseRecords(exercise_type, intensity, member_id, duration)
         values(#{exerciseType},#{intensity},#{memberId},#{duration});
     </insert>
-</mapper>
+
+    <!-- exerDelete --> 
+
+    <delete id="exerDelete" parameterType="java.util.Map">
+        delete from ExerciseRecords
+        where exercise_type = #{exerciseType} and record_date = #{recordDate} and member_id = #{memberId};
+    </delete>
+    
+    </mapper>
