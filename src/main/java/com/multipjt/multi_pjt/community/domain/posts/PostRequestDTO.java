@@ -11,7 +11,7 @@ public class PostRequestDTO {
     private String  post_title;
     private String  post_contents;
     private Date    post_date;
-    private Date    post_modify_Date;
+    private Date    post_modify_date;
     private String  post_hashtag;
     private int     post_like_counts;
     private int     post_views;

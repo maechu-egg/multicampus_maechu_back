@@ -72,6 +72,7 @@
              <if test="post_img2 != null and post_img2 != ''">
                 , post_hashtag = #{post_hashtag}
             </if>
+            , post_modify_date = now()
         WHERE
             post_id = #{post_id} 
             AND    member_id = #{member_id} 
@@ -87,29 +88,37 @@
     <!-- 운동 종목 별 게시글 조회 -->
     <select id="postSelectSport" parameterType="String" resultType="com.multipjt.multi_pjt.community.domain.posts.PostResponseDTO">
         SELECT 
-            post_id,
+            p.post_id,
             post_title,
             post_contents,
             post_sport,
             post_sports_keyword,
             post_like_counts,
             post_views,
+            post_date,
             p.member_id,
-            m.nickname
+            m.nickname,
+            COUNT(c.comments_id) AS comment_count
         FROM
             Posts p
         INNER JOIN
             Member m
         ON
             p.member_id = m.member_id
+        LEFT JOIN
+            Comments c 
+        ON 
+            p.post_id = c.post_id
         WHERE
             post_sport = #{post_sport}
+        GROUP BY
+            p.post_id    
     </select>
 
     <!-- 게시글 검색  제목/내용/해시태그 -->
     <select id="postSelectTCH" parameterType="String" resultType="com.multipjt.multi_pjt.community.domain.posts.PostResponseDTO">
         SELECT 
-            post_id,
+            p.post_id,
             post_title,
             post_contents,
             post_sport,
@@ -117,19 +126,27 @@
             post_like_counts,
             post_views,
             p.member_id,
-            m.nickname
+            m.nickname,
+            post_date,
+            COUNT(c.comments_id) AS comment_count
         FROM
             Posts p
         INNER JOIN
             Member m
         ON
             p.member_id = m.member_id
+        LEFT JOIN
+            Comments c 
+        ON 
+            p.post_id = c.post_id
         WHERE
             post_title LIKE CONCAT( '%', #{keyword}, '%' )
             OR
             post_contents LIKE CONCAT( '%', #{keyword}, '%' )
             OR
             post_hashtag LIKE CONCAT( '%', #{keyword}, '%' )
+        GROUP BY
+            p.post_id 
     </select>
     
 </mapper>
