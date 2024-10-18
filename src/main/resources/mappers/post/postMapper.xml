@@ -47,6 +47,39 @@
         WHERE member_id= #{member_id}
     </select>
 
+    
+    <update id="postUpdate" parameterType="com.multipjt.multi_pjt.community.domain.posts.PostRequestDTO" >  
+        UPDATE Posts
+        SET  
+            <if test="post_title != null and post_title != ''">
+                post_title = #{post_title}
+            </if>
+            <if test="post_img2 != null and post_img2 != ''">
+                , post_contents = #{post_contents}
+            </if>
+            <if test="post_title != null and post_title != ''">
+                , post_sport = #{post_sport}
+            </if>
+            <if test="post_img2 != null and post_img2 != ''">
+                , post_sports_keyword = #{post_sports_keyword}
+            </if>
+            <if test="post_title != null and post_title != ''">
+                , post_img1 = #{post_img1}
+            </if>
+            <if test="post_img2 != null and post_img2 != ''">
+                , post_img2 = #{post_img2}
+            </if>
+             <if test="post_img2 != null and post_img2 != ''">
+                , post_hashtag = #{post_hashtag}
+            </if>
+        WHERE
+            post_id = #{post_id} 
+            AND    member_id = #{member_id} 
+    </update>
 
-      
+    <select id ="getPostById" parameterType="int"  resultType="com.multipjt.multi_pjt.community.domain.posts.PostResponseDTO">
+        SELECT * 
+        FROM Posts 
+        WHERE post_id= #{post_id}
+    </select>
 </mapper>
