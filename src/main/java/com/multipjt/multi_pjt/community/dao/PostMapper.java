@@ -29,5 +29,9 @@ public interface PostMapper {
     List<PostResponseDTO> postSelectSport(@Param("post_sport") String psport);
     
 
+    // 단어 검색 - 글 제목 / 글 내용 / 해시태그  
+    List<PostResponseDTO> postSelectTCH(@Param("keyword") String keyword);
+
+
 
 }

@@ -102,11 +102,11 @@ public class PostMapperApplicationTests {
     public void postSelectSportTest(){
         
      
-        //  Given : 게시글 조회 및 수정할 게시글 준비
+        //  Given : 게시글 조회 준비
         String sport = "헬스";
         
         
-        // When :  게시글 수정을 위한 세팅
+        // When :  게시글 조회를 위한 세팅
         List<PostResponseDTO> sportList = postMapper.postSelectSport(sport);
         
         // List 가 비어있는지 확인
@@ -124,5 +124,28 @@ public class PostMapperApplicationTests {
         
     }
 
-
+    @Test
+    @DisplayName("P04: 제목/내욕/해시태그 검색 ")
+    public void postSelectTCHTest(){
+        
+     
+        //  Given : 게시글 조회
+        String keyword = "오늘은";
+        
+        // When :  게시글 수정을 위한 세팅
+        List<PostResponseDTO> searchList = postMapper.postSelectTCH(keyword);
+        
+        // List 가 비어있는지 확인
+        Assertions.assertFalse(searchList.isEmpty(), "게시글 조회에 실패했습니다.");
+        
+        // Then: 게시글 정보 검증
+        PostResponseDTO first = searchList.get(0);
+   
+        // 게시글 확인
+        Assertions.assertEquals("수정된 테스트 제목", first.getPost_title(), "게시글 제목이 조회 되어야 합니다.");
+        Assertions.assertEquals("첫번째 게시글 수정 내용입니다.", first.getPost_contents(), "게시글 내용이 조회 되어야 합니다.");
+        Assertions.assertEquals("달리기", first.getPost_sport(), "운동 종목이 조회 되어야 합니다.");
+        Assertions.assertEquals(1, first.getMember_id(), "회원 id가 조회 되어야 합니다.");
+        
+    }
 }

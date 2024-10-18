@@ -47,7 +47,7 @@
         WHERE member_id= #{member_id}
     </select>
 
-    
+    <!-- 게시글 수정 -->
     <update id="postUpdate" parameterType="com.multipjt.multi_pjt.community.domain.posts.PostRequestDTO" >  
         UPDATE Posts
         SET  
@@ -77,12 +77,14 @@
             AND    member_id = #{member_id} 
     </update>
 
+    <!-- post_id로 게시글 조회 -->
     <select id ="getPostById" parameterType="int"  resultType="com.multipjt.multi_pjt.community.domain.posts.PostResponseDTO">
         SELECT * 
         FROM Posts 
         WHERE post_id= #{post_id}
     </select>
 
+    <!-- 운동 종목 별 게시글 조회 -->
     <select id="postSelectSport" parameterType="String" resultType="com.multipjt.multi_pjt.community.domain.posts.PostResponseDTO">
         SELECT 
             post_id,
@@ -104,6 +106,30 @@
             post_sport = #{post_sport}
     </select>
 
-
+    <!-- 게시글 검색  제목/내용/해시태그 -->
+    <select id="postSelectTCH" parameterType="String" resultType="com.multipjt.multi_pjt.community.domain.posts.PostResponseDTO">
+        SELECT 
+            post_id,
+            post_title,
+            post_contents,
+            post_sport,
+            post_sports_keyword,
+            post_like_counts,
+            post_views,
+            p.member_id,
+            m.nickname
+        FROM
+            Posts p
+        INNER JOIN
+            Member m
+        ON
+            p.member_id = m.member_id
+        WHERE
+            post_title LIKE CONCAT( '%', #{keyword}, '%' )
+            OR
+            post_contents LIKE CONCAT( '%', #{keyword}, '%' )
+            OR
+            post_hashtag LIKE CONCAT( '%', #{keyword}, '%' )
+    </select>
     
 </mapper>
