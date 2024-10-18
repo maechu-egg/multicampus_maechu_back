@@ -41,7 +41,7 @@ public class CommentMapperApplicationTests {
         
         
         // Null 여부 확인
-        Assertions.assertNotNull(registeredComments, "댓글 등록 성공1");
+        Assertions.assertNotNull(registeredComments, "댓글 등록 성공");
         
         CommentResponseDTO registeredComment = registeredComments.get(0);
 
@@ -63,7 +63,7 @@ public class CommentMapperApplicationTests {
 
         // member_id and comment_id 로 삭제
         request.setMember_id(1);
-        request.setComments_id(3);
+        request.setComments_id(5);
         
 
         // When : 댓글 삭제 수행
@@ -71,7 +71,7 @@ public class CommentMapperApplicationTests {
         Assertions.assertEquals(1, rowsAffected, "댓글이 삭제 되어야 합니다.");
 
         // Then : 삭제된 댓글 정보 조회 - null 확인
-        CommentResponseDTO deleteComment = commentMapper.getCommentById(1);  
+        CommentResponseDTO deleteComment = commentMapper.getCommentById(5);  
         
         // null이 아닐경우 테스트 실패
         Assertions.assertNull(deleteComment, "삭제한 댓글의 정보는 조회할 수 없어야 합니다.");
