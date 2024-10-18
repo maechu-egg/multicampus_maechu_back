@@ -13,9 +13,30 @@
 
     <!-- exerDelete --> 
 
-    <delete id="exerDelete" parameterType="java.util.Map">
+    <delete id="exerDelete" parameterType="java.lang.Long">
         delete from ExerciseRecords
-        where exercise_type = #{exerciseType} and record_date = #{recordDate} and member_id = #{memberId};
+        where exercise_id = #{exerciseId};
     </delete>
-    
-    </mapper>
+
+    <!-- exerIdGet --> 
+
+    <select id="exerIdGet" parameterType="java.util.Map">
+        select exercise_id from ExerciseRecords
+        where exercise_type = #{exerciseType} and record_date = #{recordDate} and member_id = #{memberId};
+    </select>    
+
+    <!-- exerUpdate --> 
+
+    <update id="exerUpdate" parameterType="java.util.Map">
+        update ExerciseRecords
+        set intensity = #{intensity}
+        where exercise_id = #{exerciseId};
+    </update>
+
+    <!-- exerDaySelect --> 
+
+    <select id="exerDaySelect" parameterType="java.util.Map" resultType="com.multipjt.multi_pjt.record.exercise.domain.ExerResponseDTO">
+        select * from ExerciseRecords
+        where member_id = #{memberId} and record_date = #{recordDate};
+    </select>
+</mapper>
