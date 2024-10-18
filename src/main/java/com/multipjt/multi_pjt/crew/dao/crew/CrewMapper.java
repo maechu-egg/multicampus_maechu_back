@@ -71,4 +71,7 @@ public interface CrewMapper {
 
     // 크루 게시판 게시물 댓글 조회
     public List<CrewCommentsResponseDTO> selectCrewCommentsRow(CrewCommentsRequestDTO param);
+
+    // 크루 게시판 게시물 댓글 삭제
+    public void deleteCrewCommentRow(CrewCommentsRequestDTO param);
 }

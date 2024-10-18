@@ -224,4 +224,12 @@
         FROM CrewComments
         WHERE crew_post_id = #{crew_post_id} AND member_id = #{member_id};
     </select>
+
+    <!-- deleteCrewCommentRow --> 
+
+    <delete id="deleteCrewCommentRow"
+            parameterType="com.multipjt.multi_pjt.crew.domain.crew.CrewCommentsResponseDTO">
+        DELETE FROM CrewComments
+        WHERE crew_post_id = #{crew_post_id} AND member_id = #{member_id} AND crew_comments_id = #{crew_comments_id};
+    </delete>
 </mapper>

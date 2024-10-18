@@ -251,7 +251,7 @@ public class MybatisApplicationTests {
     }
 
     @Test
-    @DisplayName("015 : 크루 게시판 댓글 조회")
+    @DisplayName("016 : 크루 게시판 댓글 조회")
     public void selectCrewCommentsTest(){
         CrewCommentsRequestDTO comment = new CrewCommentsRequestDTO();
         comment.setCrew_post_id(10);
@@ -262,5 +262,17 @@ public class MybatisApplicationTests {
             System.out.println(dto);
         }
         System.out.println("크루 게시판 댓글 조회 완료");
+    }
+
+    @Test
+    @DisplayName("017 : 크루 게시판 삭제")
+    public void deleteCrewCommentsTest(){
+        CrewCommentsRequestDTO deleteComment = new CrewCommentsRequestDTO();
+        deleteComment.setCrew_post_id(10);
+        deleteComment.setCrew_comments_id(3);
+        deleteComment.setMember_id(17);
+
+        crewMapper.deleteCrewCommentRow(deleteComment);
+        System.out.println("크루 게시판 댓글 삭제 완료");
     }
 }
