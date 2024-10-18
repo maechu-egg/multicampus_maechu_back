@@ -214,4 +214,14 @@
             #{member_id}
         );
     </insert>
+
+    <!-- 크루 게시글 댓글 조회 --> 
+
+    <select id="selectCrewCommentsRow"
+            parameterType="com.multipjt.multi_pjt.crew.domain.crew.CrewCommentsRequestDTO"
+            resultType="com.multipjt.multi_pjt.crew.domain.crew.CrewCommentsResponseDTO">
+        SELECT *
+        FROM CrewComments
+        WHERE crew_post_id = #{crew_post_id} AND member_id = #{member_id};
+    </select>
 </mapper>

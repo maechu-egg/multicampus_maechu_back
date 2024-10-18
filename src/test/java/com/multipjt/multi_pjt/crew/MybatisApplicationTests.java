@@ -7,6 +7,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import com.multipjt.multi_pjt.crew.dao.crew.CrewMapper;
 import com.multipjt.multi_pjt.crew.domain.crew.CrewCommentsRequestDTO;
+import com.multipjt.multi_pjt.crew.domain.crew.CrewCommentsResponseDTO;
 import com.multipjt.multi_pjt.crew.domain.crew.CrewMemberRequestDTO;
 import com.multipjt.multi_pjt.crew.domain.crew.CrewMemberResponseDTO;
 import com.multipjt.multi_pjt.crew.domain.crew.CrewPostRequestDTO;
@@ -247,5 +248,19 @@ public class MybatisApplicationTests {
                                         .build();
         crewMapper.insertCrewCommentRow(comment);
         System.out.println("크루 게시판 댓글 작성 완료");
+    }
+
+    @Test
+    @DisplayName("015 : 크루 게시판 댓글 조회")
+    public void selectCrewCommentsTest(){
+        CrewCommentsRequestDTO comment = new CrewCommentsRequestDTO();
+        comment.setCrew_post_id(10);
+        comment.setMember_id(17);
+
+        List<CrewCommentsResponseDTO> postList = crewMapper.selectCrewCommentsRow(comment);
+        for (CrewCommentsResponseDTO dto:postList){
+            System.out.println(dto);
+        }
+        System.out.println("크루 게시판 댓글 조회 완료");
     }
 }
