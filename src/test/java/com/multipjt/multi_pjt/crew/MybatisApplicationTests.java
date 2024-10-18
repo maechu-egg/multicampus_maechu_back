@@ -160,20 +160,16 @@ public class MybatisApplicationTests {
         System.out.println("크루원 조회 완료");
     }
 
-    // @Test
-    // @DisplayName("011 : 크루 멤버 삭제")
-    // public void delete(){
-    //     Map<String, Integer> map = new HashMap<>();
-    //     map.put("crew_id", 1);
+    @Test
+    @DisplayName("011 : 크루 멤버 삭제")
+    public void deleteCrewMemberTest() {
+        CrewMemberRequestDTO deleteMember = new CrewMemberRequestDTO();
+        deleteMember.setCrew_id(1);
+        deleteMember.setMember_id(17);
 
-    //     List<CrewMemberResponseDTO> memberList = crewMapper.selectCrewMemberRow(map);
-    //     for(CrewMemberResponseDTO dto : memberList){
-    //         System.out.println(dto);
-    //     }
-    //     assertFalse(memberList.isEmpty(), "크루가 존재해야 합니다.");
-    //     System.out.println("크루원 조회 완료");
-    // }
-
+        crewMapper.deleteCrewMemberRow(deleteMember);
+        System.out.println("크루원 삭제 완료");
+    }
 
     // --------- 크루 게시판 ---------
 
@@ -192,4 +188,15 @@ public class MybatisApplicationTests {
         crewMapper.insertCrewPostRow(post);
         System.out.println("크루 게시글 등록 완료");
     }
+
+    // @Test
+    // @DisplayName("012 : 게시글 전체 조회")
+    // public void deleteCrewMemberTest() {
+    //     CrewMemberRequestDTO deleteMember = new CrewMemberRequestDTO();
+    //     deleteMember.setCrew_id(1);
+    //     deleteMember.setMember_id(17);
+
+    //     crewMapper.deleteCrewMemberRow(deleteMember);
+    //     System.out.println("크루원 삭제 완료");
+    // }
 }

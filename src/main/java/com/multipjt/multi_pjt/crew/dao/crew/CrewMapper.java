@@ -40,11 +40,14 @@ public interface CrewMapper {
 
     // --------- 크루원 정보 ---------
     
-    // 크루원 멤버 가입 승인
+    // 크루원 가입 승인
     public void updateCrewMemberRow(CrewMemberRequestDTO param);
 
-    // 크루원 멤버 조회
+    // 크루원 조회
     public List<CrewMemberResponseDTO> selectCrewMemberRow(Map<String, Integer> map);
+
+    // 크루원 삭제
+    public void deleteCrewMemberRow(CrewMemberRequestDTO param);
 
     // --------- 크루 게시판 ---------
     

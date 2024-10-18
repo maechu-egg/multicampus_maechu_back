@@ -109,7 +109,7 @@
 
     <!--  @@@@@@@@@ 크루원 정보 @@@@@@@@@  -->
 
-    <!-- 크루원 멤버 승인 --> 
+    <!-- 크루원 승인 --> 
 
     <update id="updateCrewMemberRow"
             parameterType="com.multipjt.multi_pjt.crew.domain.crew.CrewMemberRequestDTO">
@@ -118,7 +118,7 @@
         WHERE crew_id = #{crew_id} AND member_id = #{member_id}
     </update>
     
-    <!-- 크루 멤버 조회 --> 
+    <!-- 크루원 조회 --> 
 
     <select id="selectCrewMemberRow"
             parameterType="java.util.HashMap"
@@ -126,7 +126,15 @@
         SELECT *
         FROM CrewMember
         WHERE crew_id = #{crew_id}
-    </select> 
+    </select>
+
+    <!-- 크루원 삭제 --> 
+
+    <delete id="deleteCrewMemberRow"
+            parameterType="com.multipjt.multi_pjt.crew.domain.crew.CrewMemberRequestDTO">
+        delete from CrewMember
+        WHERE member_id = #{member_id} AND crew_id = #{crew_id};
+    </delete>   
 
     <!--  @@@@@@@@@ 크루 게시판 @@@@@@@@@  -->
 
@@ -153,7 +161,5 @@
             #{crew_post_date},
             #{crew_id}
         );
-    </insert>
-
-       
+    </insert>    
 </mapper>
