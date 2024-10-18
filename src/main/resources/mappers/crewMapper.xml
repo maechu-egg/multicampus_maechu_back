@@ -2,6 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.multipjt.multi_pjt.crew.dao.crew.CrewMapper">
+    <!--  @@@@@@@@@ 크루 찾기 @@@@@@@@@  -->
 
     <!-- 크루 생성 --> 
 
@@ -18,7 +19,10 @@
             crew_gender,
             crew_frequency,
             crew_age,
-            crew_date
+            crew_date,
+            crew_intro_post,
+            crew_intro_img,
+            crew_state
         ) VALUES (
             #{crew_id},
             #{member_id},
@@ -30,7 +34,10 @@
             #{crew_gender},
             #{crew_frequency},
             #{crew_age},
-            #{crew_date}
+            #{crew_date},
+            #{crew_intro_post},
+            #{crew_intro_img},
+            #{crew_state}
             );
     </insert>
 
@@ -40,6 +47,7 @@
             resultType="com.multipjt.multi_pjt.crew.domain.crew.CrewResponseDTO">
         SELECT *
         FROM Crew
+        WHERE crew_state = 1
     </select>    
 
     <!-- 특정 크루 리스트 조회 (종목) --> 
@@ -48,7 +56,7 @@
             resultType="com.multipjt.multi_pjt.crew.domain.crew.CrewResponseDTO">
         SELECT *
         FROM Crew
-        WHERE crew_sport = #{crew_sport};
+        WHERE crew_sport = #{crew_sport} AND crew_state = 1;
     </select>
 
     <!-- 특정 크루 정보 조회  -->
@@ -58,16 +66,18 @@
             resultType="com.multipjt.multi_pjt.crew.domain.crew.CrewResponseDTO">
         SELECT *
         FROM Crew
-        WHERE crew_id = #{crew_id};
+        WHERE crew_id = #{crew_id} AND crew_state = 1;
     </select>
 
     <!-- 크루원 추가 --> 
 
     <insert id="insertCrewMemberRow"
-            parameterType="com.multipjt.multi_pjt.crew.domain.crew.CrewRequestDTO">
+            parameterType="com.multipjt.multi_pjt.crew.domain.crew.CrewMemberRequestDTO">
         INSERT INTO CrewMember(crew_id, member_id, crew_member_state, battle_wins)
         VALUES(#{crew_id}, #{member_id},#{crew_member_state},#{battle_wins});
     </insert>
+
+    <!--  @@@@@@@@@ 크루 소개 @@@@@@@@@  -->
 
     <!-- 크루 소개 수정 --> 
 
@@ -92,7 +102,58 @@
             crew_sport = #{crew_sport},
             crew_gender = #{crew_gender},
             crew_frequency = #{crew_frequency},
-            crew_age = #{crew_age}
+            crew_age = #{crew_age},
+            crew_state = #{crew_state}
         WHERE crew_id = #{crew_id};
     </update>
+
+    <!--  @@@@@@@@@ 크루원 정보 @@@@@@@@@  -->
+
+    <!-- 크루원 멤버 승인 --> 
+
+    <update id="updateCrewMemberRow"
+            parameterType="com.multipjt.multi_pjt.crew.domain.crew.CrewMemberRequestDTO">
+        UPDATE CrewMember
+        SET crew_member_state = 1
+        WHERE crew_id = #{crew_id} AND member_id = #{member_id}
+    </update>
+    
+    <!-- 크루 멤버 조회 --> 
+
+    <select id="selectCrewMemberRow"
+            parameterType="java.util.HashMap"
+            resultType="com.multipjt.multi_pjt.crew.domain.crew.CrewMemberResponseDTO">
+        SELECT *
+        FROM CrewMember
+        WHERE crew_id = #{crew_id}
+    </select> 
+
+    <!--  @@@@@@@@@ 크루 게시판 @@@@@@@@@  -->
+
+    <!-- 크루 게시글 등록 --> 
+
+    <insert id="insertCrewPostRow"
+            parameterType="com.multipjt.multi_pjt.crew.domain.crew.CrewPostRequestDTO">
+        INSERT INTO CrewPost(
+            crew_post_id,
+            crew_post_title,
+            crew_post_content,
+            crew_post_img,
+            crew_post_like,
+            crew_post_state,
+            crew_post_date,
+            crew_id
+        ) VALUES (
+            #{crew_post_id},
+            #{crew_post_title},
+            #{crew_post_content},
+            #{crew_post_img},
+            #{crew_post_like},
+            #{crew_post_state},
+            #{crew_post_date},
+            #{crew_id}
+        );
+    </insert>
+
+       
 </mapper>

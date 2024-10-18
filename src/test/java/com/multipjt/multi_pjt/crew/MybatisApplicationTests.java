@@ -7,6 +7,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import com.multipjt.multi_pjt.crew.dao.crew.CrewMapper;
 import com.multipjt.multi_pjt.crew.domain.crew.CrewMemberRequestDTO;
+import com.multipjt.multi_pjt.crew.domain.crew.CrewMemberResponseDTO;
 import com.multipjt.multi_pjt.crew.domain.crew.CrewPostRequestDTO;
 import com.multipjt.multi_pjt.crew.domain.crew.CrewRequestDTO;
 import com.multipjt.multi_pjt.crew.domain.crew.CrewResponseDTO;
@@ -41,6 +42,7 @@ public class MybatisApplicationTests {
                                     .crew_frequency("주 6회")
                                     .crew_age("20대")
                                     .crew_date("2024-10-15 17:25:10")
+                                    .crew_state(0)
                                     .build();
         //크루 생성
         crewMapper.createCrewRow(request);
@@ -62,7 +64,7 @@ public class MybatisApplicationTests {
     @DisplayName("003 : 특정 크루 리스트 조회 (종목)")
     public void selectCrewSportTest(){
         Map<String, String> map = new HashMap<>();
-        map.put("crew_sport", "헬스");
+        map.put("crew_sport", "운동 종목");
 
         List<CrewResponseDTO> crewList = crewMapper.selectCrewSportRow(map);
         for (CrewResponseDTO dto : crewList){
@@ -76,7 +78,7 @@ public class MybatisApplicationTests {
     @DisplayName("004 : 특정 크루 정보 조회")
     public void selectCrewInfoTest(){
         Map<String, Integer> map = new HashMap<>();
-        map.put("crew_id", 2);
+        map.put("crew_id", 9);
         CrewResponseDTO crewInfo = crewMapper.selectCrewInfoRow(map);
         System.out.println(crewInfo);
         assertNotNull(crewInfo, "크루가 존재해야 합니다.");
@@ -87,8 +89,8 @@ public class MybatisApplicationTests {
     @DisplayName("005 : 크루원 추가")
     public void insertNewMemberTest(){
         CrewMemberRequestDTO Member1 = CrewMemberRequestDTO.builder()
-                                    .crew_id(1)
-                                    .member_id(16)
+                                    .crew_id(2)
+                                    .member_id(17)
                                     .crew_member_state(0)
                                     .battle_wins(0)
                                     .build();
@@ -114,8 +116,8 @@ public class MybatisApplicationTests {
     @DisplayName("007 : 크루 관리 수정")
     public void updateCrewInfoTest(){
         CrewRequestDTO info = CrewRequestDTO.builder()
-                                .crew_id(1)
-                                .crew_name("up-crew2")
+                                .crew_id(9)
+                                .crew_name("up-crew3")
                                 .crew_goal("크루 목표")
                                 .crew_title("크루 제목")
                                 .crew_location("활동 지역")
@@ -123,6 +125,7 @@ public class MybatisApplicationTests {
                                 .crew_gender("혼성")
                                 .crew_frequency("주 3회")
                                 .crew_age("20대")
+                                .crew_state(1)
                                 .build();
         crewMapper.updateCrewInfoRow(info);
         System.out.println("크루 관리 수정 완료");
@@ -130,17 +133,63 @@ public class MybatisApplicationTests {
 
     // --------- 크루원 정보 ---------
 
-    // --------- 크루 ---------
+    @Test
+    @DisplayName("009 : 크루 멤버 가입 승인")
+    public void updateCrewMemberTest(){
+        CrewMemberRequestDTO post = CrewMemberRequestDTO.builder()
+                                    .battle_wins(0)
+                                    .crew_member_state(0)
+                                    .member_id(17)
+                                    .crew_id(2)
+                                    .build();
+        crewMapper.updateCrewMemberRow(post);
+        System.out.println("크루원 가입 승인 완료");
+    }
+
+    @Test
+    @DisplayName("010 : 크루 멤버 조회")
+    public void selectCrewMemberTest(){
+        Map<String, Integer> map = new HashMap<>();
+        map.put("crew_id", 2);
+
+        List<CrewMemberResponseDTO> memberList = crewMapper.selectCrewMemberRow(map);
+        for(CrewMemberResponseDTO dto : memberList){
+            System.out.println(dto);
+        }
+        assertFalse(memberList.isEmpty(), "크루원이 존재해야 합니다.");
+        System.out.println("크루원 조회 완료");
+    }
+
     // @Test
-    // @DisplayName("008 : 크루 게시판 게시물 등록")
-    // public void insertCrewPostTest(){
-    //     CrewPostRequestDTO post = CrewPostRequestDTO.builder()
-    //                                 .crew_post_title("게시글 제목")
-    //                                 .crew_post_contennt("게시글 내용")
-    //                                 .crew_post_img("게시글 img")
-    //                                 .crew_post_like(2)
-    //                                 .crew_post_state(2)
-    //                                 .
-    //                                 .build();
+    // @DisplayName("011 : 크루 멤버 삭제")
+    // public void delete(){
+    //     Map<String, Integer> map = new HashMap<>();
+    //     map.put("crew_id", 1);
+
+    //     List<CrewMemberResponseDTO> memberList = crewMapper.selectCrewMemberRow(map);
+    //     for(CrewMemberResponseDTO dto : memberList){
+    //         System.out.println(dto);
+    //     }
+    //     assertFalse(memberList.isEmpty(), "크루가 존재해야 합니다.");
+    //     System.out.println("크루원 조회 완료");
     // }
+
+
+    // --------- 크루 게시판 ---------
+
+    @Test
+    @DisplayName("008 : 크루 게시판 게시물 등록")
+    public void insertCrewPostTest(){
+        CrewPostRequestDTO post = CrewPostRequestDTO.builder()
+                                    .crew_post_title("게시글 제목")
+                                    .crew_post_content("게시글 내용")
+                                    .crew_post_img("게시글 img")
+                                    .crew_post_like(200)
+                                    .crew_post_state(1)
+                                    .crew_post_date("2024-10-18 17:25:10")
+                                    .crew_id(1)
+                                    .build();
+        crewMapper.insertCrewPostRow(post);
+        System.out.println("크루 게시글 등록 완료");
+    }
 }

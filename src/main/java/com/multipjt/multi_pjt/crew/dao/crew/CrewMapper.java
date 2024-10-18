@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 
 import com.multipjt.multi_pjt.crew.domain.crew.CrewMemberRequestDTO;
+import com.multipjt.multi_pjt.crew.domain.crew.CrewMemberResponseDTO;
+import com.multipjt.multi_pjt.crew.domain.crew.CrewPostRequestDTO;
 import com.multipjt.multi_pjt.crew.domain.crew.CrewRequestDTO;
 import com.multipjt.multi_pjt.crew.domain.crew.CrewResponseDTO;
 
@@ -35,4 +37,19 @@ public interface CrewMapper {
 
     // 크루 관리 수정
     public void updateCrewInfoRow(CrewRequestDTO param);
+
+    // --------- 크루원 정보 ---------
+    
+    // 크루원 멤버 가입 승인
+    public void updateCrewMemberRow(CrewMemberRequestDTO param);
+
+    // 크루원 멤버 조회
+    public List<CrewMemberResponseDTO> selectCrewMemberRow(Map<String, Integer> map);
+
+    // --------- 크루 게시판 ---------
+    
+    // 크루 게시물 등록
+    public void insertCrewPostRow(CrewPostRequestDTO param);
+
+
 }
