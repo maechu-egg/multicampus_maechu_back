@@ -198,4 +198,20 @@
             crew_post_date = #{crew_post_date}
         WHERE crew_id = #{crew_id} AND member_id = #{member_id};
     </update>
+
+    <!-- 크루 댓글 작성 --> 
+    <insert id="insertCrewCommentRow"
+            parameterType="com.multipjt.multi_pjt.crew.domain.crew.CrewCommentsRequestDTO">
+        INSERT INTO CrewComments(
+            crew_comments_content,
+            crew_comments_date,
+            crew_post_id,
+            member_id
+        ) VALUES (
+            #{crew_comments_content},
+            #{crew_comments_date},
+            #{crew_post_id},
+            #{member_id}
+        );
+    </insert>
 </mapper>

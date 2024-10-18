@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import com.multipjt.multi_pjt.crew.dao.crew.CrewMapper;
+import com.multipjt.multi_pjt.crew.domain.crew.CrewCommentsRequestDTO;
 import com.multipjt.multi_pjt.crew.domain.crew.CrewMemberRequestDTO;
 import com.multipjt.multi_pjt.crew.domain.crew.CrewMemberResponseDTO;
 import com.multipjt.multi_pjt.crew.domain.crew.CrewPostRequestDTO;
@@ -233,5 +234,18 @@ public class MybatisApplicationTests {
                                 .build();
         crewMapper.updateCrewPostRow(post);
         System.out.println("크루 게시판 게시물 수정 완료");
+    }
+
+    @Test
+    @DisplayName("015 : 크루 게시판 댓글 작성")
+    public void insertCrewCommentsTest(){
+        CrewCommentsRequestDTO comment = CrewCommentsRequestDTO.builder()
+                                        .crew_comments_content("댓글내용")
+                                        .crew_comments_date("2024-10-18 17:25:10")
+                                        .crew_post_id(10)
+                                        .member_id(17)
+                                        .build();
+        crewMapper.insertCrewCommentRow(comment);
+        System.out.println("크루 게시판 댓글 작성 완료");
     }
 }

@@ -5,6 +5,8 @@ import org.apache.ibatis.annotations.Mapper;
 import java.util.List;
 import java.util.Map;
 
+import com.multipjt.multi_pjt.crew.domain.crew.CrewCommentsRequestDTO;
+import com.multipjt.multi_pjt.crew.domain.crew.CrewCommentsResponseDTO;
 import com.multipjt.multi_pjt.crew.domain.crew.CrewMemberRequestDTO;
 import com.multipjt.multi_pjt.crew.domain.crew.CrewMemberResponseDTO;
 import com.multipjt.multi_pjt.crew.domain.crew.CrewPostRequestDTO;
@@ -63,4 +65,7 @@ public interface CrewMapper {
 
     // 크루 특정 게시물 조회 (상세보기)
     public void updateCrewPostRow(CrewPostRequestDTO param);
+
+    // 크루 댓글 작성
+    public void insertCrewCommentRow(CrewCommentsRequestDTO param);
 }
