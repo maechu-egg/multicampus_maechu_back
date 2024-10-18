@@ -19,5 +19,12 @@ public interface PostMapper {
     List<PostResponseDTO> getMemberById(@Param("member_id") int mid);
 
     
+    public int postUpdate(PostResponseDTO pdto);
+
+
+    PostResponseDTO getPostById(@Param("post_id") int pid);
+
+
+
 
 }
