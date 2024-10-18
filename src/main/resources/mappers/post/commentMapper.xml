@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.multipjt.multi_pjt.community.dao.CommentMapper">
+
+    <!-- 댓글 입력 -->
+    <insert id="commentInsert" parameterType="com.multipjt.multi_pjt.community.domain.comments.CommentRequestDTO">
+        Insert INTO Comments (
+            comments_contents,
+            member_id,
+            post_id
+        )
+        VALUES(
+            #{comments_contents},
+            #{member_id},
+            #{post_id}
+        )
+    </insert>
+
+    <!-- 게시글 번호로 댓글 조회 -->
+    <select id ="getPostById" parameterType="int" resultType="com.multipjt.multi_pjt.community.domain.comments.CommentResponseDTO">
+        SELECT * 
+        FROM Comments 
+        WHERE post_id= #{post_id}
+    </select>
+
+    <!-- 댓글 삭제  -->
+    <delete id = "commentDelete" parameterType="com.multipjt.multi_pjt.community.domain.comments.CommentRequestDTO">
+        DELETE 
+        FROM 
+            Comments
+        WHERE
+            member_id = #{member_id}
+        AND 
+            comments_id = #{comments_id}
+    </delete>
+
+    <!-- 댓글 번호로 조회 -  삭제 되었나 확인용 -->
+    <select id = "getCommentById" parameterType="int" resultType="com.multipjt.multi_pjt.community.domain.comments.CommentResponseDTO">
+        SELECT * 
+        FROM Comments
+        WHERE comments_id = #{comments_id}
+
+    </select>
+</mapper>
