@@ -184,4 +184,18 @@
         FROM CrewPost
         WHERE crew_id = #{crew_id} AND crew_post_state = #{crew_post_state};
     </select>
+
+    <!-- 크루 게시판 게시물 수정 --> 
+
+    <update id="updateCrewPostRow"
+            parameterType="com.multipjt.multi_pjt.crew.domain.crew.CrewPostRequestDTO">
+        UPDATE CrewPost
+        SET crew_post_title = #{crew_post_title},
+            crew_post_content = #{crew_post_content},
+            crew_post_img = #{crew_post_img},
+            crew_post_like = #{crew_post_like},
+            crew_post_state = #{crew_post_state},
+            crew_post_date = #{crew_post_date}
+        WHERE crew_id = #{crew_id} AND member_id = #{member_id};
+    </update>
 </mapper>

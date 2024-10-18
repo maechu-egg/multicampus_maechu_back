@@ -185,7 +185,7 @@ public class MybatisApplicationTests {
                                     .crew_post_state(0)
                                     .crew_post_date("2024-10-18 17:25:10")
                                     .crew_id(2)
-                                    .member_id(1)
+                                    .member_id(17)
                                     .build();
         crewMapper.insertCrewPostRow(post);
         System.out.println("크루 게시글 등록 완료");
@@ -218,5 +218,20 @@ public class MybatisApplicationTests {
         }
         assertFalse(postList.isEmpty(), "크루 게시판에 공지/ 인기/ 일반 게시글이 존재해야 합니다.");
         System.out.println("크루 게시판 공지/ 인기/ 일반 게시글  조회 테스트 성공");
+    }
+
+    @Test
+    @DisplayName("014 : 크루 게시판 게시물 수정")
+    public void updateCrewPostTest(){
+        CrewPostRequestDTO post = CrewPostRequestDTO.builder()
+                                .crew_post_title("up-post2-17")
+                                .crew_post_content("content")
+                                .crew_post_like(0)
+                                .crew_post_state(2)
+                                .crew_id(2)
+                                .member_id(17)
+                                .build();
+        crewMapper.updateCrewPostRow(post);
+        System.out.println("크루 게시판 게시물 수정 완료");
     }
 }

@@ -62,5 +62,5 @@ public interface CrewMapper {
     public List<CrewPostResponseDTO> selectCrewNoticePostRow(CrewPostRequestDTO param);
 
     // 크루 특정 게시물 조회 (상세보기)
-    
+    public void updateCrewPostRow(CrewPostRequestDTO param);
 }
