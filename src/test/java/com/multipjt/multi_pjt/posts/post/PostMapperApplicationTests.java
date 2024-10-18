@@ -60,11 +60,41 @@ public class PostMapperApplicationTests {
         Assertions.assertEquals("복싱", registeredPost.getPost_sport(), "운동 종목이 일치해야 합니다.");
         Assertions.assertEquals("근력 운동", registeredPost.getPost_sports_keyword(), "키워드가 일치해야 합니다.");
 
-
-
     }
 
+    @Test
+    @DisplayName("P02: 게시글 수정 ")
+    public void postUpdateTest(){
+        
+     
+        //  Given : 게시글 조회 및 수정할 게시글 준비
+        List<PostResponseDTO> selectPosts = postMapper.getMemberById(1);
+        
+        // 첫번째 게시글 선택
+        PostResponseDTO selectPost = selectPosts.get(0);
 
+        // When :  게시글 수정을 위한 세팅
+        selectPost.setPost_contents("첫번째 게시글 수정 내용입니다.");
+        selectPost.setPost_title("수정된 테스트 제목");
+        selectPost.setPost_hashtag("#오늘은 #금요일");
+        selectPost.setPost_img2("/update/post_img2");
+
+        // 게시글 수정
+        int postUpdate = postMapper.postUpdate(selectPost);
+
+        // postUpdate가 1이면 이면 성공
+        Assertions.assertEquals(1, postUpdate , "게시글이 수정되었습니다.");
+
+        // Then: 수정된 게시글 정보 검증
+        PostResponseDTO updatedPost = postMapper.getPostById(selectPost.getPost_id());
+   
+        // 게시글 확인
+        Assertions.assertEquals("수정된 테스트 제목", updatedPost.getPost_title(), "게시글 제목이 수정되어야 합니다.");
+        Assertions.assertEquals("첫번째 게시글 수정 내용입니다.", updatedPost.getPost_contents(), "게시글 내용이 수정 되어야 합니다.");
+        Assertions.assertEquals("#오늘은 #금요일", updatedPost.getPost_hashtag(), "게시글 헤시테그 값이 수정 되어야 합니다.");
+        Assertions.assertEquals("/update/post_img2", updatedPost.getPost_img2(), "이미지2이 수정 되어야 합니다.");
+        
+    }
 
 
 
