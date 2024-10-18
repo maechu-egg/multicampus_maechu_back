@@ -57,4 +57,10 @@ public interface CrewMapper {
 
     // 크루 게시판 게시물 전체 조회
     public List<CrewPostResponseDTO> selectCrewPostRow(Map<String, Integer> map);
+
+    // 크루 게시판 공지/인기/일반 게시물 조회
+    public List<CrewPostResponseDTO> selectCrewNoticePostRow(CrewPostRequestDTO param);
+
+    // 크루 특정 게시물 조회 (상세보기)
+    
 }

@@ -150,7 +150,8 @@
             crew_post_like,
             crew_post_state,
             crew_post_date,
-            crew_id
+            crew_id,
+            member_id
         ) VALUES (
             #{crew_post_id},
             #{crew_post_title},
@@ -159,7 +160,8 @@
             #{crew_post_like},
             #{crew_post_state},
             #{crew_post_date},
-            #{crew_id}
+            #{crew_id},
+            #{member_id}
         );
     </insert>    
 
@@ -171,5 +173,15 @@
         SELECT *
         FROM CrewPost
         WHERE crew_id = #{crew_id}
+    </select>
+
+    <!-- 크루 게시판 공지/인기/일반 게시물 조회 --> 
+
+    <select id="selectCrewNoticePostRow"
+            parameterType="com.multipjt.multi_pjt.crew.domain.crew.CrewPostRequestDTO"
+            resultType="com.multipjt.multi_pjt.crew.domain.crew.CrewPostResponseDTO">
+        Select *
+        FROM CrewPost
+        WHERE crew_id = #{crew_id} AND crew_post_state = #{crew_post_state};
     </select>
 </mapper>

@@ -182,9 +182,10 @@ public class MybatisApplicationTests {
                                     .crew_post_content("게시글 내용")
                                     .crew_post_img("게시글 img")
                                     .crew_post_like(200)
-                                    .crew_post_state(1)
+                                    .crew_post_state(0)
                                     .crew_post_date("2024-10-18 17:25:10")
                                     .crew_id(2)
+                                    .member_id(1)
                                     .build();
         crewMapper.insertCrewPostRow(post);
         System.out.println("크루 게시글 등록 완료");
@@ -196,11 +197,26 @@ public class MybatisApplicationTests {
         Map<String, Integer> map = new HashMap<>();
         map.put("crew_id", 2);
 
-        List<CrewPostResponseDTO> crewList = crewMapper.selectCrewPostRow(map);
-        for (CrewPostResponseDTO dto:crewList){
+        List<CrewPostResponseDTO> postList = crewMapper.selectCrewPostRow(map);
+        for (CrewPostResponseDTO dto:postList){
             System.out.println(dto);
         }
-        assertFalse(crewList.isEmpty(), "크루 게시판에 게시글이 존재해야 합니다.");
+        assertFalse(postList.isEmpty(), "크루 게시판에 게시글이 존재해야 합니다.");
         System.out.println("크루 게시판 게시글 전체 조회 테스트 성공");
+    }
+
+    @Test
+    @DisplayName("013 : 크루 게시판 공지: 0/인기: 1 /일반: 2 게시글 조회")
+    public void selectCrewNoticePostTest() {
+        CrewPostRequestDTO NoticePost = new CrewPostRequestDTO();
+        NoticePost.setCrew_id(2);
+        NoticePost.setCrew_post_state(1);
+
+        List<CrewPostResponseDTO> postList = crewMapper.selectCrewNoticePostRow(NoticePost);
+        for (CrewPostResponseDTO dto:postList){
+            System.out.println(dto);
+        }
+        assertFalse(postList.isEmpty(), "크루 게시판에 공지/ 인기/ 일반 게시글이 존재해야 합니다.");
+        System.out.println("크루 게시판 공지/ 인기/ 일반 게시글  조회 테스트 성공");
     }
 }
