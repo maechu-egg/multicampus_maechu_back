@@ -97,5 +97,32 @@ public class PostMapperApplicationTests {
     }
 
 
+    @Test
+    @DisplayName("P03: 운동 종목 별 조회 ")
+    public void postSelectSportTest(){
+        
+     
+        //  Given : 게시글 조회 및 수정할 게시글 준비
+        String sport = "헬스";
+        
+        
+        // When :  게시글 수정을 위한 세팅
+        List<PostResponseDTO> sportList = postMapper.postSelectSport(sport);
+        
+        // List 가 비어있는지 확인
+        Assertions.assertFalse(sportList.isEmpty(), "게시글 조회에 실패했습니다.");
+
+
+        // Then: 게시글 정보 검증
+        PostResponseDTO first = sportList.get(0);
+   
+        // 게시글 확인
+        Assertions.assertEquals("두 번째 테스트", first.getPost_title(), "게시글 제목이 조회 되어야 합니다.");
+        Assertions.assertEquals("두 번째 운동은 상체 근력 운동입니다. 땀이 많이 났어요.", first.getPost_contents(), "게시글 내용이 조회 되어야 합니다.");
+        Assertions.assertEquals("헬스", first.getPost_sport(), "운동 종목이 조회 되어야 합니다.");
+        Assertions.assertEquals(1, first.getMember_id(), "회원 id가 조회 되어야 합니다.");
+        
+    }
+
 
 }

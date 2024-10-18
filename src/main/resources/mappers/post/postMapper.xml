@@ -82,4 +82,28 @@
         FROM Posts 
         WHERE post_id= #{post_id}
     </select>
+
+    <select id="postSelectSport" parameterType="String" resultType="com.multipjt.multi_pjt.community.domain.posts.PostResponseDTO">
+        SELECT 
+            post_id,
+            post_title,
+            post_contents,
+            post_sport,
+            post_sports_keyword,
+            post_like_counts,
+            post_views,
+            p.member_id,
+            m.nickname
+        FROM
+            Posts p
+        INNER JOIN
+            Member m
+        ON
+            p.member_id = m.member_id
+        WHERE
+            post_sport = #{post_sport}
+    </select>
+
+
+    
 </mapper>

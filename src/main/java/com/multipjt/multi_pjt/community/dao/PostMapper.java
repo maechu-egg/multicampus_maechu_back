@@ -24,7 +24,8 @@ public interface PostMapper {
 
     PostResponseDTO getPostById(@Param("post_id") int pid);
 
-
+    List<PostResponseDTO> postSelectSport(@Param("post_sport") String psport);
+    
 
 
 }
