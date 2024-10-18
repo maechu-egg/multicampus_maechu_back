@@ -22,9 +22,9 @@
     <!-- findDietNumber --> 
 
     <select id="findDietNumber" parameterType="com.multipjt.multi_pjt.record.diet.domain.DietRequestDTO" resultType="java.lang.Long">
-        select diet_id from DietRecords
-        where member_id = #{memberId} and record_date = #{recordDate} and meal_type = #{mealType}
-    </select>
+    select diet_id from DietRecords
+    where member_id = #{memberId} and record_date = #{recordDate} and meal_type = #{mealType}
+</select>
 
     <!-- dietDelete --> 
 
@@ -35,17 +35,27 @@
 
     <!-- itemDelete --> 
 
-    <delete id="itemDelete" parameterType="java.lang.Long">
+    <delete id="itemDelete" parameterType="java.util.Map">
         delete from DietItems
-        where item_id = #{itemId};
+        where item_name = #{itemName} and diet_id = #{dietId};
     </delete>    
 
     <!-- itemFindAll --> 
 
     <select id="itemFindAll" parameterType="java.lang.Long" resultType="com.multipjt.multi_pjt.record.diet.domain.ItemResponseDTO">
-        select item_id, item_name, quantity, carbs, protein, fat, calories, diet_id 
-        from DietItems
+        select * from DietItems
         where diet_id = #{dietId};
     </select>
-    
+
+    <!-- itemUpdate --> 
+
+    <update id="itemUpdate" parameterType="java.util.Map">
+        update DietItems
+        set item_name = #{itemName},
+        calories = #{calories},
+        carbs = #{carbs},
+        fat = #{fat},
+        protein = #{protein}
+        where item_name = #{itemName} and diet_id = #{dietId};
+    </update>    
 </mapper>

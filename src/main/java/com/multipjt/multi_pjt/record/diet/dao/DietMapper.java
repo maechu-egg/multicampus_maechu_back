@@ -7,6 +7,7 @@ import com.multipjt.multi_pjt.record.diet.domain.ItemRequestDTO;
 import com.multipjt.multi_pjt.record.diet.domain.ItemResponseDTO;
 
 import java.util.ArrayList;
+import java.util.Map;
 @Mapper
 public interface DietMapper {
     
@@ -16,11 +17,13 @@ public interface DietMapper {
     public int itemInsert(ItemRequestDTO requestDTO);
     // diet_id 찾기
     public Long findDietNumber(DietRequestDTO requestDTO);
+    // DietItems 출력
+    public ArrayList<ItemResponseDTO> itemFindAll(Long dietId);
     // DietRecords 삭제
     public int dietDelete(Long dietId);
     // DietItems 삭제
-    public int itemDelete(Long itemid);
-
-    public ArrayList<ItemResponseDTO> itemFindAll(Long dietId);
+    public int itemDelete(Map<String,Object> map);
+    //DietItems 수정
+    public int itemUpdate(Map<String,Object> map);
 
 }
