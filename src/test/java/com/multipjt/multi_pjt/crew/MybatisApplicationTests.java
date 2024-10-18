@@ -9,6 +9,7 @@ import com.multipjt.multi_pjt.crew.dao.crew.CrewMapper;
 import com.multipjt.multi_pjt.crew.domain.crew.CrewMemberRequestDTO;
 import com.multipjt.multi_pjt.crew.domain.crew.CrewMemberResponseDTO;
 import com.multipjt.multi_pjt.crew.domain.crew.CrewPostRequestDTO;
+import com.multipjt.multi_pjt.crew.domain.crew.CrewPostResponseDTO;
 import com.multipjt.multi_pjt.crew.domain.crew.CrewRequestDTO;
 import com.multipjt.multi_pjt.crew.domain.crew.CrewResponseDTO;
 
@@ -183,20 +184,23 @@ public class MybatisApplicationTests {
                                     .crew_post_like(200)
                                     .crew_post_state(1)
                                     .crew_post_date("2024-10-18 17:25:10")
-                                    .crew_id(1)
+                                    .crew_id(2)
                                     .build();
         crewMapper.insertCrewPostRow(post);
         System.out.println("크루 게시글 등록 완료");
     }
 
-    // @Test
-    // @DisplayName("012 : 게시글 전체 조회")
-    // public void deleteCrewMemberTest() {
-    //     CrewMemberRequestDTO deleteMember = new CrewMemberRequestDTO();
-    //     deleteMember.setCrew_id(1);
-    //     deleteMember.setMember_id(17);
+    @Test
+    @DisplayName("012 : 크루 게시판 게시글 전체 조회")
+    public void selectCrewPostTest() {
+        Map<String, Integer> map = new HashMap<>();
+        map.put("crew_id", 2);
 
-    //     crewMapper.deleteCrewMemberRow(deleteMember);
-    //     System.out.println("크루원 삭제 완료");
-    // }
+        List<CrewPostResponseDTO> crewList = crewMapper.selectCrewPostRow(map);
+        for (CrewPostResponseDTO dto:crewList){
+            System.out.println(dto);
+        }
+        assertFalse(crewList.isEmpty(), "크루 게시판에 게시글이 존재해야 합니다.");
+        System.out.println("크루 게시판 게시글 전체 조회 테스트 성공");
+    }
 }

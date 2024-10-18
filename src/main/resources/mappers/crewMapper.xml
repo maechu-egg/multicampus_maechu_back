@@ -162,4 +162,14 @@
             #{crew_id}
         );
     </insert>    
+
+    <!-- 크루 게시판 게시물 전체 조회 --> 
+
+    <select id="selectCrewPostRow"
+            parameterType="java.util.HashMap"
+            resultType="com.multipjt.multi_pjt.crew.domain.crew.CrewPostResponseDTO">
+        SELECT *
+        FROM CrewPost
+        WHERE crew_id = #{crew_id}
+    </select>
 </mapper>
