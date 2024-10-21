@@ -195,11 +195,11 @@ public class MybatisApplicationTests {
 
     @Test
     @DisplayName("012 : 크루 게시판 게시글 전체 조회")
-    public void selectCrewPostTest() {
+    public void selectCrewPostListTest() {
         Map<String, Integer> map = new HashMap<>();
         map.put("crew_id", 2);
 
-        List<CrewPostResponseDTO> postList = crewMapper.selectCrewPostRow(map);
+        List<CrewPostResponseDTO> postList = crewMapper.selectCrewPostListRow(map);
         for (CrewPostResponseDTO dto:postList){
             System.out.println(dto);
         }
@@ -210,11 +210,11 @@ public class MybatisApplicationTests {
     @Test
     @DisplayName("013 : 크루 게시판 공지: 0/인기: 1 /일반: 2 게시글 조회")
     public void selectCrewNoticePostTest() {
-        CrewPostRequestDTO NoticePost = new CrewPostRequestDTO();
-        NoticePost.setCrew_id(2);
-        NoticePost.setCrew_post_state(1);
+        CrewPostRequestDTO Post = new CrewPostRequestDTO();
+        Post.setCrew_id(2);
+        Post.setCrew_post_state(1);
 
-        List<CrewPostResponseDTO> postList = crewMapper.selectCrewNoticePostRow(NoticePost);
+        List<CrewPostResponseDTO> postList = crewMapper.selectCrewNoticePostRow(Post);
         for (CrewPostResponseDTO dto:postList){
             System.out.println(dto);
         }
@@ -223,15 +223,28 @@ public class MybatisApplicationTests {
     }
 
     @Test
+    @DisplayName("018 : 크루 게시물 상세 조회")
+    public void selectCrewPostTest() {
+        CrewPostRequestDTO post = new CrewPostRequestDTO();
+        post.setCrew_id(2);
+        post.setCrew_post_id(10);
+        System.out.println(post);
+        assertNotNull(post, "게시물이 존재해야 합니다.");
+        System.out.println("크루 게시물 상세 조회 성공");
+    }
+
+
+    @Test
     @DisplayName("014 : 크루 게시판 게시물 수정")
     public void updateCrewPostTest(){
         CrewPostRequestDTO post = CrewPostRequestDTO.builder()
                                 .crew_post_title("up-post2-17")
-                                .crew_post_content("content")
+                                .crew_post_content("where절 수정 했다")
                                 .crew_post_like(0)
                                 .crew_post_state(2)
                                 .crew_id(2)
                                 .member_id(17)
+                                .crew_post_id(10)
                                 .build();
         crewMapper.updateCrewPostRow(post);
         System.out.println("크루 게시판 게시물 수정 완료");

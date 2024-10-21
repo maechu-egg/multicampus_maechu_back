@@ -168,7 +168,7 @@
 
     <!-- 크루 게시판 게시물 전체 조회 --> 
 
-    <select id="selectCrewPostRow"
+    <select id="selectCrewPostListRow"
             parameterType="java.util.HashMap"
             resultType="com.multipjt.multi_pjt.crew.domain.crew.CrewPostResponseDTO">
         SELECT *
@@ -186,6 +186,17 @@
         WHERE crew_id = #{crew_id} AND crew_post_state = #{crew_post_state};
     </select>
 
+    
+    <!-- 크루 게시물 상세 조회 --> 
+
+    <select id="selectCrewPostRow"
+            parameterType="com.multipjt.multi_pjt.crew.domain.crew.CrewPostRequestDTO"
+            resultType="com.multipjt.multi_pjt.crew.domain.crew.CrewPostResponseDTO">
+        SELECT *
+        FROM CrewPost
+        WHERE crew_id = #{crew_id} AND crew_post_id = #{crew_post_id}
+    </select>
+
     <!-- 크루 게시판 게시물 수정 --> 
 
     <update id="updateCrewPostRow"
@@ -197,7 +208,7 @@
             crew_post_like = #{crew_post_like},
             crew_post_state = #{crew_post_state},
             crew_post_date = #{crew_post_date}
-        WHERE crew_id = #{crew_id} AND member_id = #{member_id};
+        WHERE crew_id = #{crew_id} AND member_id = #{member_id} AND crew_post_id = #{crew_post_id};
     </update>
 
     <!-- 크루 댓글 작성 --> 
@@ -226,7 +237,7 @@
         WHERE crew_post_id = #{crew_post_id} AND member_id = #{member_id};
     </select>
 
-    <!-- deleteCrewCommentRow --> 
+    <!-- 크루 댓글 삭제 --> 
 
     <delete id="deleteCrewCommentRow"
             parameterType="com.multipjt.multi_pjt.crew.domain.crew.CrewCommentsResponseDTO">

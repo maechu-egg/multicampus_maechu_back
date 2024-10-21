@@ -58,10 +58,13 @@ public interface CrewMapper {
     public void insertCrewPostRow(CrewPostRequestDTO param);
 
     // 크루 게시판 게시물 전체 조회
-    public List<CrewPostResponseDTO> selectCrewPostRow(Map<String, Integer> map);
+    public List<CrewPostResponseDTO> selectCrewPostListRow(Map<String, Integer> map);
 
     // 크루 게시판 공지/인기/일반 게시물 조회
     public List<CrewPostResponseDTO> selectCrewNoticePostRow(CrewPostRequestDTO param);
+
+    // 크루 게시물 상세 조회
+    public CrewPostResponseDTO selectCrewPostRow(CrewPostRequestDTO param);
 
     // 크루 게시물 수정
     public void updateCrewPostRow(CrewPostRequestDTO param);
