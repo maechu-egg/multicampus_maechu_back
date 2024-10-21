@@ -48,6 +48,7 @@
         SELECT *
         FROM Crew
         WHERE crew_state = 1
+        ORDER BY crew_date DESC;
     </select>    
 
     <!-- 특정 크루 리스트 조회 (종목) --> 
@@ -57,7 +58,8 @@
             resultType="com.multipjt.multi_pjt.crew.domain.crew.CrewResponseDTO">
         SELECT *
         FROM Crew
-        WHERE crew_sport = #{crew_sport} AND crew_state = 1;
+        WHERE crew_sport = #{crew_sport} AND crew_state = 1
+        ORDER BY crew_date DESC;
     </select>
 
     <!-- 특정 크루 정보 조회  -->
@@ -116,7 +118,7 @@
             parameterType="com.multipjt.multi_pjt.crew.domain.crew.CrewMemberRequestDTO">
         UPDATE CrewMember
         SET crew_member_state = 1
-        WHERE crew_id = #{crew_id} AND member_id = #{member_id}
+        WHERE crew_id = #{crew_id} AND member_id = #{member_id};
     </update>
     
     <!-- 크루원 조회 --> 
@@ -126,7 +128,7 @@
             resultType="com.multipjt.multi_pjt.crew.domain.crew.CrewMemberResponseDTO">
         SELECT *
         FROM CrewMember
-        WHERE crew_id = #{crew_id}
+        WHERE crew_id = #{crew_id};
     </select>
 
     <!-- 크루원 삭제 --> 
@@ -174,6 +176,7 @@
         SELECT *
         FROM CrewPost
         WHERE crew_id = #{crew_id}
+        ORDER BY crew_post_date DESC;
     </select>
 
     <!-- 크루 게시판 공지/인기/일반 게시물 조회 --> 
@@ -183,7 +186,8 @@
             resultType="com.multipjt.multi_pjt.crew.domain.crew.CrewPostResponseDTO">
         Select *
         FROM CrewPost
-        WHERE crew_id = #{crew_id} AND crew_post_state = #{crew_post_state};
+        WHERE crew_id = #{crew_id} AND crew_post_state = #{crew_post_state}
+        ORDER BY crew_post_date DESC;
     </select>
 
     
@@ -195,6 +199,7 @@
         SELECT *
         FROM CrewPost
         WHERE crew_id = #{crew_id} AND crew_post_id = #{crew_post_id}
+        ORDER BY crew_post_date DESC;
     </select>
 
     <!-- 크루 게시판 게시물 수정 --> 
@@ -206,8 +211,7 @@
             crew_post_content = #{crew_post_content},
             crew_post_img = #{crew_post_img},
             crew_post_like = #{crew_post_like},
-            crew_post_state = #{crew_post_state},
-            crew_post_date = #{crew_post_date}
+            crew_post_state = #{crew_post_state}
         WHERE crew_id = #{crew_id} AND member_id = #{member_id} AND crew_post_id = #{crew_post_id};
     </update>
 
@@ -234,7 +238,8 @@
             resultType="com.multipjt.multi_pjt.crew.domain.crew.CrewCommentsResponseDTO">
         SELECT *
         FROM CrewComments
-        WHERE crew_post_id = #{crew_post_id} AND member_id = #{member_id};
+        WHERE crew_post_id = #{crew_post_id} AND member_id = #{member_id}
+        ORDER BY crew_comments_date ASC;
     </select>
 
     <!-- 크루 댓글 삭제 --> 

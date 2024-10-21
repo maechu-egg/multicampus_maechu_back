@@ -238,7 +238,7 @@ public class MybatisApplicationTests {
     @DisplayName("014 : 크루 게시판 게시물 수정")
     public void updateCrewPostTest(){
         CrewPostRequestDTO post = CrewPostRequestDTO.builder()
-                                .crew_post_title("up-post2-17")
+                                .crew_post_title("한 번 더")
                                 .crew_post_content("where절 수정 했다")
                                 .crew_post_like(0)
                                 .crew_post_state(2)
