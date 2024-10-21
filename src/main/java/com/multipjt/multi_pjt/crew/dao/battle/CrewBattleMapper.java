@@ -17,13 +17,13 @@ public interface CrewBattleMapper {
     // <---- 크루 배틀 ---->
 
     // 배틀 생성
-    public void saveCrewBattleRow(CrewBattleRequestDTO params);
+    public void createCrewBattleRow(CrewBattleRequestDTO params);
     
     // 배틀 목록 조회
     public List<CrewBattleResponseDTO> selectCrewBattleRow();
 
     // 배틀 신청
-    public void saveBattleMemberRow(BattleMemberRequestDTO params);
+    public void createBattleMemberRow(BattleMemberRequestDTO params);
 
     // <---- 크루 배틀 상세보기 ---->
 
@@ -31,11 +31,11 @@ public interface CrewBattleMapper {
     public List<BattleMemberResponseDTO> selectBattleMemberRow();
 
     // 피드 작성
-    public void saveCrewBattleFeedRow(CrewBattleFeedRequestDTO params);
+    public void createCrewBattleFeedRow(CrewBattleFeedRequestDTO params);
 
     // 피드 조회
     public List<CrewBattleFeedResponseDTO> selectCrewBattleFeedRow();
 
     // 투표
-    public void saveVoteRow(CrewVoteRequestDTO params);
+    public void createVoteRow(CrewVoteRequestDTO params);
 } 

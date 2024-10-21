@@ -34,7 +34,7 @@ public class CrewBattleTests {
                                         .battle_state(0)
                                         .crew_id(2)
                                         .build();
-        crewBattleMapper.saveCrewBattleRow(request);
+        crewBattleMapper.createCrewBattleRow(request);
         System.out.println("debug >>> save success!!!");
     }
 
@@ -55,7 +55,7 @@ public class CrewBattleTests {
                                             .battle_id(1)
                                             .member_id(1)
                                             .build();
-        crewBattleMapper.saveBattleMemberRow(request);
+        crewBattleMapper.createBattleMemberRow(request);
     }
 
     @Test
@@ -79,7 +79,7 @@ public class CrewBattleTests {
                                             .feed_time(1)
                                             .participant_id(3)
                                             .build();
-        crewBattleMapper.saveCrewBattleFeedRow(request);
+        crewBattleMapper.createCrewBattleFeedRow(request);
     }
 
     @Test
@@ -100,6 +100,6 @@ public class CrewBattleTests {
                                         .participant_id(1)
                                         .member_id(1)
                                         .build();
-        crewBattleMapper.saveVoteRow(request);
+        crewBattleMapper.createVoteRow(request);
     }
 }
