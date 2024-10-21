@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.multipjt.multi_pjt.badge.dao.MemberBadgeMapper">
+
+    <!-- MemberBadgeMapper -->
+
+    <insert id="insertBadge" parameterType="com.multipjt.multi_pjt.badge.domain.badge.MemberBadgeRequestDTO">
+        INSERT INTO MemberBadge (
+            badge_id,
+            current_points,
+            badge_level,
+            member_id
+        ) VALUES (
+            #{badge_id},
+            #{current_points},
+            #{badge_level},
+            #{member_id}
+        );
+    </insert>
+
+    <select id="selectBadgeByMemberId" resultType="com.multipjt.multi_pjt.badge.domain.badge.MemberBadgeResponseDTO">
+        SELECT * FROM MemberBadge WHERE member_id = #{member_id};
+    </select>
+
+    <update id="updateBadge" parameterType="com.multipjt.multi_pjt.badge.domain.badge.MemberBadgeRequestDTO">
+        UPDATE MemberBadge 
+        SET current_points = #{current_points}, badge_level = #{badge_level}
+        WHERE member_id = #{member_id};
+    </update>
+
+</mapper>

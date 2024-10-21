@@ -10,6 +10,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
+
 public class DatabaseApplicationTests {
  
     // Given: 테스트를 위한 사전 조건 설정 (자동 주입된 SqlSessionFactory)
@@ -18,6 +19,7 @@ public class DatabaseApplicationTests {
 
     @Test
     @DisplayName("00 : SqlSessionFactory 빈 주입 성공 테스트")
+    @DisplayName("SqlSessionFactory 빈 주입 성공 테스트")
     public void givenSqlSessionFactory_whenInjected_thenFactoryShouldNotBeNull() {
        
         // When: factory 객체가 정상적으로 생성되었는지 확인
@@ -32,3 +34,4 @@ public class DatabaseApplicationTests {
         assertThat(factory).isNotNull();
     }
 }
+
