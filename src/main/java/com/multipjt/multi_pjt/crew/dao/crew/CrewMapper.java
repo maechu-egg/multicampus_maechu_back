@@ -41,6 +41,9 @@ public interface CrewMapper {
     // 크루 관리 수정
     public void updateCrewInfoRow(CrewRequestDTO param);
 
+    // 크루 삭제
+    public void deleteCrewRow(CrewRequestDTO param);
+
     // --------- 크루원 정보 ---------
     
     // 크루원 가입 승인

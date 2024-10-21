@@ -110,6 +110,15 @@
         WHERE crew_id = #{crew_id};
     </update>
 
+    
+    <!-- 크루 삭제 --> 
+
+    <delete id="deleteCrewRow"
+            parameterType="com.multipjt.multi_pjt.crew.domain.crew.CrewRequestDTO">
+        DELETE FROM Crew
+        WHERE crew_id = #{crew_id};
+    </delete>
+
     <!--  @@@@@@@@@ 크루원 정보 @@@@@@@@@  -->
 
     <!-- 크루원 승인 --> 

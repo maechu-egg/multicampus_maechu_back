@@ -134,6 +134,16 @@ public class MybatisApplicationTests {
         System.out.println("크루 관리 수정 완료");
     }
 
+    @Test
+    @DisplayName("020 : 크루 삭제")
+    public void deleteCrewTest(){
+        CrewRequestDTO deleteCrew = new CrewRequestDTO();
+        deleteCrew.setCrew_id(9);
+        
+        crewMapper.deleteCrewRow(deleteCrew);
+        System.out.println("크루 삭제 완료");
+    }
+
     // --------- 크루원 정보 ---------
 
     @Test
