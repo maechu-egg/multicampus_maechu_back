@@ -24,7 +24,7 @@ import java.util.Map;
 
 @SpringBootTest
 // @Transactional
-public class MybatisApplicationTests {
+public class CrewTests {
     
     @Autowired
     private CrewMapper crewMapper;

@@ -16,7 +16,7 @@ import com.multipjt.multi_pjt.crew.domain.battle.CrewBattleResponseDTO;
 import com.multipjt.multi_pjt.crew.domain.battle.CrewVoteRequestDTO;
 
 @SpringBootTest
-public class CrewBattleTest {
+public class CrewBattleTests {
     
     @Autowired
     private CrewBattleMapper crewBattleMapper;
