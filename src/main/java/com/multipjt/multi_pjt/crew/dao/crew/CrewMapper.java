@@ -63,7 +63,7 @@ public interface CrewMapper {
     // 크루 게시판 공지/인기/일반 게시물 조회
     public List<CrewPostResponseDTO> selectCrewNoticePostRow(CrewPostRequestDTO param);
 
-    // 크루 특정 게시물 조회 (상세보기)
+    // 크루 게시물 수정
     public void updateCrewPostRow(CrewPostRequestDTO param);
 
     // 크루 댓글 작성
