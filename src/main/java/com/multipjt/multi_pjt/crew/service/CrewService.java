@@ -20,6 +20,8 @@ public class CrewService {
     @Autowired
     private CrewMapper crewMapper;
     
+    // --------- 크루 찾기 ---------
+
     // 크루생성
     public void createCrew(CrewRequestDTO param) {
         System.out.println("debug: createCrew + " + crewMapper);
