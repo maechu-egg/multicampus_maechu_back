@@ -185,9 +185,9 @@ public class MybatisApplicationTests {
                                     .crew_post_img("게시글 img")
                                     .crew_post_like(200)
                                     .crew_post_state(0)
-                                    .crew_post_date("2024-10-18 17:25:10")
+                                    .crew_post_date("2024-10-18 17:25:11")
                                     .crew_id(2)
-                                    .member_id(17)
+                                    .member_id(1)
                                     .build();
         crewMapper.insertCrewPostRow(post);
         System.out.println("크루 게시글 등록 완료");
@@ -205,6 +205,21 @@ public class MybatisApplicationTests {
         }
         assertFalse(postList.isEmpty(), "크루 게시판에 게시글이 존재해야 합니다.");
         System.out.println("크루 게시판 게시글 전체 조회 테스트 성공");
+    }
+
+    @Test
+    @DisplayName("019 : 크루 게시판 상단 TOP 3 조회")
+    public void selectCrewTopPostTest() {
+        CrewPostRequestDTO Post = new CrewPostRequestDTO();
+        Post.setCrew_id(2);
+        Post.setCrew_post_state(0);
+
+        List<CrewPostResponseDTO> postList = crewMapper.selectCrewTopPostRow(Post);
+        for (CrewPostResponseDTO dto:postList){
+            System.out.println(dto);
+        }
+        assertFalse(postList.isEmpty(), "크루 게시판에 게시글이 존재해야 합니다.");
+        System.out.println("크루 게시판 상단 TOP 3 조회 성공");
     }
 
     @Test

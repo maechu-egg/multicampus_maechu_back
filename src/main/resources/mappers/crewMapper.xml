@@ -179,6 +179,17 @@
         ORDER BY crew_post_date DESC;
     </select>
 
+    <!-- 크루 게시판 상단 공지, 일반 고정 3개씩 --> 
+
+    <select id="selectCrewTopPostRow"
+            parameterType="com.multipjt.multi_pjt.crew.domain.crew.CrewPostRequestDTO"
+            resultType="com.multipjt.multi_pjt.crew.domain.crew.CrewPostResponseDTO">
+        Select *
+        FROM CrewPost
+        WHERE crew_id = #{crew_id} AND crew_post_state = #{crew_post_state}
+        ORDER BY crew_post_date DESC limit 3;
+    </select>
+
     <!-- 크루 게시판 공지/인기/일반 게시물 조회 --> 
 
     <select id="selectCrewNoticePostRow"
