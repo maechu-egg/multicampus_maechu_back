@@ -7,8 +7,8 @@
     <!-- exerInsert --> 
 
     <insert id="exerInsert" parameterType="com.multipjt.multi_pjt.record.exercise.domain.ExerRequestDTO">
-        insert into ExerciseRecords(exercise_type, intensity, member_id, duration)
-        values(#{exerciseType},#{intensity},#{memberId},#{duration});
+        insert into ExerciseRecords(exercise_type, intensity, member_id, duration, calories)
+        values(#{exercise_type},#{intensity},#{member_id},#{duration}, #{calories});
     </insert>
 
     <!-- exerDelete --> 
@@ -29,7 +29,7 @@
 
     <update id="exerUpdate" parameterType="java.util.Map">
         update ExerciseRecords
-        set intensity = #{intensity}
+        set intensity = #{intensity}, duration = #{duration}, calories = #{calories}
         where exercise_id = #{exerciseId};
     </update>
 
@@ -39,4 +39,33 @@
         select * from ExerciseRecords
         where member_id = #{memberId} and record_date = #{recordDate};
     </select>
-</mapper>
+
+
+    <!-- setInsert --> 
+
+    <insert id="setInsert" parameterType="com.multipjt.multi_pjt.record.exercise.domain.SetRequestDTO">
+        insert into ExerciseSet(distance,weight,repetitions,exercise_id)
+        values(#{distance},#{weight},#{repetitions},#{exercise_id});
+    </insert>
+
+    <select id="getSetInfo" parameterType="java.lang.Long" resultType="com.multipjt.multi_pjt.record.exercise.domain.SetResponseDTO">
+        select * from ExerciseSet
+        where exercise_id = #{exerciseId}    
+    </select>
+
+    <!-- setUpdate --> 
+
+    <update id="setUpdate" parameterType="java.uitl.Map">
+        update ExerciseSet
+        set distance = #{distance} , weight = #{weight} , repetitions = #{repetitions}
+        where set_id = #{set_id};
+    </update>
+
+    <!-- setDelete --> 
+
+    <delete id="setDelete" parameterType="java.lang.Long">
+        delete from ExerciseSet
+        where set_id = #{setId};
+    </delete>
+    
+    </mapper>

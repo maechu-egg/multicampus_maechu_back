@@ -16,7 +16,7 @@ public interface DietMapper {
     // DietItems 삽입
     public int itemInsert(ItemRequestDTO requestDTO);
     // diet_id 찾기
-    public Long findDietNumber(DietRequestDTO requestDTO);
+    public Long findDietNumber(Map<String,Object> map);
     // DietItems 출력
     public ArrayList<ItemResponseDTO> itemFindAll(Long dietId);
     // DietRecords 삭제
@@ -25,5 +25,7 @@ public interface DietMapper {
     public int itemDelete(Map<String,Object> map);
     //DietItems 수정
     public int itemUpdate(Map<String,Object> map);
+
+    public ArrayList<Map<String,Object>> itemNutCheck(Map<String,Object> map);
 
 }

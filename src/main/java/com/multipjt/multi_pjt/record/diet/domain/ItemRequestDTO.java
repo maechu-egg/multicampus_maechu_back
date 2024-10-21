@@ -6,12 +6,12 @@ import lombok.Data;
 public class ItemRequestDTO {
  
     //private Long itemId;  autoIncrement
-    private String itemName;
+    private String item_name;
     private Integer quantity;
     private Integer carbs;
     private Integer protein;
     private Integer fat;
     private Integer calories;
-    private Long dietId;    
+    private Long diet_id;    
 
 }

@@ -5,13 +5,13 @@ import lombok.Data;
 @Data
 public class ItemResponseDTO {
  
-    private Long itemId;
-    private String itemName;
+    private Long item_id;
+    private String item_name;
     private Integer quantity;
     private Integer carbs;
     private Integer protein;
     private Integer fat;
     private Integer calories;
-    private Long dietId;    
+    private Long diet_id;    
 
 }

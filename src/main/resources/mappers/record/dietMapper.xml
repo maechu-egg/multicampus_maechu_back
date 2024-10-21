@@ -7,7 +7,7 @@
 
     <insert id="dietInsert" parameterType="com.multipjt.multi_pjt.record.diet.domain.DietRequestDTO">
         insert into DietRecords(meal_type,member_id)
-        values(#{mealType},#{memberId});
+        values(#{mealType},#{member_id});
     </insert>
 
 
@@ -16,14 +16,14 @@
 
     <insert id="itemInsert" parameterType="com.multipjt.multi_pjt.record.diet.domain.ItemRequestDTO">
         insert into DietItems(item_name,quantity,carbs,protein,fat,calories,diet_id)
-        values(#{itemName},#{quantity},#{carbs},#{protein},#{fat},#{calories},#{dietId}); 
+        values(#{item_name},#{quantity},#{carbs},#{protein},#{fat},#{calories},#{dietId}); 
     </insert>    
 
     <!-- findDietNumber --> 
 
-    <select id="findDietNumber" parameterType="com.multipjt.multi_pjt.record.diet.domain.DietRequestDTO" resultType="java.lang.Long">
+    <select id="findDietNumber" parameterType="java.util.Map" resultType="java.lang.Long">
     select diet_id from DietRecords
-    where member_id = #{memberId} and record_date = #{recordDate} and meal_type = #{mealType}
+    where member_id = #{member_id} and record_date = #{recordDate} and meal_type = #{mealType}
 </select>
 
     <!-- dietDelete --> 
@@ -51,11 +51,29 @@
 
     <update id="itemUpdate" parameterType="java.util.Map">
         update DietItems
-        set item_name = #{itemName},
+        set item_name = #{newItemName},
         calories = #{calories},
         carbs = #{carbs},
         fat = #{fat},
         protein = #{protein}
         where item_name = #{itemName} and diet_id = #{dietId};
     </update>    
+
+    <!-- itemNutCheck --> 
+
+    <select id="itemNutCheck" parameterType="java.util.Map" resultType="java.util.Map">
+        SELECT 
+            d.meal_type AS mealType,
+            SUM(i.calories) AS totalCalories,
+            SUM(i.carbs) AS totalCarbs,
+            SUM(i.protein) AS totalProtein,
+            SUM(i.fat) AS totalFat
+        FROM DietRecords d
+        JOIN DietItems i
+            ON d.diet_id = i.diet_id
+        WHERE d.record_date = #{recordDate}
+            AND d.member_id = #{memberId}
+        GROUP BY d.meal_type;
+    </select>
+    
 </mapper>

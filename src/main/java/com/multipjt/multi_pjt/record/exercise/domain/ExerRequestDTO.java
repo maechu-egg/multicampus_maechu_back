@@ -7,12 +7,10 @@ import lombok.Data;
 
 @Data
 public class ExerRequestDTO {
-    private String exerciseType;
-    private int duration; 
-    private float calories; // default 값 존재
+    private String exercise_type;
+    private Integer duration; 
+    private Float calories;
     @Enumerated(EnumType.STRING)
     private Intensity intensity; 
-    private float distance; // default 값 존재
-    private int weight; // default 값 존재
-    private Long memberId;
+    private Long member_id;
 }
