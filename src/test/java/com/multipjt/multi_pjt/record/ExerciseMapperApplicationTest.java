@@ -211,10 +211,22 @@ public class ExerciseMapperApplicationTest {
     @Test
     @DisplayName("test006 : Set Update")
     public void testSetUpdate(){
+
+        test();
+        
+        Map<String,Object> map = new HashMap<>();
+        map.put("recordDate", LocalDate.of(2024, 10, 22));
+        map.put("memberId", exerRequestDTO.getMember_id());
+        map.put("exerciseType", exerRequestDTO.getExercise_type());
+        
+        // 회원이 특정 날짜에 한 특정 운동의 운동 번호 조회
+        // 회원이 하루에 같은 운동을 n번 할 경우 운동 번호 여러 개 나오면 exerciseId의 크기가 작은 게 먼저 한 것       
+        List<Long> exerciseId = exerMapper.exerIdGet(map);
+
         SetRequestDTO setRequestDTO = new SetRequestDTO();
       
         setRequestDTO.setDistance(3F);
-        setRequestDTO.setExercise_id(14L);
+        setRequestDTO.setExercise_id(exerciseId.get(0));
         setRequestDTO.setRepetitions(null);
         setRequestDTO.setWeight(null);
         
@@ -223,18 +235,18 @@ public class ExerciseMapperApplicationTest {
         // 검증
         Assertions.assertThat(row).isEqualTo(1);
         // exercise_id를 통해 set 정보 출력
-        SetResponseDTO setResponseDTO = exerMapper.getSetInfo(14L);
+        SetResponseDTO setResponseDTO = exerMapper.getSetInfo(exerciseId.get(0));
         System.out.println("debug setResponseDTO >>> " + setResponseDTO);
         //given : set_id를 통해 update할 준비
-        Map<String,Object> map = new HashMap<>();
-        map.put("set_id", setResponseDTO.getSet_id());
-        map.put("distance", 7L);
-        map.put("weight", setResponseDTO.getWeight());
-        map.put("repetitions", setResponseDTO.getRepetitions());
+        Map<String,Object> map2 = new HashMap<>();
+        map2.put("set_id", setResponseDTO.getSet_id());
+        map2.put("distance", 7F);
+        map2.put("weight", setResponseDTO.getWeight());
+        map2.put("repetitions", setResponseDTO.getRepetitions());
         
-        System.out.println("debug map >>> " + map);
+        System.out.println("debug map2 >>> " + map2);
         //when : update
-        int row2 = exerMapper.setUpdate(map);
+        int row2 = exerMapper.setUpdate(map2);
         //given : 검증
         Assertions.assertThat(row2).isEqualTo(1);
     }
@@ -242,10 +254,22 @@ public class ExerciseMapperApplicationTest {
     @Test
     @DisplayName("test007 : Set Delete")
     public void testSetDelete(){
+
+        test();
+        
+        Map<String,Object> map = new HashMap<>();
+        map.put("recordDate", LocalDate.of(2024, 10, 22));
+        map.put("memberId", exerRequestDTO.getMember_id());
+        map.put("exerciseType", exerRequestDTO.getExercise_type());
+        
+        // 회원이 특정 날짜에 한 특정 운동의 운동 번호 조회
+        // 회원이 하루에 같은 운동을 n번 할 경우 운동 번호 여러 개 나오면 exerciseId의 크기가 작은 게 먼저 한 것       
+        List<Long> exerciseId = exerMapper.exerIdGet(map);
+
         SetRequestDTO setRequestDTO = new SetRequestDTO();
       
         setRequestDTO.setDistance(3F);
-        setRequestDTO.setExercise_id(14L);
+        setRequestDTO.setExercise_id(exerciseId.get(0));
         setRequestDTO.setRepetitions(null);
         setRequestDTO.setWeight(null);
         
@@ -254,7 +278,7 @@ public class ExerciseMapperApplicationTest {
         // 검증
         Assertions.assertThat(row).isEqualTo(1);
         //given : set_id를 통해 delete할 준비
-        SetResponseDTO setResponseDTO = exerMapper.getSetInfo(14L);
+        SetResponseDTO setResponseDTO = exerMapper.getSetInfo(exerciseId.get(0));
         System.out.println("debug setResponseDTO >>> " + setResponseDTO);
 
         Long setId = setResponseDTO.getSet_id();

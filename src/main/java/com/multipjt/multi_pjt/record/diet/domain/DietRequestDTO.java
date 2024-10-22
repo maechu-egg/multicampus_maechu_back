@@ -10,7 +10,7 @@ public class DietRequestDTO {
     // dietId는 auto increment 여서 지정하지 않음, date도 default 값을 기입할 거여서 기입 x 
     private Long member_id;
     @Enumerated(EnumType.STRING)
-    private MealType mealType;
+    private MealType meal_type;
     // recordDate는 default 
 
 }

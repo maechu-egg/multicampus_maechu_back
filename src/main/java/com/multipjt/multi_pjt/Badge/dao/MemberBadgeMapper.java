@@ -1,10 +1,10 @@
-package com.multipjt.multi_pjt.Badge.dao;
+package com.multipjt.multi_pjt.badge.dao;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
-import com.multipjt.multi_pjt.Badge.domain.badge.MemberBadgeRequestDTO;
-import com.multipjt.multi_pjt.Badge.domain.badge.MemberBadgeResponseDTO;
+import com.multipjt.multi_pjt.badge.domain.badge.MemberBadgeRequestDTO;
+import com.multipjt.multi_pjt.badge.domain.badge.MemberBadgeResponseDTO;
 
 @Mapper
 public interface MemberBadgeMapper {

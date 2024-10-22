@@ -1,4 +1,4 @@
-package com.multipjt.multi_pjt.Badge.domain.badge;
+package com.multipjt.multi_pjt.badge.domain.badge;
 
 import lombok.Data;
 

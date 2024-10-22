@@ -5,10 +5,10 @@ import org.springframework.stereotype.Service;
 
 import com.multipjt.multi_pjt.user.dao.UserMapper;
 
-@Service
+//@Service
 public class UserService {
-    @Autowired
-    private UserMapper userMapper;
+    // @Autowired
+    // private UserMapper userMapper;
 
    
 }

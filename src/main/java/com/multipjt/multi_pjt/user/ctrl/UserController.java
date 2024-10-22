@@ -10,8 +10,8 @@ import com.multipjt.multi_pjt.user.service.UserService;
 @RestController
 @RequestMapping("/user")
 public class UserController {
-    @Autowired
-    private UserService userService;
+//    @Autowired
+    //private UserService userService;
 
   
     
