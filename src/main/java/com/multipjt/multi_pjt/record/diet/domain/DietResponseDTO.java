@@ -9,7 +9,7 @@ public class DietResponseDTO {
     
     private Long diet_id;
     private LocalDate record_date;
-    private String mealType; // enum String으로 가져옴
+    private String meal_type; // enum String으로 가져옴
     private Long member_id;
 
 }

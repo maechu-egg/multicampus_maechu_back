@@ -10,6 +10,7 @@ import com.multipjt.multi_pjt.badge.dao.CrewBadgeMapper;
 
 import jakarta.transaction.Transactional;
 
+
 @SpringBootTest
 @Transactional
 public class CrewBadgeMapperTest {

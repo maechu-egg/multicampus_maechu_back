@@ -55,7 +55,7 @@
 
     <!-- setUpdate --> 
 
-    <update id="setUpdate" parameterType="java.uitl.Map">
+    <update id="setUpdate" parameterType="java.util.Map">
         update ExerciseSet
         set distance = #{distance} , weight = #{weight} , repetitions = #{repetitions}
         where set_id = #{set_id};
