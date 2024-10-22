@@ -14,7 +14,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class DatabaseApplicationTests {
  
     // Given: 테스트를 위한 사전 조건 설정 (자동 주입된 SqlSessionFactory)
-   @Autowired
+    @Autowired
     private SqlSessionFactory factory;
 
     @Test
