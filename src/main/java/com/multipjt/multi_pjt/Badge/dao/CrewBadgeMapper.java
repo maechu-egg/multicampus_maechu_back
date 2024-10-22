@@ -1,10 +1,10 @@
-package com.multipjt.multi_pjt.badge.dao;
+package com.multipjt.multi_pjt.Badge.dao;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
-import com.multipjt.multi_pjt.badge.domain.badge.CrewBadgeRequestDTO;
-import com.multipjt.multi_pjt.badge.domain.badge.CrewBadgeResponseDTO;
+import com.multipjt.multi_pjt.Badge.domain.badge.CrewBadgeRequestDTO;
+import com.multipjt.multi_pjt.Badge.domain.badge.CrewBadgeResponseDTO;
 
 @Mapper
 public interface CrewBadgeMapper {

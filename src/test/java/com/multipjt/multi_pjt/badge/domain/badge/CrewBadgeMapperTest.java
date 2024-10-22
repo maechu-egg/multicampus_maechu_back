@@ -6,9 +6,12 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import com.multipjt.multi_pjt.badge.dao.CrewBadgeMapper;
+import com.multipjt.multi_pjt.Badge.dao.CrewBadgeMapper;
 
 import jakarta.transaction.Transactional;
+import com.multipjt.multi_pjt.Badge.domain.badge.CrewBadgeRequestDTO;
+import com.multipjt.multi_pjt.Badge.domain.badge.CrewBadgeResponseDTO;
+
 
 @SpringBootTest
 @Transactional

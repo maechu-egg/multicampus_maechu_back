@@ -6,7 +6,10 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import com.multipjt.multi_pjt.badge.dao.MemberBadgeMapper;
+import com.multipjt.multi_pjt.Badge.dao.MemberBadgeMapper;
+import com.multipjt.multi_pjt.Badge.domain.badge.MemberBadgeRequestDTO;
+import com.multipjt.multi_pjt.Badge.domain.badge.MemberBadgeResponseDTO;
+
 
 import jakarta.transaction.Transactional;
 
