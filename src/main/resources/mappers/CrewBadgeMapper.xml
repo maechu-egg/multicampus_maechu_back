@@ -18,7 +18,7 @@
         );
     </insert>
 
-    <select id="selectBadgeByMemberId" resultType="com.multipjt.multi_pjt.badge.domain.badge.CrewBadgeResponseDTO">
+    <select id="selectCrewBadgeByMemberId" resultType="com.multipjt.multi_pjt.badge.domain.badge.CrewBadgeResponseDTO">
         SELECT * FROM CrewBadge WHERE member_id = #{member_id};
     </select>
 </mapper>

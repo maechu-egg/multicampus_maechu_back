@@ -12,7 +12,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.multipjt.multi_pjt.user.dao.ProfileMapper;
 import com.multipjt.multi_pjt.user.dao.UserMapper;
-import com.multipjt.multi_pjt.user.domain.UserRequestDTO;
 import com.multipjt.multi_pjt.user.domain.mypage.ProfileRequestDTO;
 import com.multipjt.multi_pjt.user.domain.mypage.ProfileResponseDTO;
 
