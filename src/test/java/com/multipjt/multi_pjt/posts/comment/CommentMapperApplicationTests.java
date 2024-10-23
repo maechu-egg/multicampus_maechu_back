@@ -21,8 +21,8 @@ public class CommentMapperApplicationTests {
     private CommentMapper commentMapper;
 
     @Test
-    @DisplayName("Com01: 댓글 작성")
-    public void postInsertTest(){
+    @DisplayName("Com001: 댓글 작성")
+    public void commentInsertTest(){
         
         // Given : 댓글 등록 기본 세팅
         CommentRequestDTO request = new CommentRequestDTO();
@@ -54,8 +54,8 @@ public class CommentMapperApplicationTests {
 
 
     @Test
-    @DisplayName("Com02: 댓글 삭제")
-    public void postDeleteTest(){
+    @DisplayName("Com002: 댓글 삭제")
+    public void commentDeleteTest(){
         
         // Given : 댓글 삭제 기본 세팅
         CommentRequestDTO request = new CommentRequestDTO();
@@ -73,10 +73,8 @@ public class CommentMapperApplicationTests {
         // Then : 삭제된 댓글 정보 조회 - null 확인
         CommentResponseDTO deleteComment = commentMapper.getCommentById(5);  
         
-        // null이 아닐경우 테스트 실패
+        // null이 아닐 경우 테스트 실패
         Assertions.assertNull(deleteComment, "삭제한 댓글의 정보는 조회할 수 없어야 합니다.");
     }   
-
-
 
 }
