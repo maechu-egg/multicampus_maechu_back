@@ -3,7 +3,9 @@ package com.multipjt.multi_pjt.community.domain.posts;
 
 
 import java.util.Date;
+import java.util.List;
 
+import com.multipjt.multi_pjt.community.domain.comments.CommentResponseDTO;
 
 import lombok.Data;
 
@@ -22,10 +24,11 @@ public class PostResponseDTO {
     private String  post_img1;
     private String  post_img2;
     
-    
+    // 댓글 목록
+    private List<CommentResponseDTO> comments; 
     
     // 외래키
     private int member_id;
     
-
+    private String post_nickname;
 }

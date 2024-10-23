@@ -13,4 +13,8 @@ public class CommentResponseDTO {
     // 외래키 
     private int     member_id;
     private int     post_id;
+
+    // join
+    private String c_nickname;
+
 }

@@ -19,9 +19,11 @@ public class PostRequestDTO {
     private String  post_sports_keyword;
     private String  post_img1;
     private String  post_img2;
-    
-    
-    
+
+
     // 외래키
     private int member_id;
+    
+    private String post_nickname;
 }
+

@@ -14,4 +14,7 @@ public class CommentRequestDTO {
     private int     member_id;
     private int     post_id;
 
+
+
+
 }

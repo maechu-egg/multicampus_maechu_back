@@ -41,4 +41,5 @@ public interface PostMapper {
 
     // 상세 페이지
     List<PostResponseDTO> postDetailSelect(PostRequestDTO pdto);
+    
 }
