@@ -1,7 +1,14 @@
 package com.multipjt.multi_pjt.badge.service;
 
+
+
+import org.springframework.stereotype.Service;
+
 import com.multipjt.multi_pjt.badge.domain.badge.MemberBadgeResponseDTO;
 
+
+
+@Service
 public class BadgeService {
 
     // 현재 포인트를 기반으로 뱃지 등급을 계산하는 메소드
@@ -29,7 +36,7 @@ public class BadgeService {
         // 새로운 포인트로 뱃지 등급 계산
         String newBadgeLevel = getBadgeLevel(updatedPoints);
 
-        // 뱃지 업데이트
+        // 뱃지 업그레이드
         badge.setCurrent_points(updatedPoints);
         badge.setBadge_level(newBadgeLevel);
     }

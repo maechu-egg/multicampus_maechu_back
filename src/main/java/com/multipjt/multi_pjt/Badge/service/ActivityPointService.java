@@ -1,5 +1,8 @@
 package com.multipjt.multi_pjt.badge.service;
 
+import org.springframework.stereotype.Service;
+
+@Service
 public class ActivityPointService {
 
     public float calculateActivityPoints(String activityType) {
