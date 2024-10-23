@@ -9,7 +9,6 @@
     <insert id="createCrewRow"
             parameterType="com.multipjt.multi_pjt.crew.domain.crew.CrewRequestDTO">
         INSERT INTO Crew(
-            crew_id,
             member_id,
             crew_name,
             crew_goal,
@@ -24,7 +23,6 @@
             crew_intro_img,
             crew_state
         ) VALUES (
-            #{crew_id},
             #{member_id},
             #{crew_name},
             #{crew_goal},
