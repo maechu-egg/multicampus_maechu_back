@@ -24,48 +24,64 @@ repositories {
 }
 
 dependencies {
-	// 스프링부트 3.0 에서 JSP 사용하고자 할 때만 추가 
-	implementation 'jakarta.servlet:jakarta.servlet-api' 
-	implementation 'jakarta.servlet.jsp.jstl:jakarta.servlet.jsp.jstl-api' 
-	implementation 'org.glassfish.web:jakarta.servlet.jsp.jstl'
-	implementation 'org.apache.tomcat.embed:tomcat-embed-jasper'
-	///////////////////////////////////////////////////////////////////////////
+    // JSP 사용 의존성 (Spring Boot 3.x와 호환되는 Jakarta 버전 사용)
+    implementation 'jakarta.servlet:jakarta.servlet-api:6.0.0'
+    implementation 'jakarta.servlet.jsp.jstl:jakarta.servlet.jsp.jstl-api:2.0.0'
+    implementation 'org.glassfish.web:jakarta.servlet.jsp.jstl'
+    implementation 'org.apache.tomcat.embed:tomcat-embed-jasper'
 
-	// Validate를 이용한 유효성 검증(추가)
-	implementation group: 'org.springframework.boot', name: 'spring-boot-starter-validation'
-	//////////////////////////////////////////////////////////////////////////
+    // 유효성 검증
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
 
-	// 비밀번호 암호화
-	implementation 'org.springframework.boot:spring-boot-starter-security' 
-	///////////////////////////////////////////////////////////////////////////
+    // 비밀번호 암호화
+    implementation 'org.springframework.boot:spring-boot-starter-security'
 
-	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-	implementation 'org.springframework.boot:spring-boot-starter-web'
-	implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.3'
-	compileOnly 'org.projectlombok:lombok'
-	developmentOnly 'org.springframework.boot:spring-boot-devtools'
-	runtimeOnly 'com.mysql:mysql-connector-j'
-	annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
-	annotationProcessor 'org.projectlombok:lombok'
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	testImplementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter-test:3.0.3'
-	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
-	// Swagger + spring 3.x
+    // JPA, Web, MyBatis
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.3'
+
+
+    // Lombok
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+
+    // 개발 도구 및 DB 커넥터
+    developmentOnly 'org.springframework.boot:spring-boot-devtools'
+    runtimeOnly 'com.mysql:mysql-connector-j'
+    annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
+
+    // 테스트 의존성
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter-test:3.0.3'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    testImplementation 'org.springframework.security:spring-security-test'
+
+    // Swagger (Spring Boot 3.x 호환)
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.0.2'
 
-	//login 
-	implementation 'org.springframework.boot:spring-boot-starter-mail'
-	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
-	implementation 'org.springframework.boot:spring-boot-starter-security'
-	testImplementation 'org.springframework.security:spring-security-test'
-	implementation group: 'io.jsonwebtoken', name: 'jjwt-api', version: '0.11.2'
-	implementation group: 'io.jsonwebtoken', name: 'jjwt-impl', version: '0.11.2'
-	implementation group: 'io.jsonwebtoken', name: 'jjwt-jackson', version: '0.11.2'
+    // OAuth 2.0 및 메일
+    implementation 'org.springframework.boot:spring-boot-starter-mail'
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
 
-	// actuator
-	implementation 'org.springframework.boot:spring-boot-starter-actuator'
+
+	  // actuator
+	  implementation 'org.springframework.boot:spring-boot-starter-actuator'
+
+    // JWT 관련 의존성 (최신 버전 사용 권장)
+    implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
+    implementation 'io.jsonwebtoken:jjwt-impl:0.11.5'
+    implementation 'io.jsonwebtoken:jjwt-jackson:0.11.5'
+    runtimeOnly('io.jsonwebtoken:jjwt-orgjson:0.11.5') {
+        exclude group: 'org.json', module: 'json'
+    }
+
+    // Gson 최신 버전 사용
+    implementation 'com.google.code.gson:gson:2.9.1'
+
 }
+
 
 tasks.named('test') {
 	useJUnitPlatform()

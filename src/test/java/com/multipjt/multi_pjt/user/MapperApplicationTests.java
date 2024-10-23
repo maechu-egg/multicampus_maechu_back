@@ -116,7 +116,7 @@ public class MapperApplicationTests {
         UserResponseDTO registeredUser = userMapper.getUserByEmail("test@example.com");
         Assertions.assertNotNull(registeredUser, "사용자가 데이터베이스에 존재해야 합니다.");
         
-        Integer memberId = registeredUser.getMember_id();
+        Integer memberId = registeredUser.getMemberId();
 
         // 회원 탈퇴 수행
         int deleteRowsAffected = userMapper.deleteUserById(memberId);

@@ -7,10 +7,10 @@ import org.apache.ibatis.annotations.Mapper;
 import com.multipjt.multi_pjt.crew.domain.battle.BattleMemberRequestDTO;
 import com.multipjt.multi_pjt.crew.domain.battle.BattleMemberResponseDTO;
 import com.multipjt.multi_pjt.crew.domain.battle.CrewBattleFeedRequestDTO;
-import com.multipjt.multi_pjt.crew.domain.battle.CrewBattleFeedResponseDTO;
 import com.multipjt.multi_pjt.crew.domain.battle.CrewBattleRequestDTO;
-import com.multipjt.multi_pjt.crew.domain.battle.CrewBattleResponseDTO;
 import com.multipjt.multi_pjt.crew.domain.battle.CrewVoteRequestDTO;
+import com.multipjt.multi_pjt.crew.domain.battle.CrewBattleFeedResponseDTO;
+import com.multipjt.multi_pjt.crew.domain.battle.CrewBattleResponseDTO;
 
 @Mapper
 public interface CrewBattleMapper {
