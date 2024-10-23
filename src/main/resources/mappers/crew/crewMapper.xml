@@ -18,7 +18,6 @@
             crew_gender,
             crew_frequency,
             crew_age,
-            crew_date,
             crew_intro_post,
             crew_intro_img,
             crew_state
@@ -32,7 +31,6 @@
             #{crew_gender},
             #{crew_frequency},
             #{crew_age},
-            #{crew_date},
             #{crew_intro_post},
             #{crew_intro_img},
             #{crew_state}
@@ -159,7 +157,6 @@
             crew_post_img,
             crew_post_like,
             crew_post_state,
-            crew_post_date,
             crew_id,
             member_id
         ) VALUES (
@@ -169,7 +166,6 @@
             #{crew_post_img},
             #{crew_post_like},
             #{crew_post_state},
-            #{crew_post_date},
             #{crew_id},
             #{member_id}
         );
