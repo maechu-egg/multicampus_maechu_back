@@ -32,6 +32,13 @@ public interface PostMapper {
     // 단어 검색 - 글 제목 / 글 내용 / 해시태그  
     List<PostResponseDTO> postSelectTCH(@Param("keyword") String keyword);
 
+    // 현재 게시글의 좋아요 수 조회
+    int postLikeCount(@Param("post_id") int pid);
+    
+    // 전체 페이지 
+    List<PostResponseDTO> postAllSelect();
 
 
+    // 상세 페이지
+    List<PostResponseDTO> postDetailSelect(PostRequestDTO pdto);
 }
