@@ -152,7 +152,8 @@
 
     <!-- 전체 게시글 조회 -->
     <select id="postAllSelect"  resultType="com.multipjt.multi_pjt.community.domain.posts.PostResponseDTO">
-        SELECT 
+        SELECT @rownum := @rownum +1 As rownum, Posts.* 
+        From(SELECT 
             p.post_title AS post_title,
             p.post_sport AS post_sport,
             p.post_date AS post_date,
@@ -169,13 +170,18 @@
         JOIN 
             Member m ON p.member_id = m.member_id
         GROUP BY 
-            p.post_id, p.post_title, p.post_sport, p.post_sports_keyword, 
-            p.post_like_counts, p.post_views, m.nickname
+            p.post_id, p.post_title, p.post_sport, p.post_sports_keyword, p.post_date, 
+            p.post_like_counts, p.post_views, m.nickname, m.member_id
         ORDER BY 
             p.post_date DESC
-      
-    </select>
+        LIMIT #{size} OFFSET #{offset}) Posts, (SELECT @rownum := 0 )r
+    </select> 
 
+    <!-- 전체 게시글 수 -->
+    <select id="countPosts" resultType="int">
+        SELECT COUNT(*)
+        FROM Posts
+    </select>
 
     <resultMap id="PostWithCommentsResultMap" type="com.multipjt.multi_pjt.community.domain.posts.PostResponseDTO">
         <!-- 게시글 정보 매핑 -->
@@ -236,7 +242,5 @@
     </select>
 
   
-
-
 
 </mapper>

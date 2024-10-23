@@ -297,10 +297,12 @@ public class PostMapperApplicationTests {
     @DisplayName("P011: 전체 게시글 조회 ")
     public  void postAllSelectTest(){
 
-        //Given : 
+        //Given : 전체글 페이지 세팅
+        int size = 10;
+        int offset =  1;
          
         //When : 전체 게시글 조회
-        List<PostResponseDTO> postAll = postMapper.postAllSelect();
+        List<PostResponseDTO> postAll = postMapper.postAllSelect(size, offset);
 
         // List 가 비어있는지 확인
         Assertions.assertFalse(postAll.isEmpty(), "게시글 조회에 실패했습니다.");

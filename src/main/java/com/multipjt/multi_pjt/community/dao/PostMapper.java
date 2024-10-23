@@ -36,10 +36,15 @@ public interface PostMapper {
     int postLikeCount(@Param("post_id") int pid);
     
     // 전체 페이지 
-    List<PostResponseDTO> postAllSelect();
+    List<PostResponseDTO> postAllSelect(@Param("size") int size, @Param("offset") int offset);
+
+    // 전체 페이지 수
+    int countPosts();
 
 
     // 상세 페이지
     List<PostResponseDTO> postDetailSelect(PostRequestDTO pdto);
+
+  
     
 }
