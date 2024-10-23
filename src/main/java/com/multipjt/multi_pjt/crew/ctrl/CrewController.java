@@ -24,7 +24,7 @@ public class CrewController {
     @PostMapping("/create")
     public ResponseEntity<Void> createCrew(@RequestBody CrewRequestDTO param) {
         System.out.println("client endpoint: /crew/create");
-        System.out.println("debug: createCrew + " + param);
+        System.out.println("debug>>> createCrew + " + param);
         crewService.createCrew(param);
         return ResponseEntity.ok().build();
     }
@@ -35,7 +35,7 @@ public class CrewController {
     @PostMapping("/intro/update")
     public ResponseEntity<Void> updateCrewIntro(@RequestBody CrewRequestDTO param) {
         System.out.println("client endpoint: /crew/intro/update");
-        System.out.println("debug: updateCrewIntro + " + param);
+        System.out.println("debug>>> updateCrewIntro + " + param);
         crewService.updateCrewIntro(param);
         return ResponseEntity.ok().build();
     }
@@ -46,7 +46,7 @@ public class CrewController {
     @PostMapping("/post/create")
     public ResponseEntity<Void> createCrewPost(@RequestBody CrewPostRequestDTO param) {
         System.out.println("client endpoint: /crew/post/create");
-        System.out.println("debug: createCrewPost + " + param);
+        System.out.println("debug>>> createCrewPost + " + param);
         crewService.createCrewPost(param);
         return ResponseEntity.ok().build();
     }

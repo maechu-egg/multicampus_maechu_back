@@ -23,7 +23,7 @@ public class CrewBattleController {
     @PostMapping("/create")
     public ResponseEntity<Void> createCrewBattle(@RequestBody CrewBattleRequestDTO param) {
         System.out.println("client endpoint: /crew/battle/create");
-        System.out.println("debug: createCrewBattle + " + param);
+        System.out.println("debug>>> createCrewBattle + " + param);
         crewBattleService.createCrewBattle(param);
         return ResponseEntity.ok().build();
     }
@@ -34,7 +34,7 @@ public class CrewBattleController {
     @PostMapping("/feed/create")
     public ResponseEntity<Void> createCrewBattleFeed(@RequestBody CrewBattleFeedRequestDTO param) {
         System.out.println("client endpoint: /crew/battle/feed/create");
-        System.out.println("debug: createCrewBattleFeed + " + param);
+        System.out.println("debug>>> createCrewBattleFeed + " + param);
         crewBattleService.createCrewBattleFeed(param);
         return ResponseEntity.ok().build();
     }
