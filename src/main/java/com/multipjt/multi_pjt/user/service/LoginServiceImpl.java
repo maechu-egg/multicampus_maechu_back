@@ -10,9 +10,10 @@ import org.springframework.stereotype.Service;
 import com.multipjt.multi_pjt.jwt.JwtTokenProvider;
 import com.multipjt.multi_pjt.user.dao.UserMapper;
 import com.multipjt.multi_pjt.user.domain.CustomUserDetails;
-import com.multipjt.multi_pjt.user.domain.LoginDTO;
-import com.multipjt.multi_pjt.user.domain.UserRequestDTO;
-import com.multipjt.multi_pjt.user.domain.UserResponseDTO;
+import com.multipjt.multi_pjt.user.domain.login.UserRequestDTO;
+import com.multipjt.multi_pjt.user.domain.login.UserResponseDTO;
+import com.multipjt.multi_pjt.user.domain.login.LoginDTO;
+
 
 import java.util.ArrayList;
 
@@ -36,6 +37,24 @@ public class LoginServiceImpl implements UserDetailsService { // UserDetailsServ
         userMapper.registerUser(userRequestDTO);
     }
 
+    //1.2 이메일 형식 검증 메서드 추가
+    public boolean isValidEmail(String email) {
+        String emailRegex = "^[A-Za-z0-9+_.-]+@(.+)$"; // 간단한 이메일 정규 표현식
+        return email.matches(emailRegex);
+    }
+
+    // 1.3 회원가입 시 이메일 유효성 확인 
+    public boolean existsByEmail(String email) {
+        int count = userMapper.existsByEmail(email);
+        return count > 0; //0보다 크면 중복 이메일 존재 
+    }
+
+    // 1.4 회원가입 시 닉네임 중복 확인 
+    public boolean existsByNickname(String nickname) {
+        int count = userMapper.existsByNickname(nickname);
+        return count > 0; 
+    }
+ 
     // 2. 로그인 : 이메일, 비번 가져와 검증 후 존재하면 jwt 토큰 생성 
     public String login(LoginDTO loginDTO) {
         // 이메일로 사용자 조회
@@ -83,4 +102,9 @@ public class LoginServiceImpl implements UserDetailsService { // UserDetailsServ
             new ArrayList<>() // 권한 목록 (필요에 따라 수정)
         );
     }
+
+    // @Override
+    // public void expireToken(String token) {
+    //     jwtTokenProvider.expireToken(token);
+    // }
 }
