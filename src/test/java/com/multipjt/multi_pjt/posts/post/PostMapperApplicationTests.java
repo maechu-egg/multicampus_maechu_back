@@ -37,7 +37,7 @@ public class PostMapperApplicationTests {
         PostRequestDTO request = new PostRequestDTO();
         UserRequestDTO user = new UserRequestDTO();
 
-        user.setMember_id("1");
+        // user.setMember_id("1");
 
         request.setPost_contents("첫번째 게시글입니다.");
         request.setPost_title("첫번째 테스트");
