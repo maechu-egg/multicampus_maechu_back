@@ -4,21 +4,21 @@ import lombok.Data;
 
 @Data
 public class LoginDTO {
-    private String memberEmail;
-    private String memeberPassword;
+    private String password;
+    private String email;   
 
     public LoginDTO() {
 
     }
     
     public LoginDTO(String email, String pw) {
-        this.memberEmail = email;
-        this.memeberPassword = pw;
+        this.email = email;
+        this.password = pw;
     }
 
     public LoginDTO(UserRequestDTO userRequestDTO) {
-        this.memberEmail = userRequestDTO.getEmail();
-        this.memeberPassword = userRequestDTO.getPassword();
+        this.email = userRequestDTO.getEmail();
+        this.password = userRequestDTO.getPassword();
     }
 
 }
