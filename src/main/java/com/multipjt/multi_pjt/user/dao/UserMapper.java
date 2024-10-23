@@ -1,5 +1,6 @@
 package com.multipjt.multi_pjt.user.dao;
 
+import com.multipjt.multi_pjt.user.domain.LoginDTO;
 import com.multipjt.multi_pjt.user.domain.UserRequestDTO;
 import com.multipjt.multi_pjt.user.domain.UserResponseDTO;
 import org.apache.ibatis.annotations.Mapper;
@@ -16,10 +17,16 @@ public interface UserMapper {
     //회원 정보 수정
     int updateUser(UserRequestDTO user);
 
-    // ID로 사용자 조회
-    UserResponseDTO getUserById(@Param("member_id") String memberId);
+ // ID로 회원 조회
+ UserResponseDTO getUserById(Integer member_id);  // memberId를 매개변수로 받음
 
-    // 회원 삭제
-    int deleteUser(String memberId);  
+    // 이메일로 사용자 조회
+    UserResponseDTO getUserByEmail(@Param("email") String email);
+
+   // 이메일로 사용자 조회 : UserDetailsService 인터페이스 구현 
+   LoginDTO getUserByEmail2(@Param("email") String email);
+
+   // 회원 ID로 사용자 삭제
+   int deleteUserById(Integer member_id);
 }
 

@@ -1,20 +1,22 @@
 package com.multipjt.multi_pjt.user;
 
 import static org.assertj.core.api.Assertions.assertThat;
-
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.multipjt.multi_pjt.user.dao.ProfileMapper;
 import com.multipjt.multi_pjt.user.dao.UserMapper;
-import com.multipjt.multi_pjt.user.domain.UserRequestDTO;
 import com.multipjt.multi_pjt.user.domain.mypage.ProfileRequestDTO;
 import com.multipjt.multi_pjt.user.domain.mypage.ProfileResponseDTO;
 
 @SpringBootTest
+@Transactional 
 public class MyPageMapperApplicationTests {
 
     @Autowired
@@ -28,7 +30,6 @@ public class MyPageMapperApplicationTests {
     public void testRegisterProfile() {
         // given : 프로필 등록을 위한 DTO 설정
         ProfileRequestDTO profileRequest = new ProfileRequestDTO();
-        profileRequest.setProfile_id("P003");
         profileRequest.setProfile_gender("M");
         profileRequest.setProfile_age(25);
         profileRequest.setProfile_region("Seoul");
@@ -36,7 +37,7 @@ public class MyPageMapperApplicationTests {
         profileRequest.setProfile_height(175.0f);
         profileRequest.setProfile_goal("Bulking");
         profileRequest.setProfile_time("Evening");
-        profileRequest.setMember_id("testuser2");
+        profileRequest.setMember_id(16);
         profileRequest.setProfile_allergy("None");
         profileRequest.setProfile_diet_goal("Maintain");
         profileRequest.setProfile_sport1("Weightlifting");
@@ -55,11 +56,10 @@ public class MyPageMapperApplicationTests {
     @DisplayName("013 : ID별 유저 프로필 조회") 
     public void selectProfile() {
         // gicen : 사용자 ID
-        String memberId = "testuser3";
+        int memberId = 1;
 
         // 프로필 등록 (필요시)
         ProfileRequestDTO profileRequest = new ProfileRequestDTO();
-        profileRequest.setProfile_id("P003");
         profileRequest.setProfile_gender("M");
         profileRequest.setProfile_age(25);
         profileRequest.setProfile_region("Seoul");
@@ -76,92 +76,108 @@ public class MyPageMapperApplicationTests {
         profileRequest.setProfile_workout_frequency(4);
         
         // 프로필 등록 메서드 호출
-        profileMapper.registerProfile(profileRequest);
+    profileMapper.registerProfile(profileRequest);
 
-        // when : 사용자 ID로 프로필 조회
-        ProfileResponseDTO retrievedProfile = profileMapper.getUserById(memberId);
+    // when : 프로필 조회 메서드 호출
+    ProfileResponseDTO profile = profileMapper.getUserById(memberId);
 
-        // then : 결과 확인
-        assertThat(retrievedProfile).isNotNull();  // 프로필이 null이 아니어야 함
-        assertThat(retrievedProfile.getMember_id()).isEqualTo(memberId);  // member_id가 일치해야 함
-        assertThat(retrievedProfile.getProfile_id()).isEqualTo("P003");  // profile_id가 일치해야 함
-        assertThat(retrievedProfile.getProfile_gender()).isEqualTo("M");  // 성별이 일치해야 함
-        assertThat(retrievedProfile.getProfile_age()).isEqualTo(25);  // 나이가 일치해야 함
-        assertThat(retrievedProfile.getProfile_region()).isEqualTo("Seoul");  // 거주 지역이 일치해야 함
-        assertThat(retrievedProfile.getProfile_weight()).isEqualTo(70.5f);  // 몸무게가 일치해야 함
-        assertThat(retrievedProfile.getProfile_height()).isEqualTo(175.0f);  // 키가 일치해야 함
-        assertThat(retrievedProfile.getProfile_goal()).isEqualTo("Bulking");  // 운동 목표가 일치해야 함
-        assertThat(retrievedProfile.getProfile_time()).isEqualTo("Evening");  // 운동 시간대가 일치해야 함
-        assertThat(retrievedProfile.getProfile_allergy()).isEqualTo("None");  // 알레르리가 일치해야 함
-        assertThat(retrievedProfile.getProfile_diet_goal()).isEqualTo("Maintain");  // 식단 목표가 일치해야 함
-        assertThat(retrievedProfile.getProfile_sport1()).isEqualTo("Weightlifting");  // 주력 운동 종목이 일치해야 함
-        assertThat(retrievedProfile.getProfile_sport2()).isEqualTo("Running");  // 주력 운동 종목 2순위가 일치해야 함
-        assertThat(retrievedProfile.getProfile_sport3()).isEqualTo("Cycling");  // 주력 운동 종목 3순위가 일치해야 함
-        assertThat(retrievedProfile.getProfile_workout_frequency()).isEqualTo(4);  // 주간 운동 빈도가 일치해야 함
+    // then : 조회된 프로필의 데이터 검증
+    assertThat(profile).isNotNull();
+    assertThat(profile.getProfile_gender()).isEqualTo("M");
+    assertThat(profile.getProfile_age()).isEqualTo(25);
+    assertThat(profile.getProfile_region()).isEqualTo("Seoul");
+    assertThat(profile.getProfile_weight()).isEqualTo(70.5f);
+    assertThat(profile.getProfile_height()).isEqualTo(175.0f);
+    assertThat(profile.getProfile_goal()).isEqualTo("Bulking");
+    assertThat(profile.getProfile_time()).isEqualTo("Evening");
+    assertThat(profile.getMember_id()).isEqualTo(memberId);
+    assertThat(profile.getProfile_allergy()).isEqualTo("None");
+    assertThat(profile.getProfile_diet_goal()).isEqualTo("Maintain");
+    assertThat(profile.getProfile_sport1()).isEqualTo("Weightlifting");
+    assertThat(profile.getProfile_sport2()).isEqualTo("Running");
+    assertThat(profile.getProfile_sport3()).isEqualTo("Cycling");
+    assertThat(profile.getProfile_workout_frequency()).isEqualTo(4);
+
+       
+        
 }
 
     @Test
     @DisplayName("014 : 사용자 별 프로필 수정")
     public void testUpdateProfile() {
-        // given : 기존 프로필을 등록하기 위해 DTO 설정
-        ProfileRequestDTO profileRequest = new ProfileRequestDTO();
-        profileRequest.setProfile_id("P005");
-        profileRequest.setProfile_gender("M");
-        profileRequest.setProfile_age(25);
-        profileRequest.setProfile_region("Seoul");
-        profileRequest.setProfile_weight(70.5f);
-        profileRequest.setProfile_height(175.0f);
-        profileRequest.setProfile_goal("Bulking");
-        profileRequest.setProfile_time("Evening");
-        profileRequest.setMember_id("testuser5");
-        profileRequest.setProfile_allergy("None");
-        profileRequest.setProfile_diet_goal("Maintain");
-        profileRequest.setProfile_sport1("Weightlifting");
-        profileRequest.setProfile_sport2("Running");
-        profileRequest.setProfile_sport3("Cycling");
-        profileRequest.setProfile_workout_frequency(4);
+ // given : 사용자 ID와 새로운 프로필 정보
+        int memberId = 1;
 
-        // 프로필 등록 메서드 호출
-        profileMapper.registerProfile(profileRequest);
+        // 새로운 프로필 생성
+        ProfileRequestDTO newProfile = new ProfileRequestDTO();
+        newProfile.setProfile_gender("M");
+        newProfile.setProfile_age(25);
+        newProfile.setProfile_region("Seoul");
+        newProfile.setProfile_weight(70.5f);
+        newProfile.setProfile_height(175.0f);
+        newProfile.setProfile_goal("Bulking");
+        newProfile.setProfile_time("Evening");
+        newProfile.setMember_id(memberId);
+        newProfile.setProfile_allergy("None");
+        newProfile.setProfile_diet_goal("Maintain");
+        newProfile.setProfile_sport1("Weightlifting");
+        newProfile.setProfile_sport2("Running");
+        newProfile.setProfile_sport3("Cycling");
+        newProfile.setProfile_workout_frequency(4);
 
-        // when:  프로필 수정할 DTO 설정
-        profileRequest.setProfile_goal("Cutting"); // 목표 변경
-        profileRequest.setProfile_weight(68.0f);    // 체중 변경
+        // when : 새로운 프로필을 DB에 등록
+        int insertResult = profileMapper.registerProfile(newProfile);
+        assertEquals(1, insertResult);  // 성공적으로 삽입되었는지 검증
 
-        // 프로필 수정 메서드 호출
-        int result = profileMapper.updateProfile(profileRequest);
+        // 프로필 수정
+        ProfileRequestDTO updatedProfile = new ProfileRequestDTO();
+        updatedProfile.setProfile_gender("F");
+        updatedProfile.setProfile_age(30);
+        updatedProfile.setProfile_region("Busan");
+        updatedProfile.setProfile_weight(65.0f);
+        updatedProfile.setProfile_height(170.0f);
+        updatedProfile.setProfile_goal("Cutting");
+        updatedProfile.setProfile_time("Morning");
+        updatedProfile.setMember_id(memberId);
+        updatedProfile.setProfile_allergy("Peanuts");
+        updatedProfile.setProfile_diet_goal("Lose Weight");
+        updatedProfile.setProfile_sport1("Yoga");
+        updatedProfile.setProfile_sport2("Swimming");
+        updatedProfile.setProfile_sport3("Cycling");
+        updatedProfile.setProfile_workout_frequency(5);
 
-        // then : 결과 확인 (1이 반환되면 성공)
-        assertThat(result).isEqualTo(1);
-        
+        // 프로필 수정
+        int updateResult = profileMapper.updateProfile(updatedProfile);
+        assertEquals(1, updateResult);  // 성공적으로 수정되었는지 검증
+
         // 수정된 프로필 확인
-        ProfileResponseDTO updatedProfile = profileMapper.getUserById("testuser5");
-        assertThat(updatedProfile.getProfile_goal()).isEqualTo("Cutting");
-        assertThat(updatedProfile.getProfile_weight()).isEqualTo(68.0f);
+        ProfileResponseDTO verifiedProfile = profileMapper.getUserById(memberId);
+
+        // 값 검증
+        assertEquals("F", verifiedProfile.getProfile_gender());
+        assertEquals(30, verifiedProfile.getProfile_age());
+        assertEquals("Busan", verifiedProfile.getProfile_region());
+        assertEquals(65.0f, verifiedProfile.getProfile_weight());
+        assertEquals(170.0f, verifiedProfile.getProfile_height());
+        assertEquals("Cutting", verifiedProfile.getProfile_goal());
+        assertEquals("Morning", verifiedProfile.getProfile_time());
+        assertEquals("Peanuts", verifiedProfile.getProfile_allergy());
+        assertEquals("Lose Weight", verifiedProfile.getProfile_diet_goal());
+        assertEquals("Yoga", verifiedProfile.getProfile_sport1());
+        assertEquals("Swimming", verifiedProfile.getProfile_sport2());
+        assertEquals("Cycling", verifiedProfile.getProfile_sport3());
+        assertEquals(5, verifiedProfile.getProfile_workout_frequency());
     }
+    
 
     @Test
     @DisplayName("016 : 회원 탈퇴 시 유저 프로필도 삭제됨")
     public void testDeleteUserAndProfile() {
-        // 1. 회원가입 및 프로필 등록
-        String memberId = "testuser9";
-        
-        // 사용자 등록
-        UserRequestDTO initialRequest = new UserRequestDTO();
-        initialRequest.setMember_id(memberId);
-        initialRequest.setMember_nickname("OldNick9");
-        initialRequest.setMember_password("oldpassword");
-        initialRequest.setMember_email("old@example.com");
-        initialRequest.setMember_phone("010-1234-5678");
-        initialRequest.setMember_img("default.png");
-        initialRequest.setMember_type("local");
-        // 추가 필드 설정 (필요한 경우)
-        
-        userMapper.registerUser(initialRequest);
-        
-        // 프로필 등록하기 위한 객체
+       // given : 사용자 ID와 프로필 정보
+        int memberId = 16;
+
+        // 먼저, 테스트를 위해 프로필을 생성합니다.
         ProfileRequestDTO profileRequest = new ProfileRequestDTO();
-        profileRequest.setProfile_id("P006");
         profileRequest.setProfile_gender("M");
         profileRequest.setProfile_age(25);
         profileRequest.setProfile_region("Seoul");
@@ -177,18 +193,19 @@ public class MyPageMapperApplicationTests {
         profileRequest.setProfile_sport3("Cycling");
         profileRequest.setProfile_workout_frequency(4);
 
-        //프로필 등록 메서드 호출 
+        // 프로필 등록
         profileMapper.registerProfile(profileRequest);
-        
-        // 2. 회원 탈퇴
-        userMapper.deleteUser(memberId); // 회원 탈퇴 메서드 호출
-        
-       // 3. 프로필 삭제
-    profileMapper.deleteProfileByMemberId(memberId); // 프로필 삭제 메서드 호출
-    
-    // 4. 프로필 존재 여부 확인
-    ProfileResponseDTO deletedProfile = profileMapper.getUserById(memberId);
-    assertThat(deletedProfile).isNull(); // 프로필이 null이어야 함
+
+        // when : 회원 탈퇴
+        int withdrawalResult = userMapper.deleteUserById(memberId); // 회원 삭제 메서드 호출
+        assertEquals(1, withdrawalResult);  // 성공적으로 삭제되었는지 검증
+
+  
+
+        // then : 프로필이 삭제되었는지 확인
+        ProfileResponseDTO deletedProfile = profileMapper.getUserById(memberId);
+        assertNull(deletedProfile);  // 프로필이 null이어야 함
     }
-}
+    }
+
 
