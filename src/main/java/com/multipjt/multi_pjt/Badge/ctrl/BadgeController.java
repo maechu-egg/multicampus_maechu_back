@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.multipjt.multi_pjt.badge.service.MemberBadgeManager;
 
 @RestController
-@RequestMapping("/api/badges")
+@RequestMapping("/badges")
 public class BadgeController {
 
     private final MemberBadgeManager memberBadgeManager;
@@ -22,8 +22,9 @@ public class BadgeController {
     @PostMapping("/processActivity")
     public ResponseEntity<String> processActivity(
             @RequestParam("memberId") int memberId,
-            @RequestParam("activityType") String activityType) {  // Add activityType as a request parameter
-        memberBadgeManager.processActivity(memberId, activityType);  // Pass activityType to the service
+            @RequestParam("activityType") String activityType) {  
+        memberBadgeManager.processActivity(memberId, activityType);  
         return ResponseEntity.ok("Processed activity for memberId: " + memberId);
     }
 }
+

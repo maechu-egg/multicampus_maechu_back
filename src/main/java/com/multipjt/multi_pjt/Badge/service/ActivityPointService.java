@@ -13,7 +13,7 @@ public class ActivityPointService {
             case "exercise":
                 return 0.5f;
             default:
-                return 0f; // 잘못된 활동 유형일 경우 0 포인트 반환
+                return 0f;
         }
     }
 }
