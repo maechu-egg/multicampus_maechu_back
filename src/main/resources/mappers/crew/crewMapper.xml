@@ -76,8 +76,8 @@
 
     <insert id="insertCrewMemberRow"
             parameterType="com.multipjt.multi_pjt.crew.domain.crew.CrewMemberRequestDTO">
-        INSERT INTO CrewMember(crew_id, member_id, crew_member_state, battle_wins)
-        VALUES(#{crew_id}, #{member_id},#{crew_member_state},#{battle_wins});
+        INSERT INTO CrewMember(crew_id, member_id)
+        VALUES(#{crew_id}, #{member_id});
     </insert>
 
     <!--  @@@@@@@@@ 크루 소개 @@@@@@@@@  -->

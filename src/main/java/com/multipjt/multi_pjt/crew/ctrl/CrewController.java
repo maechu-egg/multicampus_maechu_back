@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.PathVariable;
 
+import com.multipjt.multi_pjt.crew.domain.crew.CrewMemberRequestDTO;
 import com.multipjt.multi_pjt.crew.domain.crew.CrewPostRequestDTO;
 import com.multipjt.multi_pjt.crew.domain.crew.CrewRequestDTO;
 import com.multipjt.multi_pjt.crew.domain.crew.CrewResponseDTO;
@@ -56,6 +57,15 @@ public class CrewController {
     public ResponseEntity<CrewResponseDTO> getCrewInfo(@PathVariable("crewId") Integer crewId) {
         System.out.println("client endpoint: /crew/info/" + crewId);
         return ResponseEntity.ok(crewService.getCrewInfo(crewId));
+    }
+
+    // 크루원 추가
+    @PostMapping("/member/add")
+    public ResponseEntity<Void> addCrewMember(@RequestBody CrewMemberRequestDTO param) {
+        System.out.println("client endpoint: /crew/member/add");
+        System.out.println("debug>>> addCrewMember + " + param);
+        crewService.addCrewMember(param);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     // --------- 크루 소개 ---------
