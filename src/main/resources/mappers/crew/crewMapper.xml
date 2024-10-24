@@ -65,7 +65,7 @@
     <!-- 특정 크루 정보 조회  -->
 
     <select id="selectCrewInfoRow"
-            parameterType="java.util.HashMap"
+            parameterType="Integer"
             resultType="com.multipjt.multi_pjt.crew.domain.crew.CrewResponseDTO">
         SELECT *
         FROM Crew
