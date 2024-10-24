@@ -1,4 +1,4 @@
-package com.multipjt.multi_pjt.user.service;
+// package com.multipjt.multi_pjt.user.service;
 
 // import org.springframework.beans.factory.annotation.Autowired;
 // import org.springframework.stereotype.Service;
@@ -9,10 +9,6 @@ package com.multipjt.multi_pjt.user.service;
 // public class UserService {
 //     @Autowired
 //     private UserMapper userMapper;
-//@Service
-public class UserService {
-    // @Autowired
-    // private UserMapper userMapper;
 
    
-}
+// }

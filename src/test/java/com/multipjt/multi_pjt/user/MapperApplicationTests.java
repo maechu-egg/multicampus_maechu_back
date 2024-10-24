@@ -1,8 +1,9 @@
 package com.multipjt.multi_pjt.user;
 
 import com.multipjt.multi_pjt.user.dao.UserMapper;
-import com.multipjt.multi_pjt.user.domain.UserRequestDTO;
-import com.multipjt.multi_pjt.user.domain.UserResponseDTO;
+import com.multipjt.multi_pjt.user.domain.login.UserRequestDTO;
+import com.multipjt.multi_pjt.user.domain.login.UserResponseDTO;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

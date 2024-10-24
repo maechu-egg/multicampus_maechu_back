@@ -3,7 +3,7 @@ package com.multipjt.multi_pjt.user;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.multipjt.multi_pjt.jwt.JwtTokenProvider;
 import com.multipjt.multi_pjt.user.domain.CustomUserDetails;
-import com.multipjt.multi_pjt.user.domain.UserRequestDTO;
+import com.multipjt.multi_pjt.user.domain.login.UserRequestDTO;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

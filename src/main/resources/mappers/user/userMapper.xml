@@ -6,7 +6,7 @@
 
 
     <!-- 사용자 등록 -->
-    <insert id="registerUser" parameterType="com.multipjt.multi_pjt.user.domain.UserRequestDTO">
+    <insert id="registerUser" parameterType="com.multipjt.multi_pjt.user.domain.login.UserRequestDTO">
         INSERT INTO Member (
             member_img, nickname, password, email, phone, 
             verified, sns_provider, regDate
@@ -17,7 +17,7 @@
     </insert>
 
 <!-- 회원 정보 수정 쿼리 -->
-    <update id="updateUser" parameterType="com.multipjt.multi_pjt.user.domain.UserRequestDTO">
+    <update id="updateUser" parameterType="com.multipjt.multi_pjt.user.domain.login.UserRequestDTO">
         UPDATE Member
          SET 
         member_img = #{member_img}, 
@@ -39,7 +39,7 @@
 
 
      <!-- 이메일로 사용자 조회 -->
-    <select id="getUserByEmail" parameterType="String" resultType="com.multipjt.multi_pjt.user.domain.UserResponseDTO">
+    <select id="getUserByEmail" parameterType="String" resultType="com.multipjt.multi_pjt.user.domain.login.UserResponseDTO">
         SELECT 
             *
         FROM Member
@@ -48,24 +48,32 @@
 
      <!-- getUserByEmail2 --> 
 
-    <select id="getUserByEmail2" parameterType="String" resultType="com.multipjt.multi_pjt.user.domain.LoginDTO">
+    <select id="getUserByEmail2" parameterType="String" resultType="com.multipjt.multi_pjt.user.domain.login.LoginDTO">
     SELECT * FROM Member WHERE email = #{email}
     </select> 
 
     <!-- getUserById --> 
 
-    <select id="getUserById" parameterType="int" resultType="com.multipjt.multi_pjt.user.domain.UserResponseDTO">
+    <select id="getUserById" parameterType="int" resultType="com.multipjt.multi_pjt.user.domain.login.UserResponseDTO">
     SELECT member_id, member_img, nickname, email, phone, verified, sns_provider
         FROM Member
         WHERE member_id = #{memberId}
     </select>
 
     <!-- deleteUserById --> 
-
     <delete id="deleteUserById" parameterType="int">
         DELETE FROM Member WHERE member_id = #{member_id}
     </delete> 
     
 
-     
+  <!-- existsByEmail --> 
+    <select id="existsByEmail" parameterType="String" resultType="int">
+        SELECT COUNT(*) FROM Member WHERE email = #{email}
+    </select>
+
+    <!-- existsByNickname --> 
+
+    <select id="existsByNickname" parameterType="String" resultType="int">
+     SELECT COUNT(*) FROM Member WHERE nickname = #{nickname}
+    </select>     
     </mapper>

@@ -25,25 +25,19 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter { // 요청당
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String authorizationHeader = request.getHeader(HttpHeaders.AUTHORIZATION); // Authorization 헤더에서 jwt 추출
 
-        // Swagger 관련 요청에 대한 인증 건너뛰기
-        if (request.getRequestURI().startsWith("/v2/api-docs") || 
-            request.getRequestURI().startsWith("/swagger-ui/") || 
-            request.getRequestURI().startsWith("/swagger-resources/")) {
-            filterChain.doFilter(request, response); // 다음 필터로 요청 전달
-            return; // 필터 체인 진행 중단
-        }
-
-        // /register 요청에 대한 인증 건너뛰기
-        if (request.getRequestURI().equals("/api/user/register")) {
-            filterChain.doFilter(request, response); // 다음 필터로 요청 전달
-            return; // 필터 체인 진행 중단
-        }
-
-        // /login 요청에 대한 인증 건너뛰기
-        if (request.getRequestURI().equals("/api/user/login")) {
-            filterChain.doFilter(request, response); // 다음 필터로 요청 전달
-            return; // 필터 체인 진행 중단
-        }
+         // SecurityConfig에서 허용된 경로는 필터를 통과하도록 설정
+         if (request.getRequestURI().startsWith("/v2/api-docs") || 
+         request.getRequestURI().startsWith("/swagger-ui/") || 
+         request.getRequestURI().startsWith("/swagger-resources/") ||
+         request.getRequestURI().equals("/user/register") ||
+         request.getRequestURI().equals("/user/login") ||
+         request.getRequestURI().equals("/user/register/email-certification") ||
+         request.getRequestURI().equals("/user/register/email-check") ||
+         request.getRequestURI().equals("/user/register/nickname-check") ||
+         request.getRequestURI().equals("/user/register/verify-certification")) {
+         filterChain.doFilter(request, response); // 다음 필터로 요청 전달
+         return; // 필터 체인 진행 중단
+     }
 
         // Authorization 헤더가 없거나 Bearer로 시작하지 않는 경우
         if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
