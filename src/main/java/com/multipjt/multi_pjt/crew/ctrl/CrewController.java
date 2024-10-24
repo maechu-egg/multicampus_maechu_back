@@ -50,7 +50,6 @@ public class CrewController {
         return ResponseEntity.ok(crewService.getCrewSportList(map));
     }
 
-
     // --------- 크루 소개 ---------
 
     // 크루 소개 수정

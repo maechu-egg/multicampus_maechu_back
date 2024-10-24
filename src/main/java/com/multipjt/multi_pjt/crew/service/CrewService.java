@@ -45,10 +45,10 @@ public class CrewService {
     }
 
     // 특정 크루 정보 조회
-    public CrewResponseDTO getCrewInfo(Map<String, Integer> map) {
+    public CrewResponseDTO getCrewInfo(Integer crew_id) {
         System.out.println("debug: getCrewInfo + " + crewMapper);
-        System.out.println("debug: getCrewInfo + " + map);
-        return crewMapper.selectCrewInfoRow(map);
+        System.out.println("debug: getCrewInfo + " + crew_id);
+        return crewMapper.selectCrewInfoRow(crew_id);
     }
 
     // 크루원 추가
