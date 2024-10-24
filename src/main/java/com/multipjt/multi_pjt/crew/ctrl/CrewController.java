@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -71,11 +72,20 @@ public class CrewController {
     // --------- 크루 소개 ---------
 
     // 크루 소개 수정
-    @PostMapping("/intro/update")
+    @PatchMapping("/intro/update")
     public ResponseEntity<Void> updateCrewIntro(@RequestBody CrewRequestDTO param) {
         System.out.println("client endpoint: /crew/intro/update");
         System.out.println("debug>>> updateCrewIntro + " + param);
         crewService.updateCrewIntro(param);
+        return ResponseEntity.ok().build();
+    }
+
+    // 크루 관리 수정
+    @PatchMapping("/info/update")
+    public ResponseEntity<Void> updateCrewInfo(@RequestBody CrewRequestDTO param) {
+        System.out.println("client endpoint: /crew/info/update");
+        System.out.println("debug>>> updateCrewInfo + " + param);
+        crewService.updateCrewInfo(param);
         return ResponseEntity.ok().build();
     }
 
