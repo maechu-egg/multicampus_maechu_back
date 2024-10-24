@@ -10,7 +10,6 @@ import com.multipjt.multi_pjt.badge.dao.CrewBadgeMapper;
 
 import jakarta.transaction.Transactional;
 
-
 @SpringBootTest
 @Transactional
 public class CrewBadgeMapperTest {
@@ -29,12 +28,12 @@ public class CrewBadgeMapperTest {
         crewBadgeMapper.insertBadge(badgeRequest);
 
         // 2. 뱃지 조회
-        CrewBadgeResponseDTO badgeResponse = crewBadgeMapper.selectCrewBadgeByMemberId(1);
+        CrewBadgeResponseDTO badgeResponse = crewBadgeMapper.selectBadgeByMemberId(1);
         assertThat(badgeResponse).isNotNull();
         assertThat(badgeResponse.getMember_id()).isEqualTo(1);
         assertThat(badgeResponse.getBadge_level()).isEqualTo("Bronze");
     }
 
-
+    
     
 }

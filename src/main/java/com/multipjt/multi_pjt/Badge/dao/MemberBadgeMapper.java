@@ -12,11 +12,9 @@ public interface MemberBadgeMapper {
      public void insertBadge(MemberBadgeRequestDTO param);
     
      // 특정 회원의 뱃지 조회
-     public MemberBadgeResponseDTO getselectBadgeByMemberId(@Param("member_id") int memberId);
+     public MemberBadgeResponseDTO selectBadgeByMemberId(@Param("member_id") int memberId);
  
      // 특정 회원의 뱃지 업데이트
      public void updateBadge(MemberBadgeRequestDTO param);
-
-    
 }
     
