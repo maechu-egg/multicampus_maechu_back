@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.multipjt.multi_pjt.badge.dao.MemberBadgeMapper">
+
+    <!-- 개인 뱃지 생성 -->
+    <insert id="insertBadge" parameterType="com.multipjt.multi_pjt.badge.domain.badge.MemberBadgeRequestDTO">
+        INSERT INTO MemberBadge (
+            current_points,
+            badge_level,
+            member_id
+        ) VALUES (
+            #{current_points},
+            #{badge_level},
+            #{member_id}
+        );
+    </insert>
+
+    <!-- 멤버 ID로 뱃지 정보 조회 -->
+    <select id="getBadgeByMemberId" resultType="com.multipjt.multi_pjt.badge.domain.badge.MemberBadgeResponseDTO">
+        SELECT * FROM MemberBadge WHERE member_id = #{member_id};
+    </select>
+
+    <!-- 뱃지 업데이트 -->
+    <update id="updateBadge" parameterType="com.multipjt.multi_pjt.badge.domain.badge.MemberBadgeRequestDTO">
+        UPDATE MemberBadge 
+        SET current_points = #{current_points}, badge_level = #{badge_level}
+        WHERE member_id = #{member_id};
+    </update>
+
+    <!-- 유저 활동 기록을 UserActivityRecord에 삽입 -->
+    <insert id="insertUserActivityRecord" parameterType="map">
+        INSERT INTO UserActivityRecord (
+            activity_type,
+            points,
+            created_date,
+            member_id
+        ) VALUES (
+            #{activity_type},
+            #{points},
+            NOW(),
+            #{member_id}
+        );
+    </insert>
+
+    <!-- 멤버의 활동을 포스트, 댓글, 운동기록, 식단기록에서 조회하여 UserActivityRecord에 반영 -->
+    <select id="getMemberActivity" resultType="map">
+        SELECT 
+            'post' AS activity_type, 
+            0.5 AS points, 
+            post_date AS created_date, 
+            member_id
+        FROM Posts 
+        WHERE member_id = #{member_id}
+        UNION ALL
+        SELECT 
+            'comment' AS activity_type, 
+            0.5 AS points, 
+            comments_date AS created_date, 
+            member_id
+        FROM Comments 
+        WHERE member_id = #{member_id}
+        UNION ALL
+        SELECT 
+            'diet' AS activity_type, 
+            0.5 AS points, 
+            record_date AS created_date, 
+            member_id
+        FROM DietRecords 
+        WHERE member_id = #{member_id}
+        UNION ALL
+        SELECT 
+            'exercise' AS activity_type, 
+            0.5 AS points, 
+            record_date AS created_date, 
+            member_id
+        FROM ExerciseRecords 
+        WHERE member_id = #{member_id};
+    </select>
+
+</mapper>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.multipjt.multi_pjt.badge.dao.CrewBadgeMapper">
+ <!-- CrewBadgeMapper -->
+
+    <insert id="insertBadge" parameterType="com.multipjt.multi_pjt.badge.domain.badge.CrewBadgeRequestDTO">
+        INSERT INTO CrewBadge (
+            crew_badge_id,
+            crew_current_points,
+            badge_level,
+            member_id
+        ) VALUES (
+            #{crew_badge_id},
+            #{crew_current_points},
+            #{badge_level},
+            #{member_id}
+        );
+    </insert>
+
+    <select id="selectCrewBadgeByMemberId" resultType="com.multipjt.multi_pjt.badge.domain.badge.CrewBadgeResponseDTO">
+        SELECT * FROM CrewBadge WHERE member_id = #{member_id};
+    </select>
+
+    <!-- CrewMemberMapper.xml -->
+    <select id="selectBattleWinsByMemberId" resultType="int">
+    SELECT battle_wins
+    FROM CrewMember
+    WHERE member_id = #{memberId}
+    </select>
+
+</mapper>

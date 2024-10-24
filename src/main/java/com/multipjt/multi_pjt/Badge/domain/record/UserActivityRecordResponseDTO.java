@@ -9,4 +9,7 @@ public class UserActivityRecordResponseDTO {
     private float points;
     private String created_date;
     private int member_id;
+
+
+    
 }
