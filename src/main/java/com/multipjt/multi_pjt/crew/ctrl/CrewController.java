@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import com.multipjt.multi_pjt.crew.domain.crew.CrewPostRequestDTO;
 import com.multipjt.multi_pjt.crew.domain.crew.CrewRequestDTO;
@@ -48,6 +49,13 @@ public class CrewController {
     public ResponseEntity<List<CrewResponseDTO>> getCrewSportList(@RequestParam Map<String, String> map) {
         System.out.println("client endpoint: /crew/list/sport");
         return ResponseEntity.ok(crewService.getCrewSportList(map));
+    }
+
+    // 특정 크루 정보 조회
+    @GetMapping("/info/{crewId}")
+    public ResponseEntity<CrewResponseDTO> getCrewInfo(@PathVariable("crewId") Integer crewId) {
+        System.out.println("client endpoint: /crew/info/" + crewId);
+        return ResponseEntity.ok(crewService.getCrewInfo(crewId));
     }
 
     // --------- 크루 소개 ---------

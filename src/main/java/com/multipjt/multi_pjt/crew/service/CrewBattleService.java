@@ -23,16 +23,21 @@ public class CrewBattleService {
 
     // 배틀 생성
     public void createCrewBattle(CrewBattleRequestDTO params) {
+        System.out.println("debug>>> Service:createCrewBattle + " + crewBattleMapper);
+        System.out.println("debug>>> Service:createCrewBattle + " + params);
         crewBattleMapper.createCrewBattleRow(params);
     }
 
     // 배틀 목록 조회
     public List<CrewBattleResponseDTO> selectCrewBattle() {
+        System.out.println("debug>>> Service:selectCrewBattle + " + crewBattleMapper);
         return crewBattleMapper.selectCrewBattleRow();
     }
 
     // 배틀 신청
     public void createBattleMember(BattleMemberRequestDTO params) {
+        System.out.println("debug>>> Service:createBattleMember + " + crewBattleMapper);
+        System.out.println("debug>>> Service:createBattleMember + " + params);
         crewBattleMapper.createBattleMemberRow(params);
     }
 
@@ -40,21 +45,27 @@ public class CrewBattleService {
 
     // 배틀 참가 멤버 조회
     public List<BattleMemberResponseDTO> selectBattleMember() {
+        System.out.println("debug>>> Service:selectBattleMember + " + crewBattleMapper);
         return crewBattleMapper.selectBattleMemberRow();
     }
 
     // 피드 작성
     public void createCrewBattleFeed(CrewBattleFeedRequestDTO params) {
+        System.out.println("debug>>> Service:createCrewBattleFeed + " + crewBattleMapper);
+        System.out.println("debug>>> Service:createCrewBattleFeed + " + params);
         crewBattleMapper.createCrewBattleFeedRow(params);
     }
 
     // 피드 조회
     public List<CrewBattleFeedResponseDTO> selectCrewBattleFeed() {
+        System.out.println("debug>>> Service:selectCrewBattleFeed + " + crewBattleMapper);
         return crewBattleMapper.selectCrewBattleFeedRow();
     }
 
     // 투표
     public void createVote(CrewVoteRequestDTO params) {
+        System.out.println("debug>>> Service:createVote + " + crewBattleMapper);
+        System.out.println("debug>>> Service:createVote + " + params);
         crewBattleMapper.createVoteRow(params);
     }
 }
