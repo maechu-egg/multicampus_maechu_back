@@ -1,4 +1,4 @@
- package com.multipjt.multi_pjt.user.ctrl;
+package com.multipjt.multi_pjt.user.ctrl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication; // Spring Security의 Authentication 임포트
@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.multipjt.multi_pjt.user.domain.CustomUserDetails;
+import com.multipjt.multi_pjt.user.domain.login.EmailCertificationInputDTO;
+import com.multipjt.multi_pjt.user.domain.login.EmailCertificationRequestDTO;
 import com.multipjt.multi_pjt.user.domain.login.EmailRequestDTO;
 import com.multipjt.multi_pjt.user.domain.login.LoginDTO;
 import com.multipjt.multi_pjt.user.domain.login.NicknameRequestDTO;
@@ -59,6 +61,37 @@ public class UserController {
                                  .body("{\"Code\": \"NICKNAME_ALREADY_EXISTS\", \"Message\": \"이미 존재하는 닉네임입니다.\"}");
         } else {
             return ResponseEntity.ok("{\"Code\": \"SUCCESS\", \"Message\": \"사용 가능한 닉네임입니다.\"}");
+        }
+    }
+
+   
+
+    @PostMapping("/register/email-certification")
+    public ResponseEntity<String> emailCertification(@RequestBody EmailCertificationRequestDTO emailDTO) {
+        String email = emailDTO.getEmail();
+        boolean result = loginServiceImple.sendCertificationEmail(email); // 서비스 메서드 호출
+
+        if (result) {
+            return ResponseEntity.ok("{\"Code\": \"SUCCESS\", \"Message\": \"인증 메일이 발송되었습니다.\"}");
+        } else {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                                 .body("{\"Code\": \"ERROR\", \"Message\": \"인증 메일 발송에 실패했습니다.\"}");
+        }
+    }
+
+    
+    @PostMapping("/register/verify-certification")
+    public ResponseEntity<String> verifyCertification(@RequestBody EmailCertificationInputDTO emailDTO) {
+        String email = emailDTO.getEmail();
+        String code = emailDTO.getCertificationCode(); // 인증 코드를 가져옴
+
+        boolean isVerified = loginServiceImple.verifyCertificationCode(email, code); // 인증 코드 확인
+
+        if (isVerified) {
+            return ResponseEntity.ok("{\"Code\": \"SUCCESS\", \"Message\": \"인증이 완료되었습니다.\"}");
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                                 .body("{\"Code\": \"INVALID_CODE\", \"Message\": \"유효하지 않은 인증 코드입니다.\"}");
         }
     }
 

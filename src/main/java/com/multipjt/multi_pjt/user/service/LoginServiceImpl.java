@@ -1,24 +1,35 @@
 package com.multipjt.multi_pjt.user.service;
 
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
+import com.multipjt.multi_pjt.jwt.EmailProvider;
 import com.multipjt.multi_pjt.jwt.JwtTokenProvider;
 import com.multipjt.multi_pjt.user.dao.UserMapper;
 import com.multipjt.multi_pjt.user.domain.CustomUserDetails;
 import com.multipjt.multi_pjt.user.domain.login.UserRequestDTO;
 import com.multipjt.multi_pjt.user.domain.login.UserResponseDTO;
+import com.multipjt.multi_pjt.user.domain.login.EmailCertificationCodeDTO;
 import com.multipjt.multi_pjt.user.domain.login.LoginDTO;
 
-
 import java.util.ArrayList;
+import java.security.SecureRandom;
+import java.time.LocalDateTime;
+import java.util.concurrent.ConcurrentHashMap;
 
+@Slf4j
 @Service 
 public class LoginServiceImpl implements UserDetailsService { // UserDetailsService 구현
+
+    private static final Logger logger = LoggerFactory.getLogger(LoginServiceImpl.class);
 
     @Autowired
     private UserMapper userMapper; // UserMapper 주입
@@ -28,6 +39,13 @@ public class LoginServiceImpl implements UserDetailsService { // UserDetailsServ
 
     @Autowired
     private JwtTokenProvider jwtTokenProvider;
+
+    @Autowired
+    private EmailProvider emailProvider;
+
+    private final ConcurrentHashMap<String, EmailCertificationCodeDTO> emailCertificationMap = new ConcurrentHashMap<>(); // 이메일과 인증 코드를 저장할 Map
+
+    private final SecureRandom random = new SecureRandom();
 
     // 1. 회원가입 메서드 추가
     public void registerUser(UserRequestDTO userRequestDTO) {
@@ -54,6 +72,52 @@ public class LoginServiceImpl implements UserDetailsService { // UserDetailsServ
         int count = userMapper.existsByNickname(nickname);
         return count > 0; 
     }
+
+    // 1.5 이메일 인증 코드 발송 
+    public boolean sendCertificationEmail(String email) {
+        String certificationNumber = generateCertificationNumber();
+        LocalDateTime expiryTime = LocalDateTime.now().plusMinutes(5); // 5분 후 만료
+
+        boolean result = emailProvider.sendCertificationMail(email, certificationNumber);
+        
+        if (result) {
+            emailCertificationMap.put(email, new EmailCertificationCodeDTO(email, certificationNumber, expiryTime));
+            return true;
+        } else {
+            // 로깅 추가
+            log.error("Failed to send certification email to: {}", email);
+            return false;
+        }
+    }
+
+    public String generateCertificationNumber() {
+        StringBuilder certificationNumber = new StringBuilder();
+        for (int i = 0; i < 6; i++) {
+            certificationNumber.append(random.nextInt(10));
+        }
+        return certificationNumber.toString();
+    }
+
+    // 인증 코드 확인 메서드 추가
+    public boolean verifyCertificationCode(String email, String code) {
+        EmailCertificationCodeDTO certification = emailCertificationMap.get(email);
+        if (certification == null) {
+            return false;
+        }
+
+        if (LocalDateTime.now().isAfter(certification.getExpiryTime())) {
+            emailCertificationMap.remove(email);
+            return false;
+        }
+
+        boolean isValid = certification.getCertificationCode().equals(code);
+        if (isValid) {
+            emailCertificationMap.remove(email); // 사용된 코드 제거
+        }
+        return isValid;
+    }
+
+
  
     // 2. 로그인 : 이메일, 비번 가져와 검증 후 존재하면 jwt 토큰 생성 
     public String login(LoginDTO loginDTO) {
