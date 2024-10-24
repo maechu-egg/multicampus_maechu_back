@@ -1,6 +1,7 @@
 package com.multipjt.multi_pjt.crew.ctrl;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -25,7 +26,7 @@ public class CrewBattleController {
         System.out.println("client endpoint: /crew/battle/create");
         System.out.println("debug: createCrewBattle + " + param);
         crewBattleService.createCrewBattle(param);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     // --------- 배틀 상세보기 ---------
@@ -36,6 +37,6 @@ public class CrewBattleController {
         System.out.println("client endpoint: /crew/battle/feed/create");
         System.out.println("debug: createCrewBattleFeed + " + param);
         crewBattleService.createCrewBattleFeed(param);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 }

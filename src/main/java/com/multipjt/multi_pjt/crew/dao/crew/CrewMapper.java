@@ -28,7 +28,7 @@ public interface CrewMapper {
     public List<CrewResponseDTO> selectCrewSportRow(Map<String, String> map);
 
     // 특정 크루 정보 조회
-    public CrewResponseDTO selectCrewInfoRow(Map<String, Integer> map);
+    public CrewResponseDTO selectCrewInfoRow(Integer crewId);
 
     // 크루원 추가
     public void insertCrewMemberRow(CrewMemberRequestDTO param);
