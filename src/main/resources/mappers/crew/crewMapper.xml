@@ -9,7 +9,6 @@
     <insert id="createCrewRow"
             parameterType="com.multipjt.multi_pjt.crew.domain.crew.CrewRequestDTO">
         INSERT INTO Crew(
-            crew_id,
             member_id,
             crew_name,
             crew_goal,
@@ -19,12 +18,8 @@
             crew_gender,
             crew_frequency,
             crew_age,
-            crew_date,
-            crew_intro_post,
-            crew_intro_img,
             crew_state
         ) VALUES (
-            #{crew_id},
             #{member_id},
             #{crew_name},
             #{crew_goal},
@@ -34,9 +29,6 @@
             #{crew_gender},
             #{crew_frequency},
             #{crew_age},
-            #{crew_date},
-            #{crew_intro_post},
-            #{crew_intro_img},
             #{crew_state}
             );
     </insert>
@@ -76,8 +68,8 @@
 
     <insert id="insertCrewMemberRow"
             parameterType="com.multipjt.multi_pjt.crew.domain.crew.CrewMemberRequestDTO">
-        INSERT INTO CrewMember(crew_id, member_id, crew_member_state, battle_wins)
-        VALUES(#{crew_id}, #{member_id},#{crew_member_state},#{battle_wins});
+        INSERT INTO CrewMember(crew_id, member_id)
+        VALUES(#{crew_id}, #{member_id});
     </insert>
 
     <!--  @@@@@@@@@ 크루 소개 @@@@@@@@@  -->
@@ -114,7 +106,7 @@
     <!-- 크루 삭제 --> 
 
     <delete id="deleteCrewRow"
-            parameterType="com.multipjt.multi_pjt.crew.domain.crew.CrewRequestDTO">
+            parameterType="Integer">
         DELETE FROM Crew
         WHERE crew_id = #{crew_id};
     </delete>

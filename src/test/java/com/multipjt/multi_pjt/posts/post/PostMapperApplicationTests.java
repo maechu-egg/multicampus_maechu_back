@@ -17,7 +17,7 @@ import com.multipjt.multi_pjt.community.dao.UserActivityMapper;
 import com.multipjt.multi_pjt.community.domain.UserActivity.UserActivityRequestDTO;
 import com.multipjt.multi_pjt.community.domain.posts.PostRequestDTO;
 import com.multipjt.multi_pjt.community.domain.posts.PostResponseDTO;
-import com.multipjt.multi_pjt.user.domain.UserRequestDTO;
+//import com.multipjt.multi_pjt.user.domain.UserRequestDTO;
 
 
 @SpringBootTest
@@ -35,7 +35,7 @@ public class PostMapperApplicationTests {
         
         // Given : 게시글 등록 기본 세팅
         PostRequestDTO request = new PostRequestDTO();
-        UserRequestDTO user = new UserRequestDTO();
+        //UserRequestDTO user = new UserRequestDTO();
 
         // user.setMember_id("1");
 

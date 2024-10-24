@@ -42,7 +42,7 @@ public interface CrewMapper {
     public void updateCrewInfoRow(CrewRequestDTO param);
 
     // 크루 삭제
-    public void deleteCrewRow(CrewRequestDTO param);
+    public void deleteCrewRow(Integer crewId);
 
     // --------- 크루원 정보 ---------
     

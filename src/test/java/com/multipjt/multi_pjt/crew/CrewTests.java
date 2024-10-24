@@ -135,10 +135,7 @@ public class CrewTests {
     @Test
     @DisplayName("020 : 크루 삭제")
     public void deleteCrewTest(){
-        CrewRequestDTO deleteCrew = new CrewRequestDTO();
-        deleteCrew.setCrew_id(9);
-        
-        crewMapper.deleteCrewRow(deleteCrew);
+        crewMapper.deleteCrewRow(10);
         System.out.println("크루 삭제 완료");
     }
 

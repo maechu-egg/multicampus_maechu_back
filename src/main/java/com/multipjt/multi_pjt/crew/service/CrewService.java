@@ -75,10 +75,10 @@ public class CrewService {
     }
 
     // 크루 삭제
-    public void deleteCrew(CrewRequestDTO param) {
+    public void deleteCrew(Integer crewId) {
         System.out.println("debug>>> Service: deleteCrew + " + crewMapper);
-        System.out.println("debug>>> Service: deleteCrew + " + param);
-        crewMapper.deleteCrewRow(param);
+        System.out.println("debug>>> Service: deleteCrew + " + crewId);
+        crewMapper.deleteCrewRow(crewId);
     }
 
     // --------- 크루원 정보 ---------
