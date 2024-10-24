@@ -1,4 +1,4 @@
-package com.multipjt.multi_pjt.user.domain;
+package com.multipjt.multi_pjt.user.domain.login;
 
 import lombok.Data;
 
