@@ -114,7 +114,7 @@
     <!-- 크루 삭제 --> 
 
     <delete id="deleteCrewRow"
-            parameterType="com.multipjt.multi_pjt.crew.domain.crew.CrewRequestDTO">
+            parameterType="Integer">
         DELETE FROM Crew
         WHERE crew_id = #{crew_id};
     </delete>

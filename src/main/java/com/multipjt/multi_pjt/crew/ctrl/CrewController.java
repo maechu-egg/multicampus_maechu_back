@@ -6,6 +6,7 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -87,6 +88,14 @@ public class CrewController {
         System.out.println("debug>>> updateCrewInfo + " + param);
         crewService.updateCrewInfo(param);
         return ResponseEntity.ok().build();
+    }
+
+    // 크루 삭제
+    @DeleteMapping("/delete/{crewId}")
+    public ResponseEntity<Void> deleteCrew(@PathVariable("crewId") Integer crewId) {
+        System.out.println("client endpoint: /crew/delete/" + crewId);
+        crewService.deleteCrew(crewId);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     // --------- 크루 게시판 ---------
