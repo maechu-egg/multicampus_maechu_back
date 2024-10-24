@@ -1,7 +1,10 @@
 package com.multipjt.multi_pjt.crew.ctrl;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -9,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.multipjt.multi_pjt.crew.domain.crew.CrewPostRequestDTO;
 import com.multipjt.multi_pjt.crew.domain.crew.CrewRequestDTO;
+import com.multipjt.multi_pjt.crew.domain.crew.CrewResponseDTO;
 import com.multipjt.multi_pjt.crew.service.CrewService;
 
 @RestController
@@ -27,6 +31,13 @@ public class CrewController {
         System.out.println("debug>>> createCrew + " + param);
         crewService.createCrew(param);
         return ResponseEntity.ok().build();
+    }
+
+    // 크루 리스트 전체 조회
+    @GetMapping("/list")
+    public ResponseEntity<List<CrewResponseDTO>> getCrewList() {
+        System.out.println("client endpoint: /crew/list");
+        return ResponseEntity.ok(crewService.getCrewList());
     }
 
     // --------- 크루 소개 ---------
