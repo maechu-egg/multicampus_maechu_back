@@ -2,8 +2,8 @@ package com.multipjt.multi_pjt;
 
 
 import org.apache.ibatis.session.SqlSessionFactory;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -19,6 +19,7 @@ public class DatabaseApplicationTests {
 
     @Test
     @DisplayName("00 : SqlSessionFactory 빈 주입 성공 테스트")
+    @DisplayName("SqlSessionFactory 빈 주입 성공 테스트")
     public void givenSqlSessionFactory_whenInjected_thenFactoryShouldNotBeNull() {
        
         // When: factory 객체가 정상적으로 생성되었는지 확인
@@ -33,3 +34,4 @@ public class DatabaseApplicationTests {
         assertThat(factory).isNotNull();
     }
 }
+
