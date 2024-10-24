@@ -7,9 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import com.multipjt.multi_pjt.badge.dao.CrewBadgeMapper;
-import com.multipjt.multi_pjt.badge.domain.badge.CrewBadgeRequestDTO;
-import com.multipjt.multi_pjt.badge.domain.badge.CrewBadgeResponseDTO;
-
 import jakarta.transaction.Transactional;
 
 
@@ -31,12 +28,12 @@ public class CrewBadgeMapperTest {
         crewBadgeMapper.insertBadge(badgeRequest);
 
         // 2. 뱃지 조회
-        CrewBadgeResponseDTO badgeResponse = crewBadgeMapper.selectBadgeByMemberId(1);
+        CrewBadgeResponseDTO badgeResponse = crewBadgeMapper.selectCrewBadgeByMemberId(1);
         assertThat(badgeResponse).isNotNull();
         assertThat(badgeResponse.getMember_id()).isEqualTo(1);
         assertThat(badgeResponse.getBadge_level()).isEqualTo("Bronze");
     }
 
-    
+
     
 }

@@ -2,8 +2,8 @@ package com.multipjt.multi_pjt;
 
 
 import org.apache.ibatis.session.SqlSessionFactory;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.DisplayName;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -14,7 +14,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class DatabaseApplicationTests {
  
     // Given: 테스트를 위한 사전 조건 설정 (자동 주입된 SqlSessionFactory)
-    @Autowired
+   @Autowired
     private SqlSessionFactory factory;
 
     @Test
@@ -33,4 +33,3 @@ public class DatabaseApplicationTests {
         assertThat(factory).isNotNull();
     }
 }
-

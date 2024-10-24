@@ -80,9 +80,7 @@ public class CrewTests {
     @Test
     @DisplayName("004 : 특정 크루 정보 조회")
     public void selectCrewInfoTest(){
-        Map<String, Integer> map = new HashMap<>();
-        map.put("crew_id", 9);
-        CrewResponseDTO crewInfo = crewMapper.selectCrewInfoRow(map);
+        CrewResponseDTO crewInfo = crewMapper.selectCrewInfoRow(20);
         System.out.println(crewInfo);
         assertNotNull(crewInfo, "크루가 존재해야 합니다.");
         System.out.println("크루 정보 조회 테스트 성공");

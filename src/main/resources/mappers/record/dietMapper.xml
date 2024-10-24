@@ -49,10 +49,11 @@
 
     <!-- itemUpdate --> 
 
-    <update id="itemUpdate" parameterType="java.util.Map">
+    <update id="itemUpdate" parameterType="com.multipjt.multi_pjt.record.diet.domain.ItemRequestDTO">
         update DietItems
-        set item_name = #{newItemName},
+        set item_name = #{newItemName},ㄴ
         calories = #{calories},
+        quantity = #{quantity},
         carbs = #{carbs},
         fat = #{fat},
         protein = #{protein}
