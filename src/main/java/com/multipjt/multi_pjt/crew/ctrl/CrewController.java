@@ -1,13 +1,16 @@
 package com.multipjt.multi_pjt.crew.ctrl;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.multipjt.multi_pjt.crew.domain.crew.CrewPostRequestDTO;
@@ -30,7 +33,7 @@ public class CrewController {
         System.out.println("client endpoint: /crew/create");
         System.out.println("debug>>> createCrew + " + param);
         crewService.createCrew(param);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.status(HttpStatus.CREATED).build(); // 201 Created
     }
 
     // 크루 리스트 전체 조회
@@ -39,6 +42,14 @@ public class CrewController {
         System.out.println("client endpoint: /crew/list");
         return ResponseEntity.ok(crewService.getCrewList());
     }
+
+    // 크루 리스트 종목 조회
+    @GetMapping("/list/sport")
+    public ResponseEntity<List<CrewResponseDTO>> getCrewSportList(@RequestParam Map<String, String> map) {
+        System.out.println("client endpoint: /crew/list/sport");
+        return ResponseEntity.ok(crewService.getCrewSportList(map));
+    }
+
 
     // --------- 크루 소개 ---------
 
@@ -61,5 +72,6 @@ public class CrewController {
         crewService.createCrewPost(param);
         return ResponseEntity.ok().build();
     }
+
 
 }
