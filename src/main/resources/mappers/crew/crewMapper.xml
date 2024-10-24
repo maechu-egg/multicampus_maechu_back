@@ -1,0 +1,262 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.multipjt.multi_pjt.crew.dao.crew.CrewMapper">
+    <!--  @@@@@@@@@ 크루 찾기 @@@@@@@@@  -->
+
+    <!-- 크루 생성 --> 
+
+    <insert id="createCrewRow"
+            parameterType="com.multipjt.multi_pjt.crew.domain.crew.CrewRequestDTO">
+        INSERT INTO Crew(
+            member_id,
+            crew_name,
+            crew_goal,
+            crew_title,
+            crew_location,
+            crew_sport,
+            crew_gender,
+            crew_frequency,
+            crew_age,
+            crew_state
+        ) VALUES (
+            #{member_id},
+            #{crew_name},
+            #{crew_goal},
+            #{crew_title},
+            #{crew_location},
+            #{crew_sport},
+            #{crew_gender},
+            #{crew_frequency},
+            #{crew_age},
+            #{crew_state}
+            );
+    </insert>
+
+    <!-- 전체 크루 리스트 조회 --> 
+
+    <select id="selectCrewRow"
+            resultType="com.multipjt.multi_pjt.crew.domain.crew.CrewResponseDTO">
+        SELECT *
+        FROM Crew
+        WHERE crew_state = 1
+        ORDER BY crew_date DESC;
+    </select>    
+
+    <!-- 특정 크루 리스트 조회 (종목) --> 
+
+    <select id="selectCrewSportRow"
+            parameterType="java.util.HashMap"
+            resultType="com.multipjt.multi_pjt.crew.domain.crew.CrewResponseDTO">
+        SELECT *
+        FROM Crew
+        WHERE crew_sport = #{crew_sport} AND crew_state = 1
+        ORDER BY crew_date DESC;
+    </select>
+
+    <!-- 특정 크루 정보 조회  -->
+
+    <select id="selectCrewInfoRow"
+            parameterType="Integer"
+            resultType="com.multipjt.multi_pjt.crew.domain.crew.CrewResponseDTO">
+        SELECT *
+        FROM Crew
+        WHERE crew_id = #{crew_id} AND crew_state = 1;
+    </select>
+
+    <!-- 크루원 추가 --> 
+
+    <insert id="insertCrewMemberRow"
+            parameterType="com.multipjt.multi_pjt.crew.domain.crew.CrewMemberRequestDTO">
+        INSERT INTO CrewMember(crew_id, member_id, crew_member_state, battle_wins)
+        VALUES(#{crew_id}, #{member_id},#{crew_member_state},#{battle_wins});
+    </insert>
+
+    <!--  @@@@@@@@@ 크루 소개 @@@@@@@@@  -->
+
+    <!-- 크루 소개 수정 --> 
+
+    <update id="updateCrewIntroRow"
+            parameterType="com.multipjt.multi_pjt.crew.domain.crew.CrewRequestDTO">
+        UPDATE Crew
+        SET crew_intro_post = #{crew_intro_post},
+            crew_intro_img = #{crew_intro_img},
+            crew_name = #{crew_name}
+        WHERE crew_id = #{crew_id}
+    </update>
+
+    <!-- 크루 관리 수정 --> 
+
+    <update id="updateCrewInfoRow"
+            parameterType="com.multipjt.multi_pjt.crew.domain.crew.CrewRequestDTO">
+        UPDATE Crew
+        SET crew_name = #{crew_name},
+            crew_goal = #{crew_goal},
+            crew_title = #{crew_title},
+            crew_location = #{crew_location},
+            crew_sport = #{crew_sport},
+            crew_gender = #{crew_gender},
+            crew_frequency = #{crew_frequency},
+            crew_age = #{crew_age},
+            crew_state = #{crew_state}
+        WHERE crew_id = #{crew_id};
+    </update>
+
+    
+    <!-- 크루 삭제 --> 
+
+    <delete id="deleteCrewRow"
+            parameterType="com.multipjt.multi_pjt.crew.domain.crew.CrewRequestDTO">
+        DELETE FROM Crew
+        WHERE crew_id = #{crew_id};
+    </delete>
+
+    <!--  @@@@@@@@@ 크루원 정보 @@@@@@@@@  -->
+
+    <!-- 크루원 승인 --> 
+
+    <update id="updateCrewMemberRow"
+            parameterType="com.multipjt.multi_pjt.crew.domain.crew.CrewMemberRequestDTO">
+        UPDATE CrewMember
+        SET crew_member_state = 1
+        WHERE crew_id = #{crew_id} AND member_id = #{member_id};
+    </update>
+    
+    <!-- 크루원 조회 --> 
+
+    <select id="selectCrewMemberRow"
+            parameterType="java.util.HashMap"
+            resultType="com.multipjt.multi_pjt.crew.domain.crew.CrewMemberResponseDTO">
+        SELECT *
+        FROM CrewMember
+        WHERE crew_id = #{crew_id};
+    </select>
+
+    <!-- 크루원 삭제 --> 
+
+    <delete id="deleteCrewMemberRow"
+            parameterType="com.multipjt.multi_pjt.crew.domain.crew.CrewMemberRequestDTO">
+        delete from CrewMember
+        WHERE member_id = #{member_id} AND crew_id = #{crew_id};
+    </delete>   
+
+    <!--  @@@@@@@@@ 크루 게시판 @@@@@@@@@  -->
+
+    <!-- 크루 게시글 등록 --> 
+
+    <insert id="insertCrewPostRow"
+            parameterType="com.multipjt.multi_pjt.crew.domain.crew.CrewPostRequestDTO">
+        INSERT INTO CrewPost(
+            crew_post_id,
+            crew_post_title,
+            crew_post_content,
+            crew_post_img,
+            crew_post_like,
+            crew_post_state,
+            crew_id,
+            member_id
+        ) VALUES (
+            #{crew_post_id},
+            #{crew_post_title},
+            #{crew_post_content},
+            #{crew_post_img},
+            #{crew_post_like},
+            #{crew_post_state},
+            #{crew_id},
+            #{member_id}
+        );
+    </insert>    
+
+    <!-- 크루 게시판 게시물 전체 조회 --> 
+
+    <select id="selectCrewPostListRow"
+            parameterType="java.util.HashMap"
+            resultType="com.multipjt.multi_pjt.crew.domain.crew.CrewPostResponseDTO">
+        SELECT *
+        FROM CrewPost
+        WHERE crew_id = #{crew_id}
+        ORDER BY crew_post_date DESC;
+    </select>
+
+    <!-- 크루 게시판 상단 공지, 일반 고정 3개씩 --> 
+
+    <select id="selectCrewTopPostRow"
+            parameterType="com.multipjt.multi_pjt.crew.domain.crew.CrewPostRequestDTO"
+            resultType="com.multipjt.multi_pjt.crew.domain.crew.CrewPostResponseDTO">
+        Select *
+        FROM CrewPost
+        WHERE crew_id = #{crew_id} AND crew_post_state = #{crew_post_state}
+        ORDER BY crew_post_date DESC limit 3;
+    </select>
+
+    <!-- 크루 게시판 공지/인기/일반 게시물 조회 --> 
+
+    <select id="selectCrewNoticePostRow"
+            parameterType="com.multipjt.multi_pjt.crew.domain.crew.CrewPostRequestDTO"
+            resultType="com.multipjt.multi_pjt.crew.domain.crew.CrewPostResponseDTO">
+        Select *
+        FROM CrewPost
+        WHERE crew_id = #{crew_id} AND crew_post_state = #{crew_post_state}
+        ORDER BY crew_post_date DESC;
+    </select>
+
+    
+    <!-- 크루 게시물 상세 조회 --> 
+
+    <select id="selectCrewPostRow"
+            parameterType="com.multipjt.multi_pjt.crew.domain.crew.CrewPostRequestDTO"
+            resultType="com.multipjt.multi_pjt.crew.domain.crew.CrewPostResponseDTO">
+        SELECT *
+        FROM CrewPost
+        WHERE crew_id = #{crew_id} AND crew_post_id = #{crew_post_id}
+        ORDER BY crew_post_date DESC;
+    </select>
+
+    <!-- 크루 게시판 게시물 수정 --> 
+
+    <update id="updateCrewPostRow"
+            parameterType="com.multipjt.multi_pjt.crew.domain.crew.CrewPostRequestDTO">
+        UPDATE CrewPost
+        SET crew_post_title = #{crew_post_title},
+            crew_post_content = #{crew_post_content},
+            crew_post_img = #{crew_post_img},
+            crew_post_like = #{crew_post_like},
+            crew_post_state = #{crew_post_state}
+        WHERE crew_id = #{crew_id} AND member_id = #{member_id} AND crew_post_id = #{crew_post_id};
+    </update>
+
+    <!-- 크루 댓글 작성 --> 
+    <insert id="insertCrewCommentRow"
+            parameterType="com.multipjt.multi_pjt.crew.domain.crew.CrewCommentsRequestDTO">
+        INSERT INTO CrewComments(
+            crew_comments_content,
+            crew_comments_date,
+            crew_post_id,
+            member_id
+        ) VALUES (
+            #{crew_comments_content},
+            #{crew_comments_date},
+            #{crew_post_id},
+            #{member_id}
+        );
+    </insert>
+
+    <!-- 크루 게시글 댓글 조회 --> 
+
+    <select id="selectCrewCommentsRow"
+            parameterType="com.multipjt.multi_pjt.crew.domain.crew.CrewCommentsRequestDTO"
+            resultType="com.multipjt.multi_pjt.crew.domain.crew.CrewCommentsResponseDTO">
+        SELECT *
+        FROM CrewComments
+        WHERE crew_post_id = #{crew_post_id} AND member_id = #{member_id}
+        ORDER BY crew_comments_date ASC;
+    </select>
+
+    <!-- 크루 댓글 삭제 --> 
+
+    <delete id="deleteCrewCommentRow"
+            parameterType="com.multipjt.multi_pjt.crew.domain.crew.CrewCommentsResponseDTO">
+        DELETE FROM CrewComments
+        WHERE crew_post_id = #{crew_post_id} AND member_id = #{member_id} AND crew_comments_id = #{crew_comments_id};
+    </delete>
+</mapper>

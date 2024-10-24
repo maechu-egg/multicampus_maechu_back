@@ -7,19 +7,17 @@
 
     <insert id="insertBadge" parameterType="com.multipjt.multi_pjt.badge.domain.badge.MemberBadgeRequestDTO">
         INSERT INTO MemberBadge (
-            badge_id,
             current_points,
             badge_level,
             member_id
         ) VALUES (
-            #{badge_id},
             #{current_points},
             #{badge_level},
             #{member_id}
         );
     </insert>
 
-    <select id="selectBadgeByMemberId" resultType="com.multipjt.multi_pjt.badge.domain.badge.MemberBadgeResponseDTO">
+    <select id="getselectBadgeByMemberId" resultType="com.multipjt.multi_pjt.badge.domain.badge.MemberBadgeResponseDTO">
         SELECT * FROM MemberBadge WHERE member_id = #{member_id};
     </select>
 
