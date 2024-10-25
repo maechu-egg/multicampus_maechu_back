@@ -1,5 +1,6 @@
 package com.multipjt.multi_pjt.badge.service;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
@@ -58,13 +59,13 @@ public class MemberBadgeManager {
                 MemberBadgeRequestDTO newBadge = new MemberBadgeRequestDTO();
                 newBadge.setMember_id(memberId);
                 newBadge.setCurrent_points(points);
-                newBadge.setBadge_level(badgeService.getBadgeLevel(points)); // 포인트에 따른 뱃지 레벨 설정
+                newBadge.setBadge_level(badgeService.getBadgeLevel(BigDecimal.valueOf(points))); // BigDecimal로 변환
                 memberBadgeMapper.insertBadge(newBadge);
                 return (int) points;
             } else {
                 // 기존 뱃지가 있을 경우 포인트 업데이트
                 float updatedPoints = points + currentBadge.getCurrent_points(); // 기존 포인트에 새로운 포인트 추가
-                String newBadgeLevel = badgeService.getBadgeLevel(updatedPoints); // 새로 계산된 포인트로 배지 레벨 확인
+                String newBadgeLevel = badgeService.getBadgeLevel(BigDecimal.valueOf(updatedPoints)); // BigDecimal로 변환
 
                 // 뱃지 업데이트
                 currentBadge.setCurrent_points(updatedPoints);
@@ -89,7 +90,7 @@ public class MemberBadgeManager {
 
     // 멤버의 활동 기록 처리
     @Transactional
-    public void processMemberActivity(int memberId) {
+    public void processMemberActivity(Long memberId) {
         try {
             // 멤버의 활동 내역 가져오기 (포스트, 댓글, 운동 기록, 식단 기록)
             List<Map<String, Object>> activityRecords = memberBadgeMapper.getMemberActivity(memberId);
