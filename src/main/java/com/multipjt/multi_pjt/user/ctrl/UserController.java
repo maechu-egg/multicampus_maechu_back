@@ -3,11 +3,13 @@ package com.multipjt.multi_pjt.user.ctrl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication; // Spring Security의 Authentication 임포트
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.multipjt.multi_pjt.jwt.JwtTokenProvider;
 import com.multipjt.multi_pjt.user.domain.CustomUserDetails;
 import com.multipjt.multi_pjt.user.domain.login.EmailCertificationInputDTO;
 import com.multipjt.multi_pjt.user.domain.login.EmailCertificationRequestDTO;
@@ -17,14 +19,19 @@ import com.multipjt.multi_pjt.user.domain.login.NicknameRequestDTO;
 import com.multipjt.multi_pjt.user.domain.login.UserRequestDTO;
 import com.multipjt.multi_pjt.user.service.LoginServiceImpl;
 
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 
 @RestController
 @RequestMapping("user")
 public class UserController {
     @Autowired
     private LoginServiceImpl loginServiceImple;
+
+    @Autowired
+    private JwtTokenProvider jwtTokenProvider;
 
     @PostMapping("/register")
     public ResponseEntity<String> registerUser(@RequestBody UserRequestDTO userRequestDTO) {
@@ -79,7 +86,7 @@ public class UserController {
         }
     }
 
-    
+
     @PostMapping("/register/verify-certification")
     public ResponseEntity<String> verifyCertification(@RequestBody EmailCertificationInputDTO emailDTO) {
         String email = emailDTO.getEmail();
@@ -101,6 +108,7 @@ public class UserController {
         return ResponseEntity.ok(token); // JWT 토큰 반환
     }
 
+
     @PostMapping("/test") 
     public ResponseEntity<String> test() {
         // 현재 인증된 사용자의 정보를 가져옵니다.
@@ -119,10 +127,33 @@ public class UserController {
     
     
 
-    // @PostMapping("/logout")
-    // public ResponseEntity<String> logout(@RequestHeader("Authorization") String token) {
-    //     loginServiceImple.expireToken(token); //토큰 만료 처리 
-    //     return ResponseEntity.ok("logout success");
-    // }
+      @PostMapping("/logout")
+    public ResponseEntity<String> logout(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            String token = authHeader.substring(7); // "Bearer " 접두사 제거
+            jwtTokenProvider.invalidateToken(token); // 토큰 무효화
+            return ResponseEntity.ok("Logout successful");
+        } else {
+            return ResponseEntity.badRequest().body("Logout failed");
+        }
+    }
+
+    @DeleteMapping("/delete")
+    public ResponseEntity<String> delete(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            String token = authHeader.substring(7); // "Bearer " 접두사 제거
+            int userId = jwtTokenProvider.getUserIdFromToken(token); // 토큰에서 사용자 ID 추출 (int형으로 변경)
+
+            // 사용자 탈퇴 처리
+            loginServiceImple.deleteUser(userId); // userId의 타입이 int이므로 수정된 메서드에 맞게 호출
+
+            // 토큰 무효화
+            jwtTokenProvider.invalidateToken(token);
+
+            return ResponseEntity.ok("회원 탈퇴가 완료되었습니다.");
+        } else {
+            return ResponseEntity.badRequest().body("탈퇴 실패");
+        }
+    }
 }
 
