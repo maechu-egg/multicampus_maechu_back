@@ -78,4 +78,8 @@
         WHERE member_id = #{member_id};
     </select>
 
+    <select id="getCurrentPoints" resultType="java.math.BigDecimal">
+    SELECT current_points FROM MemberBadge WHERE member_id = #{member_id};
+</select>
+
 </mapper>
