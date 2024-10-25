@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.multipjt.multi_pjt.badge.dao.UserActivityRecordMapper">
+<insert id="insertActivity" parameterType="com.multipjt.multi_pjt.badge.domain.record.UserActivityRecordRequsetDTO">
+    INSERT INTO UserActivityRecord (
+        activity_type,
+        points,
+        created_date,
+        member_id
+    ) VALUES (
+        #{activity_type},
+        #{points},
+        NOW(),
+        #{member_id}
+    );
+</insert>
+
+</mapper>
