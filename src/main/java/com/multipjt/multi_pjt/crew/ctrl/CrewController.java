@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import com.multipjt.multi_pjt.crew.domain.crew.CrewMemberRequestDTO;
+import com.multipjt.multi_pjt.crew.domain.crew.CrewMemberResponseDTO;
 import com.multipjt.multi_pjt.crew.domain.crew.CrewPostRequestDTO;
 import com.multipjt.multi_pjt.crew.domain.crew.CrewRequestDTO;
 import com.multipjt.multi_pjt.crew.domain.crew.CrewResponseDTO;
@@ -108,6 +109,12 @@ public class CrewController {
         return ResponseEntity.noContent().build(); // 204 No Content
     }
 
+    // 크루원 조회
+    @GetMapping("/member/list/{crewId}")
+    public ResponseEntity<List<CrewMemberResponseDTO>> getCrewMemberList(@PathVariable("crewId") Integer crewId) {
+        System.out.println("client endpoint: /crew/member/list/" + crewId);
+        return ResponseEntity.ok(crewService.getCrewMemberList(crewId));
+    }
 
     // --------- 크루 게시판 ---------
 

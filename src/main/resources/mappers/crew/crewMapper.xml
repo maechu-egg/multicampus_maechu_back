@@ -125,7 +125,7 @@
     <!-- 크루원 조회 --> 
 
     <select id="selectCrewMemberRow"
-            parameterType="java.util.HashMap"
+            parameterType="Integer"
             resultType="com.multipjt.multi_pjt.crew.domain.crew.CrewMemberResponseDTO">
         SELECT *
         FROM CrewMember

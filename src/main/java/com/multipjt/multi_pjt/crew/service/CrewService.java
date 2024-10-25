@@ -91,10 +91,10 @@ public class CrewService {
     }
 
     // 크루원 조회
-    public List<CrewMemberResponseDTO> getCrewMemberList(Map<String, Integer> map) {
+    public List<CrewMemberResponseDTO> getCrewMemberList(Integer crewId) {
         System.out.println("debug>>> Service: getCrewMemberList + " + crewMapper);
-        System.out.println("debug>>> Service: getCrewMemberList + " + map);
-        return crewMapper.selectCrewMemberRow(map);
+        System.out.println("debug>>> Service: getCrewMemberList + " + crewId);
+        return crewMapper.selectCrewMemberRow(crewId);
     }
 
     // 크루원 삭제

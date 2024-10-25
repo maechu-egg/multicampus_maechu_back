@@ -50,7 +50,7 @@ public interface CrewMapper {
     public void updateCrewMemberRow(CrewMemberRequestDTO param);
 
     // 크루원 조회
-    public List<CrewMemberResponseDTO> selectCrewMemberRow(Map<String, Integer> map);
+    public List<CrewMemberResponseDTO> selectCrewMemberRow(Integer crewId);
 
     // 크루원 삭제
     public void deleteCrewMemberRow(CrewMemberRequestDTO param);
