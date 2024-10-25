@@ -149,4 +149,11 @@ public class CrewController {
         System.out.println("client endpoint: /crew/post/top/" + params.getCrew_id() + "?state=" + params.getCrew_post_state());
         return ResponseEntity.ok(crewService.getCrewTopPostList(params));
     }
+
+    // 크루 게시물 공지/인기/일반 조회
+    @GetMapping("/post/notice")
+    public ResponseEntity<List<CrewPostResponseDTO>> getCrewNoticePostList(@RequestBody CrewPostRequestDTO params) {
+        System.out.println("client endpoint: /crew/post/notice/" + params.getCrew_id() + "?state=" + params.getCrew_post_state());
+        return ResponseEntity.ok(crewService.getCrewNoticePostList(params));
+    }
 }
