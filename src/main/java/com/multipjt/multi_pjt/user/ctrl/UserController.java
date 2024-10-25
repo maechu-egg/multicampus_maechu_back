@@ -1,15 +1,13 @@
-<<<<<<< HEAD
-// package com.multipjt.multi_pjt.user.ctrl;
-=======
 package com.multipjt.multi_pjt.user.ctrl;
->>>>>>> ef79067809ef1f7e9cba1288e0ffb17baa08f5db
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication; // Spring Security의 Authentication 임포트
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-<<<<<<< HEAD
-// import org.springframework.beans.factory.annotation.Autowired;
-// import org.springframework.web.bind.annotation.RequestMapping;
-// import org.springframework.web.bind.annotation.RestController;
-=======
 import com.multipjt.multi_pjt.user.domain.CustomUserDetails;
 import com.multipjt.multi_pjt.user.domain.login.EmailCertificationInputDTO;
 import com.multipjt.multi_pjt.user.domain.login.EmailCertificationRequestDTO;
@@ -18,17 +16,10 @@ import com.multipjt.multi_pjt.user.domain.login.LoginDTO;
 import com.multipjt.multi_pjt.user.domain.login.NicknameRequestDTO;
 import com.multipjt.multi_pjt.user.domain.login.UserRequestDTO;
 import com.multipjt.multi_pjt.user.service.LoginServiceImpl;
->>>>>>> ef79067809ef1f7e9cba1288e0ffb17baa08f5db
 
-// import com.multipjt.multi_pjt.user.service.UserService;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
-<<<<<<< HEAD
-// @RestController
-// @RequestMapping("/user")
-// public class UserController {
-//     @Autowired
-//     private UserService userService;
-=======
 @RestController
 @RequestMapping("user")
 public class UserController {
@@ -134,8 +125,3 @@ public class UserController {
     //     return ResponseEntity.ok("logout success");
     // }
 }
->>>>>>> ef79067809ef1f7e9cba1288e0ffb17baa08f5db
-
-  
-    
-// }

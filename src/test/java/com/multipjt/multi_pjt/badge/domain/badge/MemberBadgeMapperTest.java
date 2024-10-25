@@ -32,7 +32,7 @@ public class MemberBadgeMapperTest {
     public void testSelectBadgeByMemberId() {
         // 뱃지 조회 테스트
         int memberId = 1; 
-        MemberBadgeResponseDTO badge = memberBadgeMapper.getselectBadgeByMemberId(memberId);
+        MemberBadgeResponseDTO badge = memberBadgeMapper.getBadgeByMemberId(memberId);
         
         if (badge != null) {
             System.out.println("뱃지 조회 성공: " + badge.getBadge_level());
