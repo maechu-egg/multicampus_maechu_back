@@ -114,10 +114,10 @@ public class CrewService {
     }
 
     // 크루 게시물 전체 조회
-    public List<CrewPostResponseDTO> getCrewPostList(Map<String, Integer> map) {
+    public List<CrewPostResponseDTO> getCrewPostList(Integer crewId) {
         System.out.println("debug>>> Service: getCrewPostList + " + crewMapper);
-        System.out.println("debug>>> Service: getCrewPostList + " + map);
-        return crewMapper.selectCrewPostListRow(map);
+        System.out.println("debug>>> Service: getCrewPostList + " + crewId);
+        return crewMapper.selectCrewPostListRow(crewId);
     }
 
     // 크루 게시물 상단 공지, 일반 고정 3개씩
