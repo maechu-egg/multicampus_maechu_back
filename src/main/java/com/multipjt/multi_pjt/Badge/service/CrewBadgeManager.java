@@ -66,4 +66,13 @@ public class CrewBadgeManager {
             return "No Badge";
         }
     }
+
+    public CrewBadgeResponseDTO selectCrewBadgeByMemberId(int memberId) {
+        return crewBadgeMapper.selectCrewBadgeByMemberId(memberId); // 뱃지 정보를 조회하여 반환
+    }
+
+    // 크루 뱃지 업데이트 메서드 추가
+    public void updateBadge(CrewBadgeRequestDTO badgeRequest) {
+        crewBadgeMapper.updateBadge(badgeRequest); // 뱃지 정보를 업데이트
+    }
 }
