@@ -264,7 +264,7 @@ public class LoginServiceImpl implements UserDetailsService { // UserDetailsServ
         String newToken = jwtTokenProvider.createAccessToken(userDetails); // 새로운 토큰 생성
 
         // 회원 정보 수정 성공 메시지와 새로운 토큰을 JSON 형식으로 반환
-        return ResponseEntity.ok("{\"message\": \"회원 정보 수정 성공\", \"newToken\": \"" + newToken + "\"}");
+        return ResponseEntity.ok("{\"Code\": \"OK\", \"Message\": \"회원 정보 수정 성공\", \"newToken\": \"" + newToken + "\"}");
     }
 
     //5.1 현재 사용자의 이메일을 가져오는 메서드 
