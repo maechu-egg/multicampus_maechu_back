@@ -3,7 +3,6 @@
 
 <mapper namespace="com.multipjt.multi_pjt.record.exercise.dao.ExerMapper">
 
-
     <!-- exerInsert --> 
 
     <insert id="exerInsert" parameterType="com.multipjt.multi_pjt.record.exercise.domain.ExerRequestDTO">
@@ -15,14 +14,15 @@
 
     <delete id="exerDelete" parameterType="java.lang.Long">
         delete from ExerciseRecords
-        where exercise_id = #{exerciseId};
+        where exercise_id = #{exercise_id};
     </delete>
 
     <!-- exerIdGet --> 
 
-    <select id="exerIdGet" parameterType="java.util.Map">
+    <select id="exerIdGet" parameterType="java.util.Map" resultType="java.lang.Long">
         select exercise_id from ExerciseRecords
-        where exercise_type = #{exerciseType} and record_date = #{recordDate} and member_id = #{memberId};
+        where exercise_type = #{exercise_type} and record_date = #{record_date} 
+                                               and member_id = #{member_id};
     </select>    
 
     <!-- exerUpdate --> 
@@ -30,14 +30,14 @@
     <update id="exerUpdate" parameterType="java.util.Map">
         update ExerciseRecords
         set intensity = #{intensity}, duration = #{duration}, calories = #{calories}
-        where exercise_id = #{exerciseId};
+        where exercise_id = #{exercise_id};
     </update>
 
     <!-- exerDaySelect --> 
 
     <select id="exerDaySelect" parameterType="java.util.Map" resultType="com.multipjt.multi_pjt.record.exercise.domain.ExerResponseDTO">
         select * from ExerciseRecords
-        where member_id = #{memberId} and record_date = #{recordDate};
+        where member_id = #{member_id} and record_date = #{record_date};
     </select>
 
 
@@ -50,7 +50,7 @@
 
     <select id="getSetInfo" parameterType="java.lang.Long" resultType="com.multipjt.multi_pjt.record.exercise.domain.SetResponseDTO">
         select * from ExerciseSet
-        where exercise_id = #{exerciseId}    
+        where exercise_id = #{exercise_id}    
     </select>
 
     <!-- setUpdate --> 
@@ -65,7 +65,21 @@
 
     <delete id="setDelete" parameterType="java.lang.Long">
         delete from ExerciseSet
-        where set_id = #{setId};
+        where set_id = #{set_id};
     </delete>
     
-    </mapper>
+    <!-- exerCaloriesGet --> 
+
+    <select id="exerCaloriesGet" parameterType="java.util.Map" resultType="java.util.Map">
+        SELECT 
+            exercise_type,
+            SUM(calories) AS total_calories
+        FROM 
+            ExerciseRecords
+        WHERE 
+            record_date = #{record_date}  
+            AND member_id = #{member_id}
+        GROUP BY 
+            exercise_type;
+    </select>
+</mapper>

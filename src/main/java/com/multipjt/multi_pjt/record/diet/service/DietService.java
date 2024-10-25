@@ -46,7 +46,7 @@ public class DietService {
         return dietMapper.dietDelete(diet_id);
     }
 
-    public List<Map<String,Object>> itemNutCheckRow(Map<String,Object> map){
-        return dietMapper.itemNutCheck(map);
+    public List<Map<String,Object>> mealNutCheckRow(Map<String,Object> map){
+        return dietMapper.mealNutCheck(map);
     }
 }

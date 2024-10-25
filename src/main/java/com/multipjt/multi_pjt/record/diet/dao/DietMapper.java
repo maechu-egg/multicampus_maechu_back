@@ -26,6 +26,6 @@ public interface DietMapper {
     //DietItems 수정
     public int itemUpdate(ItemRequestDTO requestDTO);
 
-    public ArrayList<Map<String,Object>> itemNutCheck(Map<String,Object> map);
+    public ArrayList<Map<String,Object>> mealNutCheck(Map<String,Object> map);
 
 }

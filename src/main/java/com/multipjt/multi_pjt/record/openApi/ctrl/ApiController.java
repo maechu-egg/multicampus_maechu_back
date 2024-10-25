@@ -79,7 +79,6 @@ public class ApiController {
             List<NutirientDTO> list = null;
 
             try{
-
                 http = (HttpURLConnection) new URL(requestUrl).openConnection();
                 System.out.println("http connection >>> " + http);
                 int responseCode = http.getResponseCode();

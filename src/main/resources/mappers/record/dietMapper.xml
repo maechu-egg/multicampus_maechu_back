@@ -51,7 +51,7 @@
 
     <update id="itemUpdate" parameterType="com.multipjt.multi_pjt.record.diet.domain.ItemRequestDTO">
         update DietItems
-        set item_name = #{newItemName},ㄴ
+        set 
         calories = #{calories},
         quantity = #{quantity},
         carbs = #{carbs},
@@ -62,7 +62,7 @@
 
     <!-- itemNutCheck --> 
 
-    <select id="itemNutCheck" parameterType="java.util.Map" resultType="java.util.Map">
+    <select id="mealNutCheck" parameterType="java.util.Map" resultType="java.util.Map">
         SELECT 
             d.meal_type AS mealType,
             SUM(i.calories) AS totalCalories,

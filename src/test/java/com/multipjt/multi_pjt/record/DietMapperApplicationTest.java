@@ -230,7 +230,7 @@ public class DietMapperApplicationTest {
         Map<String,Object> type = new HashMap<>();
         type.put("member_id", 1L);
         type.put("record_date",LocalDate.of(2024,10,22));
-        List<Map<String, Object>> list = dietMapper.itemNutCheck(type);
+        List<Map<String, Object>> list = dietMapper.mealNutCheck(type);
         Assertions.assertThat(list).size().isEqualTo(2);
     }
 }
