@@ -143,4 +143,10 @@ public class CrewController {
         return ResponseEntity.ok(crewService.getCrewPostList(crewId));
     }
 
+    // 크루 게시물 상단 공지, 일반 고정 3개씩
+    @GetMapping("/post/top")
+    public ResponseEntity<List<CrewPostResponseDTO>> getCrewTopPostList(@RequestBody CrewPostRequestDTO params) {
+        System.out.println("client endpoint: /crew/post/top/" + params.getCrew_id() + "?state=" + params.getCrew_post_state());
+        return ResponseEntity.ok(crewService.getCrewTopPostList(params));
+    }
 }

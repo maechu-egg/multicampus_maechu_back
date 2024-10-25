@@ -172,7 +172,7 @@
     <!-- 크루 게시판 게시물 전체 조회 --> 
 
     <select id="selectCrewPostListRow"
-            parameterType="java.util.HashMap"
+            parameterType="Integer"
             resultType="com.multipjt.multi_pjt.crew.domain.crew.CrewPostResponseDTO">
         SELECT *
         FROM CrewPost
