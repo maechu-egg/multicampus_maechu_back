@@ -116,6 +116,14 @@ public class CrewController {
         return ResponseEntity.ok(crewService.getCrewMemberList(crewId));
     }
 
+    // 크루원 삭제
+    @DeleteMapping("/member/delete")
+    public ResponseEntity<Void> deleteCrewMember(@RequestBody CrewMemberRequestDTO param) {
+        System.out.println("client endpoint: /crew/member/delete");
+        crewService.deleteCrewMember(param);
+        return ResponseEntity.noContent().build(); // 204 No Content
+    }
+
     // --------- 크루 게시판 ---------
 
     // 크루 게시물 등록
