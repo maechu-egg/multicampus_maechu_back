@@ -20,6 +20,7 @@ import com.multipjt.multi_pjt.user.domain.login.UserRequestDTO;
 import com.multipjt.multi_pjt.user.service.LoginServiceImpl;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -35,10 +36,7 @@ public class UserController {
 
     @PostMapping("/register")
     public ResponseEntity<String> registerUser(@RequestBody UserRequestDTO userRequestDTO) {
-        loginServiceImple.registerUser(userRequestDTO); // 회원가입 처리
-
-        // 회원가입 성공 메시지를 JSON 형식으로 반환
-        return ResponseEntity.ok("{\"message\": \"회원가입 성공\"}");
+        return loginServiceImple.registerUser(userRequestDTO); // 회원가입 처리
     }
 
     @PostMapping("/register/email-check")
@@ -104,8 +102,24 @@ public class UserController {
 
     @PostMapping("/login")
     public ResponseEntity<String> loginUser(@RequestBody LoginDTO loginDTO) {
-        String token = loginServiceImple.login(loginDTO); // 로그인 메서드 호출
-        return ResponseEntity.ok(token); // JWT 토큰 반환
+        return loginServiceImple.login(loginDTO); // 로그인 메서드 호출
+    }
+
+    @PatchMapping("/update") 
+    public ResponseEntity<String> updateUser(@RequestBody UserRequestDTO userUpdateRequestDTO,
+                                              @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            String token = authHeader.substring(7); // "Bearer " 접두사 제거
+            int userId = jwtTokenProvider.getUserIdFromToken(token); // 토큰에서 사용자 ID 추출
+
+            // 사용자 정보 수정 처리
+            ResponseEntity<String> response = loginServiceImple.updateUser(userId, userUpdateRequestDTO); // 서비스 메서드 호출
+
+            return response; // 서비스에서 반환된 응답을 그대로 반환
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                                 .body("{\"Code\": \"UNAUTHORIZED\", \"Message\": \"인증 실패\"}");
+        }
     }
 
 
