@@ -210,8 +210,7 @@
             resultType="com.multipjt.multi_pjt.crew.domain.crew.CrewPostResponseDTO">
         SELECT *
         FROM CrewPost
-        WHERE crew_id = #{crew_id} AND crew_post_id = #{crew_post_id}
-        ORDER BY crew_post_date DESC;
+        WHERE crew_id = #{crew_id} AND crew_post_id = #{crew_post_id};
     </select>
 
     <!-- 크루 게시판 게시물 수정 --> 
