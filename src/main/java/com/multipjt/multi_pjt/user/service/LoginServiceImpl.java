@@ -90,6 +90,7 @@ public class LoginServiceImpl implements UserDetailsService { // UserDetailsServ
         }
     }
 
+    //1.5.1 인증 코드 생성 메서드
     public String generateCertificationNumber() {
         StringBuilder certificationNumber = new StringBuilder();
         for (int i = 0; i < 6; i++) {
@@ -98,7 +99,7 @@ public class LoginServiceImpl implements UserDetailsService { // UserDetailsServ
         return certificationNumber.toString();
     }
 
-    // 인증 코드 확인 메서드 추가
+    //1.5.2 인증 코드 확인 메서드 추가
     public boolean verifyCertificationCode(String email, String code) {
         EmailCertificationCodeDTO certification = emailCertificationMap.get(email);
         if (certification == null) {
@@ -123,33 +124,35 @@ public class LoginServiceImpl implements UserDetailsService { // UserDetailsServ
     public String login(LoginDTO loginDTO) {
         // 이메일로 사용자 조회
         UserResponseDTO user = userMapper.getUserByEmail(loginDTO.getEmail());
-        System.out.println("loginDTO.getEmail" + loginDTO.getEmail());
+        System.out.println("loginDTO.getEmail: " + loginDTO.getEmail());
+        System.out.println("Fetched memberId: " + user.getMemberId()); // memberId 로그 추가
 
         // 사용자 존재 여부 확인
         if (user == null) {
-            throw new RuntimeException("Invalid username or password"); // 사용자 없음
+            throw new RuntimeException("Invalid username or password");
         }
 
         // 비밀번호 검증
         if (!passwordEncoder.matches(loginDTO.getPassword(), user.getPassword())) {
-            throw new RuntimeException("Invalid username or password"); // 비밀번호 불일치
+            throw new RuntimeException("Invalid username or password");
         }
 
         // 비밀번호가 일치하는 경우 로그인 성공 메시지 출력
-        System.out.println("로그인 성공: " + user.getEmail()); // 사용자 ID 출력 (또는 다른 사용자 정보)
+        System.out.println("로그인 성공: " + user.getEmail());
 
         // CustomUserDetails 객체 생성
         CustomUserDetails userDetails = new CustomUserDetails(
-            user.getMemberId(), // memberId
-            user.getEmail(), // 이메일
-            user.getPassword(), // 비밀번호
-            new ArrayList<>() // 권한 목록 (필요에 따라 수정)
+            user.getMemberId(),
+            user.getEmail(),
+            user.getPassword(),
+            new ArrayList<>()
         );
 
         // 비밀번호가 일치하는 경우 JWT 토큰 생성
-        return jwtTokenProvider.createAccessToken(userDetails); // CustomUserDetails를 사용하여 토큰 생성
+        return jwtTokenProvider.createAccessToken(userDetails);
     }
 
+    //3. 사용자 인증 메서드 : 이메일로 조회해 SecurityContext Holder에 저장
     @Override
     public UserDetails loadUserByUsername(String useremail) {
         // 사용자 정보를 데이터베이스에서 가져오는 로직 구현
@@ -167,8 +170,10 @@ public class LoginServiceImpl implements UserDetailsService { // UserDetailsServ
         );
     }
 
-    // @Override
-    // public void expireToken(String token) {
-    //     jwtTokenProvider.expireToken(token);
-    // }
+    //4. 회원 탈퇴 메서드 
+    public void deleteUser(int userId) {
+        logger.info("Deleting user with ID: {}", userId); // userId 출력
+        userMapper.deleteUserById(userId);
+    }
+
 }

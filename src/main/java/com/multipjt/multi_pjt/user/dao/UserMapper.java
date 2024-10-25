@@ -36,6 +36,6 @@ public interface UserMapper {
    LoginDTO getUserByEmail2(@Param("email") String email);
 
    // 회원 ID로 사용자 삭제
-   int deleteUserById(Integer member_id);
+   int deleteUserById(Integer userId);
 }
 

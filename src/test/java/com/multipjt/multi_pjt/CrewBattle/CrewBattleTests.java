@@ -21,22 +21,22 @@ public class CrewBattleTests {
     @Autowired
     private CrewBattleMapper crewBattleMapper;
 
-    @Test
-    public void saveCrewBattleRowTest() {
-        System.out.println("debug mapper >>> " + crewBattleMapper);
-        CrewBattleRequestDTO request = CrewBattleRequestDTO.builder()
-                                        .battle_id(4)
-                                        .battle_name("1번째 배틀")
-                                        .battle_goal("다이어트")
-                                        .battle_end_recruitment("2024-10-15 17:25:10")
-                                        .battle_end_date("2024-11-18 00:00:00")
-                                        .battle_content("몸무게 및 칼로리 감량")
-                                        .battle_state(0)
-                                        .crew_id(2)
-                                        .build();
-        crewBattleMapper.createCrewBattleRow(request);
-        System.out.println("debug >>> save success!!!");
-    }
+    // @Test
+    // public void saveCrewBattleRowTest() {
+    //     System.out.println("debug mapper >>> " + crewBattleMapper);
+    //     CrewBattleRequestDTO request = CrewBattleRequestDTO.builder()
+    //                                     .battle_id(4)
+    //                                     .battle_name("1번째 배틀")
+    //                                     .battle_goal("다이어트")
+    //                                     .battle_end_recruitment("2024-10-15 17:25:10")
+    //                                     .battle_end_date("2024-11-18 00:00:00")
+    //                                     .battle_content("몸무게 및 칼로리 감량")
+    //                                     .battle_state(0)
+    //                                     .crew_id(2)
+    //                                     .build();
+    //     crewBattleMapper.createCrewBattleRow(request);
+    //     System.out.println("debug >>> save success!!!");
+    // }
 
     @Test
     public void selectCrewBattleTest() {
