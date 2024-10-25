@@ -50,7 +50,7 @@ public interface CrewMapper {
     public void updateCrewMemberRow(CrewMemberRequestDTO param);
 
     // 크루원 조회
-    public List<CrewMemberResponseDTO> selectCrewMemberRow(Map<String, Integer> map);
+    public List<CrewMemberResponseDTO> selectCrewMemberRow(Integer crewId);
 
     // 크루원 삭제
     public void deleteCrewMemberRow(CrewMemberRequestDTO param);
@@ -61,7 +61,7 @@ public interface CrewMapper {
     public void insertCrewPostRow(CrewPostRequestDTO param);
 
     // 크루 게시판 게시물 전체 조회
-    public List<CrewPostResponseDTO> selectCrewPostListRow(Map<String, Integer> map);
+    public List<CrewPostResponseDTO> selectCrewPostListRow(Integer crewId);
     
     // 크루 게시판 상단 공지, 일반 고정 3개씩
     public List<CrewPostResponseDTO> selectCrewTopPostRow(CrewPostRequestDTO param);

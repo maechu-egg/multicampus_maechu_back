@@ -31,7 +31,7 @@ public class CrewService {
         crewMapper.createCrewRow(param);
     }
 
-    // 전체 크루 리스트 조회
+    // 크루 리스트 전체 조회
     public List<CrewResponseDTO> getCrewList() {
         System.out.println("debug>>> Service: getCrewList + " + crewMapper);
         return crewMapper.selectCrewRow();
@@ -91,10 +91,10 @@ public class CrewService {
     }
 
     // 크루원 조회
-    public List<CrewMemberResponseDTO> getCrewMemberList(Map<String, Integer> map) {
+    public List<CrewMemberResponseDTO> getCrewMemberList(Integer crewId) {
         System.out.println("debug>>> Service: getCrewMemberList + " + crewMapper);
-        System.out.println("debug>>> Service: getCrewMemberList + " + map);
-        return crewMapper.selectCrewMemberRow(map);
+        System.out.println("debug>>> Service: getCrewMemberList + " + crewId);
+        return crewMapper.selectCrewMemberRow(crewId);
     }
 
     // 크루원 삭제
@@ -114,10 +114,10 @@ public class CrewService {
     }
 
     // 크루 게시물 전체 조회
-    public List<CrewPostResponseDTO> getCrewPostList(Map<String, Integer> map) {
+    public List<CrewPostResponseDTO> getCrewPostList(Integer crewId) {
         System.out.println("debug>>> Service: getCrewPostList + " + crewMapper);
-        System.out.println("debug>>> Service: getCrewPostList + " + map);
-        return crewMapper.selectCrewPostListRow(map);
+        System.out.println("debug>>> Service: getCrewPostList + " + crewId);
+        return crewMapper.selectCrewPostListRow(crewId);
     }
 
     // 크루 게시물 상단 공지, 일반 고정 3개씩
