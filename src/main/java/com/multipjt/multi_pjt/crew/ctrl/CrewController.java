@@ -98,6 +98,17 @@ public class CrewController {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
+    // --------- 크루원 정보 ---------
+
+    // 크루원 가입 승인
+    @PatchMapping("/member/approve")
+    public ResponseEntity<Void> approveCrewMember(@RequestBody CrewMemberRequestDTO param) {
+        System.out.println("client endpoint: /crew/member/approve");
+        crewService.approveCrewMember(param);
+        return ResponseEntity.noContent().build(); // 204 No Content
+    }
+
+
     // --------- 크루 게시판 ---------
 
     // 크루 게시물 등록
