@@ -31,7 +31,7 @@ public class CrewService {
         crewMapper.createCrewRow(param);
     }
 
-    // 전체 크루 리스트 조회
+    // 크루 리스트 전체 조회
     public List<CrewResponseDTO> getCrewList() {
         System.out.println("debug>>> Service: getCrewList + " + crewMapper);
         return crewMapper.selectCrewRow();

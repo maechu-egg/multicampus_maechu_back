@@ -80,7 +80,7 @@ public class CrewController {
         System.out.println("client endpoint: /crew/intro/update");
         System.out.println("debug>>> updateCrewIntro + " + param);
         crewService.updateCrewIntro(param);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
     }
 
     // 크루 관리 수정
@@ -89,7 +89,7 @@ public class CrewController {
         System.out.println("client endpoint: /crew/info/update");
         System.out.println("debug>>> updateCrewInfo + " + param);
         crewService.updateCrewInfo(param);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
     }
 
     // 크루 삭제
@@ -134,7 +134,7 @@ public class CrewController {
         System.out.println("client endpoint: /crew/post/create");
         System.out.println("debug>>> createCrewPost + " + param);
         crewService.createCrewPost(param);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.status(HttpStatus.CREATED).build(); // 201 Created
     }
 
     // 크루 게시물 전체 조회
@@ -166,5 +166,14 @@ public class CrewController {
         System.out.println("client endpoint: /crew/post/detail/");
         System.out.println("debug>>> getCrewPost + " + params);
         return ResponseEntity.ok(crewService.getCrewPost(params));
+    }
+
+    // 크루 게시물 수정
+    @PatchMapping("/post/update")
+    public ResponseEntity<Void> updateCrewPost(@RequestBody CrewPostRequestDTO param) {
+        System.out.println("client endpoint: /crew/post/update");
+        System.out.println("debug>>> updateCrewPost + " + param);
+        crewService.updateCrewPost(param);
+        return ResponseEntity.noContent().build();
     }
 }
