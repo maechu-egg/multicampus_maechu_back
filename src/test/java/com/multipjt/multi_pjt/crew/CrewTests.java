@@ -198,10 +198,7 @@ public class CrewTests {
     @Test
     @DisplayName("012 : 크루 게시판 게시글 전체 조회")
     public void selectCrewPostListTest() {
-        Map<String, Integer> map = new HashMap<>();
-        map.put("crew_id", 2);
-
-        List<CrewPostResponseDTO> postList = crewMapper.selectCrewPostListRow(map);
+        List<CrewPostResponseDTO> postList = crewMapper.selectCrewPostListRow(19);
         for (CrewPostResponseDTO dto:postList){
             System.out.println(dto);
         }
