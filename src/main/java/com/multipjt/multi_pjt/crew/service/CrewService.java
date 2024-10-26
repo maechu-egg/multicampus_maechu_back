@@ -148,6 +148,13 @@ public class CrewService {
         crewMapper.updateCrewPostRow(param);
     }
 
+    // 크루 게시물 삭제
+    public void deleteCrewPost(CrewPostRequestDTO param) {
+        System.out.println("debug>>> Service: deleteCrewPost + " + crewMapper);
+        System.out.println("debug>>> Service: deleteCrewPost + " + param);
+        crewMapper.deleteCrewPostRow(param);
+    }
+
     // --------- 크루 댓글 ---------
 
     // 크루 댓글 작성

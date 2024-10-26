@@ -75,6 +75,9 @@ public interface CrewMapper {
     // 크루 게시물 수정
     public void updateCrewPostRow(CrewPostRequestDTO param);
 
+    // 크루 게시물 삭제
+    public void deleteCrewPostRow(CrewPostRequestDTO param);
+
     // --------- 크루 댓글 ---------
     
     // 크루 댓글 작성

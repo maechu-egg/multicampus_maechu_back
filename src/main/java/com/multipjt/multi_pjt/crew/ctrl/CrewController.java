@@ -176,4 +176,13 @@ public class CrewController {
         crewService.updateCrewPost(param);
         return ResponseEntity.noContent().build();
     }
+
+    // 크루 게시물 삭제
+    @DeleteMapping("/post/delete")
+    public ResponseEntity<Void> deleteCrewPost(@RequestBody CrewPostRequestDTO param) {
+        System.out.println("client endpoint: /crew/post/delete");
+        System.out.println("debug>>> deleteCrewPost + " + param);
+        crewService.deleteCrewPost(param);
+        return ResponseEntity.noContent().build();
+    }
 }

@@ -226,6 +226,15 @@
         WHERE crew_id = #{crew_id} AND member_id = #{member_id} AND crew_post_id = #{crew_post_id};
     </update>
 
+    
+    <!-- 크루 게시물 삭제 --> 
+
+    <delete id="deleteCrewPostRow"
+            parameterType="com.multipjt.multi_pjt.crew.domain.crew.CrewPostRequestDTO">
+        DELETE FROM CrewPost
+        WHERE crew_id = #{crew_id} AND member_id = #{member_id} AND crew_post_id = #{crew_post_id};
+    </delete>
+
     <!-- 크루 댓글 작성 --> 
     <insert id="insertCrewCommentRow"
             parameterType="com.multipjt.multi_pjt.crew.domain.crew.CrewCommentsRequestDTO">
