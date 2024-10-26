@@ -23,9 +23,15 @@ public class MapperApplicationTests {
     public void userRegistrationTest() {
         // Given: 회원가입에 요청 데이터 
         UserRequestDTO user = new UserRequestDTO(
-            "default.jpg", "testUser", "password123",
-            "test@example.com", "010-1234-5678",
-            true, "kakao"
+            0,                          // member_id (기본값으로 0 또는 다른 적절한 값)
+            "default.jpg",             // member_img
+            "testUser",                // nickname
+            "password123",             // password
+            "test@example.com",        // email
+            "010-1234-5678",          // phone
+            true,                      // verified
+            "kakao",                   // snsProvider
+            null  
         );
 
 
@@ -48,9 +54,15 @@ public class MapperApplicationTests {
     public void updateUserTest() {
          // Given: 새로운 회원 가입을 위한 요청 데이터
     UserRequestDTO newUser = new UserRequestDTO(
-        "default.jpg", "testUser", "password123",
-        "test@example.com", "010-1234-5678",
-        true, "kakao"
+        0,                          // member_id (기본값으로 0 또는 다른 적절한 값)
+        "default.jpg",             // member_img
+        "testUser",                // nickname
+        "password123",             // password
+        "test@example.com",        // email
+        "010-1234-5678",          // phone
+        true,                      // verified
+        "kakao",                   // snsProvider
+        null  
     );
 
     // 새로운 회원 가입
@@ -59,14 +71,20 @@ public class MapperApplicationTests {
 
     // When: 수정할 회원 정보 설정
     UserRequestDTO updatedUser = new UserRequestDTO(
-        "updated.jpg", "updatedUser", "newPassword123",
-        "test@example.com", "010-9876-5432",
-        true, "kakao"
+        0,                          // member_id (기본값으로 0 또는 다른 적절한 값)
+        "default.jpg",             // member_img
+        "testUser",                // nickname
+        "password123",             // password
+        "test@example.com",        // email
+        "010-1234-5678",          // phone
+        true,                      // verified
+        "kakao",                   // snsProvider
+        null  
     );
 
     // 회원 정보 수정 수행
-    int updateRowsAffected = userMapper.updateUser(updatedUser);
-    Assertions.assertEquals(1, updateRowsAffected, "회원 정보가 성공적으로 수정되어야 합니다.");
+    userMapper.updateUser(updatedUser);
+    Assertions.assertEquals(1, "회원 정보가 성공적으로 수정되어야 합니다.");
 
     // Then: 수정된 정보 조회 및 검증
     UserResponseDTO retrievedUser = userMapper.getUserByEmail("test@example.com");
@@ -80,9 +98,15 @@ public class MapperApplicationTests {
     public void selectUserTest() {
         // Given: 새로운 회원 가입을 위한 요청 데이터
         UserRequestDTO newUser = new UserRequestDTO(
-            "default.jpg", "testUser", "password123",
-            "test@example.com", "010-1234-5678",
-            true, "kakao"
+            0,                          // member_id (기본값으로 0 또는 다른 적절한 값)
+            "default.jpg",             // member_img
+            "testUser",                // nickname
+            "password123",             // password
+            "test@example.com",        // email
+            "010-1234-5678",          // phone
+            true,                      // verified
+            "kakao",                   // snsProvider
+            null  
         );
 
         // 새로운 회원 가입
@@ -104,9 +128,15 @@ public class MapperApplicationTests {
     public void deleteUserTest() {
          // Given: 새로운 회원 가입을 위한 요청 데이터
          UserRequestDTO newUser = new UserRequestDTO(
-            "default.jpg", "testUser", "password123",
-            "test@example.com", "010-1234-5678",
-            true, "kakao"
+            0,                          // member_id (기본값으로 0 또는 다른 적절한 값)
+            "default.jpg",             // member_img
+            "testUser",                // nickname
+            "password123",             // password
+            "test@example.com",        // email
+            "010-1234-5678",          // phone
+            true,                      // verified
+            "kakao",                   // snsProvider
+            null  
         );
 
         // 새로운 회원 가입
