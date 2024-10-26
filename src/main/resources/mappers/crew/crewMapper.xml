@@ -240,12 +240,10 @@
             parameterType="com.multipjt.multi_pjt.crew.domain.crew.CrewCommentsRequestDTO">
         INSERT INTO CrewComments(
             crew_comments_content,
-            crew_comments_date,
             crew_post_id,
             member_id
         ) VALUES (
             #{crew_comments_content},
-            #{crew_comments_date},
             #{crew_post_id},
             #{member_id}
         );

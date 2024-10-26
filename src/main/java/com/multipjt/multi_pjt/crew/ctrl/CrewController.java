@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.PathVariable;
 
+import com.multipjt.multi_pjt.crew.domain.crew.CrewCommentsRequestDTO;
+import com.multipjt.multi_pjt.crew.domain.crew.CrewCommentsResponseDTO;
 import com.multipjt.multi_pjt.crew.domain.crew.CrewMemberRequestDTO;
 import com.multipjt.multi_pjt.crew.domain.crew.CrewMemberResponseDTO;
 import com.multipjt.multi_pjt.crew.domain.crew.CrewPostRequestDTO;
@@ -183,6 +185,34 @@ public class CrewController {
         System.out.println("client endpoint: /crew/post/delete");
         System.out.println("debug>>> deleteCrewPost + " + param);
         crewService.deleteCrewPost(param);
+        return ResponseEntity.noContent().build();
+    }
+
+    // --------- 크루 댓글 ---------
+
+    // 크루 댓글 작성
+    @PostMapping("/comment/create")
+    public ResponseEntity<Void> createCrewComment(@RequestBody CrewCommentsRequestDTO param) {
+        System.out.println("client endpoint: /crew/comment/create");
+        System.out.println("debug>>> createCrewComment + " + param);
+        crewService.createCrewComment(param);
+        return ResponseEntity.status(HttpStatus.CREATED).build(); // 201 Created
+    }
+
+    // 크루 댓글 조회
+    @GetMapping("/comment/list")
+    public ResponseEntity<List<CrewCommentsResponseDTO>> getCrewCommentList(@RequestBody CrewCommentsRequestDTO param) {
+        System.out.println("client endpoint: /crew/comment/list");
+        System.out.println("debug>>> getCrewCommentList + " + param);
+        return ResponseEntity.ok(crewService.getCrewCommentList(param));
+    }
+
+    // 크루 댓글 삭제
+    @DeleteMapping("/comment/delete")
+    public ResponseEntity<Void> deleteCrewComment(@RequestBody CrewCommentsRequestDTO param) {
+        System.out.println("client endpoint: /crew/comment/delete");
+        System.out.println("debug>>> deleteCrewComment + " + param);
+        crewService.deleteCrewComment(param);
         return ResponseEntity.noContent().build();
     }
 }
