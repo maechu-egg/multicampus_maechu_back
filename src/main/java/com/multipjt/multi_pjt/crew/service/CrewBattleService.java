@@ -29,12 +29,12 @@ public class CrewBattleService {
     }
 
     // 배틀 목록 조회
-    public List<CrewBattleResponseDTO> selectCrewBattle() {
+    public List<CrewBattleResponseDTO> selectCrewBattle(Integer crew_id) {
         System.out.println("debug>>> Service: selectCrewBattle + " + crewBattleMapper);
-        return crewBattleMapper.selectCrewBattleRow();
+        return crewBattleMapper.selectCrewBattleRow(crew_id);
     }
 
-    // 배틀 신청
+    // 배틀 참가
     public void createBattleMember(BattleMemberRequestDTO params) {
         System.out.println("debug>>> Service: createBattleMember + " + crewBattleMapper);
         System.out.println("debug>>> Service: createBattleMember + " + params);
@@ -44,9 +44,9 @@ public class CrewBattleService {
     // <---- 크루 배틀 상세보기 ---->
 
     // 배틀 참가 멤버 조회
-    public List<BattleMemberResponseDTO> selectBattleMember() {
+    public List<BattleMemberResponseDTO> selectBattleMember(Integer battle_id) {
         System.out.println("debug>>> Service: selectBattleMember + " + crewBattleMapper);
-        return crewBattleMapper.selectBattleMemberRow();
+        return crewBattleMapper.selectBattleMemberRow(battle_id);
     }
 
     // 피드 작성
@@ -57,9 +57,9 @@ public class CrewBattleService {
     }
 
     // 피드 조회
-    public List<CrewBattleFeedResponseDTO> selectCrewBattleFeed() {
+    public List<CrewBattleFeedResponseDTO> selectCrewBattleFeed(Integer param) {
         System.out.println("debug>>> Service: selectCrewBattleFeed + " + crewBattleMapper);
-        return crewBattleMapper.selectCrewBattleFeedRow();
+        return crewBattleMapper.selectCrewBattleFeedRow(param);
     }
 
     // 투표

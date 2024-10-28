@@ -7,9 +7,10 @@
     <!-- 크루 생성 --> 
 
     <insert id="createCrewRow"
-            parameterType="com.multipjt.multi_pjt.crew.domain.crew.CrewRequestDTO">
-        INSERT INTO Crew(
-            member_id,
+            parameterType="com.multipjt.multi_pjt.crew.domain.crew.CrewRequestDTO"
+            useGeneratedKeys="true"
+            keyProperty="crew_id">
+        INSERT INTO Crew (
             crew_name,
             crew_goal,
             crew_title,
@@ -18,9 +19,9 @@
             crew_gender,
             crew_frequency,
             crew_age,
-            crew_state
+            crew_state,
+            member_id
         ) VALUES (
-            #{member_id},
             #{crew_name},
             #{crew_goal},
             #{crew_title},
@@ -29,8 +30,9 @@
             #{crew_gender},
             #{crew_frequency},
             #{crew_age},
-            #{crew_state}
-            );
+            #{crew_state},
+            #{member_id}
+        );
     </insert>
 
     <!-- 전체 크루 리스트 조회 --> 
@@ -68,8 +70,8 @@
 
     <insert id="insertCrewMemberRow"
             parameterType="com.multipjt.multi_pjt.crew.domain.crew.CrewMemberRequestDTO">
-        INSERT INTO CrewMember(crew_id, member_id)
-        VALUES(#{crew_id}, #{member_id});
+        INSERT INTO CrewMember (crew_id, member_id, crew_member_state)
+        VALUES (#{crew_id}, #{member_id}, #{crew_member_state});
     </insert>
 
     <!--  @@@@@@@@@ 크루 소개 @@@@@@@@@  -->
@@ -127,9 +129,11 @@
     <select id="selectCrewMemberRow"
             parameterType="Integer"
             resultType="com.multipjt.multi_pjt.crew.domain.crew.CrewMemberResponseDTO">
-        SELECT *
-        FROM CrewMember
-        WHERE crew_id = #{crew_id};
+        SELECT cm.*, up.profile_region, up.profile_age, m.nickname
+        FROM CrewMember cm
+        LEFT JOIN UserProfile up ON cm.member_id = up.member_id
+        LEFT JOIN Member m ON cm.member_id = m.member_id
+        WHERE cm.crew_id = #{crew_id};
     </select>
 
     <!-- 크루원 삭제 --> 
@@ -226,17 +230,24 @@
         WHERE crew_id = #{crew_id} AND member_id = #{member_id} AND crew_post_id = #{crew_post_id};
     </update>
 
+    
+    <!-- 크루 게시물 삭제 --> 
+
+    <delete id="deleteCrewPostRow"
+            parameterType="com.multipjt.multi_pjt.crew.domain.crew.CrewPostRequestDTO">
+        DELETE FROM CrewPost
+        WHERE crew_id = #{crew_id} AND member_id = #{member_id} AND crew_post_id = #{crew_post_id};
+    </delete>
+
     <!-- 크루 댓글 작성 --> 
     <insert id="insertCrewCommentRow"
             parameterType="com.multipjt.multi_pjt.crew.domain.crew.CrewCommentsRequestDTO">
         INSERT INTO CrewComments(
             crew_comments_content,
-            crew_comments_date,
             crew_post_id,
             member_id
         ) VALUES (
             #{crew_comments_content},
-            #{crew_comments_date},
             #{crew_post_id},
             #{member_id}
         );

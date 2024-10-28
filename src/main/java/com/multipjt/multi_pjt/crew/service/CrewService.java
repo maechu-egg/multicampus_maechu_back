@@ -28,7 +28,17 @@ public class CrewService {
     public void createCrew(CrewRequestDTO param) {
         System.out.println("debug>>> Service: createCrew + " + crewMapper);
         System.out.println("debug>>> Service: createCrew + " + param);
+        
+        // 크루 생성
         crewMapper.createCrewRow(param);
+        
+        // 크루장 추가
+        CrewMemberRequestDTO crewMember = new CrewMemberRequestDTO();
+        crewMember.setCrew_id(param.getCrew_id()); // 생성된 크루 ID
+        crewMember.setMember_id(param.getMember_id()); // 크루장 ID
+        crewMember.setCrew_member_state(1); // 크루장 상태
+
+        crewMapper.insertCrewMemberRow(crewMember); // 크루 멤버 추가
     }
 
     // 크루 리스트 전체 조회
@@ -146,6 +156,13 @@ public class CrewService {
         System.out.println("debug>>> Service: updateCrewPost + " + crewMapper);
         System.out.println("debug>>> Service: updateCrewPost + " + param);
         crewMapper.updateCrewPostRow(param);
+    }
+
+    // 크루 게시물 삭제
+    public void deleteCrewPost(CrewPostRequestDTO param) {
+        System.out.println("debug>>> Service: deleteCrewPost + " + crewMapper);
+        System.out.println("debug>>> Service: deleteCrewPost + " + param);
+        crewMapper.deleteCrewPostRow(param);
     }
 
     // --------- 크루 댓글 ---------
