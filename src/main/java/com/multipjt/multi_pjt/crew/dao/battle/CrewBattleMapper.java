@@ -34,7 +34,7 @@ public interface CrewBattleMapper {
     public void createCrewBattleFeedRow(CrewBattleFeedRequestDTO params);
 
     // 피드 조회
-    public List<CrewBattleFeedResponseDTO> selectCrewBattleFeedRow();
+    public List<CrewBattleFeedResponseDTO> selectCrewBattleFeedRow(Integer param);
 
     // 투표
     public void createVoteRow(CrewVoteRequestDTO params);

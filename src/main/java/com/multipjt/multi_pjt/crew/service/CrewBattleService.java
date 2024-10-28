@@ -57,9 +57,9 @@ public class CrewBattleService {
     }
 
     // 피드 조회
-    public List<CrewBattleFeedResponseDTO> selectCrewBattleFeed() {
+    public List<CrewBattleFeedResponseDTO> selectCrewBattleFeed(Integer param) {
         System.out.println("debug>>> Service: selectCrewBattleFeed + " + crewBattleMapper);
-        return crewBattleMapper.selectCrewBattleFeedRow();
+        return crewBattleMapper.selectCrewBattleFeedRow(param);
     }
 
     // 투표

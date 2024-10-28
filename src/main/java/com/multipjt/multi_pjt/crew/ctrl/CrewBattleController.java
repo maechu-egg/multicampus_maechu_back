@@ -15,8 +15,10 @@ import org.springframework.web.bind.annotation.RestController;
 import com.multipjt.multi_pjt.crew.domain.battle.BattleMemberRequestDTO;
 import com.multipjt.multi_pjt.crew.domain.battle.BattleMemberResponseDTO;
 import com.multipjt.multi_pjt.crew.domain.battle.CrewBattleFeedRequestDTO;
+import com.multipjt.multi_pjt.crew.domain.battle.CrewBattleFeedResponseDTO;
 import com.multipjt.multi_pjt.crew.domain.battle.CrewBattleRequestDTO;
 import com.multipjt.multi_pjt.crew.domain.battle.CrewBattleResponseDTO;
+import com.multipjt.multi_pjt.crew.domain.battle.CrewVoteRequestDTO;
 import com.multipjt.multi_pjt.crew.service.CrewBattleService;
 
 @RestController
@@ -69,6 +71,23 @@ public class CrewBattleController {
         System.out.println("client endpoint: /crew/battle/feed/create");
         System.out.println("debug: createCrewBattleFeed + " + param);
         crewBattleService.createCrewBattleFeed(param);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    // 피드 조회
+    @GetMapping("/feed/list")
+    public ResponseEntity<List<CrewBattleFeedResponseDTO>> getCrewBattleFeedList(@RequestParam("participant_id") Integer param) {
+        System.out.println("client endpoint: /crew/battle/feed/list");
+        System.out.println("debug: getCrewBattleFeedList + " + param);
+        return ResponseEntity.ok(crewBattleService.selectCrewBattleFeed(param));
+    }
+
+    // 투표
+    @PostMapping("/vote/create")
+    public ResponseEntity<Void> createVote(@RequestBody CrewVoteRequestDTO param) {
+        System.out.println("client endpoint: /crew/battle/vote/create");
+        System.out.println("debug: createVote + " + param);
+        crewBattleService.createVote(param);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 }
