@@ -5,6 +5,7 @@
 <mapper namespace="com.multipjt.multi_pjt.user.dao.UserMapper">
 
 
+
     <!-- 사용자 등록 -->
     <insert id="registerUser" parameterType="com.multipjt.multi_pjt.user.domain.login.UserRequestDTO">
         INSERT INTO Member (
@@ -19,14 +20,14 @@
 <!-- 회원 정보 수정 쿼리 -->
     <update id="updateUser" parameterType="com.multipjt.multi_pjt.user.domain.login.UserRequestDTO">
         UPDATE Member
-         SET 
-        member_img = #{member_img}, 
-        nickname = #{nickname}, 
-        password = #{password}, 
-        phone = #{phone}, 
-        verified = #{verified}, 
-        sns_provider = #{snsProvider}
-    WHERE email = #{email}
+        SET 
+            member_img = #{member_img},  
+            nickname = #{nickname}, 
+            password = #{password}, 
+            phone = #{phone}, 
+            verified = #{verified}, 
+            sns_provider = #{snsProvider}
+        WHERE member_id = #{member_id} 
     </update>
 
 
@@ -40,17 +41,12 @@
 
      <!-- 이메일로 사용자 조회 -->
     <select id="getUserByEmail" parameterType="String" resultType="com.multipjt.multi_pjt.user.domain.login.UserResponseDTO">
-        SELECT 
-            *
+        SELECT member_id, member_img, nickname, password, email, phone, verified, sns_provider, regDate
         FROM Member
         WHERE email = #{email}
     </select>
 
-     <!-- getUserByEmail2 --> 
-
-    <select id="getUserByEmail2" parameterType="String" resultType="com.multipjt.multi_pjt.user.domain.login.LoginDTO">
-    SELECT * FROM Member WHERE email = #{email}
-    </select> 
+ 
 
     <!-- getUserById --> 
 
@@ -62,7 +58,7 @@
 
     <!-- deleteUserById --> 
     <delete id="deleteUserById" parameterType="int">
-        DELETE FROM Member WHERE member_id = #{member_id}
+        DELETE FROM Member WHERE member_id = #{member_id} <!-- 파라미터 이름 수정 -->
     </delete> 
     
 

@@ -2,11 +2,13 @@ package com.multipjt.multi_pjt.user.service;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import lombok.extern.slf4j.Slf4j;
@@ -24,6 +26,10 @@ import java.util.ArrayList;
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.util.concurrent.ConcurrentHashMap;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+
 
 @Slf4j
 @Service 
@@ -48,11 +54,41 @@ public class LoginServiceImpl implements UserDetailsService { // UserDetailsServ
     private final SecureRandom random = new SecureRandom();
 
     // 1. 회원가입 메서드 추가
-    public void registerUser(UserRequestDTO userRequestDTO) {
+    public ResponseEntity<String> registerUser(UserRequestDTO userRequestDTO) {
+        // 이메일 유효성 검사
+        if (!isValidEmail(userRequestDTO.getEmail())) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                                 .body("{\"Code\": \"INVALID_EMAIL\", \"Message\": \"유효하지 않은 이메일 형식입니다.\"}");
+        }
+
+        // 이메일 중복 확인
+        if (existsByEmail(userRequestDTO.getEmail())) {
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                                 .body("{\"Code\": \"EMAIL_ALREADY_EXISTS\", \"Message\": \"이미 존재하는 이메일입니다.\"}");
+        }
+
+        // 닉네임 중복 확인
+        if (existsByNickname(userRequestDTO.getNickname())) {
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                                 .body("{\"Code\": \"NICKNAME_ALREADY_EXISTS\", \"Message\": \"이미 존재하는 닉네임입니다.\"}");
+        }
+
         // 비밀번호 암호화
         String encodedPassword = passwordEncoder.encode(userRequestDTO.getPassword());
         userRequestDTO.setPassword(encodedPassword); // 암호화된 비밀번호로 설정
-        userMapper.registerUser(userRequestDTO);
+
+        try {
+            userMapper.registerUser(userRequestDTO);
+        } catch (DataIntegrityViolationException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                                 .body("{\"Code\": \"DATA_INTEGRITY_VIOLATION\", \"Message\": \"데이터 무결성 위반.\"}");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                                 .body("{\"Code\": \"REGISTRATION_FAILED\", \"Message\": \"" + e.getMessage() + "\"}");
+        }
+
+        // 회원가입 성공 메시지를 JSON 형식으로 반환
+        return ResponseEntity.ok("{\"message\": \"회원가입 성공\"}");
     }
 
     //1.2 이메일 형식 검증 메서드 추가
@@ -90,6 +126,7 @@ public class LoginServiceImpl implements UserDetailsService { // UserDetailsServ
         }
     }
 
+    //1.5.1 인증 코드 생성 메서드
     public String generateCertificationNumber() {
         StringBuilder certificationNumber = new StringBuilder();
         for (int i = 0; i < 6; i++) {
@@ -98,7 +135,7 @@ public class LoginServiceImpl implements UserDetailsService { // UserDetailsServ
         return certificationNumber.toString();
     }
 
-    // 인증 코드 확인 메서드 추가
+    //1.5.2 인증 코드 확인 메서드 추가
     public boolean verifyCertificationCode(String email, String code) {
         EmailCertificationCodeDTO certification = emailCertificationMap.get(email);
         if (certification == null) {
@@ -120,36 +157,40 @@ public class LoginServiceImpl implements UserDetailsService { // UserDetailsServ
 
  
     // 2. 로그인 : 이메일, 비번 가져와 검증 후 존재하면 jwt 토큰 생성 
-    public String login(LoginDTO loginDTO) {
+    public ResponseEntity<String> login(LoginDTO loginDTO) {
         // 이메일로 사용자 조회
         UserResponseDTO user = userMapper.getUserByEmail(loginDTO.getEmail());
-        System.out.println("loginDTO.getEmail" + loginDTO.getEmail());
-
+        System.out.println("loginDTO.getEmail: " + loginDTO.getEmail());
+        
         // 사용자 존재 여부 확인
         if (user == null) {
-            throw new RuntimeException("Invalid username or password"); // 사용자 없음
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                                 .body("이메일 혹은 비밀번호가 틀렸습니다."); // 사용자 없음
         }
 
         // 비밀번호 검증
         if (!passwordEncoder.matches(loginDTO.getPassword(), user.getPassword())) {
-            throw new RuntimeException("Invalid username or password"); // 비밀번호 불일치
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                                 .body("이메일 혹은 비밀번호가 틀렸습니다."); // 비밀번호 불일치
         }
 
         // 비밀번호가 일치하는 경우 로그인 성공 메시지 출력
-        System.out.println("로그인 성공: " + user.getEmail()); // 사용자 ID 출력 (또는 다른 사용자 정보)
+        System.out.println("로그인 성공: " + user.getEmail());
 
         // CustomUserDetails 객체 생성
         CustomUserDetails userDetails = new CustomUserDetails(
-            user.getMemberId(), // memberId
-            user.getEmail(), // 이메일
-            user.getPassword(), // 비밀번호
-            new ArrayList<>() // 권한 목록 (필요에 따라 수정)
+            user.getMemberId(),
+            user.getEmail(),
+            user.getPassword(),
+            new ArrayList<>()
         );
 
         // 비밀번호가 일치하는 경우 JWT 토큰 생성
-        return jwtTokenProvider.createAccessToken(userDetails); // CustomUserDetails를 사용하여 토큰 생성
+        String token = jwtTokenProvider.createAccessToken(userDetails);
+        return ResponseEntity.ok(token); // JWT 토큰 반환
     }
 
+    //3. 사용자 인증 메서드 : 이메일로 조회해 SecurityContext Holder에 저장
     @Override
     public UserDetails loadUserByUsername(String useremail) {
         // 사용자 정보를 데이터베이스에서 가져오는 로직 구현
@@ -167,8 +208,93 @@ public class LoginServiceImpl implements UserDetailsService { // UserDetailsServ
         );
     }
 
-    // @Override
-    // public void expireToken(String token) {
-    //     jwtTokenProvider.expireToken(token);
-    // }
+    //4. 회원 탈퇴 메서드 
+    public void deleteUser(int userId) {
+        logger.info("Deleting user with ID: {}", userId); // userId 출력
+        userMapper.deleteUserById(userId);
+    }
+
+    //5. 회원 정보 수정 메서드 
+    @Transactional
+    public ResponseEntity<String> updateUser(int userId, UserRequestDTO userRequestDTO) {
+        // 이메일 유효성 검사
+        if (!isValidEmail(userRequestDTO.getEmail())) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                                 .body("{\"Code\": \"INVALID_EMAIL\", \"Message\": \"유효하지 않은 이메일 형식입니다.\"}");
+        }
+
+        // 이메일 중복 확인 (자신의 이메일은 제외)
+        if (existsByEmail(userRequestDTO.getEmail()) && !userRequestDTO.getEmail().equals(getCurrentUserEmail(userId))) {
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                                 .body("{\"Code\": \"EMAIL_ALREADY_EXISTS\", \"Message\": \"이미 존재하는 이메일입니다.\"}");
+        }
+
+        // 닉네임 중복 확인 (자신의 닉네임은 제외)
+        if (existsByNickname(userRequestDTO.getNickname()) && !userRequestDTO.getNickname().equals(getCurrentUserNickname(userId))) {
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                                 .body("{\"Code\": \"NICKNAME_ALREADY_EXISTS\", \"Message\": \"이미 존재하는 닉네임입니다.\"}");
+        }
+
+        // 비밀번호가 제공된 경우 암호화
+        if (userRequestDTO.getPassword() != null && !userRequestDTO.getPassword().isEmpty()) {
+            String encodedPassword = passwordEncoder.encode(userRequestDTO.getPassword());
+            userRequestDTO.setPassword(encodedPassword); // 암호화된 비밀번호로 설정
+        }
+
+        // userId 값을 member_id에 설정
+        userRequestDTO.setMemberId(userId); // member_id에 userId 설정
+
+        // 로그로 업데이트할 객체 출력
+        logger.info("Updating user with ID: {}, Data: {}", userId, userRequestDTO);
+
+        try {
+            userMapper.updateUser(userRequestDTO); // 사용자 정보 업데이트
+        } catch (DataIntegrityViolationException e) {
+            logger.error("Data integrity violation: {}", e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                                 .body("{\"Code\": \"DATA_INTEGRITY_VIOLATION\", \"Message\": \"데이터 무결성 위반.\"}");
+        } catch (Exception e) {
+            logger.error("Update failed: {}", e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                                 .body("{\"Code\": \"UPDATE_FAILED\", \"Message\": \"" + e.getMessage() + "\"}");
+        }
+
+        // 새로운 토큰 생성
+        CustomUserDetails userDetails = new CustomUserDetails(userId, userRequestDTO.getEmail(), userRequestDTO.getPassword(), new ArrayList<>());
+        String newToken = jwtTokenProvider.createAccessToken(userDetails); // 새로운 토큰 생성
+
+        // 회원 정보 수정 성공 메시지와 새로운 토큰을 JSON 형식으로 반환
+        return ResponseEntity.ok("{\"Code\": \"OK\", \"Message\": \"회원 정보 수정 성공\", \"newToken\": \"" + newToken + "\"}");
+    }
+
+    //5.1 현재 사용자의 이메일을 가져오는 메서드 
+    private String getCurrentUserEmail(int userId) {
+        // userId로 현재 사용자의 이메일을 데이터베이스에서 조회하는 로직을 구현
+        UserResponseDTO user = userMapper.getUserById(userId);
+        
+        // 로그 추가
+        if (user != null) {
+            logger.info("User ID1: {}, Email: {}", userId, user.getEmail());
+        } else {
+            logger.warn("User not found for ID: {}", userId);
+        }
+        logger.info("user.getEmail()1: " + user.getEmail());
+        return user.getEmail();
+    }
+
+    // 5.2 현재 사용자의 닉네임을 가져오는 메서드 
+    private String getCurrentUserNickname(int userId) {
+        // userId로 현재 사용자의 닉네임을 데이터베이스에서 조회하는 로직을 구현
+        UserResponseDTO user = userMapper.getUserById(userId);
+        
+        // 로그 추가
+        if (user != null) {
+            logger.info("User ID2: {}, Nickname: {}", userId, user.getNickname());
+        } else {
+            logger.warn("User not found for ID: {}", userId);
+        }
+        
+        return user.getNickname();
+    }
+
 }

@@ -157,10 +157,7 @@ public class CrewTests {
     @Test
     @DisplayName("010 : 크루 멤버 조회")
     public void selectCrewMemberTest(){
-        Map<String, Integer> map = new HashMap<>();
-        map.put("crew_id", 2);
-
-        List<CrewMemberResponseDTO> memberList = crewMapper.selectCrewMemberRow(map);
+        List<CrewMemberResponseDTO> memberList = crewMapper.selectCrewMemberRow(20);
         for(CrewMemberResponseDTO dto : memberList){
             System.out.println(dto);
         }
@@ -201,10 +198,7 @@ public class CrewTests {
     @Test
     @DisplayName("012 : 크루 게시판 게시글 전체 조회")
     public void selectCrewPostListTest() {
-        Map<String, Integer> map = new HashMap<>();
-        map.put("crew_id", 2);
-
-        List<CrewPostResponseDTO> postList = crewMapper.selectCrewPostListRow(map);
+        List<CrewPostResponseDTO> postList = crewMapper.selectCrewPostListRow(19);
         for (CrewPostResponseDTO dto:postList){
             System.out.println(dto);
         }

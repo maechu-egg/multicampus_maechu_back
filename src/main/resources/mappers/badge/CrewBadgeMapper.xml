@@ -21,4 +21,12 @@
     <select id="selectCrewBadgeByMemberId" resultType="com.multipjt.multi_pjt.badge.domain.badge.CrewBadgeResponseDTO">
         SELECT * FROM CrewBadge WHERE member_id = #{member_id};
     </select>
+
+    <!-- CrewMemberMapper.xml -->
+    <select id="selectBattleWinsByMemberId" resultType="int">
+    SELECT battle_wins
+    FROM CrewMember
+    WHERE member_id = #{memberId}
+    </select>
+
 </mapper>

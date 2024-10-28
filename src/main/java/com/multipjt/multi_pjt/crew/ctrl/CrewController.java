@@ -16,8 +16,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.PathVariable;
 
+import com.multipjt.multi_pjt.crew.domain.crew.CrewCommentsRequestDTO;
+import com.multipjt.multi_pjt.crew.domain.crew.CrewCommentsResponseDTO;
 import com.multipjt.multi_pjt.crew.domain.crew.CrewMemberRequestDTO;
+import com.multipjt.multi_pjt.crew.domain.crew.CrewMemberResponseDTO;
 import com.multipjt.multi_pjt.crew.domain.crew.CrewPostRequestDTO;
+import com.multipjt.multi_pjt.crew.domain.crew.CrewPostResponseDTO;
 import com.multipjt.multi_pjt.crew.domain.crew.CrewRequestDTO;
 import com.multipjt.multi_pjt.crew.domain.crew.CrewResponseDTO;
 import com.multipjt.multi_pjt.crew.service.CrewService;
@@ -78,7 +82,7 @@ public class CrewController {
         System.out.println("client endpoint: /crew/intro/update");
         System.out.println("debug>>> updateCrewIntro + " + param);
         crewService.updateCrewIntro(param);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
     }
 
     // 크루 관리 수정
@@ -87,7 +91,7 @@ public class CrewController {
         System.out.println("client endpoint: /crew/info/update");
         System.out.println("debug>>> updateCrewInfo + " + param);
         crewService.updateCrewInfo(param);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
     }
 
     // 크루 삭제
@@ -98,6 +102,32 @@ public class CrewController {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
+    // --------- 크루원 정보 ---------
+
+    // 크루원 가입 승인
+    @PatchMapping("/member/approve")
+    public ResponseEntity<Void> approveCrewMember(@RequestBody CrewMemberRequestDTO param) {
+        System.out.println("client endpoint: /crew/member/approve");
+        crewService.approveCrewMember(param);
+        return ResponseEntity.noContent().build(); // 204 No Content
+    }
+
+    // 크루원 조회
+    @GetMapping("/member/list/{crewId}")
+    public ResponseEntity<List<CrewMemberResponseDTO>> getCrewMemberList(@PathVariable("crewId") Integer crewId) {
+        System.out.println("client endpoint: /crew/member/list/" + crewId);
+        return ResponseEntity.ok(crewService.getCrewMemberList(crewId));
+    }
+
+    // 크루원 삭제
+    @DeleteMapping("/member/delete")
+    public ResponseEntity<Void> deleteCrewMember(@RequestBody CrewMemberRequestDTO param) {
+        System.out.println("client endpoint: /crew/member/delete");
+        System.out.println("debug>>> deleteCrewMember + " + param);
+        crewService.deleteCrewMember(param);
+        return ResponseEntity.noContent().build(); // 204 No Content
+    }
+
     // --------- 크루 게시판 ---------
 
     // 크루 게시물 등록
@@ -106,8 +136,83 @@ public class CrewController {
         System.out.println("client endpoint: /crew/post/create");
         System.out.println("debug>>> createCrewPost + " + param);
         crewService.createCrewPost(param);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.status(HttpStatus.CREATED).build(); // 201 Created
     }
 
+    // 크루 게시물 전체 조회
+    @GetMapping("/post/list/{crewId}")
+    public ResponseEntity<List<CrewPostResponseDTO>> getCrewPostList(@PathVariable("crewId") Integer crewId) {
+        System.out.println("client endpoint: /crew/post/list/" + crewId);
+        return ResponseEntity.ok(crewService.getCrewPostList(crewId));
+    }
 
+    // 크루 게시물 상단 공지, 일반 고정 3개씩
+    @GetMapping("/post/top")
+    public ResponseEntity<List<CrewPostResponseDTO>> getCrewTopPostList(@RequestBody CrewPostRequestDTO params) {
+        System.out.println("client endpoint: /crew/post/top/");
+        System.out.println("debug>>> getCrewTopPostList + " + params);
+        return ResponseEntity.ok(crewService.getCrewTopPostList(params));
+    }
+
+    // 크루 게시물 공지/인기/일반 조회
+    @GetMapping("/post/notice")
+    public ResponseEntity<List<CrewPostResponseDTO>> getCrewNoticePostList(@RequestBody CrewPostRequestDTO params) {
+        System.out.println("client endpoint: /crew/post/notice/");
+        System.out.println("debug>>> getCrewNoticePostList + " + params);
+        return ResponseEntity.ok(crewService.getCrewNoticePostList(params));
+    }
+
+    // 크루 게시물 상세 조회
+    @GetMapping("/post/detail")
+    public ResponseEntity<CrewPostResponseDTO> getCrewPost(@RequestBody CrewPostRequestDTO params) {
+        System.out.println("client endpoint: /crew/post/detail/");
+        System.out.println("debug>>> getCrewPost + " + params);
+        return ResponseEntity.ok(crewService.getCrewPost(params));
+    }
+
+    // 크루 게시물 수정
+    @PatchMapping("/post/update")
+    public ResponseEntity<Void> updateCrewPost(@RequestBody CrewPostRequestDTO param) {
+        System.out.println("client endpoint: /crew/post/update");
+        System.out.println("debug>>> updateCrewPost + " + param);
+        crewService.updateCrewPost(param);
+        return ResponseEntity.noContent().build();
+    }
+
+    // 크루 게시물 삭제
+    @DeleteMapping("/post/delete")
+    public ResponseEntity<Void> deleteCrewPost(@RequestBody CrewPostRequestDTO param) {
+        System.out.println("client endpoint: /crew/post/delete");
+        System.out.println("debug>>> deleteCrewPost + " + param);
+        crewService.deleteCrewPost(param);
+        return ResponseEntity.noContent().build();
+    }
+
+    // --------- 크루 댓글 ---------
+
+    // 크루 댓글 작성
+    @PostMapping("/comment/create")
+    public ResponseEntity<Void> createCrewComment(@RequestBody CrewCommentsRequestDTO param) {
+        System.out.println("client endpoint: /crew/comment/create");
+        System.out.println("debug>>> createCrewComment + " + param);
+        crewService.createCrewComment(param);
+        return ResponseEntity.status(HttpStatus.CREATED).build(); // 201 Created
+    }
+
+    // 크루 댓글 조회
+    @GetMapping("/comment/list")
+    public ResponseEntity<List<CrewCommentsResponseDTO>> getCrewCommentList(@RequestBody CrewCommentsRequestDTO param) {
+        System.out.println("client endpoint: /crew/comment/list");
+        System.out.println("debug>>> getCrewCommentList + " + param);
+        return ResponseEntity.ok(crewService.getCrewCommentList(param));
+    }
+
+    // 크루 댓글 삭제
+    @DeleteMapping("/comment/delete")
+    public ResponseEntity<Void> deleteCrewComment(@RequestBody CrewCommentsRequestDTO param) {
+        System.out.println("client endpoint: /crew/comment/delete");
+        System.out.println("debug>>> deleteCrewComment + " + param);
+        crewService.deleteCrewComment(param);
+        return ResponseEntity.noContent().build();
+    }
 }

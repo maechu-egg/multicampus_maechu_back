@@ -9,6 +9,7 @@ public class CrewBattleFeedResponseDTO {
     private String feed_post;
     private int feed_kcal;
     private String feed_sport;
-    private int feed_time;
+    private int feed_exTime;
     private int participant_id;
+    private int battle_id;
 }

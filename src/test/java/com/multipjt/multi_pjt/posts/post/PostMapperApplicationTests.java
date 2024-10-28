@@ -17,7 +17,9 @@ import com.multipjt.multi_pjt.community.dao.UserActivityMapper;
 import com.multipjt.multi_pjt.community.domain.UserActivity.UserActivityRequestDTO;
 import com.multipjt.multi_pjt.community.domain.posts.PostRequestDTO;
 import com.multipjt.multi_pjt.community.domain.posts.PostResponseDTO;
-//import com.multipjt.multi_pjt.user.domain.UserRequestDTO;
+import com.multipjt.multi_pjt.user.domain.login.UserRequestDTO;
+
+
 
 
 @SpringBootTest
