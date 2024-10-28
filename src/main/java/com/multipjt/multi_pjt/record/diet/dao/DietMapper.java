@@ -24,8 +24,9 @@ public interface DietMapper {
     // DietItems 삭제
     public int itemDelete(Map<String,Object> map);
     //DietItems 수정
-    public int itemUpdate(Map<String,Object> map);
+    public int itemUpdate(ItemRequestDTO requestDTO);
 
-    public ArrayList<Map<String,Object>> itemNutCheck(Map<String,Object> map);
+    public ArrayList<Map<String,Object>> mealNutCheck(Map<String,Object> map);
 
+    public Map<String,String> calculateTdee(Long memberId);
 }

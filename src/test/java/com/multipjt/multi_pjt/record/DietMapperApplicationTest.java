@@ -130,20 +130,16 @@ public class DietMapperApplicationTest {
         //given : 식단 기입
         Long dietNumber = test();
         //given : 수정할 식품 dietId, ItemName 임시 지정
-        Map<String,Object> itemMap = new HashMap<>();
-        itemMap.put("diet_id",dietNumber);
-        itemMap.put("item_name",itemRequestDTO.getItem_name());
-        //given : 수정 사항 임시 지정
-        //when : Map에 모든 item 속성 기입
-        itemMap.put("newItemName", "잡곡밥");
-        itemMap.put("calories",itemRequestDTO.getCalories());
-        itemMap.put("carbs",itemRequestDTO.getCarbs());
-        itemMap.put("fat",itemRequestDTO.getFat());
-        itemMap.put("quantity",200);
-        itemMap.put("protein",itemRequestDTO.getProtein());
-
+        ItemRequestDTO itemRequestDTO = new ItemRequestDTO();
+        itemRequestDTO.setDiet_id(dietNumber);
+        itemRequestDTO.setItem_name(itemRequestDTO.getItem_name());
+        itemRequestDTO.setCalories(300);
+        itemRequestDTO.setCarbs(30);
+        itemRequestDTO.setFat(30);
+        itemRequestDTO.setQuantity(200);
+        itemRequestDTO.setProtein(30);
         //then : 검증
-        int item = dietMapper.itemUpdate(itemMap);
+        int item = dietMapper.itemUpdate(itemRequestDTO);
         
         Assertions.assertThat(item).isEqualTo(1);           
     }    
@@ -234,7 +230,7 @@ public class DietMapperApplicationTest {
         Map<String,Object> type = new HashMap<>();
         type.put("member_id", 1L);
         type.put("record_date",LocalDate.of(2024,10,22));
-        List<Map<String, Object>> list = dietMapper.itemNutCheck(type);
+        List<Map<String, Object>> list = dietMapper.mealNutCheck(type);
         Assertions.assertThat(list).size().isEqualTo(2);
     }
 }

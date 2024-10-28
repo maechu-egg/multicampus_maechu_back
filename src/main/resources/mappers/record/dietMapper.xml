@@ -49,10 +49,11 @@
 
     <!-- itemUpdate --> 
 
-    <update id="itemUpdate" parameterType="java.util.Map">
+    <update id="itemUpdate" parameterType="com.multipjt.multi_pjt.record.diet.domain.ItemRequestDTO">
         update DietItems
-        set item_name = #{newItemName},
+        set 
         calories = #{calories},
+        quantity = #{quantity},
         carbs = #{carbs},
         fat = #{fat},
         protein = #{protein}
@@ -61,7 +62,7 @@
 
     <!-- itemNutCheck --> 
 
-    <select id="itemNutCheck" parameterType="java.util.Map" resultType="java.util.Map">
+    <select id="mealNutCheck" parameterType="java.util.Map" resultType="java.util.Map">
         SELECT 
             d.meal_type AS mealType,
             SUM(i.calories) AS totalCalories,
@@ -75,5 +76,11 @@
             AND d.member_id = #{member_id}
         GROUP BY d.meal_type;
     </select>
-    
+
+    <!-- calculateTdee --> 
+
+    <select id="calculateTdee" parameterType="java.lang.Long" resultType="java.util.Map">
+        select profile_gender, profile_age , profile_weight ,profile_height, profile_activity_level from UserProfile
+        where member_id = #{member_id};
+    </select>    
 </mapper>
