@@ -76,7 +76,7 @@ public class CrewBattleTests {
                                             .feed_post("달리기 했어용")
                                             .feed_kcal(500)
                                             .feed_sport("달리기")
-                                            .feed_time(1)
+                                            .feed_exTime(1)
                                             .participant_id(3)
                                             .build();
         crewBattleMapper.createCrewBattleFeedRow(request);
@@ -85,7 +85,7 @@ public class CrewBattleTests {
     @Test
     public void selectCrewBattleFeedTest() {
         System.out.println("debug mapper >>> " + crewBattleMapper);
-        List<CrewBattleFeedResponseDTO> list = crewBattleMapper.selectCrewBattleFeedRow();
+        List<CrewBattleFeedResponseDTO> list = crewBattleMapper.selectCrewBattleFeedRow(3);
         for( CrewBattleFeedResponseDTO dto : list) {
             System.out.println(dto);
         }
