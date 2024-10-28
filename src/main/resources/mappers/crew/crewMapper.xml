@@ -129,9 +129,10 @@
     <select id="selectCrewMemberRow"
             parameterType="Integer"
             resultType="com.multipjt.multi_pjt.crew.domain.crew.CrewMemberResponseDTO">
-        SELECT cm.*, up.name, up.region, up.age
+        SELECT cm.*, up.profile_region, up.profile_age, m.nickname
         FROM CrewMember cm
         JOIN UserProfile up ON cm.member_id = up.member_id
+        JOIN Member m ON cm.member_id = m.member_id
         WHERE cm.crew_id = #{crew_id};
     </select>
 
