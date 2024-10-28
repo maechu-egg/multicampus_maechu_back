@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.multipjt.multi_pjt.crew.domain.battle.BattleMemberRequestDTO;
 import com.multipjt.multi_pjt.crew.domain.battle.CrewBattleFeedRequestDTO;
 import com.multipjt.multi_pjt.crew.domain.battle.CrewBattleRequestDTO;
 import com.multipjt.multi_pjt.crew.domain.battle.CrewBattleResponseDTO;
@@ -40,6 +41,15 @@ public class CrewBattleController {
         System.out.println("client endpoint: /crew/battle/list");
         System.out.println("debug: getCrewBattleList + " + crew_id);
         return ResponseEntity.ok(crewBattleService.selectCrewBattle(crew_id));
+    }
+
+    // 배틀 참가
+    @PostMapping("/join")
+    public ResponseEntity<Void> createBattleMember(@RequestBody BattleMemberRequestDTO param) {
+        System.out.println("client endpoint: /crew/battle/join");
+        System.out.println("debug: createBattleMember + " + param);
+        crewBattleService.createBattleMember(param);
+        return ResponseEntity.ok().build();
     }
 
     // --------- 배틀 상세보기 ---------

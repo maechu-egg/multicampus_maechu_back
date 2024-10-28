@@ -34,7 +34,7 @@ public class CrewBattleService {
         return crewBattleMapper.selectCrewBattleRow(crew_id);
     }
 
-    // 배틀 신청
+    // 배틀 참가
     public void createBattleMember(BattleMemberRequestDTO params) {
         System.out.println("debug>>> Service: createBattleMember + " + crewBattleMapper);
         System.out.println("debug>>> Service: createBattleMember + " + params);

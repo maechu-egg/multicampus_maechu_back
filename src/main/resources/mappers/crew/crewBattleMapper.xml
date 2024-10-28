@@ -3,6 +3,8 @@
 
 <mapper namespace="com.multipjt.multi_pjt.crew.dao.battle.CrewBattleMapper">
 
+    <!--  @@@@@@@@@ 크루 배틀 @@@@@@@@@  -->
+
     <!-- 배틀 생성 --> 
 
     <insert id="createCrewBattleRow"
@@ -22,13 +24,15 @@
             ORDER BY battle_state;
     </select>
     
-    <!-- 배틀 신청 --> 
+    <!-- 배틀 참가 --> 
 
     <insert id="createBattleMemberRow"
             parameterType="com.multipjt.multi_pjt.crew.domain.battle.BattleMemberRequestDTO">
         INSERT INTO BattleMember(participant_id, battle_id, member_id)
         VALUES(#{participant_id}, #{battle_id}, #{member_id});
-    </insert>    
+    </insert>
+
+    <!--  @@@@@@@@@ 배틀 상세보기 @@@@@@@@@  -->
 
     <!-- 배틀 참가 멤버 조회 --> 
 
