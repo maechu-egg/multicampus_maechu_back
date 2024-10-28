@@ -10,9 +10,9 @@ import lombok.AllArgsConstructor;
 public class CrewMemberResponseDTO {
     private int crew_id;
     private int member_id;
-    private String name;
-    private String region;
-    private int age;
+    private String nickname;
+    private String profile_region;
+    private int profile_age;
     private int battle_wins;
     private int crew_member_state;
 }
