@@ -1,8 +1,11 @@
 package com.multipjt.multi_pjt.crew.ctrl;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -10,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.multipjt.multi_pjt.crew.domain.battle.CrewBattleFeedRequestDTO;
 import com.multipjt.multi_pjt.crew.domain.battle.CrewBattleRequestDTO;
+import com.multipjt.multi_pjt.crew.domain.battle.CrewBattleResponseDTO;
 import com.multipjt.multi_pjt.crew.service.CrewBattleService;
 
 @RestController
@@ -28,6 +32,14 @@ public class CrewBattleController {
         crewBattleService.createCrewBattle(param);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
+
+    // // 배틀 목록 조회
+    // @GetMapping("/list")
+    // public ResponseEntity<List<CrewBattleResponseDTO>> getCrewBattleList(@RequestBody CrewBattleRequestDTO param) {
+    //     System.out.println("client endpoint: /crew/battle/list");
+    //     System.out.println("debug: getCrewBattleList + " + param);
+    //     return ResponseEntity.ok(crewBattleService.selectCrewBattle(param));
+    // }
 
     // --------- 배틀 상세보기 ---------
 

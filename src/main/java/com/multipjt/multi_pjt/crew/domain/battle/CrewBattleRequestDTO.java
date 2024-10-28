@@ -2,9 +2,13 @@ package com.multipjt.multi_pjt.crew.domain.battle;
 
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 
 @Data
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class CrewBattleRequestDTO {
     private int battle_id;
     private String battle_name;

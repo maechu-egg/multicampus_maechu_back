@@ -20,7 +20,7 @@ public interface CrewBattleMapper {
     public void createCrewBattleRow(CrewBattleRequestDTO params);
     
     // 배틀 목록 조회
-    public List<CrewBattleResponseDTO> selectCrewBattleRow();
+    public List<CrewBattleResponseDTO> selectCrewBattleRow(CrewBattleRequestDTO params);
 
     // 배틀 신청
     public void createBattleMemberRow(BattleMemberRequestDTO params);

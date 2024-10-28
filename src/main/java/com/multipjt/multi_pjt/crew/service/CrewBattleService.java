@@ -29,9 +29,9 @@ public class CrewBattleService {
     }
 
     // 배틀 목록 조회
-    public List<CrewBattleResponseDTO> selectCrewBattle() {
+    public List<CrewBattleResponseDTO> selectCrewBattle(CrewBattleRequestDTO params) {
         System.out.println("debug>>> Service: selectCrewBattle + " + crewBattleMapper);
-        return crewBattleMapper.selectCrewBattleRow();
+        return crewBattleMapper.selectCrewBattleRow(params);
     }
 
     // 배틀 신청

@@ -129,9 +129,10 @@
     <select id="selectCrewMemberRow"
             parameterType="Integer"
             resultType="com.multipjt.multi_pjt.crew.domain.crew.CrewMemberResponseDTO">
-        SELECT *
-        FROM CrewMember
-        WHERE crew_id = #{crew_id};
+        SELECT cm.*, up.name, up.region, up.age
+        FROM CrewMember cm
+        JOIN UserProfile up ON cm.member_id = up.member_id
+        WHERE cm.crew_id = #{crew_id};
     </select>
 
     <!-- 크루원 삭제 --> 
