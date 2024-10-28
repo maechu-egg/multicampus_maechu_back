@@ -68,6 +68,13 @@ public class CrewService {
         crewMapper.insertCrewMemberRow(param);
     }
 
+    // 내가 속한 크루 조회
+    public List<CrewResponseDTO> getMyCrewList(Integer member_id) {
+        System.out.println("debug>>> Service: getMyCrewList + " + crewMapper);
+        System.out.println("debug>>> Service: getMyCrewList + " + member_id);
+        return crewMapper.selectMyCrewRow(member_id);
+    }
+
     // --------- 크루 소개 ---------
 
     // 크루 소개 수정

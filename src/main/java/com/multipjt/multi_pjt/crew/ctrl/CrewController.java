@@ -55,6 +55,7 @@ public class CrewController {
     @GetMapping("/list/sport")
     public ResponseEntity<List<CrewResponseDTO>> getCrewSportList(@RequestParam Map<String, String> map) {
         System.out.println("client endpoint: /crew/list/sport");
+        System.out.println("debug>>> getCrewSportList + " + map);
         return ResponseEntity.ok(crewService.getCrewSportList(map));
     }
 
@@ -62,6 +63,7 @@ public class CrewController {
     @GetMapping("/info/{crewId}")
     public ResponseEntity<CrewResponseDTO> getCrewInfo(@PathVariable("crewId") Integer crewId) {
         System.out.println("client endpoint: /crew/info/" + crewId);
+        System.out.println("debug>>> getCrewInfo + " + crewId);
         return ResponseEntity.ok(crewService.getCrewInfo(crewId));
     }
 
@@ -73,6 +75,15 @@ public class CrewController {
         crewService.addCrewMember(param);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
+
+    // 내가 속한 크루 조회
+    @GetMapping("/my")
+    public ResponseEntity<List<CrewResponseDTO>> getMyCrewList(@RequestParam("member_id") Integer member_id) {
+        System.out.println("client endpoint: /crew/my");
+        System.out.println("debug>>> getMyCrewList + " + member_id);
+        return ResponseEntity.ok(crewService.getMyCrewList(member_id));
+    }
+
 
     // --------- 크루 소개 ---------
 
@@ -98,6 +109,7 @@ public class CrewController {
     @DeleteMapping("/delete/{crewId}")
     public ResponseEntity<Void> deleteCrew(@PathVariable("crewId") Integer crewId) {
         System.out.println("client endpoint: /crew/delete/" + crewId);
+        System.out.println("debug>>> deleteCrew + " + crewId);
         crewService.deleteCrew(crewId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
@@ -108,6 +120,7 @@ public class CrewController {
     @PatchMapping("/member/approve")
     public ResponseEntity<Void> approveCrewMember(@RequestBody CrewMemberRequestDTO param) {
         System.out.println("client endpoint: /crew/member/approve");
+        System.out.println("debug>>> approveCrewMember + " + param);
         crewService.approveCrewMember(param);
         return ResponseEntity.noContent().build(); // 204 No Content
     }
@@ -116,6 +129,7 @@ public class CrewController {
     @GetMapping("/member/list/{crewId}")
     public ResponseEntity<List<CrewMemberResponseDTO>> getCrewMemberList(@PathVariable("crewId") Integer crewId) {
         System.out.println("client endpoint: /crew/member/list/" + crewId);
+        System.out.println("debug>>> getCrewMemberList + " + crewId);
         return ResponseEntity.ok(crewService.getCrewMemberList(crewId));
     }
 
@@ -143,6 +157,7 @@ public class CrewController {
     @GetMapping("/post/list/{crewId}")
     public ResponseEntity<List<CrewPostResponseDTO>> getCrewPostList(@PathVariable("crewId") Integer crewId) {
         System.out.println("client endpoint: /crew/post/list/" + crewId);
+        System.out.println("debug>>> getCrewPostList + " + crewId);
         return ResponseEntity.ok(crewService.getCrewPostList(crewId));
     }
 
