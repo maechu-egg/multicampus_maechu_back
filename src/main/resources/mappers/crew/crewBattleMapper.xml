@@ -14,8 +14,9 @@
     <!-- 배틀 목록 조회 --> 
 
     <select id="selectCrewBattleRow"
+            parameterType="Integer"
             resultType="com.multipjt.multi_pjt.crew.domain.battle.CrewBattleResponseDTO">
-            SELECT battle_id, battle_name, battle_goal, battle_end_recruitment, battle_end_date, battle_content, battle_state, crew_id
+            SELECT *
             FROM CrewBattle
             WHERE crew_id = #{crew_id}
             ORDER BY battle_state;

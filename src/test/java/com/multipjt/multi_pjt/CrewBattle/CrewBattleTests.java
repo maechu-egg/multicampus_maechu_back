@@ -41,7 +41,7 @@ public class CrewBattleTests {
     @Test
     public void selectCrewBattleTest() {
         System.out.println("debug mapper >>> " + crewBattleMapper);
-        List<CrewBattleResponseDTO> list = crewBattleMapper.selectCrewBattleRow();
+        List<CrewBattleResponseDTO> list = crewBattleMapper.selectCrewBattleRow(26);
         for( CrewBattleResponseDTO dto : list) {
             System.out.println(dto);
         }
