@@ -1,5 +1,6 @@
 package com.multipjt.multi_pjt.record.diet.ctrl;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -12,6 +13,8 @@ import com.multipjt.multi_pjt.record.diet.domain.DietRequestDTO;
 import com.multipjt.multi_pjt.record.diet.domain.ItemRequestDTO;
 import com.multipjt.multi_pjt.record.diet.domain.ItemResponseDTO;
 import com.multipjt.multi_pjt.record.diet.service.DietService;
+import com.multipjt.multi_pjt.record.openApi.domain.FoodCalculateDTO;
+import com.multipjt.multi_pjt.record.openApi.service.ApiService;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,6 +29,7 @@ public class DietControl {
     
     @Autowired
     private DietService dietService;
+
 
     //규칙 : 한 끼에 같은 식품 중복 작성 불가, 하루에 끼니 유형은 하나씩만 가능
     // 식단 수정 기능은 넣지 않음, 식단 기입 여부는 식품 기록 여부에 따라 결정
@@ -134,12 +138,86 @@ public class DietControl {
         }
     }
     
-    // @PostMapping("path")
-    // public String postMethodName(@RequestBody String entity) {
-    //     //TODO: process POST request
-        
-    //     return entity;
-    // }
-    
+    // 영양소 계산 엔드포인트
+    @SuppressWarnings("null")
+    @PostMapping("/calculate/nutrients")
+    public ResponseEntity<ItemRequestDTO> calculateNutrients(@RequestBody FoodCalculateDTO foodCalcDTO) {
+        try {
+            ItemRequestDTO calculatedItem = foodCalcDTO.calculateNutrients();
+            return new ResponseEntity<>(calculatedItem, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+        }
+    }
 
+    @GetMapping("/calculate/tdee")
+    public ResponseEntity<Map<String,Integer>> calculateTdee(@RequestParam Long memberId) {
+        
+        Map<String,String> info = dietService.calculateTdeeRow(memberId);
+        // 기초대사량(BMR) 계산 - 해리스-베네딕트 공식 사용
+        Integer bmr;
+        if (info.get("profile_gender").equalsIgnoreCase("M")) {
+            bmr = (int) Math.round(88.362 + (13.397 * Double.parseDouble(info.get("profile_weight")))
+                        + (4.799 * Double.parseDouble(info.get("profile_height")))
+                        - (5.677 * Double.parseDouble(info.get("profile_age"))));
+        } else {
+            bmr = (int) Math.round(447.593 + (9.247 * Double.parseDouble(info.get("profile_weight")))
+                        + (3.098 * Double.parseDouble(info.get("profile_height")))
+                        - (4.330 * Double.parseDouble(info.get("profile_age"))));
+        }
+
+        // 활동레벨에 따른 TDEE 계산
+        double activityMultiplier;
+        switch (info.get("profile_activity_level").toLowerCase()) {
+            case "좌식생활":
+                activityMultiplier = 1.2;     // 좌식생활
+                break;
+            case "가벼운 운동":
+                activityMultiplier = 1.375;   // 가벼운 운동 (주1-3회)
+                break;
+            case "중간 강도 운동":
+                activityMultiplier = 1.55;    // 중간 강도 운동 (주3-5회)
+                break;
+            case "활동적인 운동":
+                activityMultiplier = 1.725;   // 활동적인 운동 (주6-7회)
+                break;
+            case "매우 활동적":
+                activityMultiplier = 1.9;     // 매우 활동적 (하루 2회 운동)
+                break;
+            default:
+                throw new IllegalArgumentException("잘못된 활동 레벨입니다");
+        }
+
+        Integer tdee = (int) Math.round(bmr * activityMultiplier);
+        Integer recommendedCalories = tdee;
+        boolean isMale = info.get("profile_gender").equalsIgnoreCase("M");
+
+        // 다이어트 목표에 따른 칼로리 조정
+    switch (info.get("profile_diet_goal").toLowerCase()) {
+        case "다이어트":
+            // 남성: TDEE - 300~500, 여성: TDEE - 200~300
+            recommendedCalories = tdee - (isMale ? 400 : 250);
+            break;
+        case "벌크업":
+            // 남성: TDEE + 300~500, 여성: TDEE + 200~400
+            recommendedCalories = tdee + (isMale ? 400 : 300);
+            break;
+        case "린매스업":
+            // 남성: TDEE + 200~400, 여성: TDEE + 100~200
+            recommendedCalories = tdee + (isMale ? 300 : 150);
+            break;
+        case "유지":
+            // TDEE 유지
+            break;
+        default:
+            throw new IllegalArgumentException("잘못된 다이어트 목표입니다");
+    }
+
+    Map<String,Integer> result = new HashMap<>();
+    result.put("bmr", bmr);
+    result.put("tdee", tdee);
+    result.put("recommendedCalories", recommendedCalories);
+
+    return new ResponseEntity<>(result, HttpStatus.OK);
+    }
 }

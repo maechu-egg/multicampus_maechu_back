@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.multipjt.multi_pjt.record.openApi.domain.NutirientDTO;
+import com.multipjt.multi_pjt.record.openApi.domain.FoodCalculateDTO;
 
 @Service
 public class ApiService {
@@ -43,4 +44,15 @@ public class ApiService {
         }
         return list;
     }       
+
+    public FoodCalculateDTO convertToCalculateDTO(NutirientDTO nutrientDTO) {
+        FoodCalculateDTO calcDTO = new FoodCalculateDTO();
+        calcDTO.setFoodNm(nutrientDTO.getFoodNm());
+        calcDTO.setOriginalQuantity(Integer.parseInt(nutrientDTO.getQuantity()));
+        calcDTO.setEnergy(Double.parseDouble(nutrientDTO.getEnergy()));
+        calcDTO.setCarbs(Double.parseDouble(nutrientDTO.getCarbs()));
+        calcDTO.setProtein(Double.parseDouble(nutrientDTO.getProtein()));
+        calcDTO.setFat(Double.parseDouble(nutrientDTO.getFat()));
+        return calcDTO;
+    }
 }

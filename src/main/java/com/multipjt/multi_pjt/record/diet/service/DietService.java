@@ -49,4 +49,8 @@ public class DietService {
     public List<Map<String,Object>> mealNutCheckRow(Map<String,Object> map){
         return dietMapper.mealNutCheck(map);
     }
+
+    public Map<String,String> calculateTdeeRow(Long memberId){
+        return dietMapper.calculateTdee(memberId);
+    }
 }

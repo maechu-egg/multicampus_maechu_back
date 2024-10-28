@@ -76,5 +76,11 @@
             AND d.member_id = #{member_id}
         GROUP BY d.meal_type;
     </select>
-    
+
+    <!-- calculateTdee --> 
+
+    <select id="calculateTdee" parameterType="java.lang.Long" resultType="java.util.Map">
+        select profile_gender, profile_age , profile_weight ,profile_height, profile_activity_level from UserProfile
+        where member_id = #{member_id};
+    </select>    
 </mapper>

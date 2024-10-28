@@ -28,4 +28,5 @@ public interface DietMapper {
 
     public ArrayList<Map<String,Object>> mealNutCheck(Map<String,Object> map);
 
+    public Map<String,String> calculateTdee(Long memberId);
 }
