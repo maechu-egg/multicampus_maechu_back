@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.multipjt.multi_pjt.crew.domain.battle.BattleMemberRequestDTO;
+import com.multipjt.multi_pjt.crew.domain.battle.BattleMemberResponseDTO;
 import com.multipjt.multi_pjt.crew.domain.battle.CrewBattleFeedRequestDTO;
 import com.multipjt.multi_pjt.crew.domain.battle.CrewBattleRequestDTO;
 import com.multipjt.multi_pjt.crew.domain.battle.CrewBattleResponseDTO;
@@ -44,15 +45,23 @@ public class CrewBattleController {
     }
 
     // 배틀 참가
-    @PostMapping("/join")
+    @PostMapping("/member/join")
     public ResponseEntity<Void> createBattleMember(@RequestBody BattleMemberRequestDTO param) {
-        System.out.println("client endpoint: /crew/battle/join");
+        System.out.println("client endpoint: /crew/battle/member/join");
         System.out.println("debug: createBattleMember + " + param);
         crewBattleService.createBattleMember(param);
         return ResponseEntity.ok().build();
     }
 
     // --------- 배틀 상세보기 ---------
+
+    // 배틀 참가 멤버 조회
+    @GetMapping("/member/list")
+    public ResponseEntity<List<BattleMemberResponseDTO>> getBattleMemberList(@RequestParam("battle_id") Integer battle_id) {
+        System.out.println("client endpoint: /crew/battle/member/list");
+        System.out.println("debug: getBattleMemberList + " + battle_id);
+        return ResponseEntity.ok(crewBattleService.selectBattleMember(battle_id));
+    }
 
     // 피드 작성
     @PostMapping("/feed/create")

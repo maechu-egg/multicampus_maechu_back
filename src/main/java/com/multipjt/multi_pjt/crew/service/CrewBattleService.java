@@ -44,9 +44,9 @@ public class CrewBattleService {
     // <---- 크루 배틀 상세보기 ---->
 
     // 배틀 참가 멤버 조회
-    public List<BattleMemberResponseDTO> selectBattleMember() {
+    public List<BattleMemberResponseDTO> selectBattleMember(Integer battle_id) {
         System.out.println("debug>>> Service: selectBattleMember + " + crewBattleMapper);
-        return crewBattleMapper.selectBattleMemberRow();
+        return crewBattleMapper.selectBattleMemberRow(battle_id);
     }
 
     // 피드 작성

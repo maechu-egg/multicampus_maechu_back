@@ -28,7 +28,7 @@ public interface CrewBattleMapper {
     // <---- 크루 배틀 상세보기 ---->
 
     // 배틀 참가 멤버 조회
-    public List<BattleMemberResponseDTO> selectBattleMemberRow();
+    public List<BattleMemberResponseDTO> selectBattleMemberRow(Integer battle_id);
 
     // 피드 작성
     public void createCrewBattleFeedRow(CrewBattleFeedRequestDTO params);
