@@ -14,23 +14,38 @@ public class BattleMemberResponseDTO {
     private Integer total_feed_exTime;
     private Integer feed_count;
     private String badge_level;
+    private String badgeImagePath;
+    
 
     public String getBadgeImagePath() {
-        switch (badge_level) {
-            case "기본":
-                return "img/badges/crewBadgeBasic.png"; // 기본 배지 이미지
-            case "브론즈":
-                return "img/badges/crewBadgeBronze.png";
-            case "실버":
-                return "img/badges/crewBadgeSilver.png";
-            case "골드":
-                return "img/badges/crewBadgeGold.png";
-            case "플래티넘":
-                return "img/badges/crewBadgePlatinum.png";
-            case "다이아":
-                return "img/badges/crewBadgeDiamond.png";
-            default:
-                return null; // 기본값 추가
+        if (badgeImagePath == null) {
+            if (badge_level == null) {
+                badgeImagePath = "img/badges/CrewBadgeDefault.png";
+            } else {
+                switch (badge_level) {
+                    case "기본":
+                        badgeImagePath = "img/badges/CrewBadgeDefault.png";
+                        break;
+                    case "브론즈":
+                        badgeImagePath = "img/badges/CrewBadgeBronze.png";
+                        break;
+                    case "실버":
+                        badgeImagePath = "img/badges/CrewBadgeSilver.png";
+                        break;
+                    case "골드":
+                        badgeImagePath = "img/badges/CrewBadgeGold.png";
+                        break;
+                    case "플래티넘":
+                        badgeImagePath = "img/badges/CrewBadgePlatinum.png";
+                        break;
+                    case "다이아":
+                        badgeImagePath = "img/badges/CrewBadgeDiamond.png";
+                        break;
+                    default:
+                        badgeImagePath = "img/badges/CrewBadgeDefault.png";
+                }
+            }
         }
+        return badgeImagePath;
     }
 }

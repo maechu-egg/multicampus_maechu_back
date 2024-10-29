@@ -57,20 +57,19 @@ public class CrewBattleController {
 
     // --------- 배틀 상세보기 ---------
 
-    // // 배틀 참가 멤버 조회
-    // @GetMapping("/member/list")
-    // public ResponseEntity<List<BattleMemberResponseDTO>> getBattleMemberList(@RequestParam("battle_id") Integer battle_id) {
-    //     System.out.println("client endpoint: /crew/battle/member/list");
-    //     System.out.println("debug: getBattleMemberList + " + battle_id);
-    //     List<BattleMemberResponseDTO> members = crewBattleService.selectBattleMember(battle_id);
-    //     // 뱃지 이미지 경로 설정
-    //     for (BattleMemberResponseDTO badge : members) {
-    //         String badgeImagePath = badge.getBadgeImagePath();
-            
-    //     }
-        
-    //     return ResponseEntity.ok(members);
-    // }
+    // 배틀 참가 멤버 조회
+    @GetMapping("/member/list")
+    public ResponseEntity<List<BattleMemberResponseDTO>> getBattleMemberList(@RequestParam("battle_id") Integer battle_id) {
+        System.out.println("client endpoint: /crew/battle/member/list");
+        System.out.println("debug: getBattleMemberList + " + battle_id);
+        List<BattleMemberResponseDTO> members = crewBattleService.selectBattleMember(battle_id);
+        // 뱃지 이미지 경로 설정
+        for (BattleMemberResponseDTO badge : members) {
+            String badgeImagePath = badge.getBadgeImagePath();
+            badge.setBadgeImagePath(badgeImagePath);
+        }
+        return ResponseEntity.ok(members);
+    }
 
     // 피드 작성
     @PostMapping("/feed/create")
