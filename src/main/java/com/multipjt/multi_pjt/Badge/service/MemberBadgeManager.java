@@ -4,6 +4,8 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,13 +17,17 @@ import com.multipjt.multi_pjt.badge.domain.record.UserActivityRecordRequsetDTO;
 
 @Service
 public class MemberBadgeManager {
+    private static final Logger logger = LoggerFactory.getLogger(MemberBadgeManager.class);
 
     private final ActivityPointService activityPointService;
     private final BadgeService badgeService;
     private final MemberBadgeMapper memberBadgeMapper;
     private final UserActivityRecordMapper userActivityRecordMapper;
 
-    public MemberBadgeManager(ActivityPointService activityPointService, BadgeService badgeService, MemberBadgeMapper memberBadgeMapper, UserActivityRecordMapper userActivityRecordMapper) {
+    public MemberBadgeManager(ActivityPointService activityPointService, 
+                            BadgeService badgeService, 
+                            MemberBadgeMapper memberBadgeMapper, 
+                            UserActivityRecordMapper userActivityRecordMapper) {
         this.activityPointService = activityPointService;
         this.badgeService = badgeService;
         this.memberBadgeMapper = memberBadgeMapper;
@@ -29,85 +35,134 @@ public class MemberBadgeManager {
     }
 
     // 활동을 처리하고 포인트와 뱃지를 업데이트하는 메서드
+    @Transactional
     public int processActivity(int memberId, String activityType) {
         try {
+            logger.info("Processing activity for member: {}, activity type: {}", memberId, activityType);
+            
             // 활동에 따른 포인트 계산
             float points = activityPointService.calculateActivityPoints(activityType);
         
-            // 포인트가 0이면 잘못된 활동 유형이므로 종료
+            // 포인트가 0이면 잘못된 활동 유형
             if (points == 0) {
-                return 0;
+                logger.warn("Invalid activity type: {}", activityType);
+                throw new IllegalArgumentException("유효하지 않은 활동 유형입니다: " + activityType);
             }
 
-            // 오늘 이미 해당 활동이 이루어졌는지 확인 (1일 1회만 포인트 획득 가능)
-            if (userActivityRecordMapper.countTodayActivity(memberId, activityType) > 0) {
-                return 0; // 이미 오늘 포인트가 적립된 경우 아무 작업도 하지 않음
+            // 일일 제한이 있는 활동(포스트, 댓글)인 경우 체크
+            if (isDailyActivity(activityType)) {
+                if (userActivityRecordMapper.countTodayActivity(memberId, activityType) > 0) {
+                    logger.info("Daily activity limit reached for member: {}, activity: {}", 
+                              memberId, activityType);
+                    return getCurrentPoints(memberId);
+                }
+                logger.info("Processing daily activity: {}", activityType);
             }
 
-            // 현재 회원의 뱃지 정보 가져오기
-            MemberBadgeResponseDTO currentBadge = memberBadgeMapper.getBadgeByMemberId(memberId);
+            // 활동 기록 생성
+            UserActivityRecordRequsetDTO activityRecord = createActivityRecord(memberId, activityType, points);
+            userActivityRecordMapper.insertActivity(activityRecord);
 
-            // 새로운 활동 기록 추가
-            UserActivityRecordRequsetDTO newRecord = new UserActivityRecordRequsetDTO();
-            newRecord.setMember_id(memberId);
-            newRecord.setActivity_type(activityType);
-            newRecord.setPoints(points);
-            userActivityRecordMapper.insertActivity(newRecord);
+            // 뱃지 처리
+            return processAndUpdateBadge(memberBadgeMapper.getBadgeByMemberId(memberId), memberId, points);
 
-            // 뱃지가 없으면 새로 생성
-            if (currentBadge == null) {
-                MemberBadgeRequestDTO newBadge = new MemberBadgeRequestDTO();
-                newBadge.setMember_id(memberId);
-                newBadge.setCurrent_points(points);
-                newBadge.setBadge_level(badgeService.getBadgeLevel(BigDecimal.valueOf(points))); // BigDecimal로 변환
-                memberBadgeMapper.insertBadge(newBadge);
-                return (int) points;
-            } else {
-                // 기존 뱃지가 있을 경우 포인트 업데이트
-                float updatedPoints = points + currentBadge.getCurrent_points(); // 기존 포인트에 새로운 포인트 추가
-                String newBadgeLevel = badgeService.getBadgeLevel(BigDecimal.valueOf(updatedPoints)); // BigDecimal로 변환
-
-                // 뱃지 업데이트
-                currentBadge.setCurrent_points(updatedPoints);
-                currentBadge.setBadge_level(newBadgeLevel); // 새로운 배지 레벨 설정
-
-                MemberBadgeRequestDTO updatedBadge = new MemberBadgeRequestDTO();
-                updatedBadge.setBadge_id(currentBadge.getBadge_id());
-                updatedBadge.setCurrent_points(currentBadge.getCurrent_points());
-                updatedBadge.setBadge_level(currentBadge.getBadge_level());
-                updatedBadge.setMember_id(currentBadge.getMember_id());
-
-                memberBadgeMapper.updateBadge(updatedBadge); // 배지 업데이트
-                return (int) updatedPoints;
-            }
         } catch (Exception e) {
-            // 예외 처리 로직 추가
-            // 예: 로그 기록, 사용자에게 오류 메시지 반환 등
-            e.printStackTrace();
-            return 0;
+            logger.error("Error processing activity", e);
+            throw new RuntimeException("활동 처리 중 오류가 발생했습니다", e);
         }
+    }
+
+    private boolean isDailyActivity(String activityType) {
+        return activityType.equals("post") || 
+               activityType.equals("comment"); // diet와 exercise 제거하고 comment만 추가
+    }
+
+    private UserActivityRecordRequsetDTO createActivityRecord(int memberId, 
+                                                            String activityType, 
+                                                            float points) {
+        UserActivityRecordRequsetDTO record = new UserActivityRecordRequsetDTO();
+        record.setMember_id(memberId);
+        record.setActivity_type(activityType);
+        record.setPoints(points);
+        return record;
+    }
+
+    private int processAndUpdateBadge(MemberBadgeResponseDTO currentBadge, 
+                                    int memberId, 
+                                    float points) {
+        if (currentBadge == null) {
+            return createNewBadge(memberId, points);
+        } else {
+            return updateExistingBadge(currentBadge, points);
+        }
+    }
+
+    private int createNewBadge(int memberId, float points) {
+        MemberBadgeRequestDTO newBadge = new MemberBadgeRequestDTO();
+        newBadge.setMember_id(memberId);
+        newBadge.setCurrent_points(points);
+        newBadge.setBadge_level(badgeService.getBadgeLevel(BigDecimal.valueOf(points)));
+        memberBadgeMapper.insertBadge(newBadge);
+        return (int) points;
+    }
+
+    private int updateExistingBadge(MemberBadgeResponseDTO currentBadge, float points) {
+        float updatedPoints = points + currentBadge.getCurrent_points();
+        String newBadgeLevel = badgeService.getBadgeLevel(BigDecimal.valueOf(updatedPoints));
+
+        MemberBadgeRequestDTO updatedBadge = new MemberBadgeRequestDTO();
+        updatedBadge.setBadge_id(currentBadge.getBadge_id());
+        updatedBadge.setCurrent_points(updatedPoints);
+        updatedBadge.setBadge_level(newBadgeLevel);
+        updatedBadge.setMember_id(currentBadge.getMember_id());
+
+        memberBadgeMapper.updateBadge(updatedBadge);
+        return (int) updatedPoints;
     }
 
     // 멤버의 활동 기록 처리
     @Transactional
     public void processMemberActivity(Long memberId) {
         try {
-            // 멤버의 활동 내역 가져오기 (포스트, 댓글, 운동 기록, 식단 기록)
+            logger.info("Processing member activities for member: {}", memberId);
+            
+            // 멤버의 활동 내역 가져오기
             List<Map<String, Object>> activityRecords = memberBadgeMapper.getMemberActivity(memberId);
+            
+            if (activityRecords.isEmpty()) {
+                logger.info("No activity records found for member: {}", memberId);
+                return;
+            }
 
             // 활동 기록을 UserActivityRecord 테이블에 반영
             for (Map<String, Object> record : activityRecords) {
-                memberBadgeMapper.insertUserActivityRecord(record);
+                try {
+                    memberBadgeMapper.insertUserActivityRecord(record);
+                    logger.debug("Activity record inserted: {}", record);
+                } catch (Exception e) {
+                    logger.error("Error inserting activity record: {}", record, e);
+                    // 개별 레코드 실패는 기록하고 계속 진행
+                }
             }
         } catch (Exception e) {
-            // 예외 처리 로직 추가
-            e.printStackTrace();
+            logger.error("Error processing member activities", e);
+            throw new RuntimeException("멤버 활동 처리 중 오류가 발생했습니다", e);
         }
     }
 
-    // 현재 포인트를 반환하는 메서드 추가
+    // 현재 포인트를 반환하는 메서드
     public int getCurrentPoints(int memberId) {
-        MemberBadgeResponseDTO currentBadge = memberBadgeMapper.getBadgeByMemberId(memberId);
-        return currentBadge != null ? (int) currentBadge.getCurrent_points() : 0;
+        try {
+            MemberBadgeResponseDTO currentBadge = memberBadgeMapper.getBadgeByMemberId(memberId);
+            if (currentBadge == null) {
+                throw new IllegalArgumentException("멤버 ID에 해당하는 뱃지를 찾을 수 없습니다: " + memberId);
+            }
+            return (int) currentBadge.getCurrent_points();
+        } catch (IllegalArgumentException e) {
+            throw e;
+        } catch (Exception e) {
+            logger.error("Error getting current points for member: {}", memberId, e);
+            throw new RuntimeException("포인트 조회 중 오류가 발생했습니다", e);
+        }
     }
 }

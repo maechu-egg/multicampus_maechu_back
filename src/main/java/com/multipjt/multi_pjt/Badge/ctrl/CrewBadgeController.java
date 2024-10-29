@@ -1,6 +1,8 @@
 package com.multipjt.multi_pjt.badge.ctrl;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,38 +17,99 @@ import com.multipjt.multi_pjt.badge.domain.badge.CrewBadgeRequestDTO;
 import com.multipjt.multi_pjt.badge.domain.badge.CrewBadgeResponseDTO;
 import com.multipjt.multi_pjt.badge.service.CrewBadgeManager;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @RestController
 @RequestMapping("/crew_badges")
 public class CrewBadgeController {
+    private static final Logger logger = LoggerFactory.getLogger(CrewBadgeController.class);
 
     private final CrewBadgeManager crewBadgeManager;
 
-    @Autowired
     public CrewBadgeController(CrewBadgeManager crewBadgeManager) {
         this.crewBadgeManager = crewBadgeManager;
     }
 
     // 크루 뱃지 생성
     @PostMapping("/crewbadge")
-    public ResponseEntity<String> createCrewBadge(@RequestParam int member_id) {
-        crewBadgeManager.processBattleWin(member_id); // 배틀 승리 처리
-        return ResponseEntity.ok("크루 뱃지가 생성되었습니다.");
+    public ResponseEntity<Map<String, Object>> createCrewBadge(@RequestParam int member_id) {
+        try {
+            logger.info("Creating crew badge for member: {}", member_id);
+            crewBadgeManager.processBattleWin(member_id);
+            
+            Map<String, Object> response = new HashMap<>();
+            response.put("status", "success");
+            response.put("message", "크루 뱃지가 생성되었습니다.");
+            
+            return ResponseEntity.ok(response);
+        } catch (IllegalArgumentException e) {
+            logger.warn("Invalid request for crew badge creation: {}", e.getMessage());
+            Map<String, Object> error = new HashMap<>();
+            error.put("status", "error");
+            error.put("message", e.getMessage());
+            return ResponseEntity.badRequest().body(error);
+        } catch (Exception e) {
+            logger.error("Error creating crew badge", e);
+            Map<String, Object> error = new HashMap<>();
+            error.put("status", "error");
+            error.put("message", "크루 뱃지 생성 중 오류가 발생했습니다.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
+        }
     }
 
     // 특정 크루원의 뱃지 정보 조회
     @GetMapping("/{memberId}")
-    public ResponseEntity<CrewBadgeResponseDTO> getCrewBadge(@PathVariable int memberId) {
-        CrewBadgeResponseDTO badge = crewBadgeManager.selectCrewBadgeByMemberId(memberId);
-        if (badge == null) {
-            return ResponseEntity.notFound().build(); // 뱃지가 없을 경우 404 반환
+    public ResponseEntity<Map<String, Object>> getCrewBadge(@PathVariable int memberId) {
+        try {
+            logger.info("Fetching crew badge for member: {}", memberId);
+            CrewBadgeResponseDTO badge = crewBadgeManager.selectCrewBadgeByMemberId(memberId);
+            
+            if (badge == null) {
+                logger.info("No badge found for member: {}", memberId);
+                Map<String, Object> response = new HashMap<>();
+                response.put("status", "not_found");
+                response.put("message", "해당 회원의 크루 뱃지를 찾을 수 없습니다.");
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+            }
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("status", "success");
+            response.put("data", badge);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            logger.error("Error fetching crew badge", e);
+            Map<String, Object> error = new HashMap<>();
+            error.put("status", "error");
+            error.put("message", "크루 뱃지 조회 중 오류가 발생했습니다.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
         }
-        return ResponseEntity.ok(badge);
     }
 
     // 크루 뱃지 업데이트
     @PutMapping
-    public ResponseEntity<String> updateCrewBadge(@RequestBody CrewBadgeRequestDTO badgeRequest) {
-        crewBadgeManager.updateBadge(badgeRequest);
-        return ResponseEntity.ok("크루 뱃지가 업데이트되었습니다.");
+    public ResponseEntity<Map<String, Object>> updateCrewBadge(@RequestBody CrewBadgeRequestDTO badgeRequest) {
+        try {
+            logger.info("Updating crew badge for member: {}", badgeRequest.getMember_id());
+            crewBadgeManager.updateBadge(badgeRequest);
+            
+            Map<String, Object> response = new HashMap<>();
+            response.put("status", "success");
+            response.put("message", "크루 뱃지가 업데이트되었습니다.");
+            
+            return ResponseEntity.ok(response);
+        } catch (IllegalArgumentException e) {
+            logger.warn("Invalid request for crew badge update: {}", e.getMessage());
+            Map<String, Object> error = new HashMap<>();
+            error.put("status", "error");
+            error.put("message", e.getMessage());
+            return ResponseEntity.badRequest().body(error);
+        } catch (Exception e) {
+            logger.error("Error updating crew badge", e);
+            Map<String, Object> error = new HashMap<>();
+            error.put("status", "error");
+            error.put("message", "크루 뱃지 업데이트 중 오류가 발생했습니다.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
+        }
     }
 }
