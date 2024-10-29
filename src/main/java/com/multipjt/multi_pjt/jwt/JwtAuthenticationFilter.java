@@ -5,6 +5,8 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -20,24 +22,28 @@ import java.io.IOException;
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter { // 요청당 한번만 실행되는 필터
     private final JwtTokenProvider jwtTokenProvider; // JwtTokenProvider 인스턴스 주입
+    private static final Logger logger = LoggerFactory.getLogger(JwtAuthenticationFilter.class);
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        String authorizationHeader = request.getHeader(HttpHeaders.AUTHORIZATION); // Authorization 헤더에서 jwt 추출
+        String requestURI = request.getRequestURI();
 
-         // SecurityConfig에서 허용된 경로는 필터를 통과하도록 설정
-         if (request.getRequestURI().startsWith("/v2/api-docs") || 
-         request.getRequestURI().startsWith("/swagger-ui/") || 
-         request.getRequestURI().startsWith("/swagger-resources/") ||
-         request.getRequestURI().equals("/user/register") ||
-         request.getRequestURI().equals("/user/login") ||
-         request.getRequestURI().equals("/user/register/email-certification") ||
-         request.getRequestURI().equals("/user/register/email-check") ||
-         request.getRequestURI().equals("/user/register/nickname-check") ||
-         request.getRequestURI().equals("/user/register/verify-certification")) {
-         filterChain.doFilter(request, response); // 다음 필터로 요청 전달
-         return; // 필터 체인 진행 중단
-     }
+        // SecurityConfig에서 허용된 경로는 필터를 통과하도록 설정
+        if (requestURI.startsWith("/v2/api-docs") || 
+            requestURI.startsWith("/swagger-ui/") || 
+            requestURI.startsWith("/swagger-resources/") ||
+            requestURI.equals("/user/register") ||
+            requestURI.equals("/user/login") ||
+            requestURI.equals("/user/register/email-certification") ||
+            requestURI.equals("/user/register/email-check") ||
+            requestURI.equals("/user/register/nickname-check") ||
+            requestURI.equals("/user/changepw") ||
+            requestURI.equals("/user/register/verify-certification")) {
+            filterChain.doFilter(request, response); // 다음 필터로 요청 전달
+            return; // 필터 체인 진행 중단
+        }
+
+        String authorizationHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
 
         // Authorization 헤더가 없거나 Bearer로 시작하지 않는 경우
         if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
@@ -78,6 +84,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter { // 요청당
 
         SecurityContextHolder.getContext().setAuthentication(authenticationToken); // 인증 토큰 설정
         filterChain.doFilter(request, response); // 다음 필터로 요청 전달
+
+        logger.info("Processing request for URI: {}", requestURI);
     }
 
     // 토큰 자체에 문제가 있을 때 리턴

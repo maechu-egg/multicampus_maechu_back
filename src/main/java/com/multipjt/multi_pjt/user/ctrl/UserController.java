@@ -77,20 +77,11 @@ public class UserController {
     @PostMapping("/register/email-certification")
     public ResponseEntity<String> emailCertification(@RequestBody EmailCertificationRequestDTO emailDTO) {
         String email = emailDTO.getEmail();
-        
-        // 이메일 인증 메서드 호출
-        boolean result = loginServiceImple.sendCertificationEmail(email); 
+        boolean result = loginServiceImple.sendCertificationEmail(email); // 서비스 메서드 호출
 
         if (result) {
             return ResponseEntity.ok("{\"Code\": \"SUCCESS\", \"Message\": \"인증 메일이 발송되었습니다.\"}");
         } else {
-            // 이메일이 존재하지 않는 경우에 대한 처리
-            if (!loginServiceImple.existsByEmail(email)) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                                     .body("{\"Code\": \"EMAIL_NOT_FOUND\", \"Message\": \"존재하지 않는 이메일입니다.\"}");
-            }
-            
-            // 인증 메일 발송 실패에 대한 처리
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                                  .body("{\"Code\": \"ERROR\", \"Message\": \"인증 메일 발송에 실패했습니다.\"}");
         }
@@ -138,11 +129,10 @@ public class UserController {
         }
     }
 
-    // @PatchMapping("/changepw")
-    // public ResponseEntity<String> chagePw(@RequestBody ChangePwDTO chagepwDTO) {
-
-    //     return null;
-    // }
+    @PatchMapping("/changepw")
+    public ResponseEntity<String> changePw(@RequestBody ChangePwDTO changePwDTO) {
+        return loginServiceImple.changePw(changePwDTO); // 서비스 메서드 호출
+    }
 
 
     @PostMapping("/test") 
