@@ -72,7 +72,7 @@ public class UserController {
         }
     }
 
-   
+
 
     @PostMapping("/register/email-certification")
     public ResponseEntity<String> emailCertification(@RequestBody EmailCertificationRequestDTO emailDTO) {
@@ -104,9 +104,9 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<Map<String, String>> loginUser(@RequestBody LoginDTO loginDTO) {
+    public ResponseEntity<Map<String, Object>> loginUser(@RequestBody LoginDTO loginDTO) {
         // 로그인 메서드 호출
-        ResponseEntity<Map<String, String>> responseEntity = loginServiceImple.login(loginDTO);
+        ResponseEntity<Map<String, Object>> responseEntity = loginServiceImple.login(loginDTO);
 
         // 로그인 서비스에서 반환된 응답을 그대로 반환
         return responseEntity; // JSON 형식으로 응답 반환
