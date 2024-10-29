@@ -71,7 +71,7 @@ public class CrewBattleTests {
     public void saveCrewBattleFeedTest() {
         System.out.println("debug mapper >>> " + crewBattleMapper);
         CrewBattleFeedRequestDTO request = CrewBattleFeedRequestDTO.builder()
-                                            .feed_id(4)
+                                            // .feed_id(4)
                                             .feed_img("달리기 사진")
                                             .feed_post("달리기 했어용")
                                             .feed_kcal(500)

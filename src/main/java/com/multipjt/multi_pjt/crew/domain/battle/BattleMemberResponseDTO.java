@@ -13,4 +13,24 @@ public class BattleMemberResponseDTO {
     private Integer total_feed_kcal;
     private Integer total_feed_exTime;
     private Integer feed_count;
+    private String badge_level;
+
+    public String getBadgeImagePath() {
+        switch (badge_level) {
+            case "기본":
+                return "img/badges/crewBadgeBasic.png"; // 기본 배지 이미지
+            case "브론즈":
+                return "img/badges/crewBadgeBronze.png";
+            case "실버":
+                return "img/badges/crewBadgeSilver.png";
+            case "골드":
+                return "img/badges/crewBadgeGold.png";
+            case "플래티넘":
+                return "img/badges/crewBadgePlatinum.png";
+            case "다이아":
+                return "img/badges/crewBadgeDiamond.png";
+            default:
+                return null; // 기본값 추가
+        }
+    }
 }
