@@ -14,6 +14,7 @@ import com.multipjt.multi_pjt.badge.dao.UserActivityRecordMapper;
 import com.multipjt.multi_pjt.badge.domain.badge.MemberBadgeRequestDTO;
 import com.multipjt.multi_pjt.badge.domain.badge.MemberBadgeResponseDTO;
 import com.multipjt.multi_pjt.badge.domain.record.UserActivityRecordRequsetDTO;
+import com.multipjt.multi_pjt.badge.domain.record.UserActivityRecordResponseDTO;
 
 @Service
 public class MemberBadgeManager {
@@ -127,7 +128,7 @@ public class MemberBadgeManager {
             logger.info("Processing member activities for member: {}", memberId);
             
             // 멤버의 활동 내역 가져오기
-            List<Map<String, Object>> activityRecords = memberBadgeMapper.getMemberActivity(memberId);
+            List<UserActivityRecordResponseDTO> activityRecords = memberBadgeMapper.getMemberActivity(memberId);
             
             if (activityRecords.isEmpty()) {
                 logger.info("No activity records found for member: {}", memberId);
@@ -135,9 +136,13 @@ public class MemberBadgeManager {
             }
 
             // 활동 기록을 UserActivityRecord 테이블에 반영
-            for (Map<String, Object> record : activityRecords) {
+            for (UserActivityRecordResponseDTO record : activityRecords) {
                 try {
-                    memberBadgeMapper.insertUserActivityRecord(record);
+                    UserActivityRecordRequsetDTO requestDTO = new UserActivityRecordRequsetDTO();
+                    requestDTO.setMember_id(record.getMember_id());
+                    requestDTO.setActivity_type(record.getActivity_type());
+                    requestDTO.setPoints(record.getPoints());
+                    userActivityRecordMapper.insertActivity(requestDTO);
                     logger.debug("Activity record inserted: {}", record);
                 } catch (Exception e) {
                     logger.error("Error inserting activity record: {}", record, e);
