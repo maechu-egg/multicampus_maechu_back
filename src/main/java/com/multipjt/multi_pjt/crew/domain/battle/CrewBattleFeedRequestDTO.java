@@ -11,7 +11,6 @@ import lombok.AllArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CrewBattleFeedRequestDTO {
-    private int feed_id;
     private String feed_img;
     private String feed_post;
     private int feed_kcal;

@@ -39,9 +39,24 @@
     <select id="selectBattleMemberRow"
             parameterType="Integer"
             resultType="com.multipjt.multi_pjt.crew.domain.battle.BattleMemberResponseDTO">
-        SELECT participant_id, battle_id, member_id
-        FROM BattleMember
-        WHERE battle_id = #{battle_id};
+        SELECT 
+            bm.participant_id, 
+            bm.battle_id, 
+            bm.member_id, 
+            m.nickname, 
+            up.profile_region, 
+            up.profile_age, 
+            SUM(cbf.feed_kcal) AS total_feed_kcal, 
+            SUM(cbf.feed_exTime) AS total_feed_exTime,
+            COUNT(cbf.feed_id) AS feed_count,
+            cb.badge_level
+        FROM BattleMember bm
+        LEFT JOIN UserProfile up ON bm.member_id = up.member_id
+        LEFT JOIN Member m ON bm.member_id = m.member_id
+        LEFT JOIN CrewBattleFeed cbf ON bm.participant_id = cbf.participant_id
+        LEFT JOIN CrewBadge cb ON bm.member_id = cb.member_id
+        WHERE bm.battle_id = #{battle_id}
+        GROUP BY bm.participant_id, bm.battle_id, bm.member_id;
     </select>
 
     <!-- 피드 작성 --> 

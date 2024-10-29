@@ -33,6 +33,9 @@ public interface CrewMapper {
     // 크루원 추가
     public void insertCrewMemberRow(CrewMemberRequestDTO param);
 
+    // 내가 속한 크루 조회
+    public List<CrewResponseDTO> selectMyCrewRow(Integer member_id);
+
     // --------- 크루 소개 ---------
 
     // 크루 소개 수정
