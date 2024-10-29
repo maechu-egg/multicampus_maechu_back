@@ -15,9 +15,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.multipjt.multi_pjt.badge.dao.MemberBadgeMapper;
+import com.multipjt.multi_pjt.badge.dao.UserActivityRecordMapper;
+import com.multipjt.multi_pjt.badge.domain.badge.MemberBadgeRequestDTO;
+import com.multipjt.multi_pjt.badge.domain.badge.MemberBadgeResponseDTO;
+import com.multipjt.multi_pjt.badge.domain.record.UserActivityRecordRequestDTO;
+import com.multipjt.multi_pjt.badge.domain.record.UserActivityRecordResponseDTO;
 import com.multipjt.multi_pjt.badge.service.IBadgeService;
 import com.multipjt.multi_pjt.badge.service.MemberBadgeManager;
-import com.multipjt.multi_pjt.badge.domain.record.UserActivityRecordRequestDTO;
 
 @RestController
 @RequestMapping("/badges")
@@ -25,11 +30,15 @@ public class BadgeController {
 
     private final IBadgeService badgeService;
     private final MemberBadgeManager memberBadgeManager;
+    private final UserActivityRecordMapper userActivityRecordMapper;
+    private final MemberBadgeMapper memberBadgeMapper;
 
     // BadgeController 생성자
-    public BadgeController(IBadgeService badgeService, MemberBadgeManager memberBadgeManager) {
+    public BadgeController(IBadgeService badgeService, MemberBadgeManager memberBadgeManager, UserActivityRecordMapper userActivityRecordMapper, MemberBadgeMapper memberBadgeMapper) {
         this.badgeService = badgeService;
         this.memberBadgeManager = memberBadgeManager;
+        this.userActivityRecordMapper = userActivityRecordMapper;
+        this.memberBadgeMapper = memberBadgeMapper;
     }
 
     // 활동을 처리하고 포인트를 업데이트하는 엔드포인트
@@ -38,14 +47,13 @@ public class BadgeController {
         try {
             // 활동을 처리하고 포인트를 업데이트
             memberBadgeManager.processActivity(request.getMember_id(), request.getActivity_type());
+            // 뱃지 등급은 자동으로 업데이트되므로, 현재 점수만 조회
             BigDecimal currentPoints = badgeService.getCurrentPoints(Long.valueOf(request.getMember_id()));
-            String badgeLevel = badgeService.getBadgeLevel(currentPoints);
-
+            
             // 성공 응답
             return ResponseEntity.ok(Map.of(
                 "message", String.format("활동 처리 완료: %s, 회원 ID: %d", request.getActivity_type(), request.getMember_id()),
-                "currentPoints", currentPoints,
-                "badgeLevel", badgeLevel
+                "currentPoints", currentPoints
             ));
         } catch (IllegalArgumentException e) {
             // 잘못된 요청에 대한 응답 반환
@@ -53,6 +61,18 @@ public class BadgeController {
         } catch (Exception e) {
             // 예기치 않은 오류에 대한 응답 반환
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", "예기치 않은 오류가 발생했습니다."));
+        }
+    }
+
+    // 뱃지 생성 엔드포인트
+    @PostMapping("/create")
+    public ResponseEntity<String> createBadge(@RequestBody MemberBadgeRequestDTO badgeRequest) {
+        try {
+            badgeService.createBadge(Long.valueOf(badgeRequest.getMember_id()));
+            return ResponseEntity.status(HttpStatus.CREATED).body("뱃지가 생성되었습니다.");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body("뱃지 생성 중 오류가 발생했습니다: " + e.getMessage());
         }
     }
 
@@ -84,6 +104,20 @@ public class BadgeController {
         return ResponseEntity.ok(rankings);
     }
 
+    // 4. 사용자 활동 기록 조회
+    @GetMapping("/user/{memberId}/activities")
+    public ResponseEntity<List<UserActivityRecordResponseDTO>> getUserActivities(@PathVariable("memberId") Long memberId) {
+        List<UserActivityRecordResponseDTO> activities = userActivityRecordMapper.getActivitiesByMemberId(memberId);
+        return ResponseEntity.ok(activities);
+    }
+
+    // 5. 사용자 뱃지 정보 조회
+    @GetMapping("/user/{memberId}/badge")
+    public ResponseEntity<MemberBadgeResponseDTO> getUserBadge(@PathVariable("memberId") Long memberId) {
+        MemberBadgeResponseDTO badge = memberBadgeMapper.getBadgeByMemberId(memberId.intValue());
+        return ResponseEntity.ok(badge);
+    }
+
     // 전역 예외 처리 핸들러
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Map<String, String>> handleException(Exception e) {
@@ -92,13 +126,21 @@ public class BadgeController {
 
     // 회원의 모든 활동 처리
     @PostMapping("/user/{memberId}/activities")
-    public ResponseEntity<String> processUserActivities(@PathVariable("memberId") Long memberId) {
+    public ResponseEntity<Map<String, Object>> processUserActivities(@PathVariable("memberId") Long memberId) {
         try {
             badgeService.processUserActivities(memberId);
-            return ResponseEntity.ok("회원의 모든 활동이 처리되었습니다.");
+            // 모든 활동 처리 후 현재 점수와 뱃지 등급 조회
+            BigDecimal currentPoints = badgeService.getCurrentPoints(memberId);
+            String badgeLevel = badgeService.getBadgeLevel(currentPoints);
+            
+            return ResponseEntity.ok(Map.of(
+                "message", "회원의 모든 활동이 처리되었습니다.",
+                "currentPoints", currentPoints,
+                "badgeLevel", badgeLevel
+            ));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body("활동 처리 중 오류가 발생했습니다: " + e.getMessage());
+                .body(Map.of("error", "활동 처리 중 오류가 발생했습니다: " + e.getMessage()));
         }
     }
 }
