@@ -7,6 +7,7 @@ import org.apache.ibatis.annotations.Select;
 import com.multipjt.multi_pjt.badge.domain.record.UserActivityRecordRequestDTO;
 import com.multipjt.multi_pjt.badge.domain.record.UserActivityRecordResponseDTO;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Mapper
@@ -20,5 +21,10 @@ public interface UserActivityRecordMapper {
     int countTodayActivity(@Param("memberId") int memberId, @Param("activityType") String activityType);
 
     List<UserActivityRecordResponseDTO> getActivitiesByMemberId(Long memberId);
+
+    List<UserActivityRecordResponseDTO> getActivitiesFromPosts(Long memberId);
+    List<UserActivityRecordResponseDTO> getActivitiesFromComments(Long memberId);
+
+    List<BigDecimal> getTotalPointsByMemberId(Long memberId);
 }
 
