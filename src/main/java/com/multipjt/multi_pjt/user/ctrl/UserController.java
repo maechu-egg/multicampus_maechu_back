@@ -25,6 +25,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 
+import java.util.HashMap; 
+import java.util.Map;
+
 @RestController
 @RequestMapping("user")
 public class UserController {
@@ -101,8 +104,12 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> loginUser(@RequestBody LoginDTO loginDTO) {
-        return loginServiceImple.login(loginDTO); // 로그인 메서드 호출
+    public ResponseEntity<Map<String, String>> loginUser(@RequestBody LoginDTO loginDTO) {
+        // 로그인 메서드 호출
+        ResponseEntity<Map<String, String>> responseEntity = loginServiceImple.login(loginDTO);
+
+        // 로그인 서비스에서 반환된 응답을 그대로 반환
+        return responseEntity; // JSON 형식으로 응답 반환
     }
 
     @PatchMapping("/update") 

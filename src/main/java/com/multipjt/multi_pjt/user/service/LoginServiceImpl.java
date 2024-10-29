@@ -30,6 +30,10 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
 
 @Slf4j
 @Service 
@@ -157,7 +161,7 @@ public class LoginServiceImpl implements UserDetailsService { // UserDetailsServ
 
  
     // 2. 로그인 : 이메일, 비번 가져와 검증 후 존재하면 jwt 토큰 생성 
-    public ResponseEntity<String> login(LoginDTO loginDTO) {
+    public ResponseEntity<Map<String, String>> login(LoginDTO loginDTO) {
         // 이메일로 사용자 조회
         UserResponseDTO user = userMapper.getUserByEmail(loginDTO.getEmail());
         System.out.println("loginDTO.getEmail: " + loginDTO.getEmail());
@@ -165,13 +169,13 @@ public class LoginServiceImpl implements UserDetailsService { // UserDetailsServ
         // 사용자 존재 여부 확인
         if (user == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                                 .body("이메일 혹은 비밀번호가 틀렸습니다."); // 사용자 없음
+                                 .body(Collections.singletonMap("message", "이메일 혹은 비밀번호가 틀렸습니다.")); // 사용자 없음
         }
 
         // 비밀번호 검증
         if (!passwordEncoder.matches(loginDTO.getPassword(), user.getPassword())) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                                 .body("이메일 혹은 비밀번호가 틀렸습니다."); // 비밀번호 불일치
+                                 .body(Collections.singletonMap("message", "이메일 혹은 비밀번호가 틀렸습니다.")); // 비밀번호 불일치
         }
 
         // 비밀번호가 일치하는 경우 로그인 성공 메시지 출력
@@ -187,7 +191,12 @@ public class LoginServiceImpl implements UserDetailsService { // UserDetailsServ
 
         // 비밀번호가 일치하는 경우 JWT 토큰 생성
         String token = jwtTokenProvider.createAccessToken(userDetails);
-        return ResponseEntity.ok(token); // JWT 토큰 반환
+        
+        // JSON 형식으로 토큰 반환
+        Map<String, String> response = new HashMap<>();
+        response.put("token", token); // JWT 토큰을 "token" 키로 추가
+
+        return ResponseEntity.ok(response); // JSON 형식으로 응답 반환
     }
 
     //3. 사용자 인증 메서드 : 이메일로 조회해 SecurityContext Holder에 저장
