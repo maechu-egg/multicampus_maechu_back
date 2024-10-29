@@ -26,17 +26,17 @@
     </select>
 
     <!-- 댓글 삭제  -->
-    <delete id = "commentDelete" parameterType="com.multipjt.multi_pjt.community.domain.comments.CommentRequestDTO">
+    <delete id = "commentDelete" parameterType="java.util.HashMap">
         DELETE 
         FROM 
             Comments
         WHERE
             member_id = #{member_id}
         AND 
-            comments_id = #{comments_id}
+            comments_id = #{comments_id} 
     </delete>
 
-    <!-- 댓글 번호로 조회 -  삭제 되었나 확인용 -->
+    <!-- 댓글 번호로 조회 -  삭제 확인용 -->
     <select id = "getCommentById" parameterType="int" resultType="com.multipjt.multi_pjt.community.domain.comments.CommentResponseDTO">
         SELECT * 
         FROM Comments
@@ -44,6 +44,6 @@
 
     </select>
 
-
     
+   
 </mapper>
