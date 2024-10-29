@@ -36,10 +36,8 @@ public class MyPageMapperApplicationTests {
         profileRequest.setProfile_weight(70.5f);
         profileRequest.setProfile_height(175.0f);
         profileRequest.setProfile_goal("Bulking");
-        profileRequest.setProfile_time("Evening");
         profileRequest.setMember_id(16);
         profileRequest.setProfile_allergy("None");
-        profileRequest.setProfile_diet_goal("Maintain");
         profileRequest.setProfile_sport1("Weightlifting");
         profileRequest.setProfile_sport2("Running");
         profileRequest.setProfile_sport3("Cycling");
@@ -66,10 +64,8 @@ public class MyPageMapperApplicationTests {
         profileRequest.setProfile_weight(70.5f);
         profileRequest.setProfile_height(175.0f);
         profileRequest.setProfile_goal("Bulking");
-        profileRequest.setProfile_time("Evening");
         profileRequest.setMember_id(memberId);
         profileRequest.setProfile_allergy("None");
-        profileRequest.setProfile_diet_goal("Maintain");
         profileRequest.setProfile_sport1("Weightlifting");
         profileRequest.setProfile_sport2("Running");
         profileRequest.setProfile_sport3("Cycling");
@@ -89,10 +85,8 @@ public class MyPageMapperApplicationTests {
     assertThat(profile.getProfile_weight()).isEqualTo(70.5f);
     assertThat(profile.getProfile_height()).isEqualTo(175.0f);
     assertThat(profile.getProfile_goal()).isEqualTo("Bulking");
-    assertThat(profile.getProfile_time()).isEqualTo("Evening");
     assertThat(profile.getMember_id()).isEqualTo(memberId);
     assertThat(profile.getProfile_allergy()).isEqualTo("None");
-    assertThat(profile.getProfile_diet_goal()).isEqualTo("Maintain");
     assertThat(profile.getProfile_sport1()).isEqualTo("Weightlifting");
     assertThat(profile.getProfile_sport2()).isEqualTo("Running");
     assertThat(profile.getProfile_sport3()).isEqualTo("Cycling");
@@ -116,10 +110,8 @@ public class MyPageMapperApplicationTests {
         newProfile.setProfile_weight(70.5f);
         newProfile.setProfile_height(175.0f);
         newProfile.setProfile_goal("Bulking");
-        newProfile.setProfile_time("Evening");
         newProfile.setMember_id(memberId);
         newProfile.setProfile_allergy("None");
-        newProfile.setProfile_diet_goal("Maintain");
         newProfile.setProfile_sport1("Weightlifting");
         newProfile.setProfile_sport2("Running");
         newProfile.setProfile_sport3("Cycling");
@@ -137,10 +129,8 @@ public class MyPageMapperApplicationTests {
         updatedProfile.setProfile_weight(65.0f);
         updatedProfile.setProfile_height(170.0f);
         updatedProfile.setProfile_goal("Cutting");
-        updatedProfile.setProfile_time("Morning");
         updatedProfile.setMember_id(memberId);
         updatedProfile.setProfile_allergy("Peanuts");
-        updatedProfile.setProfile_diet_goal("Lose Weight");
         updatedProfile.setProfile_sport1("Yoga");
         updatedProfile.setProfile_sport2("Swimming");
         updatedProfile.setProfile_sport3("Cycling");
@@ -160,9 +150,7 @@ public class MyPageMapperApplicationTests {
         assertEquals(65.0f, verifiedProfile.getProfile_weight());
         assertEquals(170.0f, verifiedProfile.getProfile_height());
         assertEquals("Cutting", verifiedProfile.getProfile_goal());
-        assertEquals("Morning", verifiedProfile.getProfile_time());
         assertEquals("Peanuts", verifiedProfile.getProfile_allergy());
-        assertEquals("Lose Weight", verifiedProfile.getProfile_diet_goal());
         assertEquals("Yoga", verifiedProfile.getProfile_sport1());
         assertEquals("Swimming", verifiedProfile.getProfile_sport2());
         assertEquals("Cycling", verifiedProfile.getProfile_sport3());
@@ -184,10 +172,8 @@ public class MyPageMapperApplicationTests {
         profileRequest.setProfile_weight(70.5f);
         profileRequest.setProfile_height(175.0f);
         profileRequest.setProfile_goal("Bulking");
-        profileRequest.setProfile_time("Evening");
         profileRequest.setMember_id(memberId);
         profileRequest.setProfile_allergy("None");
-        profileRequest.setProfile_diet_goal("Maintain");
         profileRequest.setProfile_sport1("Weightlifting");
         profileRequest.setProfile_sport2("Running");
         profileRequest.setProfile_sport3("Cycling");
