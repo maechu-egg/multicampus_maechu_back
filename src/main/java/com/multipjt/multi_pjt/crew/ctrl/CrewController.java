@@ -130,7 +130,12 @@ public class CrewController {
     public ResponseEntity<List<CrewMemberResponseDTO>> getCrewMemberList(@PathVariable("crewId") Integer crewId) {
         System.out.println("client endpoint: /crew/member/list/" + crewId);
         System.out.println("debug>>> getCrewMemberList + " + crewId);
-        return ResponseEntity.ok(crewService.getCrewMemberList(crewId));
+        List<CrewMemberResponseDTO> list = crewService.getCrewMemberList(crewId);   
+        for (CrewMemberResponseDTO dto : list) {
+            String badgeImagePath = dto.getBadgeImagePath();
+            dto.setBadgeImagePath(badgeImagePath);
+        }
+        return ResponseEntity.ok(list);
     }
 
     // 크루원 삭제
