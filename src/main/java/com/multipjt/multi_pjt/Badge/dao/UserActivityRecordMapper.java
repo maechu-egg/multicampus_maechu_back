@@ -20,11 +20,16 @@ public interface UserActivityRecordMapper {
     @Select("SELECT COUNT(*) FROM UserActivityRecord WHERE member_id = #{memberId} AND activity_type = #{activityType} AND DATE(created_date) = CURDATE()")
     int countTodayActivity(@Param("memberId") int memberId, @Param("activityType") String activityType);
 
+    // 특정 회원의 활동 기록을 조회하는 메서드
     List<UserActivityRecordResponseDTO> getActivitiesByMemberId(Long memberId);
 
+    // 특정 회원의 포스트에서 활동 기록을 조회하는 메서드
     List<UserActivityRecordResponseDTO> getActivitiesFromPosts(Long memberId);
+
+    // 특정 회원의 댓글에서 활동 기록을 조회하는 메서드
     List<UserActivityRecordResponseDTO> getActivitiesFromComments(Long memberId);
 
+    // 특정 회원의 총 점수를 조회하는 메서드
     List<BigDecimal> getTotalPointsByMemberId(Long memberId);
 }
 
