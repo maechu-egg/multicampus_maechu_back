@@ -39,7 +39,7 @@ public interface CrewMapper {
     // --------- 크루 소개 ---------
 
     // 크루 소개 수정
-    public void updateCrewIntroRow(CrewRequestDTO pamram);
+    public void updateCrewIntroRow(CrewRequestDTO param);
 
     // 크루 관리 수정
     public void updateCrewInfoRow(CrewRequestDTO param);
