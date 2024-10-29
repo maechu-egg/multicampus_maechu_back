@@ -13,7 +13,7 @@ import com.multipjt.multi_pjt.record.exercise.domain.SetResponseDTO;
 @Mapper
 public interface ExerMapper {
 
-    public int exerInsert(ExerRequestDTO exerRequestDTO);
+    public Long exerInsert(ExerRequestDTO exerRequestDTO);
 
     public int exerDelete(Long exer_id);
 

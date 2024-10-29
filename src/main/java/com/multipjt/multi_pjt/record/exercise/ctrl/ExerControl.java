@@ -38,8 +38,9 @@ public class ExerControl {
 
     // 운동 추가
     @PostMapping("/insert/type")
-    public ResponseEntity<Integer> exerInsert(@RequestBody ExerRequestDTO exerRequestDTO){
+    public ResponseEntity<Long> exerInsert(@RequestBody ExerRequestDTO exerRequestDTO){
         System.out.println("class endPoint >> " + "/record/exercise/insert/type");
+        // 강도, 시간, 운동 종류, member_id 만 입력받고, 칼로리는 계산해서 넣어야 함
         System.out.println("exerRequestDTO >> " + exerRequestDTO);
 
         // met 값 계산
@@ -71,7 +72,6 @@ public class ExerControl {
                     break;
             }
         }
-
         System.out.println("met >> " + met);
 
         // 몸무게 가져오기
@@ -81,18 +81,21 @@ public class ExerControl {
         // 칼로리 계산, met * 3.5 * 몸무게 * 운동 시간 * 5
         Float calories = met * 3.5F * weight * exerRequestDTO.getDuration() * 5F;
         System.out.println("calories >> " + calories);
+        exerRequestDTO.setCalories(calories);
 
+        Long exercise_id = exerService.exerInsertRow(exerRequestDTO);
+        System.out.println("exercise_id >> " + exercise_id);
 
-        int result = exerService.exerInsertRow(exerRequestDTO);
-        System.out.println("result >> " + result);
-        if(result == 1){
-            return new ResponseEntity<>(result, HttpStatus.OK);
+        // 운동 번호 반환
+        if(exercise_id != null){
+            return new ResponseEntity<>(exercise_id, HttpStatus.OK);
         } else {
-            return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(exercise_id, HttpStatus.BAD_REQUEST);
         }
     }
 
     // 운동 번호 찾기
+    // 프론트 구현하면 사용 안 할 거임
     @GetMapping("/get/exerciseId")
     public ResponseEntity<List<Long>> exerIdGet(@RequestBody Map<String,Object> map){
         System.out.println("class endPoint >> " + "/record/exercise/get/exerciseId");
@@ -107,6 +110,7 @@ public class ExerControl {
     }
 
     // 운동 세트 추가
+    // 운동 추가를 통해 exercise_id를 프론트가 가지고 있는 상태
     @PostMapping("/insert/set")
     public ResponseEntity<Integer> setInsert(@RequestBody SetRequestDTO setRequestDTO){
         System.out.println("class endPoint >> " + "/record/exercise/insert/set");
@@ -121,6 +125,7 @@ public class ExerControl {
     }
 
     // 운동 세트 정보 출력
+    // 일일 운동 조회를 통해 exercise_id를 프론트가 가지고 있는 상태
     @GetMapping("/get/setInfo")
     public ResponseEntity<SetResponseDTO> setInfoGet(@RequestParam(name = "exercise_id") Long exercise_id){
         System.out.println("class endPoint >> " + "/record/exercise/get/setInfo");  
@@ -134,7 +139,8 @@ public class ExerControl {
         }
     }
 
-    // 운동 일자별 운동 목록 찾기
+    // 일일 운동 조회
+    // 일일 운동 조회 시 운동 정보를 프론트가 가지고 있는 상태
     @GetMapping("/get/exerday")
     public ResponseEntity<List<ExerResponseDTO>> exerDayGet(@RequestBody Map<String,Object> map){
         System.out.println("class endPoint >> " + "/record/exercise/get/exerday");
@@ -148,7 +154,7 @@ public class ExerControl {
         }
     }
 
-    // 운동 종류 수정, 시간, 횟수만 수정 가능, 둘 다 또는 하나만 수정 시 칼로리 자동 수정
+    // 운동 종류 수정 -> 시간, 강도만 수정 가능, 둘 다 또는 하나만 수정 시 칼로리 자동 수정
     @PutMapping("/update/exer")
     public ResponseEntity<Integer> exerUpdate(@RequestBody Map<String,Object> map){
         System.out.println("class endPoint >> " + "/record/exercise/update/exer");
@@ -163,6 +169,7 @@ public class ExerControl {
     }
 
     // 운동 세트 수정
+    // 세트 정보 조회를 통해 set_id를 프론트가 가지고 있는 상태
     @PutMapping("/update/set")
     public ResponseEntity<Integer> setUpdate(@RequestBody Map<String,Object> map){
         System.out.println("class endPoint >> " + "/record/exercise/update/set");
@@ -177,6 +184,7 @@ public class ExerControl {
     }
 
     // 운동 삭제
+    // 일일 운동 조회를 통해 exercise_id를 프론트가 가지고 있는 상태
     @DeleteMapping("/delete/exer")
     public ResponseEntity<Integer> exerDelete(@RequestParam(name = "exercise_id") Long exercise_id){
         System.out.println("class endPoint >> " + "/record/exercise/delete/exer");
@@ -191,6 +199,7 @@ public class ExerControl {
     }
 
     // 운동 세트 삭제
+    // 세트 정보 조회를 통해 set_id를 프론트가 가지고 있는 상태
     @DeleteMapping("/delete/set")
     public ResponseEntity<Integer> setDelete(@RequestParam(name = "set_id") Long set_id){
         System.out.println("class endPoint >> " + "/record/exercise/delete/set");

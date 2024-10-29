@@ -19,8 +19,9 @@ public class ExerService {
     @Autowired
     private ExerMapper exerMapper;
 
-    public int exerInsertRow(ExerRequestDTO exerRequestDTO){
-        return exerMapper.exerInsert(exerRequestDTO);
+    public Long exerInsertRow(ExerRequestDTO exerRequestDTO){
+        exerMapper.exerInsert(exerRequestDTO);
+        return exerRequestDTO.getExercise_id();
     }
 
     public List<Long> exerIdGetRow(Map<String,Object> map){
