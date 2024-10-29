@@ -74,6 +74,17 @@
         VALUES (#{crew_id}, #{member_id}, #{crew_member_state});
     </insert>
 
+    <!-- 내가 속한 크루 조회 --> 
+
+    <select id="selectMyCrewRow"
+            parameterType="Integer"
+            resultType="com.multipjt.multi_pjt.crew.domain.crew.CrewResponseDTO">
+        SELECT cm.crew_id, c.crew_name
+        FROM CrewMember cm
+        JOIN Crew c ON cm.crew_id = c.crew_id
+        WHERE cm.member_id = #{member_id} AND cm.crew_member_state = 1;
+    </select>
+
     <!--  @@@@@@@@@ 크루 소개 @@@@@@@@@  -->
 
     <!-- 크루 소개 수정 --> 
@@ -271,4 +282,5 @@
         DELETE FROM CrewComments
         WHERE crew_post_id = #{crew_post_id} AND member_id = #{member_id} AND crew_comments_id = #{crew_comments_id};
     </delete>
+
 </mapper>

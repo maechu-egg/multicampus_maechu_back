@@ -62,7 +62,13 @@ public class CrewBattleController {
     public ResponseEntity<List<BattleMemberResponseDTO>> getBattleMemberList(@RequestParam("battle_id") Integer battle_id) {
         System.out.println("client endpoint: /crew/battle/member/list");
         System.out.println("debug: getBattleMemberList + " + battle_id);
-        return ResponseEntity.ok(crewBattleService.selectBattleMember(battle_id));
+        List<BattleMemberResponseDTO> members = crewBattleService.selectBattleMember(battle_id);
+        // 뱃지 이미지 경로 설정
+        for (BattleMemberResponseDTO badge : members) {
+            String badgeImagePath = badge.getBadgeImagePath();
+            badge.setBadgeImagePath(badgeImagePath);
+        }
+        return ResponseEntity.ok(members);
     }
 
     // 피드 작성

@@ -1,10 +1,12 @@
-package com.multipjt.multi_pjt.posts.post;
+package com.multipjt.multi_pjt.community.post;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -17,8 +19,6 @@ import com.multipjt.multi_pjt.community.dao.UserActivityMapper;
 import com.multipjt.multi_pjt.community.domain.UserActivity.UserActivityRequestDTO;
 import com.multipjt.multi_pjt.community.domain.posts.PostRequestDTO;
 import com.multipjt.multi_pjt.community.domain.posts.PostResponseDTO;
-import com.multipjt.multi_pjt.user.domain.login.UserRequestDTO;
-
 
 
 
@@ -37,9 +37,6 @@ public class PostMapperApplicationTests {
         
         // Given : 게시글 등록 기본 세팅
         PostRequestDTO request = new PostRequestDTO();
-        //UserRequestDTO user = new UserRequestDTO();
-
-        // user.setMember_id("1");
 
         request.setPost_contents("첫번째 게시글입니다.");
         request.setPost_title("첫번째 테스트");
@@ -55,13 +52,12 @@ public class PostMapperApplicationTests {
         Assertions.assertEquals(1, rowsAffected, "게시글이 등록 되었습니다.");
 
         // Then : 데이터베이스에서 등록된 사용자 정보 조회 및 검증
-        List<PostResponseDTO> registeredPosts = postMapper.getMemberById(1);     
-        
-        
+        List<PostRequestDTO> registeredPosts = postMapper.getMemberById(1);     
+               
         // Null 여부 확인
         Assertions.assertNotNull(registeredPosts, "게시글 등록 성공1");
         
-        PostResponseDTO registeredPost = registeredPosts.get(0);
+        PostRequestDTO registeredPost = registeredPosts.get(0);
 
         // 일치 여부 확인
         Assertions.assertEquals("첫번째 게시글입니다.", registeredPost.getPost_contents(), "게시글 내용이 일치해야합니다.");
@@ -75,13 +71,12 @@ public class PostMapperApplicationTests {
     @Test
     @DisplayName("P02: 게시글 수정 ")
     public void postUpdateTest(){
-        
-     
+         
         //  Given : 게시글 조회 및 수정할 게시글 준비
-        List<PostResponseDTO> selectPosts = postMapper.getMemberById(1);
+        List<PostRequestDTO> selectPosts = postMapper.getMemberById(1);
         
         // 첫번째 게시글 선택
-        PostResponseDTO selectPost = selectPosts.get(0);
+        PostRequestDTO selectPost = selectPosts.get(0);
 
         // When :  게시글 수정을 위한 세팅
         selectPost.setPost_contents("첫번째 게시글 수정 내용입니다.");
@@ -111,17 +106,15 @@ public class PostMapperApplicationTests {
     @DisplayName("P03: 운동 종목 별 조회 ")
     public void postSelectSportTest(){
         
-     
         //  Given : 게시글 조회 준비
-        String sport = "헬스";
-        
+        Map<String, Object> map = new HashMap<>();
+        map.put("sport", "헬스");
         
         // When :  게시글 조회를 위한 세팅
-        List<PostResponseDTO> sportList = postMapper.postSelectSport(sport);
+        List<PostResponseDTO> sportList = postMapper.postSelectSport(map);
         
         // List 가 비어있는지 확인
         Assertions.assertFalse(sportList.isEmpty(), "게시글 조회에 실패했습니다.");
-
 
         // Then: 게시글 정보 검증
         PostResponseDTO first = sportList.get(0);
@@ -137,13 +130,13 @@ public class PostMapperApplicationTests {
     @Test
     @DisplayName("P04: 제목/내욕/해시태그 검색 ")
     public void postSelectTCHTest(){
-        
-     
+         
         //  Given : 게시글 검색어 준비
-        String keyword = "오늘은";
-        
+        Map<String, Object> map = new HashMap<>();
+        map.put("keyword", "오늘은");
+           
         // When :  게시글 검색을 위한 세팅
-        List<PostResponseDTO> searchList = postMapper.postSelectTCH(keyword);
+        List<PostResponseDTO> searchList = postMapper.postSelectTCH(map);
         
         // List 가 비어있는지 확인
         Assertions.assertFalse(searchList.isEmpty(), "게시글 조회에 실패했습니다.");
@@ -163,13 +156,12 @@ public class PostMapperApplicationTests {
     @DisplayName("P05: 좋아요 수 조회")
     public  void postLikeCountTest(){
 
-        //Given: 좋아요 수 조회 - 게시글 번호 
+        // Given: 좋아요 수 조회 - 게시글 번호 
         int post_id = 123;
 
         // When : 좋아요 수 조회를 위한 세팅
         int countLike = postMapper.postLikeCount(post_id);
         
-
         // Then : 예상 좋아요 수와 조회되는 좋아요 수 비교
         int dataLikeCount = 10;
         assertEquals(dataLikeCount, countLike, "좋아요 수가 일치하지 않습니다.");
@@ -180,16 +172,14 @@ public class PostMapperApplicationTests {
     @DisplayName("P06: id로 좋아요 존재 확인")
     public  void LikeExistsTest(){
 
-        //Given: 좋아요 조회 - 게시글 번호 + 사용자 번호
-        UserActivityRequestDTO like = new UserActivityRequestDTO();
-        like.setMember_id(1);
-        like.setPost_id(123);
-        
+        // Given: 좋아요 조회 - 게시글 번호 + 사용자 번호
+        Map<String, Integer> map = new HashMap<>();
+        map.put("member_id", 1);
+        map.put("post_id", 123);
         
         // When : userActivity 테이블에 존재 확인
-        boolean commitLike = userActivityMapper.commitLike(like);
+        boolean commitLike = userActivityMapper.commitLike(map);
         Assertions.assertEquals( true, commitLike, "좋아요가 테이블에 있습니다.");
-
 
         // Then : 좋아요 있음 Exists : true
         boolean existsLike = true;
@@ -202,18 +192,17 @@ public class PostMapperApplicationTests {
     @DisplayName("P07: UserActivity 테이블 Insert ")
     public  void LikeACInsertTest(){
 
-        //Given: 좋아요 조회 - 게시글 번호 + 사용자 번호
-        UserActivityRequestDTO likeAC = new UserActivityRequestDTO();
-        likeAC.setMember_id(1);
-        likeAC.setPost_id(123);
-        likeAC.setUser_activity("like");
-        
+        // Given: 좋아요 조회 - 게시글 번호 + 사용자 번호
+        Map<String, Integer> map = new HashMap<>();
+        map.put("member_id", 1);
+        map.put("post_id", 123);
+
         // When : UserActivity 테이블로 등록 
-        int likeRow = userActivityMapper.likeACInsert(likeAC);
+        int likeRow = userActivityMapper.likeACInsert(map);
         Assertions.assertEquals(1, likeRow, "좋아요가 테이블에 등록 되었습니다.");
 
         // Then : UserActivity 테이블에서 사용자 정보 조회 및 검증
-        boolean commitLike = userActivityMapper.commitLike(likeAC);     
+        boolean commitLike = userActivityMapper.commitLike(map);     
         Assertions.assertEquals( true, commitLike, "좋아요가 테이블에 있습니다.");
 
         // Then : 좋아요 있음 Exists : true
@@ -226,20 +215,18 @@ public class PostMapperApplicationTests {
     @DisplayName("P08: UserActivity 테이블 delete ")
     public  void LikeACDeleteTest(){
 
-        //Given: 좋아요 조회 - 게시글 번호 + 사용자 번호
-        UserActivityRequestDTO likeAC = new UserActivityRequestDTO();
-        likeAC.setMember_id(1);
-        likeAC.setPost_id(123);
+        // Given: 좋아요 조회 - 게시글 번호 + 사용자 번호
+        Map<String, Integer> map = new HashMap<>();
+        map.put("member_id", 1);
+        map.put("post_id", 123);
        
         // When : UserActivity 테이블에서 삭제 
-        int likeRow = userActivityMapper.likeACDelete(likeAC);
+        int likeRow = userActivityMapper.likeACDelete(map);
         Assertions.assertEquals(1, likeRow, "좋아요가 테이블에서 삭제 되었습니다.");
 
         // Then : UserActivity 테이블에서 사용자 정보 조회 및 검증
-        boolean commitLike = userActivityMapper.commitLike(likeAC);     
+        boolean commitLike = userActivityMapper.commitLike(map);     
         Assertions.assertEquals( false, commitLike, "좋아요가 테이블에 없습니다.");
-
-        // Then : 좋아요  Exists : false
         boolean existsLike = false;
         assertEquals(existsLike , commitLike, "좋아요가 테이블에 있습니다.");
 
@@ -249,21 +236,20 @@ public class PostMapperApplicationTests {
     @DisplayName("P09: like만 불러와서 +1 ")
     public  void postLikeCountAddTest(){
 
-        //Given :  좋아요 수 가져올 게시글 번호 세팅
-        PostRequestDTO request = new PostRequestDTO();
-        request.setPost_id(123);
-        
+        // Given :  좋아요 수 가져올 게시글 번호 세팅
+        Map<String, Integer> map = new HashMap<>();
+        map.put("post_id", 123);
+
         //When : 좋아요 수 가져오면  +1 
-        int likeSum = userActivityMapper.likeCount(request.getPost_id());
-        likeSum += 1;
-        request.setPost_like_counts(likeSum);       
-        
+        int likeSum = userActivityMapper.likeCount(map);
+        likeSum += 1;      
+        map.put("post_like_counts", likeSum);
+
         // update 가 정상적으로 되면 1 아니면 0
-        int likeCountAdd = userActivityMapper.postLikeCountAdd(request);
+        int likeCountAdd = userActivityMapper.postLikeCountUpdate(map);
 
         // Then :  증가 했는지 확인
-        int likeSumAfter = userActivityMapper.likeCount(request.getPost_id());
-        
+        int likeSumAfter = userActivityMapper.likeCount(map);       
         Assertions.assertEquals(likeSum, likeSumAfter , "+1 증가하였습니다.");
         Assertions.assertEquals(1, likeCountAdd, "Update가 정상적으로 이루어졌는지 확인");
       
@@ -274,21 +260,19 @@ public class PostMapperApplicationTests {
     @DisplayName("P010: like만 불러와서 -1 ")
     public  void postLikeCountMinusTest(){
 
-        //Given :  좋아요 수 가져올 게시글 번호 세팅
-        PostRequestDTO request = new PostRequestDTO();
-         request.setPost_id(123);
+        // Given :  좋아요 수 가져올 게시글 번호 세팅
+        Map<String, Integer> map = new HashMap<>();
+        map.put("post_id", 123);
         
         //When : 좋아요 수 가져오면  -1 
-        int likeSum = userActivityMapper.likeCount(request.getPost_id());
+        int likeSum = userActivityMapper.likeCount(map);
         likeSum -= 1;
-        request.setPost_like_counts(likeSum);
-
+        map.put("post_like_counts", likeSum);
         // update 가 정상적으로 되면 1 아니면 0
-        int likeCountAdd = userActivityMapper.postLikeCountMinus(request);
+        int likeCountAdd = userActivityMapper.postLikeCountUpdate(map);
 
         // Then :  감소 했는지 확인
-        int likeSumAfter = userActivityMapper.likeCount(request.getPost_id());
-        
+        int likeSumAfter = userActivityMapper.likeCount(map);        
         Assertions.assertEquals(likeSum, likeSumAfter , "-1 감소 하였습니다.");
         Assertions.assertEquals(1, likeCountAdd, "Update가 정상적으로 이루어졌는지 확인");
         
@@ -299,11 +283,12 @@ public class PostMapperApplicationTests {
     @DisplayName("P011: 전체 게시글 조회 ")
     public  void postAllSelectTest(){
 
-        //Given : 
+        // Given : 전체글 페이지 세팅
+        int size = 10;
+        int offset =  1;
          
         //When : 전체 게시글 조회
-        List<PostResponseDTO> postAll = postMapper.postAllSelect();
-
+        List<PostResponseDTO> postAll = postMapper.postAllSelect(size, offset);
         // List 가 비어있는지 확인
         Assertions.assertFalse(postAll.isEmpty(), "게시글 조회에 실패했습니다.");
     
@@ -322,12 +307,11 @@ public class PostMapperApplicationTests {
     public  void postDetailSelectTest(){
 
         //Given : 상세 게시글 조회를 위한 세팅
-        PostRequestDTO request = new PostRequestDTO();
-        request.setPost_id(123);
-
-        
+        Map<String, Integer> map = new HashMap<>();
+        map.put("post_id", 123);
+              
         //When : 상세 게시글 검색
-        List<PostResponseDTO> postDetail = postMapper.postDetailSelect(request);
+        List<PostResponseDTO> postDetail = postMapper.postDetailSelectTest(map);
 
         // List 가 비어있는지 확인
         Assertions.assertFalse(postDetail.isEmpty(), "게시글 조회에 실패했습니다.");
@@ -336,7 +320,7 @@ public class PostMapperApplicationTests {
         // Then: 게시글 정보 검증
         PostResponseDTO first = postDetail.get(0);
         
-        // 댓글 가지고 오나 확인
+        // 댓글 사이즈
         assertEquals(2, postDetail.get(0).getComments().size());
 
         // 게시글 확인
@@ -352,14 +336,17 @@ public class PostMapperApplicationTests {
     @DisplayName("P013: UserActivity 테이블 Insert ")
     public  void ViewACInsertTest(){
 
-        //Given: 조회수 조회 - 게시글 번호 + 사용자 번호
+        // Given: 조회수 조회 - 게시글 번호 + 사용자 번호
         UserActivityRequestDTO viewAC = new UserActivityRequestDTO();
         viewAC.setMember_id(1);
         viewAC.setPost_id(123);
-        viewAC.setUser_activity("view");
         
+        Map<String, Integer> map = new HashMap<>();
+        map.put("post_id", 123);
+        map.put("member_id", 1);
+
         // When : UserActivity 테이블 등록       
-        int viewRow = userActivityMapper.postViewInsert(viewAC);
+        int viewRow = userActivityMapper.postViewInsert(map);
         Assertions.assertEquals(1, viewRow, "조회가 테이블에 등록 되었습니다.");
 
         // Then : UserActivity 테이블에서 사용자 정보 조회 및 검증
@@ -378,29 +365,24 @@ public class PostMapperApplicationTests {
     @DisplayName("P014: Views만 불러와서 +1 ")
     public  void postViewCountAddTest(){
 
-        //Given :  조회수 가져올 게시글 번호 세팅
-        PostRequestDTO request = new PostRequestDTO();
-        request.setPost_id(123);
-        
+        //Given :  조회수 가져올 게시글 번호 세팅 
+        Map<String, Integer> map = new HashMap<>();
+        map.put("post_id", 123);
+
         //When : 조회수 가져오면  +1 
-        int viewSum = userActivityMapper.viewCount(request.getPost_id());
+        int viewSum = userActivityMapper.viewCount(map);
         viewSum += 1;
-        request.setPost_views(viewSum);   
+        map.put("post_views", viewSum);
 
         // update 가 정상적으로 되면 1 아니면 0
-        int viewCountAdd = userActivityMapper.postViewCountAdd(request);
+        int viewCountAdd = userActivityMapper.postViewCountAdd(map);
 
         // Then :  증가 했는지 다시 호출
-        int viewSumAfter = userActivityMapper.viewCount(request.getPost_id());
-        
+        int viewSumAfter = userActivityMapper.viewCount(map);     
         Assertions.assertEquals(viewSum, viewSumAfter , "+1 증가하였습니다.");
         Assertions.assertEquals(1, viewCountAdd, "Update가 정상적으로 이루어졌습니다.");
       
     }
-
-
-
-
 
 }
 
