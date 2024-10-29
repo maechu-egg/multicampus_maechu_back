@@ -16,4 +16,20 @@
     );
 </insert>
 
+<select id="getActivitiesFromPosts" parameterType="Long" resultType="com.multipjt.multi_pjt.badge.domain.record.UserActivityRecordResponseDTO">
+    SELECT 'post' AS activityType, 0.5 AS points, created_date
+    FROM posts
+    WHERE member_id = #{value}
+</select>
+
+<select id="getActivitiesFromComments" parameterType="Long" resultType="com.multipjt.multi_pjt.badge.domain.record.UserActivityRecordResponseDTO">
+    SELECT 'comment' AS activityType, 0.5 AS points, created_date
+    FROM comments
+    WHERE member_id = #{value}
+</select>
+
+<select id="getTotalPointsByMemberId" parameterType="Long" resultType="java.math.BigDecimal">
+    SELECT COALESCE(SUM(points), 0) FROM UserActivityRecord WHERE member_id = #{memberId};
+</select>
+
 </mapper>

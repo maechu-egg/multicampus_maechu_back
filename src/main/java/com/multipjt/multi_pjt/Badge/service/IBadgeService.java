@@ -11,4 +11,5 @@ public interface IBadgeService {
     void updateUserPoints(Long memberId, BigDecimal points);
     List<Map<String, Object>> getUserRankings();
     void processUserActivities(Long memberId);
+    void createBadge(Long memberId);
 }
