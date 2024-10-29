@@ -1,6 +1,5 @@
 package com.multipjt.multi_pjt.user.service;
 
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -19,6 +18,7 @@ import com.multipjt.multi_pjt.user.dao.UserMapper;
 import com.multipjt.multi_pjt.user.domain.CustomUserDetails;
 import com.multipjt.multi_pjt.user.domain.login.UserRequestDTO;
 import com.multipjt.multi_pjt.user.domain.login.UserResponseDTO;
+import com.multipjt.multi_pjt.user.domain.login.ChangePwDTO;
 import com.multipjt.multi_pjt.user.domain.login.EmailCertificationCodeDTO;
 import com.multipjt.multi_pjt.user.domain.login.LoginDTO;
 
@@ -85,7 +85,7 @@ public class LoginServiceImpl implements UserDetailsService { // UserDetailsServ
             userMapper.registerUser(userRequestDTO);
         } catch (DataIntegrityViolationException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                                 .body("{\"Code\": \"DATA_INTEGRITY_VIOLATION\", \"Message\": \"데이터 무결성 위반.\"}");
+                                 .body("{\"Code\": \"DATA_INTEGRITY_VIOLATION\", \"Message\": \"데���터 무결성 위반.\"}");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                                  .body("{\"Code\": \"REGISTRATION_FAILED\", \"Message\": \"" + e.getMessage() + "\"}");
@@ -307,4 +307,37 @@ public class LoginServiceImpl implements UserDetailsService { // UserDetailsServ
         return user.getNickname();
     }
 
+     //6. 비밀번호 변경 메소드
+    @Transactional
+    public ResponseEntity<String> changePw(ChangePwDTO changePwDTO) {
+        logger.info("비밀번호 변경 요청: 이메일 = {}", changePwDTO.getEmail());
+
+        // 이메일로 사용자 조회
+        UserResponseDTO user = userMapper.getUserByEmail(changePwDTO.getEmail());
+        
+        // 사용자 존재 여부 확인
+        if (user == null) {
+            logger.warn("사용자를 찾을 수 없습니다: 이메일 = {}", changePwDTO.getEmail());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                                 .body("{\"Code\": \"NOT_FOUND\", \"Message\": \"사용자를 찾을 수 없습니다.\"}");
+        }
+
+        logger.info("사용자 조회 성공: 이메일 = {}", user.getEmail());
+
+        // 비밀번호 암호화
+        String encodedPassword = passwordEncoder.encode(changePwDTO.getPassword());
+        logger.info("암호화된 비밀번호 생성 완료.");
+
+        // 새 비밀번호로 설정
+        user.setPassword(encodedPassword); // 비밀번호 변경
+        userMapper.updateUserPassword(user); // 비밀번호 업데이트 메서드 호출
+
+        logger.info("비밀번호 변경 완료: 이메일 = {}", user.getEmail());
+        return ResponseEntity.ok("{\"Code\": \"SUCCESS\", \"Message\": \"비밀번호가 변경되었습니다.\"}");
+    }
+
 }
+
+   
+
+

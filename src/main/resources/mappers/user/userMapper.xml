@@ -71,5 +71,12 @@
 
     <select id="existsByNickname" parameterType="String" resultType="int">
      SELECT COUNT(*) FROM Member WHERE nickname = #{nickname}
-    </select>     
+    </select> 
+
+    <update id="updateUserPassword" parameterType="com.multipjt.multi_pjt.user.domain.login.UserResponseDTO">
+    UPDATE Member
+    SET password = #{password}
+    WHERE email = #{email}
+</update>
+
     </mapper>

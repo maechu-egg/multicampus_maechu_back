@@ -34,6 +34,8 @@ public interface UserMapper {
    // 회원 ID로 사용자 삭제
    int deleteUserById(Integer userId);
 
+   // 비밀번호 변경 
+   void updateUserPassword(UserResponseDTO userResponseDTO);
    
 }
 

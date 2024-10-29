@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.multipjt.multi_pjt.jwt.JwtTokenProvider;
 import com.multipjt.multi_pjt.user.domain.CustomUserDetails;
+import com.multipjt.multi_pjt.user.domain.login.ChangePwDTO;
 import com.multipjt.multi_pjt.user.domain.login.EmailCertificationInputDTO;
 import com.multipjt.multi_pjt.user.domain.login.EmailCertificationRequestDTO;
 import com.multipjt.multi_pjt.user.domain.login.EmailRequestDTO;
@@ -25,7 +26,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 
-import java.util.HashMap; 
 import java.util.Map;
 
 @RestController
@@ -127,6 +127,11 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                                  .body("{\"Code\": \"UNAUTHORIZED\", \"Message\": \"인증 실패\"}");
         }
+    }
+
+    @PatchMapping("/changepw")
+    public ResponseEntity<String> changePw(@RequestBody ChangePwDTO changePwDTO) {
+        return loginServiceImple.changePw(changePwDTO); // 서비스 메서드 호출
     }
 
 
