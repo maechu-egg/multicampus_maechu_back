@@ -79,11 +79,11 @@
     </select>
 
     <select id="getCurrentPoints" resultType="java.math.BigDecimal">
-    SELECT current_points FROM MemberBadge WHERE member_id = #{member_id};
-</select>
+        SELECT COALESCE(current_points, 0) FROM MemberBadge WHERE member_id = #{member_id};
+    </select>
 
-<select id="getAllBadges" resultType="com.multipjt.multi_pjt.badge.domain.badge.MemberBadgeResponseDTO">
-    SELECT * FROM MemberBadge; 
-</select>
+    <select id="getAllBadges" resultType="com.multipjt.multi_pjt.badge.domain.badge.MemberBadgeResponseDTO">
+        SELECT * FROM MemberBadge; 
+    </select>
 
 </mapper>
