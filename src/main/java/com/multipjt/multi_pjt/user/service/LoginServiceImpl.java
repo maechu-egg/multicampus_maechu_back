@@ -161,7 +161,7 @@ public class LoginServiceImpl implements UserDetailsService { // UserDetailsServ
 
  
     // 2. 로그인 : 이메일, 비번 가져와 검증 후 존재하면 jwt 토큰 생성 
-    public ResponseEntity<Map<String, String>> login(LoginDTO loginDTO) {
+    public ResponseEntity<Map<String, Object>> login(LoginDTO loginDTO) {
         // 이메일로 사용자 조회
         UserResponseDTO user = userMapper.getUserByEmail(loginDTO.getEmail());
         System.out.println("loginDTO.getEmail: " + loginDTO.getEmail());
@@ -192,9 +192,10 @@ public class LoginServiceImpl implements UserDetailsService { // UserDetailsServ
         // 비밀번호가 일치하는 경우 JWT 토큰 생성
         String token = jwtTokenProvider.createAccessToken(userDetails);
         
-        // JSON 형식으로 토큰 반환
-        Map<String, String> response = new HashMap<>();
+        // JSON 형식으로 토큰과 memberId 반환
+        Map<String, Object> response = new HashMap<>();
         response.put("token", token); // JWT 토큰을 "token" 키로 추가
+        response.put("memberId", user.getMemberId()); // memberId를 추가
 
         return ResponseEntity.ok(response); // JSON 형식으로 응답 반환
     }
