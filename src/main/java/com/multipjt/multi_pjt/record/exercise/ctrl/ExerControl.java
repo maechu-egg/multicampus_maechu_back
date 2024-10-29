@@ -1,5 +1,6 @@
 package com.multipjt.multi_pjt.record.exercise.ctrl;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -40,6 +41,48 @@ public class ExerControl {
     public ResponseEntity<Integer> exerInsert(@RequestBody ExerRequestDTO exerRequestDTO){
         System.out.println("class endPoint >> " + "/record/exercise/insert/type");
         System.out.println("exerRequestDTO >> " + exerRequestDTO);
+
+        // met 값 계산
+        List<Map<String,Object>> info = exerService.metGetRow(exerRequestDTO.getExercise_type());
+        System.out.println("ExerciseMet info >> " + info);
+
+        Float met = null;
+        // 사용자가 입력한 강도와 csv 파일에 있는 강도가 같으면 met 값 가져오기
+        for(Map<String,Object> map : info){
+            String intensity = map.get("intensity").toString();
+            if(intensity != null && intensity.trim().equalsIgnoreCase(exerRequestDTO.getIntensity().toString().trim())){
+                System.out.println("강도가 존재하는 운동입니다");
+                met = (Float) map.get("exercise_met");
+                break;
+            }   
+        }
+
+        // 사용자가 입력한 운동이 csv에 존재하지 않는 운동이면 기본 met 값 설정
+        if(met == null){
+            switch(exerRequestDTO.getIntensity().toString()){
+                case "LOW":
+                    met = 3.0F;
+                    break;
+                case "MEDIUM":
+                    met = 5.0F;
+                    break;
+                case "HIGH":
+                    met = 7.0F;
+                    break;
+            }
+        }
+
+        System.out.println("met >> " + met);
+
+        // 몸무게 가져오기
+        Float weight = exerService.getMemberInfoRow(exerRequestDTO.getMember_id());
+        System.out.println("weight >> " + weight);
+
+        // 칼로리 계산, met * 3.5 * 몸무게 * 운동 시간 * 5
+        Float calories = met * 3.5F * weight * exerRequestDTO.getDuration() * 5F;
+        System.out.println("calories >> " + calories);
+
+
         int result = exerService.exerInsertRow(exerRequestDTO);
         System.out.println("result >> " + result);
         if(result == 1){
@@ -161,7 +204,7 @@ public class ExerControl {
         }
     }
 
-    // 일일 운동 별 칼로리 총합 출력 
+    // 특정회원의 일일 운동 별 칼로리 총합 출력 
     @GetMapping("/get/exerCalories")
     public ResponseEntity<List<Map<String,Object>>> exerCaloriesGet(@RequestBody Map<String,Object> map){
         System.out.println("class endPoint >> " + "/record/exercise/get/exerCalories");
@@ -173,5 +216,5 @@ public class ExerControl {
         } else {
             return new ResponseEntity<>(list, HttpStatus.BAD_REQUEST);
         }
-    }   
+    }
 }

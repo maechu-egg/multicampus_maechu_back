@@ -34,4 +34,8 @@ public interface ExerMapper {
     public int setDelete(Long set_id);
 
     public List<Map<String,Object>> exerCaloriesGet(Map<String,Object> map);
+
+    public List<Map<String,Object>> metGet(String exercise_name);
+
+    public Float getMemberInfo(Long member_id);
 }
