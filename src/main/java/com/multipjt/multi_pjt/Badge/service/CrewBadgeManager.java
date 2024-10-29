@@ -53,17 +53,17 @@ public class CrewBadgeManager {
     // 점수에 따른 뱃지 등급 결정 메서드
     private String determineBadgeLevel(float points) {
         if (points >= 100) {
-            return "Diamond";
+            return "다이아";
         } else if (points >= 70) {
-            return "Platinum";
+            return "플래티넘";
         } else if (points >= 50) {
-            return "Gold";
+            return "골드";
         } else if (points >= 30) {
-            return "Silver";
+            return "실버";
         } else if (points >= 10) {
-            return "Bronze";
+            return "브론즈";
         } else {
-            return "No Badge";
+            return "기본";
         }
     }
 

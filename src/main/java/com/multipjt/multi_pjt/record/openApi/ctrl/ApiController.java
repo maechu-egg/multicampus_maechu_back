@@ -2,32 +2,27 @@ package com.multipjt.multi_pjt.record.openApi.ctrl;
 
 import java.io.IOException;
 import java.io.InputStream;
-
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.io.UnsupportedEncodingException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StreamUtils;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.multipjt.multi_pjt.record.openApi.domain.NutirientDTO;
 import com.multipjt.multi_pjt.record.openApi.service.ApiService;
 
 import jakarta.validation.Valid;
-
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 
 @RestController
 @RequestMapping("record/api")

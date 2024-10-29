@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.multipjt.multi_pjt.badge.service.BadgeService;
 import com.multipjt.multi_pjt.badge.service.MemberBadgeManager;
 import com.multipjt.multi_pjt.community.domain.UserActivity.UserActivityRequestDTO;
-import com.multipjt.multi_pjt.community.domain.UserActivity.UserActivityResponseDTO;
 
 @RestController
 @RequestMapping("/badges")
@@ -33,27 +32,20 @@ public class BadgeController {
         this.badgeService = badgeService;
     }
 
-    //엔드포인트
+    // 엔드포인트
     @PostMapping("/processActivity")
     public ResponseEntity<Map<String, Object>> processActivity(@RequestBody UserActivityRequestDTO request) {
         try {
-            // 활동을 처리하고 현재 포인트와 뱃지 레벨을 가져옴
-            int currentPoints = memberBadgeManager.processActivity(request.getMember_id(), request.getUser_activity());
-            String badgeLevel = badgeService.getBadgeLevel(BigDecimal.valueOf(currentPoints));
-
-            UserActivityResponseDTO response = new UserActivityResponseDTO();
-            response.setUser_activity_id(request.getUser_activity_id());
-            response.setUser_activity(request.getUser_activity());
-            response.setActivity_date(request.getActivity_date());
-            response.setPost_id(request.getPost_id());
-            response.setMember_id(request.getMember_id());
+            // 활동을 처리하고 포인트를 업데이트
+            memberBadgeManager.processMemberActivity(Long.valueOf(request.getMember_id()));
+            BigDecimal currentPoints = badgeService.getCurrentPoints(Long.valueOf(request.getMember_id()));
+            String badgeLevel = badgeService.getBadgeLevel(currentPoints);
 
             // 성공 
             return ResponseEntity.ok(Map.of(
                 "message", String.format("활동 처리 완료: %s, 회원 ID: %d", request.getUser_activity(), request.getMember_id()),
                 "currentPoints", currentPoints,
-                "badgeLevel", badgeLevel,
-                "activityResponse", response
+                "badgeLevel", badgeLevel
             ));
         } catch (IllegalArgumentException e) {
             // 잘못된 요청에 대한 응답 반환
@@ -84,7 +76,6 @@ public class BadgeController {
         badgeService.updateUserPoints(memberId, points);
         return ResponseEntity.ok("점수가 업데이트되었습니다.");
     }
-
 
     // 4. 사용자 점수 순위 통계
     @GetMapping("/user/rankings")

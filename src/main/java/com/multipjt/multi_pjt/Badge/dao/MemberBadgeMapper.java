@@ -31,6 +31,12 @@ public interface MemberBadgeMapper {
     public List<MemberBadgeResponseDTO> getAllBadges();
 
     BigDecimal getCurrentPoints(@Param("member_id") Long memberId);
+
+    // posts 테이블에서 활동 가져오기
+    List<Map<String, Object>> getActivitiesFromPosts(Long memberId);
+
+    // comments 테이블에서 활동 가져오기
+    List<Map<String, Object>> getActivitiesFromComments(Long memberId);
 }
 
 

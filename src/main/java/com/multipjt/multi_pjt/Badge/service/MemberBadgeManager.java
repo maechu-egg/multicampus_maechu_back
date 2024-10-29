@@ -126,7 +126,7 @@ public class MemberBadgeManager {
         try {
             logger.info("Processing member activities for member: {}", memberId);
             
-            // 멤버의 활동 내역 가져오기
+            // posts, comments, diet, exercise 테이블에서 활동 내역 가져오기
             List<Map<String, Object>> activityRecords = memberBadgeMapper.getMemberActivity(memberId);
             
             if (activityRecords.isEmpty()) {
@@ -135,19 +135,44 @@ public class MemberBadgeManager {
             }
 
             // 활동 기록을 UserActivityRecord 테이블에 반영
+            float totalPoints = 0; // 총 점수 초기화
             for (Map<String, Object> record : activityRecords) {
                 try {
-                    memberBadgeMapper.insertUserActivityRecord(record);
+                    // UserActivityRecord에 활동 기록 삽입
+                    UserActivityRecordRequsetDTO activityRecord = createActivityRecord(record);
+                    userActivityRecordMapper.insertActivity(activityRecord);
+                    totalPoints += (float) record.get("points"); // 총 점수 누적
                     logger.debug("Activity record inserted: {}", record);
                 } catch (Exception e) {
                     logger.error("Error inserting activity record: {}", record, e);
                     // 개별 레코드 실패는 기록하고 계속 진행
                 }
             }
+
+            // MemberBadge의 current_points 업데이트
+            updateMemberBadgePoints(memberId, totalPoints);
+
         } catch (Exception e) {
             logger.error("Error processing member activities", e);
             throw new RuntimeException("멤버 활동 처리 중 오류가 발생했습니다", e);
         }
+    }
+
+    // Map에서 UserActivityRecordRequsetDTO 생성
+    private UserActivityRecordRequsetDTO createActivityRecord(Map<String, Object> record) {
+        UserActivityRecordRequsetDTO activityRecord = new UserActivityRecordRequsetDTO();
+        activityRecord.setActivity_type((String) record.get("activity_type"));
+        activityRecord.setPoints((float) record.get("points"));
+        activityRecord.setMember_id((Integer) record.get("member_id"));
+        return activityRecord;
+    }
+
+    private void updateMemberBadgePoints(Long memberId, float points) {
+        MemberBadgeRequestDTO badgeRequest = new MemberBadgeRequestDTO();
+        badgeRequest.setMember_id(memberId.intValue());
+        badgeRequest.setCurrent_points(points); // 현재 점수 업데이트
+        badgeRequest.setBadge_level(badgeService.getBadgeLevel(BigDecimal.valueOf(points))); // 뱃지 레벨 업데이트
+        memberBadgeMapper.updateBadge(badgeRequest);
     }
 
     // 현재 포인트를 반환하는 메서드
@@ -165,4 +190,5 @@ public class MemberBadgeManager {
             throw new RuntimeException("포인트 조회 중 오류가 발생했습니다", e);
         }
     }
+
 }
