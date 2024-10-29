@@ -19,6 +19,7 @@ import com.multipjt.multi_pjt.user.dao.UserMapper;
 import com.multipjt.multi_pjt.user.domain.CustomUserDetails;
 import com.multipjt.multi_pjt.user.domain.login.UserRequestDTO;
 import com.multipjt.multi_pjt.user.domain.login.UserResponseDTO;
+import com.multipjt.multi_pjt.user.domain.login.ChangePwDTO;
 import com.multipjt.multi_pjt.user.domain.login.EmailCertificationCodeDTO;
 import com.multipjt.multi_pjt.user.domain.login.LoginDTO;
 
@@ -115,6 +116,12 @@ public class LoginServiceImpl implements UserDetailsService { // UserDetailsServ
 
     // 1.5 이메일 인증 코드 발송 
     public boolean sendCertificationEmail(String email) {
+        // 이메일 존재 여부 확인
+        if (!existsByEmail(email)) {
+            log.warn("이메일이 존재하지 않습니다: {}", email);
+            return false; // 이메일이 존재하지 않으면 false 반환
+        }
+
         String certificationNumber = generateCertificationNumber();
         LocalDateTime expiryTime = LocalDateTime.now().plusMinutes(5); // 5분 후 만료
 
@@ -306,5 +313,10 @@ public class LoginServiceImpl implements UserDetailsService { // UserDetailsServ
         
         return user.getNickname();
     }
+
+    //6. 비밀번호 변경 메소드
+    // public ResponseEntity<String> changePw(ChangePwDTO chagepwDTO) {
+        
+    // }
 
 }
