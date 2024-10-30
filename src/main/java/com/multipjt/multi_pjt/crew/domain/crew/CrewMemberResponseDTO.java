@@ -18,29 +18,29 @@ public class CrewMemberResponseDTO {
     public String getBadgeImagePath() {
         if (badgeImagePath == null) {
             if (badge_level == null) {
-                badgeImagePath = "img/badges/CrewBadgeDefault.png";
+                badgeImagePath = "img/crewBadge/CrewBadgeDefault.png";
             } else {
                 switch (badge_level) {
                     case "기본":
-                        badgeImagePath = "img/badges/CrewBadgeDefault.png";
+                        badgeImagePath = "img/crewBadge/CrewBadgeDefault.png";
                         break;
                     case "브론즈":
-                        badgeImagePath = "img/badges/CrewBadgeBronze.png";
+                        badgeImagePath = "img/crewBadge/CrewBadgeBronze.png";
                         break;
                     case "실버":
-                        badgeImagePath = "img/badges/CrewBadgeSilver.png";
+                        badgeImagePath = "img/crewBadge/CrewBadgeSilver.png";
                         break;
                     case "골드":
-                        badgeImagePath = "img/badges/CrewBadgeGold.png";
+                        badgeImagePath = "img/crewBadge/CrewBadgeGold.png";
                         break;
                     case "플래티넘":
-                        badgeImagePath = "img/badges/CrewBadgePlatinum.png";
+                        badgeImagePath = "img/crewBadge/CrewBadgePlatinum.png";
                         break;
                     case "다이아":
-                        badgeImagePath = "img/badges/CrewBadgeDiamond.png";
+                        badgeImagePath = "img/crewBadge/CrewBadgeDiamond.png";
                         break;
                     default:
-                        badgeImagePath = "img/badges/CrewBadgeDefault.png";
+                        badgeImagePath = "img/crewBadge/CrewBadgeDefault.png";
                 }
             }
         }
