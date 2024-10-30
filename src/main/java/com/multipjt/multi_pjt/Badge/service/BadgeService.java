@@ -1,6 +1,7 @@
 package com.multipjt.multi_pjt.badge.service;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
@@ -70,9 +71,9 @@ public class BadgeService implements IBadgeService {
     @Override
     public void updateUserPoints(Long memberId, BigDecimal points) {
         UserActivityRecordRequestDTO activityRecord = new UserActivityRecordRequestDTO();
-        activityRecord.setMember_id(memberId.intValue());
+        activityRecord.setMemberId(memberId.intValue());
         activityRecord.setPoints(points.floatValue());
-        activityRecord.setCreated_date(LocalDateTime.now());
+        activityRecord.setCreatedDate(LocalDateTime.now());
         userActivityRecordMapper.insertActivity(activityRecord);
 
         MemberBadgeRequestDTO badgeRequest = new MemberBadgeRequestDTO();
@@ -100,28 +101,48 @@ public class BadgeService implements IBadgeService {
     // 사용자 활동을 처리하는 메서드
     @Transactional
     public void processUserActivities(Long memberId) {
-        // posts와 comments에서 활동 가져오기
+        // 1. 회원의 운동 기록 조회
+        List<UserActivityRecordResponseDTO> exerciseActivities = userActivityRecordMapper.getActivitiesFromExercises(memberId);
+        
+        // 2. 오늘 날짜와 비교하여 점수 부여 로직
+        LocalDate today = LocalDate.now();
+        boolean hasExerciseToday = exerciseActivities.stream()
+            .anyMatch(activity -> activity.getCreatedDate().toLocalDate().isEqual(today));
+
+        if (hasExerciseToday) {
+            // 점수 부여 로직
+            UserActivityRecordRequestDTO activityRecord = new UserActivityRecordRequestDTO();
+            activityRecord.setActivityType("exercise");
+            activityRecord.setPoints(0.5f); // 고정 점수 0.5점 부여
+            activityRecord.setMemberId(memberId.intValue());
+            activityRecord.setCreatedDate(LocalDateTime.now());
+            userActivityRecordMapper.insertActivity(activityRecord);
+        }
+        // 3. 나머지 활동 처리 (포스트, 댓글, 식단 등)
         List<UserActivityRecordResponseDTO> postActivities = userActivityRecordMapper.getActivitiesFromPosts(memberId);
         List<UserActivityRecordResponseDTO> commentActivities = userActivityRecordMapper.getActivitiesFromComments(memberId);
+        List<UserActivityRecordResponseDTO> dietActivities = userActivityRecordMapper.getActivitiesFromDiets(memberId);
 
-        // 모든 활동을 useractivityrecord 테이블에 삽입
         for (UserActivityRecordResponseDTO activity : postActivities) {
             insertActivityRecord(memberId, activity);
         }
         for (UserActivityRecordResponseDTO activity : commentActivities) {
             insertActivityRecord(memberId, activity);
         }
+        for (UserActivityRecordResponseDTO activity : dietActivities) {
+            insertActivityRecord(memberId, activity);
+        }
 
-        // 점수 업데이트
+        // 4. 점수 업데이트
         updateMemberBadgePoints(memberId);
     }
 
     private void insertActivityRecord(Long memberId, UserActivityRecordResponseDTO activity) {
         UserActivityRecordRequestDTO activityRecord = new UserActivityRecordRequestDTO();
-        activityRecord.setActivity_type(activity.getActivityType());
+        activityRecord.setActivityType(activity.getActivityType());
         activityRecord.setPoints(activity.getPoints());
-        activityRecord.setMember_id(memberId.intValue());
-        activityRecord.setCreated_date(activity.getCreatedDate());
+        activityRecord.setMemberId(memberId.intValue());
+        activityRecord.setCreatedDate(activity.getCreatedDate());
         userActivityRecordMapper.insertActivity(activityRecord);
     }
 
