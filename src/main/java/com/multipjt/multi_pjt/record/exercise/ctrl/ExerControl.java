@@ -111,6 +111,7 @@ public class ExerControl {
 
     // 운동 세트 추가
     // 운동 추가를 통해 exercise_id를 프론트가 가지고 있는 상태
+    // 값을 넣지 않는 항목은 0을 부여
     @PostMapping("/insert/set")
     public ResponseEntity<Integer> setInsert(@RequestBody SetRequestDTO setRequestDTO){
         System.out.println("class endPoint >> " + "/record/exercise/insert/set");
@@ -124,18 +125,20 @@ public class ExerControl {
         }
     }
 
-    // 운동 세트 정보 출력
+    // 운동 세트 정보 조회
     // 일일 운동 조회를 통해 exercise_id를 프론트가 가지고 있는 상태
+    // set_id 값을 기준으로 나열, 세트 정보 조회를 통해 set_id 값을 프론트가 가짐
+    // 값이 0인 항목은 출력 x 
     @GetMapping("/get/setInfo")
-    public ResponseEntity<SetResponseDTO> setInfoGet(@RequestParam(name = "exercise_id") Long exercise_id){
+    public ResponseEntity<List<SetResponseDTO>> setInfoGet(@RequestParam(name = "exercise_id") Long exercise_id){
         System.out.println("class endPoint >> " + "/record/exercise/get/setInfo");  
         System.out.println("exercise_id >> " + exercise_id);
-        SetResponseDTO setResponseDTO = exerService.setInfoGetRow(exercise_id);
-        System.out.println("setResponseDTO >> " + setResponseDTO);
-        if(setResponseDTO != null){
-            return new ResponseEntity<>(setResponseDTO, HttpStatus.OK);
+        List<SetResponseDTO> setResponseDTOs = exerService.setInfoGetRow(exercise_id);
+        System.out.println("setResponseDTOs >> " + setResponseDTOs);
+        if(setResponseDTOs != null && !setResponseDTOs.isEmpty()){
+            return new ResponseEntity<>(setResponseDTOs, HttpStatus.OK);
         } else {
-            return new ResponseEntity<>(setResponseDTO, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(setResponseDTOs, HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -145,12 +148,12 @@ public class ExerControl {
     public ResponseEntity<List<ExerResponseDTO>> exerDayGet(@RequestBody Map<String,Object> map){
         System.out.println("class endPoint >> " + "/record/exercise/get/exerday");
         System.out.println("map >> " + map);
-        List<ExerResponseDTO> exerResponseDTO = exerService.exerDayGetRow(map);
-        System.out.println("exerResponseDTO >> " + exerResponseDTO);
-        if(exerResponseDTO != null){
-            return new ResponseEntity<>(exerResponseDTO, HttpStatus.OK);
+        List<ExerResponseDTO> exerResponseDTOs = exerService.exerDayGetRow(map);
+        System.out.println("exerResponseDTOs >> " + exerResponseDTOs);
+        if(exerResponseDTOs != null && !exerResponseDTOs.isEmpty()){
+            return new ResponseEntity<>(exerResponseDTOs, HttpStatus.OK);
         } else {
-            return new ResponseEntity<>(exerResponseDTO, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(exerResponseDTOs, HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -170,6 +173,7 @@ public class ExerControl {
 
     // 운동 세트 수정
     // 세트 정보 조회를 통해 set_id를 프론트가 가지고 있는 상태
+    // 출력하고 싶지 않은 항목은 값 0 부여
     @PutMapping("/update/set")
     public ResponseEntity<Integer> setUpdate(@RequestBody Map<String,Object> map){
         System.out.println("class endPoint >> " + "/record/exercise/update/set");

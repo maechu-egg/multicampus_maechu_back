@@ -23,11 +23,9 @@ public interface ExerMapper {
 
     public List<ExerResponseDTO> exerDaySelect(Map<String,Object> map);
 
-    public Map<String,Integer> getTotalCaloriesByExerciseType(Map<String,Object> map);
-
     public int setInsert(SetRequestDTO setRequestDTO);
 
-    public SetResponseDTO getSetInfo(Long exercise_id);
+    public List<SetResponseDTO> getSetInfo(Long exercise_id);
 
     public int setUpdate(Map<String,Object> map);
 

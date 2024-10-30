@@ -174,7 +174,7 @@ public class ExerciseMapperApplicationTest {
             Assertions.assertThat(row).isEqualTo(1);
 
             // when: 해당 운동의 Set 정보 조회
-            SetResponseDTO setResponseDTO = exerMapper.getSetInfo(exerciseId);
+            List<SetResponseDTO> setResponseDTO = exerMapper.getSetInfo(exerciseId);
             System.out.println("debug setResponseDTO>>> " + setResponseDTO);
 
             // then: Set 정보가 있는지 확인 및 출력
@@ -235,14 +235,14 @@ public class ExerciseMapperApplicationTest {
         // 검증
         Assertions.assertThat(row).isEqualTo(1);
         // exercise_id를 통해 set 정보 출력
-        SetResponseDTO setResponseDTO = exerMapper.getSetInfo(exerciseId.get(0));
+        List<SetResponseDTO> setResponseDTO = exerMapper.getSetInfo(exerciseId.get(0));
         System.out.println("debug setResponseDTO >>> " + setResponseDTO);
         //given : set_id를 통해 update할 준비
         Map<String,Object> map2 = new HashMap<>();
-        map2.put("set_id", setResponseDTO.getSet_id());
+        map2.put("set_id", setResponseDTO.get(0).getSet_id());
         map2.put("distance", 7F);
-        map2.put("weight", setResponseDTO.getWeight());
-        map2.put("repetitions", setResponseDTO.getRepetitions());
+        map2.put("weight", setResponseDTO.get(0).getWeight());
+        map2.put("repetitions", setResponseDTO.get(0).getRepetitions());
         
         System.out.println("debug map2 >>> " + map2);
         //when : update
@@ -278,10 +278,10 @@ public class ExerciseMapperApplicationTest {
         // 검증
         Assertions.assertThat(row).isEqualTo(1);
         //given : set_id를 통해 delete할 준비
-        SetResponseDTO setResponseDTO = exerMapper.getSetInfo(exerciseId.get(0));
+        List<SetResponseDTO> setResponseDTO = exerMapper.getSetInfo(exerciseId.get(0));
         System.out.println("debug setResponseDTO >>> " + setResponseDTO);
 
-        Long setId = setResponseDTO.getSet_id();
+        Long setId = setResponseDTO.get(0).getSet_id();
       
         System.out.println("debug setId >>> " + setId);
         //when : delete

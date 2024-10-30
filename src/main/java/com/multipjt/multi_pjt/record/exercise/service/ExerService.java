@@ -32,7 +32,7 @@ public class ExerService {
         return exerMapper.setInsert(setRequestDTO);
     }
 
-    public SetResponseDTO setInfoGetRow(Long exerciseId){
+    public List<SetResponseDTO> setInfoGetRow(Long exerciseId){
         return exerMapper.getSetInfo(exerciseId);
     }
 
