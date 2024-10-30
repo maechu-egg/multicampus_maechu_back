@@ -14,8 +14,13 @@ import com.multipjt.multi_pjt.badge.domain.record.UserActivityRecordResponseDTO;
 @Mapper
 public interface MemberBadgeMapper {
     // 뱃지 생성
+<<<<<<< HEAD
     public void insertBadge(MemberBadgeRequestDTO param);
 
+=======
+    public void insertBadge(MemberBadgeRequestDTO badgeRequest);
+    
+>>>>>>> 4c12a91c4f992580de3742c75ffe97cf3202f206
     // 특정 회원의 뱃지 조회
     public MemberBadgeResponseDTO getBadgeByMemberId(@Param("member_id") int memberId);
 

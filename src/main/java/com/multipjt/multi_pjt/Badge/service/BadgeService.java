@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.multipjt.multi_pjt.badge.dao.MemberBadgeMapper;
 import com.multipjt.multi_pjt.badge.dao.UserActivityRecordMapper;
@@ -96,41 +97,73 @@ public class BadgeService implements IBadgeService {
                 .collect(Collectors.toList());
     }
 
-    @Override
+    // 사용자 활동을 처리하는 메서드
+    @Transactional
     public void processUserActivities(Long memberId) {
-        // 사용자의 활동을 조회
-        List<UserActivityRecordResponseDTO> activities = userActivityRecordMapper.getActivitiesByMemberId(memberId);
-        
-        float totalPoints = 0;
+        // posts와 comments에서 활동 가져오기
+        List<UserActivityRecordResponseDTO> postActivities = userActivityRecordMapper.getActivitiesFromPosts(memberId);
+        List<UserActivityRecordResponseDTO> commentActivities = userActivityRecordMapper.getActivitiesFromComments(memberId);
 
-        // 각 활동에 대해 점수를 계산하고 업데이트
-        for (UserActivityRecordResponseDTO activity : activities) {
-            float points = activityPointService.calculateActivityPoints(activity.getActivityType());
-            totalPoints += points;
-
-            // 활동 기록을 데이터베이스에 삽입
-            UserActivityRecordRequestDTO activityRecord = new UserActivityRecordRequestDTO();
-            activityRecord.setActivity_type(activity.getActivityType());
-            activityRecord.setPoints(points);
-            activityRecord.setMember_id(memberId.intValue());
-            activityRecord.setCreated_date(LocalDateTime.now());
-            userActivityRecordMapper.insertActivity(activityRecord);
+        // 모든 활동을 useractivityrecord 테이블에 삽입
+        for (UserActivityRecordResponseDTO activity : postActivities) {
+            insertActivityRecord(memberId, activity);
+        }
+        for (UserActivityRecordResponseDTO activity : commentActivities) {
+            insertActivityRecord(memberId, activity);
         }
 
-        // 총 점수 업데이트
-        updateMemberBadgePoints(memberId, totalPoints);
+        // 점수 업데이트
+        updateMemberBadgePoints(memberId);
     }
 
-    private void updateMemberBadgePoints(Long memberId, float totalPoints) {
-        // 현재 점수 조회
-        BigDecimal currentPoints = getCurrentPoints(memberId);
-        float newTotalPoints = currentPoints.floatValue() + totalPoints;
+    private void insertActivityRecord(Long memberId, UserActivityRecordResponseDTO activity) {
+        UserActivityRecordRequestDTO activityRecord = new UserActivityRecordRequestDTO();
+        activityRecord.setActivity_type(activity.getActivityType());
+        activityRecord.setPoints(activity.getPoints());
+        activityRecord.setMember_id(memberId.intValue());
+        activityRecord.setCreated_date(activity.getCreatedDate());
+        userActivityRecordMapper.insertActivity(activityRecord);
+    }
 
-        // MemberBadge의 current_points 업데이트
+    private void updateMemberBadgePoints(Long memberId) {
+        // 사용자의 총 점수 계산
+        List<BigDecimal> pointsList = userActivityRecordMapper.getTotalPointsByMemberId(memberId);
+        BigDecimal totalPoints = pointsList.isEmpty() ? BigDecimal.ZERO : pointsList.get(0);
+        
+        // 현재 뱃지 정보 조회
+        MemberBadgeResponseDTO currentBadge = memberBadgeMapper.getBadgeByMemberId(memberId.intValue());
+        // 뱃지 레벨 결정
+        String newBadgeLevel = getBadgeLevel(totalPoints);
+        
+        // 뱃지 정보 업데이트
+        if (currentBadge != null) {
+            // 현재 점수와 뱃지 레벨 업데이트
+            MemberBadgeRequestDTO badgeRequest = new MemberBadgeRequestDTO();
+            badgeRequest.setMember_id(memberId.intValue());
+            badgeRequest.setCurrent_points(totalPoints.floatValue());
+            badgeRequest.setBadge_level(newBadgeLevel);
+            
+            // 뱃지 업데이트
+            memberBadgeMapper.updateBadge(badgeRequest);
+        } else {
+            // 뱃지가 없는 경우 새로 생성
+            createBadge(memberId);
+        }
+    }
+
+    @Override
+    public void createBadge(Long memberId) {
+        // 기본 점수와 뱃지 레벨 설정
+        float defaultPoints = 0.0f; // 기본 점수
+        String defaultBadgeLevel = "기본"; // 기본 뱃지 레벨
+
+        // 뱃지 생성 요청 DTO
         MemberBadgeRequestDTO badgeRequest = new MemberBadgeRequestDTO();
         badgeRequest.setMember_id(memberId.intValue());
-        badgeRequest.setCurrent_points(newTotalPoints); // 현재 점수 업데이트
-        badgeRequest.setBadge_level(getBadgeLevel(BigDecimal.valueOf(newTotalPoints))); // 뱃지 레벨 업데이트
-        memberBadgeMapper.updateBadge(badgeRequest);
+        badgeRequest.setCurrent_points(defaultPoints);
+        badgeRequest.setBadge_level(defaultBadgeLevel);
+
+        // 뱃지 삽입
+        memberBadgeMapper.insertBadge(badgeRequest);
     }
 }
