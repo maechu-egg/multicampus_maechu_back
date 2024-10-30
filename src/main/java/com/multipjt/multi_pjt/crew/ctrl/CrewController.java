@@ -46,8 +46,10 @@ public class CrewController {
     public ResponseEntity<Void> createCrew(
             @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader,
             @RequestBody CrewRequestDTO param) {
+
         System.out.println("client endpoint: /crew/create");
         System.out.println("debug>>> createCrew + " + param);
+
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             crewService.createCrew(param);
             return ResponseEntity.status(HttpStatus.CREATED).build(); // 201 Created
@@ -59,7 +61,9 @@ public class CrewController {
     // 크루 리스트 전체 조회
     @GetMapping("/list")
     public ResponseEntity<List<CrewResponseDTO>> getCrewList(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
+        
         System.out.println("client endpoint: /crew/list");
+
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             return ResponseEntity.ok(crewService.getCrewList());
         } else {
@@ -73,8 +77,10 @@ public class CrewController {
     public ResponseEntity<List<CrewResponseDTO>> getCrewSportList(
             @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader,
             @RequestParam Map<String, String> map) {
+
         System.out.println("client endpoint: /crew/list/sport");
         System.out.println("debug>>> getCrewSportList + " + map);
+
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             return ResponseEntity.ok(crewService.getCrewSportList(map));
         } else {
@@ -87,8 +93,10 @@ public class CrewController {
     public ResponseEntity<CrewResponseDTO> getCrewInfo(
             @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader,
             @PathVariable("crewId") Integer crewId) {
+
         System.out.println("client endpoint: /crew/info/" + crewId);
         System.out.println("debug>>> getCrewInfo + " + crewId);
+
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             return ResponseEntity.ok(crewService.getCrewInfo(crewId));
         } else {
@@ -101,8 +109,10 @@ public class CrewController {
     public ResponseEntity<Void> addCrewMember(
             @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader,
             @RequestBody CrewMemberRequestDTO param) {
+
         System.out.println("client endpoint: /crew/member/add");
         System.out.println("debug>>> addCrewMember + " + param);
+
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             crewService.addCrewMember(param);
             return ResponseEntity.status(HttpStatus.CREATED).build();
@@ -116,8 +126,10 @@ public class CrewController {
     public ResponseEntity<List<CrewResponseDTO>> getMyCrewList(
             @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader,
             @RequestParam("member_id") Integer member_id) {
+
         System.out.println("client endpoint: /crew/my");
         System.out.println("debug>>> getMyCrewList + " + member_id);
+
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             return ResponseEntity.ok(crewService.getMyCrewList(member_id));
         } else {
@@ -133,8 +145,10 @@ public class CrewController {
     public ResponseEntity<Void> updateCrewIntro(
             @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader,
             @RequestBody CrewRequestDTO param) {
+
         System.out.println("client endpoint: /crew/intro/update");
         System.out.println("debug>>> updateCrewIntro + " + param);
+
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             crewService.updateCrewIntro(param);
             return ResponseEntity.noContent().build();
@@ -147,9 +161,11 @@ public class CrewController {
     @PatchMapping("/info/update")
     public ResponseEntity<Void> updateCrewInfo(
             @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader,
-    @RequestBody CrewRequestDTO param) {
+            @RequestBody CrewRequestDTO param) {
+
         System.out.println("client endpoint: /crew/info/update");
         System.out.println("debug>>> updateCrewInfo + " + param);
+
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             crewService.updateCrewInfo(param);
             return ResponseEntity.noContent().build();
@@ -164,12 +180,14 @@ public class CrewController {
     public ResponseEntity<Void> deleteCrew(
             @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader,
             @PathVariable("crewId") Integer crewId) {
+
         System.out.println("client endpoint: /crew/delete/" + crewId);
         System.out.println("debug>>> deleteCrew + " + crewId);
+
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             String token = authHeader.substring(7); // "Bearer " 접두사 제거
-            int leader_id = jwtTokenProvider.getUserIdFromToken(token); // 토큰에서 사용자 ID 추출
-            crewService.deleteCrew(crewId, leader_id);
+            int token_id = jwtTokenProvider.getUserIdFromToken(token); // 토큰에서 사용자 ID 추출
+            crewService.deleteCrew(crewId, token_id);
             return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build(); // 인증 실패 시 401 반환
@@ -184,12 +202,14 @@ public class CrewController {
     public ResponseEntity<Void> approveCrewMember(
             @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader,
             @RequestBody CrewMemberRequestDTO param) {
+
         System.out.println("client endpoint: /crew/member/approve");
         System.out.println("debug>>> approveCrewMember + " + param);
+
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             String token = authHeader.substring(7); // "Bearer " 접두사 제거
-            int leader_id = jwtTokenProvider.getUserIdFromToken(token); // 토큰에서 사용자 ID 추출
-            crewService.approveCrewMember(param, leader_id);
+            int token_id = jwtTokenProvider.getUserIdFromToken(token); // 토큰에서 사용자 ID 추출
+            crewService.approveCrewMember(param, token_id);
             return ResponseEntity.noContent().build(); // 204 No Content
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build(); // 인증 실패 시 401 반환
@@ -207,9 +227,6 @@ public class CrewController {
         System.out.println("debug>>> Authorization Header: " + authHeader);
        
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
-            String token = authHeader.substring(7); // "Bearer " 접두사 제거
-            int member_id = jwtTokenProvider.getUserIdFromToken(token); // 토큰에서 사용자 ID 추출
-            System.out.println("debug>>> member_id: " + member_id);
             return ResponseEntity.ok(crewService.getCrewMemberList(crewId));
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build(); // 인증 실패 시 401 반환
@@ -218,12 +235,23 @@ public class CrewController {
 
     // 크루원 삭제
     @DeleteMapping("/member/delete")
-    public ResponseEntity<Void> deleteCrewMember(@RequestBody CrewMemberRequestDTO param) {
+    public ResponseEntity<Void> deleteCrewMember(
+            @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader,
+            @RequestBody CrewMemberRequestDTO param) {
+
         System.out.println("client endpoint: /crew/member/delete");
         System.out.println("debug>>> deleteCrewMember + " + param);
-        crewService.deleteCrewMember(param);
-        return ResponseEntity.noContent().build(); // 204 No Content
+
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            String token = authHeader.substring(7); // "Bearer " 접두사 제거
+            int token_id = jwtTokenProvider.getUserIdFromToken(token); // 토큰에서 사용자 ID 추출
+            crewService.deleteCrewMember(param, token_id);
+            return ResponseEntity.noContent().build(); // 204 No Content
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build(); // 인증 실패 시 401 반환
+        }
     }
+
 
     // --------- 크루 게시판 ---------
 

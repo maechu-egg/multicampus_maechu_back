@@ -100,10 +100,10 @@ public class CrewService {
     }
 
     // 크루 삭제
-    public void deleteCrew(Integer crewId, Integer leader_id) {
+    public void deleteCrew(Integer crewId, Integer token_id) {
         System.out.println("debug>>> Service: deleteCrew + " + crewMapper);
         System.out.println("debug>>> Service: deleteCrew + " + crewId);
-        if(leader_id == crewMapper.selectCrewLeaderIdRow(crewId)) {
+        if(token_id == crewMapper.selectCrewLeaderIdRow(crewId)) {
             crewMapper.deleteCrewRow(crewId);
         }else{
             throw new IllegalArgumentException("크루장만 크루를 삭제할 수 있습니다.");
@@ -113,10 +113,10 @@ public class CrewService {
     // --------- 크루원 정보 ---------
 
     // 크루원 가입 승인
-    public void approveCrewMember(CrewMemberRequestDTO param, Integer leader_id) {
+    public void approveCrewMember(CrewMemberRequestDTO param, Integer token_id) {
         System.out.println("debug>>> Service: approveCrewMember + " + crewMapper);
         System.out.println("debug>>> Service: approveCrewMember + " + param);
-        if(leader_id == crewMapper.selectCrewLeaderIdRow(param.getCrew_id())) {
+        if(token_id == crewMapper.selectCrewLeaderIdRow(param.getCrew_id())) {
             crewMapper.updateCrewMemberRow(param);
         } else {
             throw new IllegalArgumentException("크루장만 크루원 가입을 승인할 수 있습니다.");
@@ -131,10 +131,14 @@ public class CrewService {
     }
 
     // 크루원 삭제
-    public void deleteCrewMember(CrewMemberRequestDTO param) {
+    public void deleteCrewMember(CrewMemberRequestDTO param, Integer token_id) {
         System.out.println("debug>>> Service: deleteCrewMember + " + crewMapper);
         System.out.println("debug>>> Service: deleteCrewMember + " + param);
-        crewMapper.deleteCrewMemberRow(param);
+        if(token_id == crewMapper.selectCrewLeaderIdRow(param.getCrew_id()) || token_id == param.getMember_id()) {
+            crewMapper.deleteCrewMemberRow(param);
+        } else {
+            throw new IllegalArgumentException("크루장 또는 자신만 크루원을 삭제할 수 있습니다.");
+        }
     }
 
     // --------- 크루 게시판 ---------
