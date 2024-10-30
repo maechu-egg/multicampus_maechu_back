@@ -6,8 +6,11 @@
     <!-- exerInsert --> 
 
     <insert id="exerInsert" parameterType="com.multipjt.multi_pjt.record.exercise.domain.ExerRequestDTO">
+        <selectKey keyProperty="exercise_id" resultType="long" order="AFTER">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
         insert into ExerciseRecords(exercise_type, intensity, member_id, duration, calories)
-        values(#{exercise_type},#{intensity},#{member_id},#{duration}, #{calories});
+        values(#{exercise_type}, #{intensity}, #{member_id}, #{duration}, #{calories});
     </insert>
 
     <!-- exerDelete --> 
@@ -82,4 +85,20 @@
         GROUP BY 
             exercise_type;
     </select>
-</mapper>
+
+    <!-- metGet --> 
+
+    <select id="metGet" parameterType="java.lang.String" resultType="java.util.Map">
+        select exercise_met, intensity from ExerciseMet
+        where exercise_name = #{exercise_name};
+    </select>
+
+    <!-- getMemberInfo --> 
+
+    <select id="getMemberInfo" parameterType="java.lang.Long" resultType="java.util.Float">
+        select profile_weight 
+        from UserProfile 
+        where member_id = #{member_id};
+    </select>
+    
+    </mapper>

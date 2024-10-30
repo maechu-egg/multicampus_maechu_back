@@ -50,7 +50,7 @@ public class DietService {
         return dietMapper.mealNutCheck(map);
     }
 
-    public Map<String,String> calculateTdeeRow(Long memberId){
-        return dietMapper.calculateTdee(memberId);
+    public Map<String,String> getMemberInfoRow(Long memberId){
+        return dietMapper.getMemberInfo(memberId);
     }
 }

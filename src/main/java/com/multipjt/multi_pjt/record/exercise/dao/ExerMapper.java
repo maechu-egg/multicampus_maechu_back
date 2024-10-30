@@ -13,7 +13,7 @@ import com.multipjt.multi_pjt.record.exercise.domain.SetResponseDTO;
 @Mapper
 public interface ExerMapper {
 
-    public int exerInsert(ExerRequestDTO exerRequestDTO);
+    public Long exerInsert(ExerRequestDTO exerRequestDTO);
 
     public int exerDelete(Long exer_id);
 
@@ -23,15 +23,17 @@ public interface ExerMapper {
 
     public List<ExerResponseDTO> exerDaySelect(Map<String,Object> map);
 
-    public Map<String,Integer> getTotalCaloriesByExerciseType(Map<String,Object> map);
-
     public int setInsert(SetRequestDTO setRequestDTO);
 
-    public SetResponseDTO getSetInfo(Long exercise_id);
+    public List<SetResponseDTO> getSetInfo(Long exercise_id);
 
     public int setUpdate(Map<String,Object> map);
 
     public int setDelete(Long set_id);
 
     public List<Map<String,Object>> exerCaloriesGet(Map<String,Object> map);
+
+    public List<Map<String,Object>> metGet(String exercise_name);
+
+    public Float getMemberInfo(Long member_id);
 }

@@ -138,7 +138,7 @@ public class DietControl {
         }
     }
     
-    // 영양소 계산 엔드포인트
+    // API로 받은 데이터를 기준으로 영양소 계산 엔드포인트
     @SuppressWarnings("null")
     @PostMapping("/calculate/nutrients")
     public ResponseEntity<ItemRequestDTO> calculateNutrients(@RequestBody FoodCalculateDTO foodCalcDTO) {
@@ -149,11 +149,12 @@ public class DietControl {
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         }
     }
-
+    
+    // 특정 회원의 TDEE 계산 엔드포인트
     @GetMapping("/calculate/tdee")
     public ResponseEntity<Map<String,Integer>> calculateTdee(@RequestParam Long memberId) {
         
-        Map<String,String> info = dietService.calculateTdeeRow(memberId);
+        Map<String,String> info = dietService.getMemberInfoRow(memberId);
         // 기초대사량(BMR) 계산 - 해리스-베네딕트 공식 사용
         Integer bmr;
         if (info.get("profile_gender").equalsIgnoreCase("M")) {
