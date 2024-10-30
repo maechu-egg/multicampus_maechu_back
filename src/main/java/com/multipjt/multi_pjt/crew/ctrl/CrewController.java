@@ -140,17 +140,13 @@ public class CrewController {
         System.out.println("client endpoint: /crew/member/list/" + crewId);
         System.out.println("debug>>> getCrewMemberList + " + crewId);
         System.out.println("debug>>> Authorization Header: " + authHeader);
-        
+       
+
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             String token = authHeader.substring(7); // "Bearer " 접두사 제거
             int member_id = jwtTokenProvider.getUserIdFromToken(token); // 토큰에서 사용자 ID 추출
-            
-            List<CrewMemberResponseDTO> list = crewService.getCrewMemberList(crewId);
-            for (CrewMemberResponseDTO dto : list) {
-                String badgeImagePath = dto.getBadgeImagePath();
-                dto.setBadgeImagePath(badgeImagePath);
-            }
-            return ResponseEntity.ok(list);
+            System.out.println("debug>>> member_id: " + member_id);
+            return ResponseEntity.ok(crewService.getCrewMemberList(crewId));
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build(); // 인증 실패 시 401 반환
         }
