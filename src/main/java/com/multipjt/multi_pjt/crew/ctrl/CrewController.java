@@ -141,7 +141,6 @@ public class CrewController {
         System.out.println("debug>>> getCrewMemberList + " + crewId);
         System.out.println("debug>>> Authorization Header: " + authHeader);
        
-
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             String token = authHeader.substring(7); // "Bearer " 접두사 제거
             int member_id = jwtTokenProvider.getUserIdFromToken(token); // 토큰에서 사용자 ID 추출
