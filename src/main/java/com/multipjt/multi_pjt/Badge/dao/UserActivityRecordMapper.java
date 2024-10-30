@@ -29,6 +29,12 @@ public interface UserActivityRecordMapper {
     // 특정 회원의 댓글에서 활동 기록을 조회하는 메서드
     List<UserActivityRecordResponseDTO> getActivitiesFromComments(Long memberId);
 
+    // 특정 회원의 운동 기록을 조회하는 메서드
+    List<UserActivityRecordResponseDTO> getActivitiesFromExercises(Long memberId);
+
+    // 특정 회원의 식단 기록을 조회하는 메서드
+    List<UserActivityRecordResponseDTO> getActivitiesFromDiets(Long memberId);
+
     // 특정 회원의 총 점수를 조회하는 메서드
     List<BigDecimal> getTotalPointsByMemberId(Long memberId);
 }
