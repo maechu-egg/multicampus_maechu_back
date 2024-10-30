@@ -145,21 +145,37 @@ public class CrewController {
 
     // 크루 관리 수정
     @PatchMapping("/info/update")
-    public ResponseEntity<Void> updateCrewInfo(@RequestBody CrewRequestDTO param) {
+    public ResponseEntity<Void> updateCrewInfo(
+            @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader,
+    @RequestBody CrewRequestDTO param) {
         System.out.println("client endpoint: /crew/info/update");
         System.out.println("debug>>> updateCrewInfo + " + param);
-        crewService.updateCrewInfo(param);
-        return ResponseEntity.noContent().build();
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            crewService.updateCrewInfo(param);
+            return ResponseEntity.noContent().build();
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build(); // 인증 실패 시 401 반환
+        }
     }
+
 
     // 크루 삭제
     @DeleteMapping("/delete/{crewId}")
-    public ResponseEntity<Void> deleteCrew(@PathVariable("crewId") Integer crewId) {
+    public ResponseEntity<Void> deleteCrew(
+            @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader,
+            @PathVariable("crewId") Integer crewId) {
         System.out.println("client endpoint: /crew/delete/" + crewId);
         System.out.println("debug>>> deleteCrew + " + crewId);
-        crewService.deleteCrew(crewId);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            String token = authHeader.substring(7); // "Bearer " 접두사 제거
+            int member_id = jwtTokenProvider.getUserIdFromToken(token); // 토큰에서 사용자 ID 추출
+            crewService.deleteCrew(crewId, member_id);
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build(); // 인증 실패 시 401 반환
+        }
     }
+
 
     // --------- 크루원 정보 ---------
 

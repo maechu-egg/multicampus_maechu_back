@@ -92,14 +92,22 @@ public class CrewService {
     public void updateCrewInfo(CrewRequestDTO param) {
         System.out.println("debug>>> Service: updateCrewInfo + " + crewMapper);
         System.out.println("debug>>> Service: updateCrewInfo + " + param);
-        crewMapper.updateCrewInfoRow(param);
+        if(param.getMember_id() == crewMapper.selectCrewLeaderIdRow(param.getCrew_id())) {
+            crewMapper.updateCrewInfoRow(param);
+        } else {
+            throw new IllegalArgumentException("크루장만 크루 관리를 수정할 수 있습니다.");
+        }
     }
 
     // 크루 삭제
-    public void deleteCrew(Integer crewId) {
+    public void deleteCrew(Integer crewId, Integer member_id) {
         System.out.println("debug>>> Service: deleteCrew + " + crewMapper);
         System.out.println("debug>>> Service: deleteCrew + " + crewId);
-        crewMapper.deleteCrewRow(crewId);
+        if(member_id == crewMapper.selectCrewLeaderIdRow(crewId)) {
+            crewMapper.deleteCrewRow(crewId);
+        }else{
+            throw new IllegalArgumentException("크루장만 크루를 삭제할 수 있습니다.");
+        }
     }
 
     // --------- 크루원 정보 ---------
