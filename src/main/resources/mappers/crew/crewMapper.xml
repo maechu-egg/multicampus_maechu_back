@@ -98,6 +98,16 @@
         WHERE crew_id = #{crew_id}
     </update>
 
+    <!-- 크루장 조회 -->
+
+    <select id="selectCrewLeaderIdRow"
+            parameterType="Integer"
+            resultType="Integer">
+        SELECT member_id
+        FROM Crew
+        WHERE crew_id = #{crew_id};
+    </select>
+
     <!-- 크루 관리 수정 --> 
 
     <update id="updateCrewInfoRow"

@@ -81,7 +81,11 @@ public class CrewService {
     public void updateCrewIntro(CrewRequestDTO param) {
         System.out.println("debug>>> Service: updateCrewIntro + " + crewMapper);
         System.out.println("debug>>> Service: updateCrewIntro + " + param);
-        crewMapper.updateCrewIntroRow(param);
+        if(param.getMember_id() == crewMapper.selectCrewLeaderIdRow(param.getCrew_id())) {
+            crewMapper.updateCrewIntroRow(param);
+        } else {
+            throw new IllegalArgumentException("크루장만 크루 소개를 수정할 수 있습니다.");
+        }
     }
 
     // 크루 관리 수정
