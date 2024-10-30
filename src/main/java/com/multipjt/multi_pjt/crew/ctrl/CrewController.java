@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -25,6 +27,7 @@ import com.multipjt.multi_pjt.crew.domain.crew.CrewPostResponseDTO;
 import com.multipjt.multi_pjt.crew.domain.crew.CrewRequestDTO;
 import com.multipjt.multi_pjt.crew.domain.crew.CrewResponseDTO;
 import com.multipjt.multi_pjt.crew.service.CrewService;
+import com.multipjt.multi_pjt.jwt.JwtTokenProvider;
 
 @RestController
 @RequestMapping("/crew")
@@ -32,6 +35,9 @@ public class CrewController {
     
     @Autowired
     private CrewService crewService;
+
+    @Autowired
+    private JwtTokenProvider jwtTokenProvider;
 
     // --------- 크루 찾기 ---------
 
@@ -127,15 +133,27 @@ public class CrewController {
 
     // 크루원 조회
     @GetMapping("/member/list/{crewId}")
-    public ResponseEntity<List<CrewMemberResponseDTO>> getCrewMemberList(@PathVariable("crewId") Integer crewId) {
+    public ResponseEntity<List<CrewMemberResponseDTO>> getCrewMemberList(
+        @PathVariable("crewId") Integer crewId,
+        @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
+        
         System.out.println("client endpoint: /crew/member/list/" + crewId);
         System.out.println("debug>>> getCrewMemberList + " + crewId);
-        List<CrewMemberResponseDTO> list = crewService.getCrewMemberList(crewId);   
-        for (CrewMemberResponseDTO dto : list) {
-            String badgeImagePath = dto.getBadgeImagePath();
-            dto.setBadgeImagePath(badgeImagePath);
+        System.out.println("debug>>> Authorization Header: " + authHeader);
+        
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            String token = authHeader.substring(7); // "Bearer " 접두사 제거
+            int member_id = jwtTokenProvider.getUserIdFromToken(token); // 토큰에서 사용자 ID 추출
+            
+            List<CrewMemberResponseDTO> list = crewService.getCrewMemberList(crewId);
+            for (CrewMemberResponseDTO dto : list) {
+                String badgeImagePath = dto.getBadgeImagePath();
+                dto.setBadgeImagePath(badgeImagePath);
+            }
+            return ResponseEntity.ok(list);
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build(); // 인증 실패 시 401 반환
         }
-        return ResponseEntity.ok(list);
     }
 
     // 크루원 삭제
