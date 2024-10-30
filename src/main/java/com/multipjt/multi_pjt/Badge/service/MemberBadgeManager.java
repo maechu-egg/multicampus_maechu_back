@@ -40,9 +40,9 @@ public class MemberBadgeManager {
         
         // 활동 기록 생성
         UserActivityRecordRequestDTO activityRecord = new UserActivityRecordRequestDTO();
-        activityRecord.setActivity_type(activityType);
+        activityRecord.setActivityType(activityType);
         activityRecord.setPoints(points);
-        activityRecord.setMember_id(memberId);
+        activityRecord.setMemberId(memberId);
         
         // 활동 기록을 데이터베이스에 삽입
         userActivityRecordMapper.insertActivity(activityRecord);
