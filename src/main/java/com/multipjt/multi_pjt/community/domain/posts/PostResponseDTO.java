@@ -26,9 +26,12 @@ public class PostResponseDTO {
     
     // 댓글 목록
     private List<CommentResponseDTO> comments; 
+    // 좋아요 상태
+    private boolean likeStatus;
     
     // 외래키
     private int member_id;
     
     private String post_nickname;
+    private int comments_count;
 }

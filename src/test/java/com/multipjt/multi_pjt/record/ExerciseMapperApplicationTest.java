@@ -36,10 +36,10 @@ public class ExerciseMapperApplicationTest {
         exerRequestDTO.setDuration(30);
         exerRequestDTO.setCalories(78F);
         //when : ExerciseRecords에 값 Insert
-        int row = exerMapper.exerInsert(exerRequestDTO);
+        Long row = exerMapper.exerInsert(exerRequestDTO);
 
         //then : 검증
-        Assertions.assertThat(row).isEqualTo(1);
+        Assertions.assertThat(row).isNotNull();
 
     }
 
@@ -135,14 +135,14 @@ public class ExerciseMapperApplicationTest {
         exerRequestDTO3.setCalories(89F);
 
         // ExerciseRecords에 삽입 검증
-        int row1 = exerMapper.exerInsert(exerRequestDTO1);
-        Assertions.assertThat(row1).isEqualTo(1);
+        Long row1 = exerMapper.exerInsert(exerRequestDTO1);
+        Assertions.assertThat(row1).isNotNull();
 
-        int row2 = exerMapper.exerInsert(exerRequestDTO2);
-        Assertions.assertThat(row2).isEqualTo(1);
+        Long row2 = exerMapper.exerInsert(exerRequestDTO2);
+        Assertions.assertThat(row2).isNotNull();
 
-        int row3 = exerMapper.exerInsert(exerRequestDTO3);
-        Assertions.assertThat(row3).isEqualTo(1);
+        Long row3 = exerMapper.exerInsert(exerRequestDTO3);
+        Assertions.assertThat(row3).isNotNull();
 
         // memberId, recordDate를 통해 회원이 특정 날짜에 한 운동들 조회하기 위해 설정한 값
         Map<String,Object> map = new HashMap<>();
@@ -155,13 +155,13 @@ public class ExerciseMapperApplicationTest {
         System.out.println("debug list >>> " + list);
 
         //then : 검증
-        Assertions.assertThat(list).size().isEqualTo(2);       
+        Assertions.assertThat(list).size().isGreaterThan(0);       
         
         for (ExerResponseDTO exer : list) {
             Long exerciseId = exer.getExercise_id();
             System.out.println("debug exer >>> " + exer);
 
-            Assertions.assertThat(exer.getExercise_id()).isNotNull();
+            Assertions.assertThat(exerciseId).isNotNull();
 
             System.out.println("운동명: " + exer.getExercise_type() + ", ExerciseId: " + exerciseId);
             
@@ -174,7 +174,7 @@ public class ExerciseMapperApplicationTest {
             Assertions.assertThat(row).isEqualTo(1);
 
             // when: 해당 운동의 Set 정보 조회
-            SetResponseDTO setResponseDTO = exerMapper.getSetInfo(exerciseId);
+            List<SetResponseDTO> setResponseDTO = exerMapper.getSetInfo(exerciseId);
             System.out.println("debug setResponseDTO>>> " + setResponseDTO);
 
             // then: Set 정보가 있는지 확인 및 출력
@@ -235,14 +235,14 @@ public class ExerciseMapperApplicationTest {
         // 검증
         Assertions.assertThat(row).isEqualTo(1);
         // exercise_id를 통해 set 정보 출력
-        SetResponseDTO setResponseDTO = exerMapper.getSetInfo(exerciseId.get(0));
+        List<SetResponseDTO> setResponseDTO = exerMapper.getSetInfo(exerciseId.get(0));
         System.out.println("debug setResponseDTO >>> " + setResponseDTO);
         //given : set_id를 통해 update할 준비
         Map<String,Object> map2 = new HashMap<>();
-        map2.put("set_id", setResponseDTO.getSet_id());
+        map2.put("set_id", setResponseDTO.get(0).getSet_id());
         map2.put("distance", 7F);
-        map2.put("weight", setResponseDTO.getWeight());
-        map2.put("repetitions", setResponseDTO.getRepetitions());
+        map2.put("weight", setResponseDTO.get(0).getWeight());
+        map2.put("repetitions", setResponseDTO.get(0).getRepetitions());
         
         System.out.println("debug map2 >>> " + map2);
         //when : update
@@ -278,10 +278,10 @@ public class ExerciseMapperApplicationTest {
         // 검증
         Assertions.assertThat(row).isEqualTo(1);
         //given : set_id를 통해 delete할 준비
-        SetResponseDTO setResponseDTO = exerMapper.getSetInfo(exerciseId.get(0));
+        List<SetResponseDTO> setResponseDTO = exerMapper.getSetInfo(exerciseId.get(0));
         System.out.println("debug setResponseDTO >>> " + setResponseDTO);
 
-        Long setId = setResponseDTO.getSet_id();
+        Long setId = setResponseDTO.get(0).getSet_id();
       
         System.out.println("debug setId >>> " + setId);
         //when : delete

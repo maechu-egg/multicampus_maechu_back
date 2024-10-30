@@ -19,8 +19,9 @@ public class ExerService {
     @Autowired
     private ExerMapper exerMapper;
 
-    public int exerInsertRow(ExerRequestDTO exerRequestDTO){
-        return exerMapper.exerInsert(exerRequestDTO);
+    public Long exerInsertRow(ExerRequestDTO exerRequestDTO){
+        exerMapper.exerInsert(exerRequestDTO);
+        return exerRequestDTO.getExercise_id();
     }
 
     public List<Long> exerIdGetRow(Map<String,Object> map){
@@ -31,7 +32,7 @@ public class ExerService {
         return exerMapper.setInsert(setRequestDTO);
     }
 
-    public SetResponseDTO setInfoGetRow(Long exerciseId){
+    public List<SetResponseDTO> setInfoGetRow(Long exerciseId){
         return exerMapper.getSetInfo(exerciseId);
     }
 
@@ -57,5 +58,13 @@ public class ExerService {
 
     public List<Map<String,Object>> exerCaloriesGetRow(Map<String,Object> map){
         return exerMapper.exerCaloriesGet(map);
+    }
+
+    public List<Map<String,Object>> metGetRow(String exercise_name){
+        return exerMapper.metGet(exercise_name);
+    }
+
+    public Float getMemberInfoRow(Long memberId){
+        return exerMapper.getMemberInfo(memberId);
     }
 }
