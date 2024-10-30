@@ -61,7 +61,7 @@ public class CrewService {
         return crewMapper.selectCrewInfoRow(crewId);
     }
 
-    // 크루원 추가
+    // 크루원 신청
     public void addCrewMember(CrewMemberRequestDTO param) {
         System.out.println("debug>>> Service: addCrewMember + " + crewMapper);
         System.out.println("debug>>> Service: addCrewMember + " + param);
@@ -100,10 +100,10 @@ public class CrewService {
     }
 
     // 크루 삭제
-    public void deleteCrew(Integer crewId, Integer member_id) {
+    public void deleteCrew(Integer crewId, Integer leader_id) {
         System.out.println("debug>>> Service: deleteCrew + " + crewMapper);
         System.out.println("debug>>> Service: deleteCrew + " + crewId);
-        if(member_id == crewMapper.selectCrewLeaderIdRow(crewId)) {
+        if(leader_id == crewMapper.selectCrewLeaderIdRow(crewId)) {
             crewMapper.deleteCrewRow(crewId);
         }else{
             throw new IllegalArgumentException("크루장만 크루를 삭제할 수 있습니다.");
@@ -113,10 +113,14 @@ public class CrewService {
     // --------- 크루원 정보 ---------
 
     // 크루원 가입 승인
-    public void approveCrewMember(CrewMemberRequestDTO param) {
+    public void approveCrewMember(CrewMemberRequestDTO param, Integer leader_id) {
         System.out.println("debug>>> Service: approveCrewMember + " + crewMapper);
         System.out.println("debug>>> Service: approveCrewMember + " + param);
-        crewMapper.updateCrewMemberRow(param);
+        if(leader_id == crewMapper.selectCrewLeaderIdRow(param.getCrew_id())) {
+            crewMapper.updateCrewMemberRow(param);
+        } else {
+            throw new IllegalArgumentException("크루장만 크루원 가입을 승인할 수 있습니다.");
+        }
     }
 
     // 크루원 조회

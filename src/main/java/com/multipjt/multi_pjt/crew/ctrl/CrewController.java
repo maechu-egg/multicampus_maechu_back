@@ -168,8 +168,8 @@ public class CrewController {
         System.out.println("debug>>> deleteCrew + " + crewId);
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             String token = authHeader.substring(7); // "Bearer " 접두사 제거
-            int member_id = jwtTokenProvider.getUserIdFromToken(token); // 토큰에서 사용자 ID 추출
-            crewService.deleteCrew(crewId, member_id);
+            int leader_id = jwtTokenProvider.getUserIdFromToken(token); // 토큰에서 사용자 ID 추출
+            crewService.deleteCrew(crewId, leader_id);
             return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build(); // 인증 실패 시 401 반환
@@ -181,11 +181,19 @@ public class CrewController {
 
     // 크루원 가입 승인
     @PatchMapping("/member/approve")
-    public ResponseEntity<Void> approveCrewMember(@RequestBody CrewMemberRequestDTO param) {
+    public ResponseEntity<Void> approveCrewMember(
+            @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader,
+            @RequestBody CrewMemberRequestDTO param) {
         System.out.println("client endpoint: /crew/member/approve");
         System.out.println("debug>>> approveCrewMember + " + param);
-        crewService.approveCrewMember(param);
-        return ResponseEntity.noContent().build(); // 204 No Content
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            String token = authHeader.substring(7); // "Bearer " 접두사 제거
+            int leader_id = jwtTokenProvider.getUserIdFromToken(token); // 토큰에서 사용자 ID 추출
+            crewService.approveCrewMember(param, leader_id);
+            return ResponseEntity.noContent().build(); // 204 No Content
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build(); // 인증 실패 시 401 반환
+        }
     }
 
     // 크루원 조회
