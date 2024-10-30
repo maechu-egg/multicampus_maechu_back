@@ -4,6 +4,8 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -28,13 +30,16 @@ import com.multipjt.multi_pjt.badge.service.MemberBadgeManager;
 @RequestMapping("/badges")
 public class BadgeController {
 
+    private static final Logger logger = LoggerFactory.getLogger(BadgeController.class);
+
     private final IBadgeService badgeService;
     private final MemberBadgeManager memberBadgeManager;
     private final UserActivityRecordMapper userActivityRecordMapper;
     private final MemberBadgeMapper memberBadgeMapper;
 
     // BadgeController 생성자
-    public BadgeController(IBadgeService badgeService, MemberBadgeManager memberBadgeManager, UserActivityRecordMapper userActivityRecordMapper, MemberBadgeMapper memberBadgeMapper) {
+    public BadgeController(IBadgeService badgeService, MemberBadgeManager memberBadgeManager, 
+                           UserActivityRecordMapper userActivityRecordMapper, MemberBadgeMapper memberBadgeMapper) {
         this.badgeService = badgeService;
         this.memberBadgeManager = memberBadgeManager;
         this.userActivityRecordMapper = userActivityRecordMapper;
@@ -46,13 +51,13 @@ public class BadgeController {
     public ResponseEntity<Map<String, Object>> processActivity(@RequestBody UserActivityRecordRequestDTO request) {
         try {
             // 활동을 처리하고 포인트를 업데이트
-            memberBadgeManager.processActivity(request.getMember_id(), request.getActivity_type());
+            memberBadgeManager.processActivity(request.getMemberId(), request.getActivityType());
             // 뱃지 등급은 자동으로 업데이트되므로, 현재 점수만 조회
-            BigDecimal currentPoints = badgeService.getCurrentPoints(Long.valueOf(request.getMember_id()));
+            BigDecimal currentPoints = badgeService.getCurrentPoints(Long.valueOf(request.getMemberId()));
             
             // 성공 응답
             return ResponseEntity.ok(Map.of(
-                "message", String.format("활동 처리 완료: %s, 회원 ID: %d", request.getActivity_type(), request.getMember_id()),
+                "message", String.format("점수 반영 완료: %s, 회원 ID: %d", request.getActivityType(), request.getMemberId()),
                 "currentPoints", currentPoints
             ));
         } catch (IllegalArgumentException e) {
