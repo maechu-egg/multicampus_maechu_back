@@ -65,7 +65,7 @@ public class LoginServiceImpl implements UserDetailsService { // UserDetailsServ
     private final SecureRandom random = new SecureRandom();
 
     // 1. 회원가입 메서드 추가
-    public ResponseEntity<String> registerUser(UserRequestDTO userRequestDTO) {
+    public ResponseEntity<String> registerUser(UserRequestDTO userRequestDTO, MultipartFile memberImgFile) {
         // 이메일 유효성 검사
         if (!isValidEmail(userRequestDTO.getEmail())) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
@@ -89,7 +89,6 @@ public class LoginServiceImpl implements UserDetailsService { // UserDetailsServ
         userRequestDTO.setPassword(encodedPassword); // 암호화된 비밀번호로 설정
 
         // 이미지 저장 로직 추가
-        MultipartFile memberImgFile = userRequestDTO.getMemberImgFile();
         if (memberImgFile != null && !memberImgFile.isEmpty()) {
             String fileName = System.currentTimeMillis() + "_" + memberImgFile.getOriginalFilename();
             Path path = Paths.get("src/main/resources/static/" + fileName); // 정적 폴더 경로
@@ -104,6 +103,8 @@ public class LoginServiceImpl implements UserDetailsService { // UserDetailsServ
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                                      .body("{\"Code\": \"IMAGE_UPLOAD_FAILED\", \"Message\": \"이미지 업로드 실패: " + e.getMessage() + "\"}");
             }
+        } else {
+            userRequestDTO.setMember_img(null); // 이미지가 없을 경우 null 설정
         }
 
         // DB에 저장하기 전 UserRequestDTO 상태 로그
@@ -368,14 +369,14 @@ public class LoginServiceImpl implements UserDetailsService { // UserDetailsServ
         return ResponseEntity.ok("{\"Code\": \"SUCCESS\", \"Message\": \"비밀번호가 변경되었습니다.\"}");
     }
 
-    // 5. 사용자 정보 조회 메서드
-    public UserResponseDTO getUserInfo(int userId) {
+     // 5. 사용자 정보 조회 메서드
+     public UserResponseDTO getUserInfo(int userId) {
         // 사용자 ID로 사용자 정보 조회
         UserResponseDTO user = userMapper.getUserById(userId);
         if (user != null) {
             logger.info("User info retrieved successfully for userId: {}", userId);
             // 이미지 URL 설정 (정적 파일 경로에 맞게 URL 생성)
-            user.setMemberImgUrl(getImageUrl(user.getMemberImg())); // 이미지 URL 설정
+            user.setMemberImg(getImageUrl(user.getMemberImg())); // 이미지 URL 설정
         } else {
             logger.warn("User not found for userId: {}", userId);
         }
@@ -386,6 +387,9 @@ public class LoginServiceImpl implements UserDetailsService { // UserDetailsServ
     private String getImageUrl(String memberImg) {
         return "/static/" + memberImg; // 정적 파일 경로에 맞게 URL 생성
     }
+
+
+    
 
 }
 
