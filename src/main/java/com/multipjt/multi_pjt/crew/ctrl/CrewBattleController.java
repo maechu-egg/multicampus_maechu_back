@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -44,6 +45,14 @@ public class CrewBattleController {
         System.out.println("client endpoint: /crew/battle/list");
         System.out.println("debug: getCrewBattleList + " + crew_id);
         return ResponseEntity.ok(crewBattleService.selectCrewBattle(crew_id));
+    }
+
+    // 특정 배틀 상세 조회
+    @GetMapping("/detail/{battle_id}")
+    public ResponseEntity<CrewBattleResponseDTO> getCrewBattleDetail(@PathVariable("battle_id") Integer battle_id) {
+        System.out.println("client endpoint: /crew/battle/detail");
+        System.out.println("debug: getCrewBattleDetail + " + battle_id);
+        return ResponseEntity.ok(crewBattleService.selectCrewBattleDetail(battle_id));
     }
 
     // 배틀 참가
