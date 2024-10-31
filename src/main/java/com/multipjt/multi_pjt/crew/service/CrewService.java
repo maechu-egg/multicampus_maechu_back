@@ -5,6 +5,8 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
+import org.springframework.http.HttpStatus;
 
 import com.multipjt.multi_pjt.crew.dao.crew.CrewMapper;
 import com.multipjt.multi_pjt.crew.domain.crew.CrewCommentsRequestDTO;
@@ -95,7 +97,7 @@ public class CrewService {
         if(param.getMember_id() == crewMapper.selectCrewLeaderIdRow(param.getCrew_id())) {
             crewMapper.updateCrewInfoRow(param);
         } else {
-            throw new IllegalArgumentException("크루장만 크루 관리를 수정할 수 있습니다.");
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "멤버 승인된 크루원만 게시물 등록이 가능합니다.");
         }
     }
 
@@ -151,11 +153,10 @@ public class CrewService {
         // 크루원 상태 확인
         boolean isActiveMember = crewMapper.selectCrewMemberRow(param.getCrew_id()).stream()
             .anyMatch(member -> member.getMember_id() == token_id && member.getCrew_member_state() == 1);
-        
         if (isActiveMember) {
             crewMapper.insertCrewPostRow(param);
         } else {
-            throw new IllegalArgumentException("멤버 승인된 크루원만 게시물 등록이 가능합니다.");
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "멤버 승인된 크루원만 게시물 등록이 가능합니다.");
         }
     }
 

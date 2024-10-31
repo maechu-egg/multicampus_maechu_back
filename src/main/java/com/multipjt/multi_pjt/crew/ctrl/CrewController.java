@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.multipjt.multi_pjt.crew.domain.crew.CrewCommentsRequestDTO;
 import com.multipjt.multi_pjt.crew.domain.crew.CrewCommentsResponseDTO;
@@ -257,7 +258,7 @@ public class CrewController {
 
     // 크루 게시물 등록
     @PostMapping("/post/create")
-    public ResponseEntity<Void> createCrewPost(
+    public ResponseEntity<Object> createCrewPost(
             @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader,
             @RequestBody CrewPostRequestDTO param) {
 
@@ -267,8 +268,14 @@ public class CrewController {
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             String token = authHeader.substring(7); // "Bearer " 접두사 제거
             int token_id = jwtTokenProvider.getUserIdFromToken(token); // 토큰에서 사용자 ID 추출
-            crewService.createCrewPost(param, token_id);
-            return ResponseEntity.status(HttpStatus.CREATED).build(); // 201 Created
+            
+            try {
+                crewService.createCrewPost(param, token_id);
+                return ResponseEntity.status(HttpStatus.CREATED).build(); // 201 Created
+            } catch (ResponseStatusException e) {
+                return ResponseEntity.status(e.getStatusCode()).body(e.getMessage()); // 서비스에서 발생한 예외에 따라 상태 코드 반환
+            }
+            
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build(); // 인증 실패 시 401 반환
         }

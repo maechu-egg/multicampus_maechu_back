@@ -174,23 +174,15 @@
     <insert id="insertCrewPostRow"
             parameterType="com.multipjt.multi_pjt.crew.domain.crew.CrewPostRequestDTO">
         INSERT INTO CrewPost(
-            crew_post_id,
             crew_post_title,
             crew_post_content,
             crew_post_img,
-            crew_post_like,
-            crew_post_state,
-            crew_post_date,
             crew_id,
             member_id
         ) VALUES (
-            #{crew_post_id},
             #{crew_post_title},
             #{crew_post_content},
             #{crew_post_img},
-            #{crew_post_like},
-            #{crew_post_state},
-            #{crew_post_date},
             #{crew_id},
             #{member_id}
         );
