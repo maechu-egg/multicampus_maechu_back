@@ -46,6 +46,7 @@ public class CrewBattleService {
     // 배틀 참가 멤버 조회
     public List<BattleMemberResponseDTO> selectBattleMember(Integer battle_id) {
         System.out.println("debug>>> Service: selectBattleMember + " + crewBattleMapper);
+        System.out.println("debug>>> Service: selectBattleMember + " + battle_id);
         return crewBattleMapper.selectBattleMemberRow(battle_id);
     }
 
