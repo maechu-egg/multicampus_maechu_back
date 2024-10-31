@@ -1,11 +1,17 @@
 package com.multipjt.multi_pjt.badge.domain.badge;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
+import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import com.multipjt.multi_pjt.badge.dao.MemberBadgeMapper;
-
+import com.multipjt.multi_pjt.badge.dao.UserActivityRecordMapper;
 import jakarta.transaction.Transactional;
 
 @SpringBootTest
@@ -14,6 +20,9 @@ public class MemberBadgeMapperTest {
 
     @Autowired
     private MemberBadgeMapper memberBadgeMapper;
+
+    @Autowired
+    private UserActivityRecordMapper userActivityRecordMapper;
 
     @Test
     public void testInsertBadge() {
@@ -55,5 +64,24 @@ public class MemberBadgeMapperTest {
         System.out.println("뱃지 업데이트 완료");
     }
 
+    @Test
+    public void testInsertActivityAndUpdatePoints() {
+        // 테스트할 데이터 설정
+        String activityType = "diet"; // 예시 활동 유형
+        Long memberId = 135L; // 예시 회원 ID
+
+        // 파라미터 맵 생성
+        Map<String, Object> params = new HashMap<>();
+        params.put("activityType", activityType);
+        params.put("memberId", memberId);
+
+        // 스토어드 프로시저 호출
+        userActivityRecordMapper.insertActivityAndUpdatePoints(params);
+
+        // 결과 확인 (예: MemberBadge 테이블에서 점수 확인)
+        BigDecimal currentPoints = memberBadgeMapper.getCurrentPoints(memberId);
+        assertNotNull(currentPoints); // 점수가 null이 아닌지 확인
+        System.out.println("Current Points: " + currentPoints);
+    }
 
 }
