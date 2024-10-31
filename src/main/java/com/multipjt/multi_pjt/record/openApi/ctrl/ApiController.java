@@ -49,7 +49,7 @@ public class ApiController {
         @Valid @RequestParam(name = "foodNm") String foodNm) throws UnsupportedEncodingException{
         
         if(foodNm == null || foodNm.isEmpty()){
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("식품명을 입력해주세요.",HttpStatus.BAD_REQUEST);
         } else{    
         String encodeFoodNm = URLEncoder.encode(foodNm, "UTF-8");    
 
@@ -86,14 +86,16 @@ public class ApiController {
                 
 
                 if(responseCode == HttpURLConnection.HTTP_OK){
-                stream = http.getInputStream();
-                result = StreamUtils.copyToString(stream, Charset.forName("UTF-8"));
-                list = apiService.parseJson(result);    
+                    stream = http.getInputStream();
+                    result = StreamUtils.copyToString(stream, Charset.forName("UTF-8"));
+                    list = apiService.parseJson(result);    
                 
-                System.out.println("api list >>> " + list);
-                
-                } else{ 
-                    return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+                    System.out.println("api list >>> " + list);
+                    if(list.isEmpty()){
+                        return new ResponseEntity<>("해당 식품이 없습니다.",HttpStatus.NOT_FOUND);
+                    } 
+                }else{ 
+                    return new ResponseEntity<>("서버 오류가 발생했습니다.",HttpStatus.INTERNAL_SERVER_ERROR);
                 }
             }catch(Exception e){
                 e.printStackTrace();

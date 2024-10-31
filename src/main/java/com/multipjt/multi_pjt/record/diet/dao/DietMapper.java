@@ -3,6 +3,7 @@ package com.multipjt.multi_pjt.record.diet.dao;
 import org.apache.ibatis.annotations.Mapper;
 
 import com.multipjt.multi_pjt.record.diet.domain.DietRequestDTO;
+import com.multipjt.multi_pjt.record.diet.domain.DietResponseDTO;
 import com.multipjt.multi_pjt.record.diet.domain.ItemRequestDTO;
 import com.multipjt.multi_pjt.record.diet.domain.ItemResponseDTO;
 
@@ -16,17 +17,21 @@ public interface DietMapper {
     // DietItems 삽입
     public int itemInsert(ItemRequestDTO requestDTO);
     // diet_id 찾기
-    public Long findDietNumber(Map<String,Object> map);
+    public Integer findDietNumber(Map<String,Object> map);
+    // DietRecords 출력
+    public ArrayList<DietResponseDTO> dietFindAll(Map<String,Object> map);
     // DietItems 출력
-    public ArrayList<ItemResponseDTO> itemFindAll(Long dietId);
+    public ArrayList<ItemResponseDTO> itemFindAll(Integer dietId);
     // DietRecords 삭제
-    public int dietDelete(Long dietId);
+    public int dietDelete(Integer dietId);
     // DietItems 삭제
-    public int itemDelete(Map<String,Object> map);
+    public int itemDelete(Integer item_id);
     //DietItems 수정
     public int itemUpdate(ItemRequestDTO requestDTO);
 
     public ArrayList<Map<String,Object>> mealNutCheck(Map<String,Object> map);
 
-    public Map<String,String> getMemberInfo(Long memberId);
+    public Map<String,String> getMemberInfo(Integer memberId);
+
+    public int mealUpdate(DietRequestDTO dietRequestDTO);
 }
