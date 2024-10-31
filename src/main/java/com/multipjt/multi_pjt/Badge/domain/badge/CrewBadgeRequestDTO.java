@@ -8,4 +8,9 @@ public class CrewBadgeRequestDTO {
     private float crew_current_points;
     private int member_id;
     private String badge_level;
+    private int crew_battle_wins;
+
+    public void setCrew_battle_wins(int crew_battle_wins) {
+        this.crew_battle_wins = crew_battle_wins;
+    }
 }

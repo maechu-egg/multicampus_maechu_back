@@ -8,4 +8,5 @@ public class CrewBadgeResponseDTO {
     private float crew_current_points;
     private int member_id;
     private String badge_level;
+    private int crew_battle_wins;
 }
