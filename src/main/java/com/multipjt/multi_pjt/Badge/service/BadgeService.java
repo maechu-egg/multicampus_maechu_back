@@ -72,7 +72,6 @@ public class BadgeService implements IBadgeService {
     public void updateUserPoints(Long memberId, BigDecimal points) {
         UserActivityRecordRequestDTO activityRecord = new UserActivityRecordRequestDTO();
         activityRecord.setMemberId(memberId.intValue());
-        activityRecord.setPoints(points.floatValue());
         activityRecord.setCreatedDate(LocalDateTime.now());
         userActivityRecordMapper.insertActivity(activityRecord);
 
@@ -113,7 +112,6 @@ public class BadgeService implements IBadgeService {
             // 점수 부여 로직
             UserActivityRecordRequestDTO activityRecord = new UserActivityRecordRequestDTO();
             activityRecord.setActivityType("exercise");
-            activityRecord.setPoints(0.5f); // 고정 점수 0.5점 부여
             activityRecord.setMemberId(memberId.intValue());
             activityRecord.setCreatedDate(LocalDateTime.now());
             userActivityRecordMapper.insertActivity(activityRecord);
@@ -140,7 +138,6 @@ public class BadgeService implements IBadgeService {
     private void insertActivityRecord(Long memberId, UserActivityRecordResponseDTO activity) {
         UserActivityRecordRequestDTO activityRecord = new UserActivityRecordRequestDTO();
         activityRecord.setActivityType(activity.getActivityType());
-        activityRecord.setPoints(activity.getPoints());
         activityRecord.setMemberId(memberId.intValue());
         activityRecord.setCreatedDate(activity.getCreatedDate());
         userActivityRecordMapper.insertActivity(activityRecord);

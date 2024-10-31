@@ -8,7 +8,6 @@ import lombok.Data;
 public class UserActivityRecordRequestDTO {
     private Integer recordId;
     private String activityType;
-    private float points;
     private LocalDateTime createdDate;
     private int memberId;
 
