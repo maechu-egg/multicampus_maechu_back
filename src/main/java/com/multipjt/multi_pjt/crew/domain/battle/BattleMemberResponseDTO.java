@@ -14,4 +14,5 @@ public class BattleMemberResponseDTO {
     private Integer total_feed_exTime;
     private Integer feed_count;
     private String badge_level;
+    private Integer vote_count;
 }
