@@ -144,10 +144,19 @@ public class CrewService {
     // --------- 크루 게시판 ---------
 
     // 크루 게시물 등록
-    public void createCrewPost(CrewPostRequestDTO param) {
+    public void createCrewPost(CrewPostRequestDTO param, Integer token_id) {
         System.out.println("debug>>> Service: createCrewPost + " + crewMapper);
         System.out.println("debug>>> Service: createCrewPost + " + param);
-        crewMapper.insertCrewPostRow(param);
+        
+        // 크루원 상태 확인
+        boolean isActiveMember = crewMapper.selectCrewMemberRow(param.getCrew_id()).stream()
+            .anyMatch(member -> member.getMember_id() == token_id && member.getCrew_member_state() == 1);
+        
+        if (isActiveMember) {
+            crewMapper.insertCrewPostRow(param);
+        } else {
+            throw new IllegalArgumentException("멤버 승인된 크루원만 게시물 등록이 가능합니다.");
+        }
     }
 
     // 크루 게시물 전체 조회

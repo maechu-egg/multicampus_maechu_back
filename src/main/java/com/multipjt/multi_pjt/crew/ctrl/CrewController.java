@@ -257,12 +257,23 @@ public class CrewController {
 
     // 크루 게시물 등록
     @PostMapping("/post/create")
-    public ResponseEntity<Void> createCrewPost(@RequestBody CrewPostRequestDTO param) {
+    public ResponseEntity<Void> createCrewPost(
+            @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader,
+            @RequestBody CrewPostRequestDTO param) {
+
         System.out.println("client endpoint: /crew/post/create");
         System.out.println("debug>>> createCrewPost + " + param);
-        crewService.createCrewPost(param);
-        return ResponseEntity.status(HttpStatus.CREATED).build(); // 201 Created
+
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            String token = authHeader.substring(7); // "Bearer " 접두사 제거
+            int token_id = jwtTokenProvider.getUserIdFromToken(token); // 토큰에서 사용자 ID 추출
+            crewService.createCrewPost(param, token_id);
+            return ResponseEntity.status(HttpStatus.CREATED).build(); // 201 Created
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build(); // 인증 실패 시 401 반환
+        }
     }
+
 
     // 크루 게시물 전체 조회
     @GetMapping("/post/list/{crewId}")
