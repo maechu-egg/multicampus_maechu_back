@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.web.multipart.MultipartFile;
+//import org.springframework.web.multipart.MultipartFile;
 
 @Data
 @NoArgsConstructor
@@ -20,7 +20,7 @@ public class UserRequestDTO {
     private boolean verified;      // 인증 여부
     private String snsProvider;    // SNS 제공자 (KAKAO, NAVER 등)
     private String regDate;
-    private MultipartFile memberImgFile; // 프로필 이미지 파일 추가
+    //private MultipartFile memberImgFile; // 프로필 이미지 파일 추가
 
     // Getter and Setter for member_id
     public int getMemberId() {
@@ -102,13 +102,12 @@ public class UserRequestDTO {
     public void setRegDate(String regDate) {
         this.regDate = regDate;
     }
-
     // Getter and Setter for memberImg
-    public MultipartFile getMemberImgFile() {
-        return memberImgFile;
-    }
+    // public MultipartFile getMemberImgFile() {
+    //     return memberImgFile;
+    // }
 
-    public void setMemberImgFile(MultipartFile memberImgFile) {
-        this.memberImgFile = memberImgFile;
-    }
+    // public void setMemberImgFile(MultipartFile memberImgFile) {
+    //     this.memberImgFile = memberImgFile;
+    // }
 }

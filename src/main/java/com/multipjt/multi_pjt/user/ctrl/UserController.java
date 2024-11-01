@@ -6,8 +6,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
 import com.multipjt.multi_pjt.jwt.JwtTokenProvider;
 import com.multipjt.multi_pjt.user.domain.CustomUserDetails;
@@ -21,12 +19,6 @@ import com.multipjt.multi_pjt.user.domain.login.UserRequestDTO;
 import com.multipjt.multi_pjt.user.domain.login.UserResponseDTO;
 import com.multipjt.multi_pjt.user.service.LoginServiceImpl;
 
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.bind.annotation.*;
 
@@ -43,9 +35,8 @@ public class UserController {
 
     @PostMapping("/register")
     public ResponseEntity<String> registerUser(@ModelAttribute UserRequestDTO userRequestDTO,
-                                               @RequestParam("memberImgFile") MultipartFile memberImgFile) {
-        userRequestDTO.setMemberImgFile(memberImgFile); // MultipartFile을 DTO에 설정
-        return loginServiceImple.registerUser(userRequestDTO); // 회원가입 처리
+                                               @RequestParam(value = "memberImgFile", required = false) MultipartFile memberImgFile) {
+        return loginServiceImple.registerUser(userRequestDTO, memberImgFile); // 회원가입 처리
     }
 
     @PostMapping("/register/email-check")
@@ -199,7 +190,7 @@ public class UserController {
             UserResponseDTO userInfo = loginServiceImple.getUserInfo(userId);
             if (userInfo != null) {
                 // 이미지 URL을 포함하여 반환
-                userInfo.setMemberImgUrl(userInfo.getMemberImgUrl()); // 이미지 URL 설정
+                //userInfo.setMemberImg(userInfo.getMemberImg()); // 이미지 URL 설정
                 return ResponseEntity.ok(userInfo); // 사용자 정보 반환
             } else {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND)
