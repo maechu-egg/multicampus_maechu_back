@@ -5,10 +5,10 @@ import lombok.Data;
 @Data
 public class SetResponseDTO {
 
-    private Long set_id;
-    private Float distance;
+    private Integer set_id;
+    private Double distance;
     private Integer weight;
     private Integer repetitions;
-    private Long exercise_id;
+    private Integer exercise_id;
 
 }

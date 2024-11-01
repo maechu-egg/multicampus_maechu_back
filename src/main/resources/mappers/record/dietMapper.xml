@@ -10,8 +10,6 @@
         values(#{meal_type},#{member_id});
     </insert>
 
-
-
     <!-- itemRow --> 
 
     <insert id="itemInsert" parameterType="com.multipjt.multi_pjt.record.diet.domain.ItemRequestDTO">
@@ -21,28 +19,35 @@
 
     <!-- findDietNumber --> 
 
-    <select id="findDietNumber" parameterType="java.util.Map" resultType="java.lang.Long">
-    select diet_id from DietRecords
-    where member_id = #{member_id} and record_date = #{record_date} and meal_type = #{meal_type}
-</select>
+    <select id="findDietNumber" parameterType="java.util.Map" resultType="java.lang.Integer">
+        select diet_id from DietRecords
+        where member_id = #{member_id} and record_date = #{record_date} and meal_type = #{meal_type}
+    </select>
 
     <!-- dietDelete --> 
 
-    <delete id="dietDelete" parameterType="java.lang.Long">
+    <delete id="dietDelete" parameterType="java.lang.Integer">
         delete from DietRecords
         where diet_id = #{diet_id};
     </delete>
 
     <!-- itemDelete --> 
 
-    <delete id="itemDelete" parameterType="java.util.Map">
+    <delete id="itemDelete" parameterType="java.lang.Integer">
         delete from DietItems
-        where item_name = #{item_name} and diet_id = #{diet_id};
+        where item_id = #{item_id};
     </delete>    
+
+    <!-- dietFindAll --> 
+
+    <select id="dietFindAll" parameterType="java.util.Map" resultType="com.multipjt.multi_pjt.record.diet.domain.DietResponseDTO">
+        select * from DietRecords
+        where member_id = #{member_id} and record_date = #{record_date}
+    </select>
 
     <!-- itemFindAll --> 
 
-    <select id="itemFindAll" parameterType="java.lang.Long" resultType="com.multipjt.multi_pjt.record.diet.domain.ItemResponseDTO">
+    <select id="itemFindAll" parameterType="java.lang.Integer" resultType="com.multipjt.multi_pjt.record.diet.domain.ItemResponseDTO">
         select * from DietItems
         where diet_id = #{diet_id};
     </select>
@@ -57,7 +62,7 @@
         carbs = #{carbs},
         fat = #{fat},
         protein = #{protein}
-        where item_name = #{item_name} and diet_id = #{diet_id};
+        where item_id = #{item_id};
     </update>    
 
     <!-- itemNutCheck --> 
@@ -79,8 +84,16 @@
 
     <!-- calculateTdee --> 
 
-    <select id="calculateTdee" parameterType="java.lang.Long" resultType="java.util.Map">
+    <select id="calculateTdee" parameterType="java.lang.Integer" resultType="java.util.Map">
         select profile_gender, profile_age , profile_weight ,profile_height, profile_activity_level from UserProfile
         where member_id = #{member_id};
     </select>    
+
+    <!-- mealUpdate --> 
+
+    <update id="mealUpdate" parameterType="com.multipjt.multi_pjt.record.diet.domain.DietRequestDTO">
+        update DietRecords
+        set meal_type = #{meal_type}
+        where diet_id = #{diet_id}; 
+    </update>
 </mapper>

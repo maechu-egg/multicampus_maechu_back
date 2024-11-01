@@ -8,7 +8,7 @@ import lombok.Data;
 public class DietRequestDTO {
     
     // dietId는 auto increment 여서 지정하지 않음, date도 default 값을 기입할 거여서 기입 x 
-    private Long member_id;
+    private Integer member_id;
     @Enumerated(EnumType.STRING)
     private MealType meal_type;
     // recordDate는 default 
