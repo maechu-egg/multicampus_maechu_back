@@ -73,5 +73,6 @@ public class CommentMapperApplicationTests {
         // // null이 아닐 경우 테스트 실패
         Assertions.assertNull(deleteComment, "삭제한 댓글의 정보는 조회할 수 없어야 합니다.");
     }   
+    // 
 
 }

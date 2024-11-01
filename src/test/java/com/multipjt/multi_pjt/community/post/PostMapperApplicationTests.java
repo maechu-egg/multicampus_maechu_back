@@ -383,7 +383,7 @@ public class PostMapperApplicationTests {
         Assertions.assertEquals(1, viewCountAdd, "Update가 정상적으로 이루어졌습니다.");
       
     }
-
+    //
 }
 
 
