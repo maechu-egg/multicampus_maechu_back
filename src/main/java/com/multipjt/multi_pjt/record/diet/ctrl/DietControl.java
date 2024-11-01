@@ -78,7 +78,7 @@ public class DietControl {
         System.out.println("class endPoint >> " + "/record/diet/get/dietnumber");
         Integer result = dietService.findDietRow(map);
         System.out.println("result >>" + result);
-        if(result != 0){
+        if(result != null){
             return new ResponseEntity<>(result,HttpStatus.OK);
         } else{
             return new ResponseEntity<>(result,HttpStatus.BAD_REQUEST);
