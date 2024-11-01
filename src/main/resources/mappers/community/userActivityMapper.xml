@@ -85,5 +85,51 @@
         ) As existsView
     </select>
 
+    <!-- 싫어요 확인 EXISTS - boolean 값 반환-->
+   <select id="commitUnLike" parameterType="java.util.HashMap" resultType="Boolean">
+        SELECT EXISTS (
+            SELECT 1
+            FROM UserActivity
+            WHERE post_id = #{post_id}
+            AND member_id = #{member_id}
+            AND user_activity = 'unlike'
+        ) As existsLike
+    </select>
+   
+    <!-- 싫어요 수 조회-->
+    <select id="unLikeCount" parameterType="java.util.HashMap">
+        SELECT post_unlike_counts 
+        FROM Posts
+        WHERE 
+            post_id = #{post_id}
+    </select>
+
+
+       <!-- 싫어요 수 변경 -->
+    <update id="postUnLikeCountUpdate" parameterType="java.util.HashMap">
+        UPDATE Posts
+        SET 
+            post_unlike_counts = #{post_unlike_counts}
+        WHERE
+            post_id = #{post_id}
+    </update>
+
+
+    <!-- 싫어요를 테이블에 넣기 -->
+    <insert id="unLikeACInsert" parameterType="java.util.HashMap" >
+        INSERT INTO UserActivity (user_activity,  post_id, member_id)
+        VALUES('unlike', #{post_id}, #{member_id});
+    </insert>
+
+    <!-- 싫어요를 테이블에서 삭제 -->
+    <delete id="unLikeACDelete"   parameterType="java.util.HashMap" >
+        DELETE FROM UserActivity
+        WHERE 
+            post_id = #{post_id}
+        AND 
+            member_id = #{member_id}
+        AND 
+            user_activity = 'unlike'    
+    </delete>
 
 </mapper>
