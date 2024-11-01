@@ -1,14 +1,21 @@
 package com.multipjt.multi_pjt.community.ctrl;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -17,12 +24,16 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
-
+import com.multipjt.multi_pjt.badge.domain.record.UserActivityRecordRequsetDTO;
 import com.multipjt.multi_pjt.community.domain.posts.PostRequestDTO;
 import com.multipjt.multi_pjt.community.domain.posts.PostResponseDTO;
 import com.multipjt.multi_pjt.community.service.PostService;
 import com.multipjt.multi_pjt.community.service.UserActivityService;
+import com.multipjt.multi_pjt.jwt.JwtTokenProvider;
+
+
 
 
 
@@ -30,12 +41,16 @@ import com.multipjt.multi_pjt.community.service.UserActivityService;
 @RequestMapping("/community")
 public class PostController {
 
+        private static final String POST_IMAGE_REPO = "C:\\maechu\\community\\post_image";
 
         @Autowired
         private PostService postService;
 
         @Autowired
         private UserActivityService userActivityService;
+
+        @Autowired
+        private JwtTokenProvider jwtTokenProvider;
 
         // 전체 페이지 조회
         @GetMapping("/posts")
@@ -44,6 +59,14 @@ public class PostController {
                                             @RequestParam(defaultValue = "10") int size,
                                             @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader
         ){
+
+
+            Map<String, Object> response = new HashMap<>();
+
+            if (authHeader != null && authHeader.startsWith("Bearer ")) {
+                String token = authHeader.substring(7); // "Bearer " 접두사 제거
+                int userId = jwtTokenProvider.getUserIdFromToken(token); // 토큰에서 사용자 ID 추출 (int형으로 변경)
+            }
             System.out.println("Controller - All posts 조회");
                     
             // 전체 페이지 조회 - 로그인 안한 사용자 
@@ -52,16 +75,14 @@ public class PostController {
             System.out.println("Controller - 전체 게시글 조회 " + allList);
             System.out.println("totalpage = " + totalpage);
             
-
-
-            Map<String, Object> response = new HashMap<>();
+            
             response.put("posts", allList);
             response.put("totalpage", totalpage);
             response.put("totalPages", (int)Math.ceil((double) totalpage/ size)); // 페이지수 계산
             response.put("currentPage", page);
         
             response.put("message", "전체 페이지 조회");
-
+            
             return ResponseEntity.ok(response);
         }   
 
@@ -70,30 +91,36 @@ public class PostController {
         @GetMapping("/posts/search")
         public ResponseEntity<Map<String, Object>> PostSearch(@RequestParam("keyword") String keyword,
                                                                 @RequestParam(defaultValue = "1") int page,
-                                                                @RequestParam(defaultValue = "10") int size
+                                                                @RequestParam(defaultValue = "10") int size,
+                                                                @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader
         ) {
-            
-            
-            System.out.println("controller - posts - search : " + keyword );
-
-            Map<String, Object> map = new HashMap<>();
-            map.put("keyword" , keyword);
-            map.put("size"  , size);
-            map.put("page", page);
-
-            // 페이지 조회
-            List<PostResponseDTO> searchList = postService.postSelectTCH(map);
-            int totalpage = postService.countPosts();
-            System.out.println("Controller - 검색 기능 " + searchList);
-            System.out.println("totalpage = " + totalpage);
-
             Map<String, Object> response = new HashMap<>();
-            response.put("posts", searchList);
-            response.put("totalpage", totalpage);
-            response.put("totalPages", (int)Math.ceil((double) totalpage/ size)); // 페이지수 계산
-            response.put("currentPage", page);
-        
-            response.put("message", keyword + " 페이지 조회");
+
+            if (authHeader != null && authHeader.startsWith("Bearer ")) {
+                String token = authHeader.substring(7); // "Bearer " 접두사 제거
+                int userId = jwtTokenProvider.getUserIdFromToken(token); // 토큰에서 사용자 ID 추출 (int형으로 변경)
+            }
+                System.out.println("controller - posts - search : " + keyword );
+
+                Map<String, Object> map = new HashMap<>();
+                map.put("keyword" , keyword);
+                map.put("size"  , size);
+                map.put("page", page);
+
+                // 페이지 조회
+                List<PostResponseDTO> searchList = postService.postSelectTCH(map);
+                int totalpage = postService.countPosts();
+                System.out.println("Controller - 검색 기능 " + searchList);
+                System.out.println("totalpage = " + totalpage);
+
+            
+                response.put("posts", searchList);
+                response.put("totalpage", totalpage);
+                response.put("totalPages", (int)Math.ceil((double) totalpage/ size)); // 페이지수 계산
+                response.put("currentPage", page);
+            
+                response.put("message", keyword + " 페이지 조회");
+            
             return ResponseEntity.ok(response);
         }
         
@@ -104,8 +131,14 @@ public class PostController {
         public ResponseEntity<Map<String, Object>> PostSport(
                                             @PathVariable("post_sport") String sport,
                                             @RequestParam(defaultValue = "1") int page,
-                                            @RequestParam(defaultValue = "10") int size
+                                            @RequestParam(defaultValue = "10") int size,
+                                            @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader
         ){
+
+            if (authHeader != null && authHeader.startsWith("Bearer ")) {
+                String token = authHeader.substring(7); // "Bearer " 접두사 제거
+                int userId = jwtTokenProvider.getUserIdFromToken(token); // 토큰에서 사용자 ID 추출 (int형으로 변경)
+            }
           
             System.out.println("page : " + page + " / size : " + size);
             Map<String, Object> map = new HashMap<>();
@@ -131,15 +164,65 @@ public class PostController {
 
         // 글 작성 
         @PostMapping("/posts/effortpost")
-        public ResponseEntity<Void> postInsert(@RequestBody  PostRequestDTO pdto){
-        
-            // 로그인 상태       
-            System.out.println("controller - client end point : /posts/effortpost");
-            System.out.println("pdto" + pdto);
+        public ResponseEntity<String> postInsert(@ModelAttribute PostRequestDTO pdto,
+                                                @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader,
+                                                @RequestParam(value = "images", required = false) List<MultipartFile> imageFiles
+        ){
+                                        
+            if (authHeader != null && authHeader.startsWith("Bearer ")) {
+                String token = authHeader.substring(7); // "Bearer " 접두사 제거
+                int userId = jwtTokenProvider.getUserIdFromToken(token); // 토큰에서 사용자 ID 추출 (int형으로 변경)
+                System.out.println("userId : " + userId);
+                // 로그인 상태       
+                System.out.println("controller - client end point : /posts/effortpost");
+                System.out.println("pdto" + pdto);
 
-            // 글 등록 Service
-            postService.postInsert(pdto);
-            return  new ResponseEntity<>(HttpStatus.NO_CONTENT);
+                pdto.setMember_id(userId);
+                UserActivityRecordRequsetDTO uadto = new UserActivityRecordRequsetDTO();
+
+                uadto.setActivity_type("post");
+                uadto.setMember_id(userId);
+
+                if(imageFiles != null && !imageFiles.isEmpty()){
+                    
+                    try{
+
+                        Path directory = Paths.get(POST_IMAGE_REPO);
+                        if (!Files.exists(directory)) {
+                            Files.createDirectories(directory);
+                        }
+                        
+                        if(imageFiles.size() > 0 && !imageFiles.get(0).isEmpty()){
+                            String originalFileName = imageFiles.get(0).getOriginalFilename();
+                            String extension = originalFileName.substring(originalFileName.lastIndexOf("."));
+                            String uniqueFileName1 = UUID.randomUUID().toString() + extension;
+                            String filePath1 = POST_IMAGE_REPO  + "\\" +uniqueFileName1;
+                            imageFiles.get(0).transferTo(new File(filePath1));
+                            pdto.setPost_img1("/images/"+uniqueFileName1);
+                        }
+                        if(imageFiles.size() > 1 && !imageFiles.get(1).isEmpty()){
+                            String originalFileName = imageFiles.get(1).getOriginalFilename();
+                            String extension = originalFileName.substring(originalFileName.lastIndexOf("."));
+                            String uniqueFileName2 = UUID.randomUUID().toString() + extension;
+                            String filePath2 = POST_IMAGE_REPO +"\\"+ uniqueFileName2;
+                            imageFiles.get(1).transferTo(new File(filePath2));
+                            pdto.setPost_img2("/images/"+uniqueFileName2);
+                        }
+                    }catch(IOException e){
+                        e.printStackTrace();
+                        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("이미지 파일 업로드 중 오류가 발생했습니다.");
+                    }
+                    
+                }
+
+                    // 글 등록 Service
+                    postService.postInsert(pdto, uadto);
+
+                return  ResponseEntity.ok("글이 등록되었습니다.");
+            }else{
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인 한 사용자만 글쓰기가 가능합니다.");
+            }
+            
         }   
  
     
@@ -147,22 +230,36 @@ public class PostController {
         @PutMapping("/posts/{postId}/update")
         public ResponseEntity<String> postUpdate(
                                             @RequestBody  PostRequestDTO pdto, 
-                                            @PathVariable("postId") int postId           
+                                            @PathVariable("postId") int postId,
+                                            @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader           
                                             
          ){
+
             System.out.println("controller - client end point : /posts/effortpost");
             System.out.println("pdto" + pdto);
+            ResponseEntity<String> response = null;  
+            if (authHeader != null && authHeader.startsWith("Bearer ")) {
+                String token = authHeader.substring(7); // "Bearer " 접두사 제거
+                int userId = jwtTokenProvider.getUserIdFromToken(token); // 토큰에서 사용자 ID 추출 (int형으로 변경)
+                System.out.println("userId : " + userId);
+             
+                pdto.setMember_id(userId);
+                
+                pdto.setPost_id(postId);
+        
+                // 글 수정 Service
+                int result = postService.postUpdate(pdto);   
             
-            pdto.setPost_id(postId);
-    
-            // 글 수정 Service
-            int result = postService.postUpdate(pdto);     
-            
-            if (result == 1) {
-                return ResponseEntity.ok("Controller - Post updat 성공.");
-            } else {
-                return ResponseEntity.badRequest().body("Controller - Post updat 실패.");
+                if (result == 1) {
+                    response = ResponseEntity.ok("Controller - Post updat 성공.");
+                } else {
+                    response = ResponseEntity.badRequest().body("Controller - Post updat 실패.");
+                }
+            } else{
+                response = ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인이 필요합니다.");
             }
+
+            return  response;
          }
          
          
