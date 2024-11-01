@@ -5,19 +5,17 @@ import lombok.Data;
 @Data
 public class ProfileRequestDTO {
     //private int profile_id;
-    private String profile_gender;
-    private int profile_age;
-    private String profile_region;
-    private float profile_weight;
-    private float profile_height;
-    private String profile_goal;
-    private String profile_time;
+    private String profile_gender; // 성별
+    private int profile_age; // 나이
+    private String profile_region; //사는 지역
+    private float profile_weight; //몸무게
+    private float profile_height; //키
+    private String profile_goal; //운동목표
     private int member_id; // 외래키
-    private String profile_allergy;
-    private String profile_diet_goal;
-    private String profile_sport1;
+    private String profile_allergy; //알러지
+    private String profile_sport1; //운동종목
     private String profile_sport2;
     private String profile_sport3;
-    private int profile_workout_frequency;
+    private int profile_workout_frequency; //운동빈도
 
 }

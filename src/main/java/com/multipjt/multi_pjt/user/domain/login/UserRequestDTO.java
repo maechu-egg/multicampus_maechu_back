@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+//import org.springframework.web.multipart.MultipartFile;
 
 @Data
 @NoArgsConstructor
@@ -11,7 +12,7 @@ import lombok.NoArgsConstructor;
 @Builder
 public class UserRequestDTO {
     private int member_id;         // 회원 ID (PK 디비에는 member_id로 저장됨)
-    private String member_img;     // 프로필 이미지 URL(디비에는 member_img로 저장됨)
+    private String member_img;     // 디비에 저장할 이미지 이름 
     private String nickname;       // 닉네임
     private String password;
     private String email;          // 이메일
@@ -19,6 +20,7 @@ public class UserRequestDTO {
     private boolean verified;      // 인증 여부
     private String snsProvider;    // SNS 제공자 (KAKAO, NAVER 등)
     private String regDate;
+    //private MultipartFile memberImgFile; // 프로필 이미지 파일 추가
 
     // Getter and Setter for member_id
     public int getMemberId() {
@@ -100,4 +102,12 @@ public class UserRequestDTO {
     public void setRegDate(String regDate) {
         this.regDate = regDate;
     }
+    // Getter and Setter for memberImg
+    // public MultipartFile getMemberImgFile() {
+    //     return memberImgFile;
+    // }
+
+    // public void setMemberImgFile(MultipartFile memberImgFile) {
+    //     this.memberImgFile = memberImgFile;
+    // }
 }

@@ -42,4 +42,20 @@ public interface UserActivityMapper {
     int postViewCountAdd(Map<String, Integer> map);
 
 
+    boolean commitUnLike(Map<String, Integer> map);
+
+    // 테이블에 좋아요 추가
+    int unLikeACInsert(Map<String, Integer> map);
+
+    // 테이블에 좋아요 삭제
+    int unLikeACDelete(Map<String, Integer> map);
+
+    // posts에서 싫어요 수 가져오기
+    int unLikeCount(Map<String, Integer> map);
+    
+    // 싫어요 클릭시 싫어요 수 업데이트
+    int postUnLikeCountUpdate(Map<String, Integer> map);
+
+ 
+    
 }

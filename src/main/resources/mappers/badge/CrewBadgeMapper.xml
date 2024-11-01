@@ -9,24 +9,58 @@
             crew_badge_id,
             crew_current_points,
             badge_level,
-            member_id
+            member_id,
+            crew_battle_wins
         ) VALUES (
             #{crew_badge_id},
             #{crew_current_points},
             #{badge_level},
-            #{member_id}
+            #{member_id},
+            #{crew_battle_wins}
         );
     </insert>
 
     <select id="selectCrewBadgeByMemberId" resultType="com.multipjt.multi_pjt.badge.domain.badge.CrewBadgeResponseDTO">
-        SELECT * FROM CrewBadge WHERE member_id = #{member_id};
+        SELECT *
+        FROM CrewBadge
+        WHERE member_id = #{memberId};
     </select>
 
-    <!-- CrewMemberMapper.xml -->
-    <select id="selectBattleWinsByMemberId" resultType="int">
-    SELECT battle_wins
-    FROM CrewMember
-    WHERE member_id = #{memberId}
+    <!-- 특정 회원의 배틀 승수 합산 조회 -->
+    <select id="selectTotalBattleWinsByMemberId" resultType="int">
+        SELECT SUM(battle_wins) 
+        FROM CrewMember 
+        WHERE member_id = #{memberId}
+        GROUP BY member_id
+        HAVING SUM(battle_wins) > 0
     </select>
+
+    <!-- 뱃지 업데이트 쿼리 추가 -->
+    <update id="updateBadge" parameterType="com.multipjt.multi_pjt.badge.domain.badge.CrewBadgeRequestDTO">
+        UPDATE CrewBadge
+        SET crew_current_points = #{crew_current_points},
+            badge_level = #{badge_level}
+        WHERE crew_badge_id = #{crew_badge_id};
+    </update>
+
+    <select id="selectNewBattleWinsByMemberId" resultType="int">
+        SELECT 
+            COALESCE(SUM(cm.battle_wins), 0) - COALESCE(cb.crew_battle_wins, 0) AS newWins
+        FROM CrewMember cm
+        LEFT JOIN CrewBadge cb ON cm.member_id = cb.member_id
+        WHERE cm.member_id = #{memberId}
+        GROUP BY cm.member_id;
+    </select>
+
+    <update id="updateCrewBattleWins" parameterType="map">
+       UPDATE CrewBadge
+       SET crew_battle_wins = (
+           SELECT COALESCE(SUM(battle_wins), 0) 
+           FROM CrewMember 
+           WHERE member_id = #{memberId}
+    )
+        WHERE member_id = #{memberId};
+    </update>
+
 
 </mapper>

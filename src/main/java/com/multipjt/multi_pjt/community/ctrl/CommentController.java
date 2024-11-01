@@ -3,21 +3,23 @@ package com.multipjt.multi_pjt.community.ctrl;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-
+import com.multipjt.multi_pjt.badge.domain.record.UserActivityRecordRequsetDTO;
 import com.multipjt.multi_pjt.community.domain.comments.CommentRequestDTO;
 import com.multipjt.multi_pjt.community.domain.comments.CommentResponseDTO;
 import com.multipjt.multi_pjt.community.service.CommentService;
-
+import com.multipjt.multi_pjt.jwt.JwtTokenProvider;
 
 import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -32,15 +34,31 @@ public class CommentController {
     @Autowired
     private CommentService commentService;
 
+    @Autowired
+    private JwtTokenProvider jwtTokenProvider;
+
     // 댓글 저장
     @PostMapping("/saveComment")
-    public ResponseEntity<Void> saveComment(@RequestBody CommentRequestDTO cdto) {
+    public ResponseEntity<String> saveComment(@RequestBody CommentRequestDTO cdto,
+                                            @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
         System.out.println("Controller endpoint : /community/commnet/saveComment");
         System.out.println("cdto - " + cdto);
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            String token = authHeader.substring(7); // "Bearer " 접두사 제거
+            int userId = jwtTokenProvider.getUserIdFromToken(token); // 토큰에서 사용자 ID 추출 (int형으로 변경)
+            System.out.println("userId : " + userId);
+         
+            UserActivityRecordRequsetDTO uadto = new UserActivityRecordRequsetDTO();
 
-        commentService.createComment(cdto);
+            uadto.setActivity_type("comment");
+            uadto.setMember_id(userId);
+            commentService.createComment(cdto, uadto);
+
+            return ResponseEntity.status(HttpStatus.CREATED).body("댓글이 성공적으로 추가되었습니다");
+        }else{
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인 한 사용자만 글쓰기가 가능합니다.");
+        }
         
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     // 댓글 list

@@ -6,8 +6,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
 import com.multipjt.multi_pjt.jwt.JwtTokenProvider;
 import com.multipjt.multi_pjt.user.domain.CustomUserDetails;
@@ -18,13 +16,11 @@ import com.multipjt.multi_pjt.user.domain.login.EmailRequestDTO;
 import com.multipjt.multi_pjt.user.domain.login.LoginDTO;
 import com.multipjt.multi_pjt.user.domain.login.NicknameRequestDTO;
 import com.multipjt.multi_pjt.user.domain.login.UserRequestDTO;
+import com.multipjt.multi_pjt.user.domain.login.UserResponseDTO;
 import com.multipjt.multi_pjt.user.service.LoginServiceImpl;
 
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
@@ -38,8 +34,9 @@ public class UserController {
     private JwtTokenProvider jwtTokenProvider;
 
     @PostMapping("/register")
-    public ResponseEntity<String> registerUser(@RequestBody UserRequestDTO userRequestDTO) {
-        return loginServiceImple.registerUser(userRequestDTO); // 회원가입 처리
+    public ResponseEntity<String> registerUser(@ModelAttribute UserRequestDTO userRequestDTO,
+                                               @RequestParam(value = "memberImgFile", required = false) MultipartFile memberImgFile) {
+        return loginServiceImple.registerUser(userRequestDTO, memberImgFile); // 회원가입 처리
     }
 
     @PostMapping("/register/email-check")
@@ -143,7 +140,7 @@ public class UserController {
         if (authentication != null && authentication.isAuthenticated()) {
             // principal을 UserDetails로 캐스팅
             CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
-            String email = userDetails.getUsername(); // 이메일을 가져옵니다.
+            String email = userDetails.getUsername(); // 이메일을 가져니다.
             return ResponseEntity.ok("인증 성공! 사용자: " + email);
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("인증 실패");
@@ -179,6 +176,28 @@ public class UserController {
             return ResponseEntity.ok("회원 탈퇴가 완료되었습니다.");
         } else {
             return ResponseEntity.badRequest().body("탈퇴 실패");
+        }
+    }
+
+    @GetMapping("/info")
+    public ResponseEntity<UserResponseDTO> getUserInfo(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
+        // Authorization 헤더에서 토큰 추출
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            String token = authHeader.substring(7); // "Bearer " 접두사 제거
+            int userId = jwtTokenProvider.getUserIdFromToken(token); // 토큰에서 사용자 ID 추출
+
+            // 사용자 정보 조회
+            UserResponseDTO userInfo = loginServiceImple.getUserInfo(userId);
+            if (userInfo != null) {
+                // 이미지 URL을 포함하여 반환
+                //userInfo.setMemberImg(userInfo.getMemberImg()); // 이미지 URL 설정
+                return ResponseEntity.ok(userInfo); // 사용자 정보 반환
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                                     .body(null); // 사용자 정보가 없을 경우 404 반환
+            }
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null); // 인증 실패
         }
     }
 }

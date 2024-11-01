@@ -34,6 +34,13 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+
+import org.springframework.web.multipart.MultipartFile;
 
 @Slf4j
 @Service 
@@ -58,7 +65,7 @@ public class LoginServiceImpl implements UserDetailsService { // UserDetailsServ
     private final SecureRandom random = new SecureRandom();
 
     // 1. 회원가입 메서드 추가
-    public ResponseEntity<String> registerUser(UserRequestDTO userRequestDTO) {
+    public ResponseEntity<String> registerUser(UserRequestDTO userRequestDTO, MultipartFile memberImgFile) {
         // 이메일 유효성 검사
         if (!isValidEmail(userRequestDTO.getEmail())) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
@@ -81,12 +88,38 @@ public class LoginServiceImpl implements UserDetailsService { // UserDetailsServ
         String encodedPassword = passwordEncoder.encode(userRequestDTO.getPassword());
         userRequestDTO.setPassword(encodedPassword); // 암호화된 비밀번호로 설정
 
+        // 이미지 저장 로직 추가
+        if (memberImgFile != null && !memberImgFile.isEmpty()) {
+            String fileName = System.currentTimeMillis() + "_" + memberImgFile.getOriginalFilename();
+            Path path = Paths.get("src/main/resources/static/" + fileName); // 정적 폴더 경로
+            logger.info("Attempting to save image: {} at path: {}", fileName, path.toString()); // 파일 이름과 경로 로그
+
+            try {
+                Files.copy(memberImgFile.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
+                userRequestDTO.setMember_img(fileName); // DB에 저장할 파일 이름 설정
+                logger.info("Image uploaded successfully: {}", fileName); // 성공 로그
+            } catch (IOException e) {
+                logger.error("Image upload failed: {}", e.getMessage(), e);
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                                     .body("{\"Code\": \"IMAGE_UPLOAD_FAILED\", \"Message\": \"이미지 업로드 실패: " + e.getMessage() + "\"}");
+            }
+        } else {
+            userRequestDTO.setMember_img(null); // 이미지가 없을 경우 null 설정
+        }
+
+        // DB에 저장하기 전 UserRequestDTO 상태 로그
+        logger.info("UserRequestDTO before saving to DB: {}", userRequestDTO);
+
         try {
+            logger.info("Registering user: {}", userRequestDTO);
             userMapper.registerUser(userRequestDTO);
+            logger.info("User registered successfully: {}", userRequestDTO.getEmail()); // 성공 로그
         } catch (DataIntegrityViolationException e) {
+            logger.error("Data integrity violation: {}", e.getMessage(), e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                                 .body("{\"Code\": \"DATA_INTEGRITY_VIOLATION\", \"Message\": \"데���터 무결성 위반.\"}");
+                                 .body("{\"Code\": \"DATA_INTEGRITY_VIOLATION\", \"Message\": \"데이터 무결성 위반.\"}");
         } catch (Exception e) {
+            logger.error("Registration failed: {}", e.getMessage(), e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                                  .body("{\"Code\": \"REGISTRATION_FAILED\", \"Message\": \"" + e.getMessage() + "\"}");
         }
@@ -209,7 +242,7 @@ public class LoginServiceImpl implements UserDetailsService { // UserDetailsServ
             throw new UsernameNotFoundException("User not found: " + useremail); // 사용자 없음 예외 처리
         }
 
-        // CustomUserDetails 객체 생성 (SecurityContext Holder에 저장)
+        // CustomUserDetails 객 생성 (SecurityContext Holder에 저장)
         return new CustomUserDetails(
             user.getMemberId(), // memberId
             user.getEmail(), // 이메일
@@ -335,6 +368,28 @@ public class LoginServiceImpl implements UserDetailsService { // UserDetailsServ
         logger.info("비밀번호 변경 완료: 이메일 = {}", user.getEmail());
         return ResponseEntity.ok("{\"Code\": \"SUCCESS\", \"Message\": \"비밀번호가 변경되었습니다.\"}");
     }
+
+     // 5. 사용자 정보 조회 메서드
+     public UserResponseDTO getUserInfo(int userId) {
+        // 사용자 ID로 사용자 정보 조회
+        UserResponseDTO user = userMapper.getUserById(userId);
+        if (user != null) {
+            logger.info("User info retrieved successfully for userId: {}", userId);
+            // 이미지 URL 설정 (정적 파일 경로에 맞게 URL 생성)
+            user.setMemberImg(getImageUrl(user.getMemberImg())); // 이미지 URL 설정
+        } else {
+            logger.warn("User not found for userId: {}", userId);
+        }
+        return user;
+    }
+
+    // 이미지 URL 생성 메서드
+    private String getImageUrl(String memberImg) {
+        return "/static/" + memberImg; // 정적 파일 경로에 맞게 URL 생성
+    }
+
+
+    
 
 }
 
