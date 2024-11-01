@@ -3,6 +3,8 @@ package com.multipjt.multi_pjt.community.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.multipjt.multi_pjt.badge.dao.UserActivityRecordMapper;
+import com.multipjt.multi_pjt.badge.domain.record.UserActivityRecordRequsetDTO;
 import com.multipjt.multi_pjt.community.dao.CommentMapper;
 import com.multipjt.multi_pjt.community.dao.PostMapper;
 import com.multipjt.multi_pjt.community.domain.comments.CommentRequestDTO;
@@ -19,12 +21,20 @@ public class CommentService {
     @Autowired
     private PostMapper postMapper;
 
+    @Autowired
+    private UserActivityRecordMapper userActivityRecordMapper;
+
 
     // 댓글 저장
-    public void createComment(CommentRequestDTO params){
+    public void createComment(CommentRequestDTO params, UserActivityRecordRequsetDTO uadto){
         System.out.println(" service - create comment ");
 
+
+        
         commentMapper.commentInsert(params);
+
+        userActivityRecordMapper.insertActivity(uadto);
+
     }
 
     // 댓글 list
