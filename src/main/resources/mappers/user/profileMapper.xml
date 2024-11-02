@@ -17,14 +17,12 @@
             profile_weight,
             profile_height,
             profile_goal,
-            profile_time,
-            member_id,
             profile_allergy,
-            profile_diet_goal,
             profile_sport1,
+            profile_workout_frequency,
             profile_sport2,
             profile_sport3,
-            profile_workout_frequency
+            member_id
         ) VALUES (
             #{profile_gender},
             #{profile_age},
@@ -32,14 +30,12 @@
             #{profile_weight},
             #{profile_height},
             #{profile_goal},
-            #{profile_time},
-            #{member_id},
             #{profile_allergy},
-            #{profile_diet_goal},
             #{profile_sport1},
+            #{profile_workout_frequency},
             #{profile_sport2},
             #{profile_sport3},
-            #{profile_workout_frequency}
+            #{member_id}
         );
     </insert>
 
