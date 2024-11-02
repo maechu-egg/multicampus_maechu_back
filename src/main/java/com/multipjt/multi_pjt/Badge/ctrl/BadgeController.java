@@ -148,4 +148,32 @@ public class BadgeController {
                 .body(Map.of("error", "활동 처리 중 오류가 발생했습니다: " + e.getMessage()));
         }
     }
+
+    // 활동 추가 엔드포인트
+    @PostMapping("/user/{memberId}/addActivity")
+    public ResponseEntity<Map<String, Object>> addActivity(@PathVariable("memberId") int memberId, @RequestBody UserActivityRecordRequestDTO request) {
+        try {
+            // 활동을 처리하고 포인트를 업데이트
+            request.setMemberId(memberId); // 요청에서 회원 ID 설정
+            userActivityRecordMapper.insertActivityAndUpdatePoints(Map.of(
+                "activityType", request.getActivityType(),
+                "memberId", memberId
+            ));
+
+            // 현재 점수 조회
+            BigDecimal currentPoints = badgeService.getCurrentPoints(Long.valueOf(memberId));
+            
+            // 성공 응답
+            return ResponseEntity.ok(Map.of(
+                "message", String.format("활동 추가 완료: %s, 회원 ID: %d", request.getActivityType(), memberId),
+                "currentPoints", currentPoints
+            ));
+        } catch (IllegalArgumentException e) {
+            // 잘못된 요청에 대한 응답 반환
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        } catch (Exception e) {
+            // 예기치 않은 오류에 대한 응답 반환
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", "예기치 않은 오류가 발생했습니다."));
+        }
+    }
 }
