@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -29,18 +30,36 @@ public class ProfileController {
     private JwtTokenProvider jwtTokenProvider;
 
     @PostMapping("/register")
-public ResponseEntity<String> postMethodName(@RequestBody ProfileRequestDTO profileRequestDTO, 
+    public ResponseEntity<String> postMethodName(@RequestBody ProfileRequestDTO profileRequestDTO, 
                             @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
-    if (authHeader != null && authHeader.startsWith("Bearer ")) {
-        String token = authHeader.substring(7); // "Bearer " 접두사 제거
-        int userId = jwtTokenProvider.getUserIdFromToken(token); // 토큰에서 사용자 ID 추출
-        
-        // 로그 출력
-        logger.info("Extracted member_id from token: {}", userId);
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            String token = authHeader.substring(7); // "Bearer " 접두사 제거
+            int userId = jwtTokenProvider.getUserIdFromToken(token); // 토큰에서 사용자 ID 추출
+            
+            // 로그 출력
+            logger.info("Extracted member_id from token: {}", userId);
 
-        // 프로필 등록 및 결과 반환
-        return profileService.registerProfile(profileRequestDTO, userId);
+            // 프로필 등록 및 결과 반환
+            return profileService.registerProfile(profileRequestDTO, userId);
+        }
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized");
     }
-    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized");
-}
+
+    @PatchMapping("/update")
+    public ResponseEntity<String> updateProfile(@RequestBody ProfileRequestDTO profileRequestDTO, 
+                                        @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            String token = authHeader.substring(7); // "Bearer " 접두사 제거
+            int userId = jwtTokenProvider.getUserIdFromToken(token); // 토큰에서 사용자 ID 추출
+            
+            // 로그 출력
+            logger.info("Extracted member_id from token: {}", userId);
+
+            // 사용자 정보 수정 처리
+            ResponseEntity<String> response = profileService.updateProfile(userId, profileRequestDTO); // 서비스 메서드 호출
+
+            return response; // 서비스에서 반환된 응답을 그대로 반환
+        }
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized");
+    }
 }

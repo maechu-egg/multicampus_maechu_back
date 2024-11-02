@@ -39,4 +39,18 @@ public class ProfileService {
                                  .body("{\"Code\": \"Internal Server Error\", \"Message\": \"프로필 등록에 실패했습니다.\"}");
         }
     }
+
+    public ResponseEntity<String> updateProfile(int member_id, ProfileRequestDTO profileRequestDTO) {
+        profileRequestDTO.setMemberId(member_id);
+        logger.info("profileRequestDTO-getMemberId: {}", profileRequestDTO.getMemberId());
+       
+        try {
+            profileMapper.updateProfile(profileRequestDTO);
+            return ResponseEntity.ok("{\"Code\": \"SUCCESS\", \"Message\": \"정상적으로 프로필이 수정되었습니다.\"}");
+        } catch (Exception e) {
+            logger.error("Error registering profile", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                                 .body("{\"Code\": \"Internal Server Error\", \"Message\": \"프로필 수정에 실패했습니다.\"}");
+        }
+    }
 }
