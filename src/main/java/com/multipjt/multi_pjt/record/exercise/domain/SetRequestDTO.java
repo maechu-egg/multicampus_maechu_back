@@ -6,9 +6,9 @@ import lombok.Data;
 public class SetRequestDTO {
     
     //private Long setId >> auto increment
-    private Float distance;
+    private Double distance;
     private Integer weight;
     private Integer repetitions;
-    private Long exercise_id;
+    private Integer exercise_id;
     
 }

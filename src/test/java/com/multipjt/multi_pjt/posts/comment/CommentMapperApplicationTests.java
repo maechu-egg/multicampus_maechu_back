@@ -1,9 +1,7 @@
-package com.multipjt.multi_pjt.community.comment;
+package com.multipjt.multi_pjt.posts.comment;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
-import java.util.HashMap;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -41,6 +39,7 @@ public class CommentMapperApplicationTests {
         // Then : 데이터베이스에서 등록된 사용자 정보 조회 및 검증
         List<CommentResponseDTO> registeredComments = commentMapper.getPostById(6);     
         
+        
         // Null 여부 확인
         Assertions.assertNotNull(registeredComments, "댓글 등록 성공");
         
@@ -59,20 +58,23 @@ public class CommentMapperApplicationTests {
     public void commentDeleteTest(){
         
         // Given : 댓글 삭제 기본 세팅
-        Map<String, Integer> map = new HashMap<>();
-        map.put("member_id", 1);
-        map.put("comments_id", 5);
+        CommentRequestDTO request = new CommentRequestDTO();
         
+
+        // member_id and comment_id 로 삭제
+        request.setMember_id(1);
+        request.setComments_id(5);
+        
+
         // When : 댓글 삭제 수행
-        int rowsAffected = commentMapper.commentDelete(map);
+        int rowsAffected = commentMapper.commentDelete(request);
         Assertions.assertEquals(1, rowsAffected, "댓글이 삭제 되어야 합니다.");
 
-        // // Then : 삭제된 댓글 정보 조회 - null 확인
+        // Then : 삭제된 댓글 정보 조회 - null 확인
         CommentResponseDTO deleteComment = commentMapper.getCommentById(5);  
         
-        // // null이 아닐 경우 테스트 실패
+        // null이 아닐 경우 테스트 실패
         Assertions.assertNull(deleteComment, "삭제한 댓글의 정보는 조회할 수 없어야 합니다.");
     }   
-    // 
 
 }

@@ -99,7 +99,7 @@
             post_date,
             p.member_id,
             m.nickname AS post_nickname,
-            COUNT(c.comments_id) AS comment_count
+            COUNT(c.comments_id) AS comments_count
         FROM
             Posts p
         INNER JOIN
@@ -134,7 +134,7 @@
             p.member_id,
             m.nickname AS post_nickname,
             post_date,
-            COUNT(c.comments_id) AS comment_count
+            COUNT(c.comments_id) AS comments_count
         FROM
             Posts p
         INNER JOIN
@@ -169,7 +169,7 @@
             p.post_sports_keyword AS sport_keyword,
             p.post_like_counts AS post_like_count,
             p.post_views AS post_views,
-            COUNT(c.comments_id) AS comment_count,
+            COUNT(c.comments_id) AS comments_count,
             m.nickname AS post_nickname,
             m.member_id AS member_id
         FROM 
@@ -209,9 +209,14 @@
             p.post_img1 AS post_img1,
             p.post_img2 AS post_img2,
             m.nickname AS post_nickname,  
-            m.member_id AS member_id  
+            m.member_id AS member_id,
+            COUNT(c.comments_id) AS comments_count  
         FROM 
             Posts p
+        LEFT JOIN
+            Comments c 
+        ON 
+            p.post_id = c.post_id 
         LEFT JOIN 
             Member m ON p.member_id = m.member_id    
         WHERE 
@@ -248,7 +253,7 @@
             p.post_sports_keyword AS sport_keyword,
             p.post_like_counts AS post_like_count,
             p.post_views AS post_views,
-            COUNT(c.comments_id) AS comment_count,
+            COUNT(c.comments_id) AS comments_count,
             m.nickname AS post_nickname,
             m.member_id AS member_id,
             (p.post_like_counts*1.0 + post_views*0.5) AS score
@@ -277,7 +282,7 @@
                 p.post_sports_keyword AS sport_keyword,
                 p.post_like_counts AS post_like_count,
                 p.post_views AS post_views,
-                COUNT(c.comments_id) AS comment_count,
+                COUNT(c.comments_id) AS comments_count,
                 m.nickname AS post_nickname,
                 m.member_id AS member_id,
                 ((p.post_like_counts * 1.0 + p.post_views * 0.5) *
@@ -397,5 +402,6 @@
             #{slimit}  
     </select>
 
+    
     
 </mapper>

@@ -19,19 +19,20 @@ public class ExerService {
     @Autowired
     private ExerMapper exerMapper;
 
-    public int exerInsertRow(ExerRequestDTO exerRequestDTO){
-        return exerMapper.exerInsert(exerRequestDTO);
+    public Integer exerInsertRow(ExerRequestDTO exerRequestDTO){
+        exerMapper.exerInsert(exerRequestDTO);
+        return exerRequestDTO.getExercise_id();
     }
 
-    public List<Long> exerIdGetRow(Map<String,Object> map){
-        return exerMapper.exerIdGet(map);
+    public ExerResponseDTO exerGetRow(Integer exercise_id){
+        return exerMapper.exerGet(exercise_id);
     }
 
     public int setInsertRow(SetRequestDTO setRequestDTO){
         return exerMapper.setInsert(setRequestDTO);
     }
 
-    public SetResponseDTO setInfoGetRow(Long exerciseId){
+    public List<SetResponseDTO> setInfoGetRow(Integer exerciseId){
         return exerMapper.getSetInfo(exerciseId);
     }
 
@@ -47,15 +48,23 @@ public class ExerService {
         return exerMapper.setUpdate(map);
     }
 
-    public int exerDeleteRow(Long exerciseId){
+    public int exerDeleteRow(Integer exerciseId){
         return exerMapper.exerDelete(exerciseId);
     }
 
-    public int setDeleteRow(Long setId){
+    public int setDeleteRow(Integer setId){
         return exerMapper.setDelete(setId);
     }
 
     public List<Map<String,Object>> exerCaloriesGetRow(Map<String,Object> map){
         return exerMapper.exerCaloriesGet(map);
+    }
+
+    public List<Map<String,Object>> metGetRow(String exercise_name){
+        return exerMapper.metGet(exercise_name);
+    }
+
+    public Double getMemberInfoRow(Integer memberId){
+        return exerMapper.getMemberInfo(memberId);
     }
 }

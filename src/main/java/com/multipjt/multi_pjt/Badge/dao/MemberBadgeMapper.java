@@ -40,4 +40,3 @@ public interface MemberBadgeMapper {
     List<Map<String, Object>> getActivitiesFromComments(Long memberId);
 }
 
-

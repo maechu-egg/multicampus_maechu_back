@@ -6,23 +6,25 @@
     <!-- exerInsert --> 
 
     <insert id="exerInsert" parameterType="com.multipjt.multi_pjt.record.exercise.domain.ExerRequestDTO">
-        insert into ExerciseRecords(exercise_type, intensity, member_id, duration, calories)
-        values(#{exercise_type},#{intensity},#{member_id},#{duration}, #{calories});
+        <selectKey keyProperty="exercise_id" resultType="java.lang.Integer" order="AFTER">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into ExerciseRecords(exercise_type, intensity, member_id, duration, calories, met)
+        values(#{exercise_type}, #{intensity}, #{member_id}, #{duration}, #{calories}, #{met});
     </insert>
 
     <!-- exerDelete --> 
 
-    <delete id="exerDelete" parameterType="java.lang.Long">
+    <delete id="exerDelete" parameterType="java.lang.Integer">
         delete from ExerciseRecords
         where exercise_id = #{exercise_id};
     </delete>
 
     <!-- exerIdGet --> 
 
-    <select id="exerIdGet" parameterType="java.util.Map" resultType="java.lang.Long">
-        select exercise_id from ExerciseRecords
-        where exercise_type = #{exercise_type} and record_date = #{record_date} 
-                                               and member_id = #{member_id};
+    <select id="exerGet" parameterType="java.lang.Integer" resultType="com.multipjt.multi_pjt.record.exercise.domain.ExerResponseDTO">
+        select * from ExerciseRecords
+        where exercise_id = #{exercise_id};
     </select>    
 
     <!-- exerUpdate --> 
@@ -48,7 +50,7 @@
         values(#{distance},#{weight},#{repetitions},#{exercise_id});
     </insert>
 
-    <select id="getSetInfo" parameterType="java.lang.Long" resultType="com.multipjt.multi_pjt.record.exercise.domain.SetResponseDTO">
+    <select id="getSetInfo" parameterType="java.lang.Integer" resultType="com.multipjt.multi_pjt.record.exercise.domain.SetResponseDTO">
         select * from ExerciseSet
         where exercise_id = #{exercise_id}    
     </select>
@@ -82,4 +84,20 @@
         GROUP BY 
             exercise_type;
     </select>
-</mapper>
+
+    <!-- metGet --> 
+
+    <select id="metGet" parameterType="java.lang.String" resultType="java.util.Map">
+        select exercise_met, intensity from ExerciseMet
+        where exercise_name = #{exercise_name};
+    </select>
+
+    <!-- getMemberInfo --> 
+
+    <select id="getMemberInfo" parameterType="java.lang.Integer" resultType="java.lang.Double">
+        select profile_weight 
+        from UserProfile 
+        where member_id = #{member_id};
+    </select>
+    
+    </mapper>

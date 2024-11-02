@@ -55,6 +55,7 @@ public class MemberBadgeManager {
         BigDecimal currentPoints = badgeService.getCurrentPoints((long) memberId);
         float totalPoints = currentPoints.floatValue() + points;
 
+
         // MemberBadge의 current_points 업데이트
         MemberBadgeRequestDTO badgeRequest = new MemberBadgeRequestDTO();
         badgeRequest.setMember_id(memberId);

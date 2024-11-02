@@ -7,6 +7,8 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.multipjt.multi_pjt.badge.dao.UserActivityRecordMapper;
+import com.multipjt.multi_pjt.badge.domain.record.UserActivityRecordRequsetDTO;
 import com.multipjt.multi_pjt.community.dao.PostMapper;
 import com.multipjt.multi_pjt.community.dao.UserActivityMapper;
 import com.multipjt.multi_pjt.community.domain.comments.CommentResponseDTO;
@@ -22,6 +24,9 @@ public class PostService {
 
     @Autowired
     private UserActivityMapper userActivityMapper;
+
+    @Autowired
+    private UserActivityRecordMapper userActivityRecordMapper;
 
     // 전체 페이지 
     public List<PostResponseDTO> getAllPagePosts(int page, int size){
@@ -76,9 +81,10 @@ public class PostService {
     }
 
     // 게시글 등록
-    public int postInsert(PostRequestDTO pdto){
+    public int postInsert(PostRequestDTO pdto, UserActivityRecordRequsetDTO uadto){
         System.out.println("service - postInsert");
         int result = postMapper.postInsert(pdto);
+        userActivityRecordMapper.insertActivity(uadto);
 
         if(result == 1){
             System.out.println("service : 게시글이 성공적으로 등록되었습니다.");

@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.multipjt.multi_pjt.record.diet.dao.DietMapper;
 import com.multipjt.multi_pjt.record.diet.domain.DietRequestDTO;
+import com.multipjt.multi_pjt.record.diet.domain.DietResponseDTO;
 import com.multipjt.multi_pjt.record.diet.domain.ItemRequestDTO;
 import com.multipjt.multi_pjt.record.diet.domain.ItemResponseDTO;
 
@@ -26,11 +27,15 @@ public class DietService {
         return dietMapper.itemInsert(itemRequestDTO);
     }
 
-    public Long findDietRow(Map<String,Object> map){
+    public Integer findDietRow(Map<String,Object> map){
         return dietMapper.findDietNumber(map);
     }
+
+    public List<DietResponseDTO> dietFindAllRow(Map<String,Object> map){
+        return dietMapper.dietFindAll(map);
+    }
         
-    public List<ItemResponseDTO> itemFindAllRow(Long diet_id){
+    public List<ItemResponseDTO> itemFindAllRow(Integer diet_id){
         return dietMapper.itemFindAll(diet_id);
     }
 
@@ -38,11 +43,11 @@ public class DietService {
         return dietMapper.itemUpdate(itemRequestDTO);
     }
 
-    public int itemDeleteRow(Map<String,Object> map){
-        return dietMapper.itemDelete(map);
+    public int itemDeleteRow(Integer item_id){
+        return dietMapper.itemDelete(item_id);
     }
 
-    public int deleteRecordRow(Long diet_id){
+    public int deleteRecordRow(Integer diet_id){
         return dietMapper.dietDelete(diet_id);
     }
 
@@ -50,7 +55,11 @@ public class DietService {
         return dietMapper.mealNutCheck(map);
     }
 
-    public Map<String,String> calculateTdeeRow(Long memberId){
-        return dietMapper.calculateTdee(memberId);
+    public Map<String,String> getMemberInfoRow(Integer memberId){
+        return dietMapper.getMemberInfo(memberId);
+    }
+
+    public int mealUpdateRow(DietRequestDTO dietRequestDTO){
+        return dietMapper.mealUpdate(dietRequestDTO);
     }
 }

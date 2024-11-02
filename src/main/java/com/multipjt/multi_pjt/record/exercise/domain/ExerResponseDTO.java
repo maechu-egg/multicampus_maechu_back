@@ -7,11 +7,12 @@ import lombok.Data;
 @Data
 public class ExerResponseDTO {
  
-    private Long exercise_id;
+    private Integer exercise_id;
     private LocalDate record_date;
     private String exercise_type;
     private Integer duration;
-    private Float calories;
+    private Integer calories;
     private String intensity;
-    private Long member_id;
+    private Integer member_id;
+    private Double met;
 }

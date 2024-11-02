@@ -4,8 +4,10 @@ import lombok.Data;
 
 @Data
 public class UserResponseDTO {
+   
+
     private int member_id;         // 회원 ID (PK 디비에는 member_id로 저장됨)
-    private String member_img;     // 프로필 이미지 URL(디비에는 member_img로 저장됨)
+    private String member_img;     // 프로필 이미지 URL(이미지 파일의 이름)
     private String nickname;       // 닉네임
     private String password;
     private String email;          // 이메일
@@ -13,6 +15,7 @@ public class UserResponseDTO {
     private boolean verified;      // 인증 여부
     private String snsProvider;    // SNS 제공자 (KAKAO, NAVER 등)
     private String regDate;
+    
 
     // Getter and Setter for member_id
     public int getMemberId() {
@@ -94,4 +97,6 @@ public class UserResponseDTO {
     public void setRegDate(String regDate) {
         this.regDate = regDate;
     }
+
+    
 }
