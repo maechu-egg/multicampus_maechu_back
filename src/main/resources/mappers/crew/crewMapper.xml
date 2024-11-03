@@ -66,12 +66,12 @@
         WHERE crew_id = #{crew_id} AND crew_state = 1;
     </select>
 
-    <!-- 크루원 추가 --> 
+    <!-- 크루원 신청 --> 
 
     <insert id="insertCrewMemberRow"
             parameterType="com.multipjt.multi_pjt.crew.domain.crew.CrewMemberRequestDTO">
-        INSERT INTO CrewMember (crew_id, member_id, crew_member_state)
-        VALUES (#{crew_id}, #{member_id}, #{crew_member_state});
+        INSERT INTO CrewMember (crew_id, member_id)
+        VALUES (#{crew_id}, #{member_id});
     </insert>
 
     <!-- 내가 속한 크루 조회 --> 
@@ -97,6 +97,16 @@
             crew_name = #{crew_name}
         WHERE crew_id = #{crew_id}
     </update>
+
+    <!-- 크루장 조회 -->
+
+    <select id="selectCrewLeaderIdRow"
+            parameterType="Integer"
+            resultType="Integer">
+        SELECT member_id
+        FROM Crew
+        WHERE crew_id = #{crew_id};
+    </select>
 
     <!-- 크루 관리 수정 --> 
 
@@ -126,7 +136,7 @@
 
     <!--  @@@@@@@@@ 크루원 정보 @@@@@@@@@  -->
 
-    <!-- 크루원 승인 --> 
+    <!-- 크루원 가입 승인 --> 
 
     <update id="updateCrewMemberRow"
             parameterType="com.multipjt.multi_pjt.crew.domain.crew.CrewMemberRequestDTO">
@@ -140,11 +150,13 @@
     <select id="selectCrewMemberRow"
             parameterType="Integer"
             resultType="com.multipjt.multi_pjt.crew.domain.crew.CrewMemberResponseDTO">
-        SELECT cm.*, up.profile_region, up.profile_age, m.nickname
+        SELECT cm.*, up.profile_region, up.profile_age, m.nickname, cb.badge_level
         FROM CrewMember cm
         LEFT JOIN UserProfile up ON cm.member_id = up.member_id
         LEFT JOIN Member m ON cm.member_id = m.member_id
-        WHERE cm.crew_id = #{crew_id};
+        LEFT JOIN CrewBadge cb ON cm.member_id = cb.member_id
+        WHERE cm.crew_id = #{crew_id}
+        ORDER BY cm.crew_id, cm.member_id, cm.battle_wins;
     </select>
 
     <!-- 크루원 삭제 --> 
@@ -162,23 +174,15 @@
     <insert id="insertCrewPostRow"
             parameterType="com.multipjt.multi_pjt.crew.domain.crew.CrewPostRequestDTO">
         INSERT INTO CrewPost(
-            crew_post_id,
             crew_post_title,
             crew_post_content,
             crew_post_img,
-            crew_post_like,
-            crew_post_state,
-            crew_post_date,
             crew_id,
             member_id
         ) VALUES (
-            #{crew_post_id},
             #{crew_post_title},
             #{crew_post_content},
             #{crew_post_img},
-            #{crew_post_like},
-            #{crew_post_state},
-            #{crew_post_date},
             #{crew_id},
             #{member_id}
         );

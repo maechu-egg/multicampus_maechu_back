@@ -22,6 +22,9 @@ public interface CrewBattleMapper {
     // 배틀 목록 조회
     public List<CrewBattleResponseDTO> selectCrewBattleRow(Integer crew_id);
 
+    // 특정 배틀 상세 조회
+    public CrewBattleResponseDTO selectCrewBattleDetailRow(Integer battle_id);
+
     // 배틀 참가
     public void createBattleMemberRow(BattleMemberRequestDTO params);
 

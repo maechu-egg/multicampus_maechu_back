@@ -11,4 +11,5 @@ public class CrewMemberResponseDTO {
     private int profile_age;
     private int battle_wins;
     private int crew_member_state;
+    private String badge_level;
 }

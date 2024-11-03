@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -46,6 +47,14 @@ public class CrewBattleController {
         return ResponseEntity.ok(crewBattleService.selectCrewBattle(crew_id));
     }
 
+    // 특정 배틀 상세 조회
+    @GetMapping("/detail/{battle_id}")
+    public ResponseEntity<CrewBattleResponseDTO> getCrewBattleDetail(@PathVariable("battle_id") Integer battle_id) {
+        System.out.println("client endpoint: /crew/battle/detail");
+        System.out.println("debug: getCrewBattleDetail + " + battle_id);
+        return ResponseEntity.ok(crewBattleService.selectCrewBattleDetail(battle_id));
+    }
+
     // 배틀 참가
     @PostMapping("/member/join")
     public ResponseEntity<Void> createBattleMember(@RequestBody BattleMemberRequestDTO param) {
@@ -62,13 +71,7 @@ public class CrewBattleController {
     public ResponseEntity<List<BattleMemberResponseDTO>> getBattleMemberList(@RequestParam("battle_id") Integer battle_id) {
         System.out.println("client endpoint: /crew/battle/member/list");
         System.out.println("debug: getBattleMemberList + " + battle_id);
-        List<BattleMemberResponseDTO> members = crewBattleService.selectBattleMember(battle_id);
-        // 뱃지 이미지 경로 설정
-        for (BattleMemberResponseDTO badge : members) {
-            String badgeImagePath = badge.getBadgeImagePath();
-            badge.setBadgeImagePath(badgeImagePath);
-        }
-        return ResponseEntity.ok(members);
+        return ResponseEntity.ok(crewBattleService.selectBattleMember(battle_id));
     }
 
     // 피드 작성

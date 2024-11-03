@@ -5,6 +5,8 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
+import org.springframework.http.HttpStatus;
 
 import com.multipjt.multi_pjt.crew.dao.crew.CrewMapper;
 import com.multipjt.multi_pjt.crew.domain.crew.CrewCommentsRequestDTO;
@@ -61,7 +63,7 @@ public class CrewService {
         return crewMapper.selectCrewInfoRow(crewId);
     }
 
-    // 크루원 추가
+    // 크루원 신청
     public void addCrewMember(CrewMemberRequestDTO param) {
         System.out.println("debug>>> Service: addCrewMember + " + crewMapper);
         System.out.println("debug>>> Service: addCrewMember + " + param);
@@ -81,30 +83,46 @@ public class CrewService {
     public void updateCrewIntro(CrewRequestDTO param) {
         System.out.println("debug>>> Service: updateCrewIntro + " + crewMapper);
         System.out.println("debug>>> Service: updateCrewIntro + " + param);
-        crewMapper.updateCrewIntroRow(param);
+        if(param.getMember_id() == crewMapper.selectCrewLeaderIdRow(param.getCrew_id())) {
+            crewMapper.updateCrewIntroRow(param);
+        } else {
+            throw new IllegalArgumentException("크루장만 크루 소개를 수정할 수 있습니다.");
+        }
     }
 
     // 크루 관리 수정
     public void updateCrewInfo(CrewRequestDTO param) {
         System.out.println("debug>>> Service: updateCrewInfo + " + crewMapper);
         System.out.println("debug>>> Service: updateCrewInfo + " + param);
-        crewMapper.updateCrewInfoRow(param);
+        if(param.getMember_id() == crewMapper.selectCrewLeaderIdRow(param.getCrew_id())) {
+            crewMapper.updateCrewInfoRow(param);
+        } else {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "멤버 승인된 크루원만 게시물 등록이 가능합니다.");
+        }
     }
 
     // 크루 삭제
-    public void deleteCrew(Integer crewId) {
+    public void deleteCrew(Integer crewId, Integer token_id) {
         System.out.println("debug>>> Service: deleteCrew + " + crewMapper);
         System.out.println("debug>>> Service: deleteCrew + " + crewId);
-        crewMapper.deleteCrewRow(crewId);
+        if(token_id == crewMapper.selectCrewLeaderIdRow(crewId)) {
+            crewMapper.deleteCrewRow(crewId);
+        }else{
+            throw new IllegalArgumentException("크루장만 크루를 삭제할 수 있습니다.");
+        }
     }
 
     // --------- 크루원 정보 ---------
 
     // 크루원 가입 승인
-    public void approveCrewMember(CrewMemberRequestDTO param) {
+    public void approveCrewMember(CrewMemberRequestDTO param, Integer token_id) {
         System.out.println("debug>>> Service: approveCrewMember + " + crewMapper);
         System.out.println("debug>>> Service: approveCrewMember + " + param);
-        crewMapper.updateCrewMemberRow(param);
+        if(token_id == crewMapper.selectCrewLeaderIdRow(param.getCrew_id())) {
+            crewMapper.updateCrewMemberRow(param);
+        } else {
+            throw new IllegalArgumentException("크루장만 크루원 가입을 승인할 수 있습니다.");
+        }
     }
 
     // 크루원 조회
@@ -115,19 +133,31 @@ public class CrewService {
     }
 
     // 크루원 삭제
-    public void deleteCrewMember(CrewMemberRequestDTO param) {
+    public void deleteCrewMember(CrewMemberRequestDTO param, Integer token_id) {
         System.out.println("debug>>> Service: deleteCrewMember + " + crewMapper);
         System.out.println("debug>>> Service: deleteCrewMember + " + param);
-        crewMapper.deleteCrewMemberRow(param);
+        if(token_id == crewMapper.selectCrewLeaderIdRow(param.getCrew_id()) || token_id == param.getMember_id()) {
+            crewMapper.deleteCrewMemberRow(param);
+        } else {
+            throw new IllegalArgumentException("크루장 또는 자신만 크루원을 삭제할 수 있습니다.");
+        }
     }
 
     // --------- 크루 게시판 ---------
 
     // 크루 게시물 등록
-    public void createCrewPost(CrewPostRequestDTO param) {
+    public void createCrewPost(CrewPostRequestDTO param, Integer token_id) {
         System.out.println("debug>>> Service: createCrewPost + " + crewMapper);
         System.out.println("debug>>> Service: createCrewPost + " + param);
-        crewMapper.insertCrewPostRow(param);
+        
+        // 크루원 상태 확인
+        boolean isActiveMember = crewMapper.selectCrewMemberRow(param.getCrew_id()).stream()
+            .anyMatch(member -> member.getMember_id() == token_id && member.getCrew_member_state() == 1);
+        if (isActiveMember) {
+            crewMapper.insertCrewPostRow(param);
+        } else {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "멤버 승인된 크루원만 게시물 등록이 가능합니다.");
+        }
     }
 
     // 크루 게시물 전체 조회
