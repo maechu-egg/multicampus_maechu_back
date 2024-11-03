@@ -247,34 +247,69 @@ public class DietControl {
 
         Integer tdee = (int) Math.round(bmr * activityMultiplier);
         Integer recommendedCalories = tdee;
-        boolean isMale = info.get("profile_gender").equalsIgnoreCase("M");
+        Integer recommendedProtein;
+        Integer recommendedFat;
+        Integer recommendedCarb;        
+        
+        Integer proteinRate;
+        Integer fatRate;
+        Integer carbRate;        
 
         // 다이어트 목표에 따른 칼로리 조정
     switch (info.get("profile_diet_goal").toLowerCase()) {
         case "다이어트":
-            // 남성: TDEE - 300~500, 여성: TDEE - 200~300
-            recommendedCalories = tdee - (isMale ? 400 : 250);
+            recommendedCalories = (int) Math.round(tdee * 0.8);
+
+            carbRate = 3;
+            proteinRate = 5;
+            fatRate = 2;
+
+            recommendedCarb = (recommendedCalories * carbRate) / 4;
+            recommendedProtein = (recommendedCalories * proteinRate) / 4;
+            recommendedFat = (recommendedCalories * fatRate) / 9;
             break;
         case "벌크업":
-            // 남성: TDEE + 300~500, 여성: TDEE + 200~400
-            recommendedCalories = tdee + (isMale ? 400 : 300);
+            recommendedCalories = (int) Math.round(tdee * 1.2);
+            carbRate = 6;
+            proteinRate = 3;
+            fatRate = 1;
+
+            recommendedCarb = (recommendedCalories * carbRate) / 4;
+            recommendedProtein = (recommendedCalories * proteinRate) / 4;
+            recommendedFat = (recommendedCalories * fatRate) / 9;
             break;
         case "린매스업":
-            // 남성: TDEE + 200~400, 여성: TDEE + 100~200
-            recommendedCalories = tdee + (isMale ? 300 : 150);
+            recommendedCalories = (int) Math.round(tdee * 1.1);
+            carbRate = 4;
+            proteinRate = 4;
+            fatRate = 2;
+
+            recommendedCarb = (recommendedCalories * carbRate) / 4;
+            recommendedProtein = (recommendedCalories * proteinRate) / 4;
+            recommendedFat = (recommendedCalories * fatRate) / 9;
             break;
         case "유지":
-            // TDEE 유지
+            recommendedCalories = tdee;
+            carbRate = 5;
+            proteinRate = 3;
+            fatRate = 2;
+
+            recommendedCarb = (recommendedCalories * carbRate) / 4;
+            recommendedProtein = (recommendedCalories * proteinRate) / 4;
+            recommendedFat = (recommendedCalories * fatRate) / 9;
             break;
         default:
             throw new IllegalArgumentException("잘못된 다이어트 목표입니다");
-    }
+        }
 
-    Map<String,Integer> result = new HashMap<>();
-    result.put("bmr", bmr);
-    result.put("tdee", tdee);
-    result.put("recommendedCalories", recommendedCalories);
+        Map<String,Integer> result = new HashMap<>();
+        result.put("bmr", bmr);
+        result.put("tdee", tdee);
+        result.put("recommendedCalories", recommendedCalories);
+        result.put("recommendedProtein", recommendedProtein);
+        result.put("recommendedFat", recommendedFat);
+        result.put("recommendedCarb", recommendedCarb);
 
-    return new ResponseEntity<>(result, HttpStatus.OK);
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 }
