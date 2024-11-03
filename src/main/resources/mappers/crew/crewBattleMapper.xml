@@ -23,7 +23,17 @@
             WHERE crew_id = #{crew_id}
             ORDER BY battle_state;
     </select>
-    
+
+    <!-- 특정 배틀 상세 조회 --> 
+
+    <select id="selectCrewBattleDetailRow"
+            parameterType="Integer"
+            resultType="com.multipjt.multi_pjt.crew.domain.battle.CrewBattleResponseDTO">
+            SELECT *
+            FROM CrewBattle
+            WHERE battle_id = #{battle_id};
+    </select>
+
     <!-- 배틀 참가 --> 
 
     <insert id="createBattleMemberRow"
@@ -49,14 +59,21 @@
             SUM(cbf.feed_kcal) AS total_feed_kcal, 
             SUM(cbf.feed_exTime) AS total_feed_exTime,
             COUNT(cbf.feed_id) AS feed_count,
+            COALESCE(v.vote_count, 0) AS vote_count,
             cb.badge_level
         FROM BattleMember bm
         LEFT JOIN UserProfile up ON bm.member_id = up.member_id
         LEFT JOIN Member m ON bm.member_id = m.member_id
         LEFT JOIN CrewBattleFeed cbf ON bm.participant_id = cbf.participant_id
         LEFT JOIN CrewBadge cb ON bm.member_id = cb.member_id
+        LEFT JOIN (
+            SELECT participant_id, COUNT(*) AS vote_count
+            FROM Vote
+            GROUP BY participant_id
+        ) v ON bm.participant_id = v.participant_id
         WHERE bm.battle_id = #{battle_id}
-        GROUP BY bm.participant_id, bm.battle_id, bm.member_id;
+        GROUP BY bm.participant_id, bm.battle_id, bm.member_id
+        ORDER BY vote_count DESC;
     </select>
 
     <!-- 피드 작성 --> 

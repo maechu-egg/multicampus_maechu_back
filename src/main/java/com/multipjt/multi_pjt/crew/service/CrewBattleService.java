@@ -31,7 +31,16 @@ public class CrewBattleService {
     // 배틀 목록 조회
     public List<CrewBattleResponseDTO> selectCrewBattle(Integer crew_id) {
         System.out.println("debug>>> Service: selectCrewBattle + " + crewBattleMapper);
+        System.out.println("debug>>> Service: selectCrewBattle + " + crew_id);
         return crewBattleMapper.selectCrewBattleRow(crew_id);
+    }
+
+    
+    // 특정 배틀 상세 조회
+    public CrewBattleResponseDTO selectCrewBattleDetail(Integer battle_id) {
+        System.out.println("debug>>> Service: selectCrewBattleDetail + " + crewBattleMapper);
+        System.out.println("debug>>> Service: selectCrewBattleDetail + " + battle_id);
+        return crewBattleMapper.selectCrewBattleDetailRow(battle_id);
     }
 
     // 배틀 참가
@@ -46,6 +55,7 @@ public class CrewBattleService {
     // 배틀 참가 멤버 조회
     public List<BattleMemberResponseDTO> selectBattleMember(Integer battle_id) {
         System.out.println("debug>>> Service: selectBattleMember + " + crewBattleMapper);
+        System.out.println("debug>>> Service: selectBattleMember + " + battle_id);
         return crewBattleMapper.selectBattleMemberRow(battle_id);
     }
 
