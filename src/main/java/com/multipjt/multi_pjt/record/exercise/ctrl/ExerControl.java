@@ -3,8 +3,6 @@ package com.multipjt.multi_pjt.record.exercise.ctrl;
 import java.util.List;
 import java.util.Map;
 
-import java.lang.Long;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -39,87 +37,265 @@ public class ExerControl {
     @PostMapping("/insert/type")
     public ResponseEntity<Integer> exerInsert(@RequestBody ExerRequestDTO exerRequestDTO){
         System.out.println("class endPoint >> " + "/record/exercise/insert/type");
+        // 강도, 시간, 운동 종류, member_id 만 입력받고, 칼로리는 계산해서 넣어야 함
         System.out.println("exerRequestDTO >> " + exerRequestDTO);
-        int result = exerService.exerInsertRow(exerRequestDTO);
-        System.out.println("result >> " + result);
-        if(result == 1){
-            return new ResponseEntity<>(result, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
-        }
-    }
 
-    // 운동 번호 찾기
-    @GetMapping("/get/exerciseId")
-    public ResponseEntity<List<Long>> exerIdGet(@RequestBody Map<String,Object> map){
-        System.out.println("class endPoint >> " + "/record/exercise/get/exerciseId");
-        System.out.println("map >> " + map);
-        List<Long> exerciseId = exerService.exerIdGetRow(map);
-        if(exerciseId != null && !exerciseId.isEmpty()){
-            exerciseId.forEach(num -> System.out.println("exerciseId >> " + num));
-            return new ResponseEntity<>(exerciseId, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(exerciseId, HttpStatus.BAD_REQUEST);
-        }
-    }
+        // met 값 계산
+        List<Map<String,Object>> info = exerService.metGetRow(exerRequestDTO.getExercise_type());
+        System.out.println("ExerciseMet info >> " + info);
 
-    // 운동 세트 추가
-    @PostMapping("/insert/set")
-    public ResponseEntity<Integer> setInsert(@RequestBody SetRequestDTO setRequestDTO){
-        System.out.println("class endPoint >> " + "/record/exercise/insert/set");
-        System.out.println("setRequestDTO >> " + setRequestDTO);
-        int result = exerService.setInsertRow(setRequestDTO);
-        System.out.println("result >> " + result);
-        if(result == 1){
-            return new ResponseEntity<>(result, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
+        Double met = null;
+        // 사용자가 입력한 운동이 csv에 존재하는 운동이면 met 값 가져오기
+        // 사용자가 입력한 강도와 csv 파일에 있는 강도가 같으면 met 값 가져오기
+        if(info != null && !info.isEmpty()){
+            System.out.println("csv에 존재하는 운동입니다");
+            Double tempMet = null;
+            for(Map<String,Object> map : info){
+                String intensity = (String) map.get("intensity");
+                if(intensity != null && intensity.equalsIgnoreCase(exerRequestDTO.getIntensity().toString())){
+                    System.out.println("강도도 존재하는 운동입니다");
+                    met = (Double) map.get("exercise_met");
+                    break;
+                }
+                else if(intensity == null){
+                    tempMet = (Double) map.get("exercise_met");
+                }
+            }
+            if(met == null){
+                System.out.println("강도는 존재하지 않는 운동입니다");
+                if (tempMet != null) {
+                    switch(exerRequestDTO.getIntensity().toString()){
+                        case "LOW":
+                            met = tempMet / 1.5;
+                            break;
+                        case "GENERAL":
+                            met = tempMet;
+                            break;
+                        case "HIGH":
+                            met = tempMet * 1.5;
+                            break;
+                    }
+                } else {
+                    // tempMet이 null인 경우 기본값 설정
+                    switch(exerRequestDTO.getIntensity().toString()){
+                        case "LOW":
+                            met = 3.0;
+                            break;
+                        case "GENERAL":
+                            met = 5.0;
+                            break;
+                        case "HIGH":
+                            met = 7.0;
+                            break;
+                    }
+                }       
+            }
         }
-    }
+        else{  // 사용자가 입력한 운동이 csv에 존재하지 않는 운동이면 기본 met 값 설정
+            System.out.println("csv에 존재하지 않는 운동입니다");
+            switch(exerRequestDTO.getIntensity().toString()){
+                case "LOW":
+                    met = 3.0;
+                    break;
+                case "GENERAL":
+                    met = 5.0;
+                    break;
+                case "HIGH":
+                    met = 7.0;
+                    break;
+            }
+        }
+        System.out.println("met >> " + met);
+        exerRequestDTO.setMet(met);
+        
+        // 몸무게 가져오기
+        Double weight = exerService.getMemberInfoRow(exerRequestDTO.getMember_id());
+        System.out.println("weight >> " + weight);
 
-    // 운동 세트 정보 출력
-    @GetMapping("/get/setInfo")
-    public ResponseEntity<SetResponseDTO> setInfoGet(@RequestParam(name = "exercise_id") Long exercise_id){
-        System.out.println("class endPoint >> " + "/record/exercise/get/setInfo");  
+        // 칼로리 계산, met * 3.5 * 몸무게 * 운동 시간 * 5
+        if (met != null) {
+            Integer calories = (int) ((met * 3.5 * weight * exerRequestDTO.getDuration()) / 1000 * 5);
+            System.out.println("calories >> " + calories);
+            exerRequestDTO.setCalories(calories);
+        }
+
+        Integer exercise_id = exerService.exerInsertRow(exerRequestDTO);
         System.out.println("exercise_id >> " + exercise_id);
-        SetResponseDTO setResponseDTO = exerService.setInfoGetRow(exercise_id);
-        System.out.println("setResponseDTO >> " + setResponseDTO);
-        if(setResponseDTO != null){
-            return new ResponseEntity<>(setResponseDTO, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(setResponseDTO, HttpStatus.BAD_REQUEST);
-        }
+        System.out.println("Result exerRequestDTO >> " + exerRequestDTO);
+        
+        // 운동 번호 반환
+        return new ResponseEntity<>(exercise_id, HttpStatus.OK);
     }
 
-    // 운동 일자별 운동 목록 찾기
-    @GetMapping("/get/exerday")
-    public ResponseEntity<List<ExerResponseDTO>> exerDayGet(@RequestBody Map<String,Object> map){
-        System.out.println("class endPoint >> " + "/record/exercise/get/exerday");
-        System.out.println("map >> " + map);
-        List<ExerResponseDTO> exerResponseDTO = exerService.exerDayGetRow(map);
-        System.out.println("exerResponseDTO >> " + exerResponseDTO);
+    // 운동 찾기
+    // 일일 운동 조회를 통해 exercise_id를 프론트가 가지고 있는 상태
+    @GetMapping("/get/exercise")
+    public ResponseEntity<ExerResponseDTO> exerGet(@RequestParam(name = "exercise_id") Integer exercise_id){
+        // exercise_id만 입력
+        System.out.println("class endPoint >> " + "/record/exercise/get/exerciseId");
+        System.out.println("exercise_id >> " + exercise_id);
+        ExerResponseDTO exerResponseDTO = exerService.exerGetRow(exercise_id);
         if(exerResponseDTO != null){
+            System.out.println("exerResponseDTO >> " + exerResponseDTO);
             return new ResponseEntity<>(exerResponseDTO, HttpStatus.OK);
         } else {
             return new ResponseEntity<>(exerResponseDTO, HttpStatus.BAD_REQUEST);
         }
     }
 
-    // 운동 종류 수정, 시간, 횟수만 수정 가능, 둘 다 또는 하나만 수정 시 칼로리 자동 수정
-    @PutMapping("/update/exer")
-    public ResponseEntity<Integer> exerUpdate(@RequestBody Map<String,Object> map){
-        System.out.println("class endPoint >> " + "/record/exercise/update/exer");
-        System.out.println("map >> " + map);
-        int result = exerService.exerUpdateRow(map);
-        System.out.println("result >> " + result);
-        if(result == 1){
-            return new ResponseEntity<>(result, HttpStatus.OK);
+    // 운동 세트 추가
+    // 운동 추가를 통해 exercise_id를 프론트가 가지고 있는 상태
+    // 값을 넣지 않는 항목은 0을 부여
+    // set_id, distance, weight, repetitions, exercise_id -> setRequestDTO 모든 값 받음
+    @PostMapping("/insert/set")
+    public ResponseEntity<Integer> setInsert(@RequestBody List<SetRequestDTO> setRequestDTOs) {
+        System.out.println("class endPoint >> " + "/record/exercise/insert/set");
+        System.out.println("setRequestDTOs >> " + setRequestDTOs);
+        
+        int successCount = 0;
+        for (SetRequestDTO dto : setRequestDTOs) {
+            try {
+                successCount += exerService.setInsertRow(dto);
+            } catch (Exception e) {
+                System.out.println("세트 추가 실패: " + e.getMessage());
+            }
+        }
+        
+        if (successCount == setRequestDTOs.size()) {
+            System.out.println("세트 추가 성공");
+            return new ResponseEntity<>(successCount, HttpStatus.OK);
+        } else if (successCount > 0) {
+            // 일부만 성공한 경우
+            System.out.println("일부만 성공한 경우");
+            return new ResponseEntity<>(successCount, HttpStatus.PARTIAL_CONTENT);
         } else {
-            return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
+            System.out.println("세트 추가 실패");
+            return new ResponseEntity<>(0, HttpStatus.BAD_REQUEST);
         }
     }
 
+    // 운동 세트 정보 조회
+    // 일일 운동 조회를 통해 exercise_id를 프론트가 가지고 있는 상태
+    // set_id 값을 기준으로 나열, 세트 정보 조회를 통해 set_id 값을 프론트가 가짐
+    // 값이 0인 항목은 출력 x 
+    @GetMapping("/get/setInfo")
+    public ResponseEntity<List<SetResponseDTO>> setInfoGet(@RequestParam(name = "exercise_id") Integer exercise_id){
+        System.out.println("class endPoint >> " + "/record/exercise/get/setInfo");  
+        System.out.println("exercise_id >> " + exercise_id);
+        List<SetResponseDTO> setResponseDTOs = exerService.setInfoGetRow(exercise_id);
+        System.out.println("setResponseDTOs >> " + setResponseDTOs);
+        if(setResponseDTOs != null && !setResponseDTOs.isEmpty()){
+            return new ResponseEntity<>(setResponseDTOs, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(setResponseDTOs, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    // 일일 운동 조회
+    // 일일 운동 조회 시 운동 정보를 프론트가 가지고 있는 상태가 됨
+    @GetMapping("/get/exerday")
+    public ResponseEntity<List<ExerResponseDTO>> exerDayGet(@RequestBody Map<String,Object> map){
+        System.out.println("class endPoint >> " + "/record/exercise/get/exerday");
+        System.out.println("map >> " + map);
+        List<ExerResponseDTO> exerResponseDTOs = exerService.exerDayGetRow(map);
+        System.out.println("exerResponseDTOs >> " + exerResponseDTOs);
+        if(exerResponseDTOs != null && !exerResponseDTOs.isEmpty()){
+            return new ResponseEntity<>(exerResponseDTOs, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(exerResponseDTOs, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    // 운동 종류 수정 -> 시간, 강도만 수정 가능, 둘 다 또는 하나만 수정 시 칼로리 자동 수정
+    // exercise_id, duration, intensity 값만 넣어주면 met, calories 자동 수정
+    @PutMapping("/update/exer")
+    public ResponseEntity<Integer> exerUpdate(@RequestBody Map<String,Object> updateExerInfo) {
+        System.out.println("class endPoint >> " + "/record/exercise/update/exer");
+        System.out.println("변경 값 >> " + updateExerInfo);
+
+        Integer exerciseId = Integer.valueOf(String.valueOf(updateExerInfo.get("exercise_id")));
+        System.out.println("exerciseId >> " + exerciseId);
+
+        ExerResponseDTO exerResponseDTO = exerService.exerGetRow(exerciseId);
+        if (exerResponseDTO == null) {
+            System.out.println("debug >>> exerResponseDTO is null");
+            return new ResponseEntity<>(0, HttpStatus.BAD_REQUEST);
+        }
+        // 강도와 MET 값 계산
+        Double met = calculateMet(exerResponseDTO, updateExerInfo);
+        System.out.println("met >> " + met);
+        // 운동 시간 계산
+        Integer duration = calculateDuration(exerResponseDTO, updateExerInfo);
+        System.out.println("duration >> " + duration);
+        
+        // 칼로리 계산
+        Double weight = exerService.getMemberInfoRow(exerResponseDTO.getMember_id());
+        System.out.println("weight >> " + weight);
+        
+        Integer calories = calculateCalories(met, weight, duration);
+        System.out.println("calories >> " + calories);
+        
+        // updateExerInfo에 계산된 값들 추가
+        updateExerInfo.put("met", met);
+        updateExerInfo.put("calories", calories);
+        System.out.println("수정 값 반영된 calories, met >> " + updateExerInfo);            
+        int result = exerService.exerUpdateRow(updateExerInfo);
+        return new ResponseEntity<>(result, result == 1 ? HttpStatus.OK : HttpStatus.BAD_REQUEST);
+    }
+
+    private Double calculateMet(ExerResponseDTO exerResponseDTO, Map<String,Object> updateExerInfo) {
+        String newIntensity = updateExerInfo.get("intensity").toString();
+        
+        // 강도가 변경되지 않은 경우 return
+        if (exerResponseDTO.getIntensity().equalsIgnoreCase(newIntensity)) {
+            return exerResponseDTO.getMet();
+        }
+        
+        // CSV에서 MET 값 조회
+        // CSV에 변경된 강도와 같은 운동이 존재 시 return
+        List<Map<String,Object>> info = exerService.metGetRow(exerResponseDTO.getExercise_type());
+        if (info != null && !info.isEmpty()) {
+            Double met = findMetFromCsv(info, newIntensity);
+            if (met != null) return met;
+        }
+        
+        // CSV에 변경된 강도와 같은 운동이 존재하지 않을 시 기본 MET 값 반환
+        return getDefaultMet(newIntensity);
+    }
+
+    // CSV에 변경된 강도와 같은 운동이 존재 시 MET 값 반환
+    private Double findMetFromCsv(List<Map<String,Object>> info, String intensity) {
+        return info.stream()
+            .filter(map -> intensity.equalsIgnoreCase((String) map.get("intensity")))
+            .map(map -> (Double) map.get("exercise_met"))
+            .findFirst()
+            .orElse(null);
+    }
+
+    // CSV에 변경된 강도와 같은 운동이 존재하지 않을 시 강도에 따라 default MET 값 반환    
+    private Double getDefaultMet(String intensity) {
+        switch(intensity.toUpperCase()) {
+            case "LOW": return 3.0;
+            case "GENERAL": return 5.0;
+            case "HIGH": return 7.0;
+            default: return 5.0;
+        }
+    }
+
+    // 운동 시간 변경 여부에 따라 반환
+    private Integer calculateDuration(ExerResponseDTO exerResponseDTO, Map<String,Object> updateExerInfo) {
+        return exerResponseDTO.getDuration().equals(updateExerInfo.get("duration")) 
+            ? exerResponseDTO.getDuration() 
+            : (Integer) updateExerInfo.get("duration");
+    }
+    // 변경된 값에 맞춰 칼로리 계산
+    private Integer calculateCalories(Double met, Double weight, Integer duration) {
+        return (int) ((met * 3.5 * weight * duration) / 1000 * 5);
+    }
+
     // 운동 세트 수정
+    // 세트 정보 조회를 통해 set_id를 프론트가 가지고 있는 상태
+    // 출력하고 싶지 않은 항목은 값 0 부여
     @PutMapping("/update/set")
     public ResponseEntity<Integer> setUpdate(@RequestBody Map<String,Object> map){
         System.out.println("class endPoint >> " + "/record/exercise/update/set");
@@ -134,8 +310,9 @@ public class ExerControl {
     }
 
     // 운동 삭제
+    // 일일 운동 조회를 통해 exercise_id를 프론트가 가지고 있는 상태
     @DeleteMapping("/delete/exer")
-    public ResponseEntity<Integer> exerDelete(@RequestParam(name = "exercise_id") Long exercise_id){
+    public ResponseEntity<Integer> exerDelete(@RequestParam(name = "exercise_id") Integer exercise_id){
         System.out.println("class endPoint >> " + "/record/exercise/delete/exer");
         System.out.println("exercise_id >> " + exercise_id);
         int result = exerService.exerDeleteRow(exercise_id);
@@ -148,8 +325,9 @@ public class ExerControl {
     }
 
     // 운동 세트 삭제
+    // 세트 정보 조회를 통해 set_id를 프론트가 가지고 있는 상태
     @DeleteMapping("/delete/set")
-    public ResponseEntity<Integer> setDelete(@RequestParam(name = "set_id") Long set_id){
+    public ResponseEntity<Integer> setDelete(@RequestParam(name = "set_id") Integer set_id){
         System.out.println("class endPoint >> " + "/record/exercise/delete/set");
         System.out.println("set_id >> " + set_id);    
         int result = exerService.setDeleteRow(set_id);
@@ -161,7 +339,7 @@ public class ExerControl {
         }
     }
 
-    // 일일 운동 별 칼로리 총합 출력 
+    // 특정회원의 일일 운동 별 칼로리 총합 출력 
     @GetMapping("/get/exerCalories")
     public ResponseEntity<List<Map<String,Object>>> exerCaloriesGet(@RequestBody Map<String,Object> map){
         System.out.println("class endPoint >> " + "/record/exercise/get/exerCalories");
@@ -173,5 +351,5 @@ public class ExerControl {
         } else {
             return new ResponseEntity<>(list, HttpStatus.BAD_REQUEST);
         }
-    }   
+    }
 }

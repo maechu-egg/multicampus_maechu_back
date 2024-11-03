@@ -16,8 +16,10 @@ public class FoodCalculateDTO {
     
     // 영양소 계산 메서드
     public ItemRequestDTO calculateNutrients() {
+        // 사용자가 입력한 그램수와 API에서 제공하는 기준 그램수의 비율 계산
         double ratio = inputQuantity.doubleValue() / originalQuantity.doubleValue();
-        
+
+        // 영양소 계산
         ItemRequestDTO item = new ItemRequestDTO();
         item.setItem_name(foodNm);
         item.setQuantity(inputQuantity);

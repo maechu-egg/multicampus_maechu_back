@@ -27,11 +27,11 @@ public class DietMapperApplicationTest {
 
     ItemRequestDTO itemRequestDTO = new ItemRequestDTO();
 
-    private Long test(){
+    private Integer test(){
 
          //given : DietRequestDTO에 임의 값 입력
          DietRequestDTO dietRequestDTO = new DietRequestDTO();
-         dietRequestDTO.setMember_id(1L);
+         dietRequestDTO.setMember_id(1);
          dietRequestDTO.setMeal_type(MealType.BREAKFAST);
          //when : db에 값 insert
          int diet = dietMapper.dietInsert(dietRequestDTO);
@@ -41,11 +41,11 @@ public class DietMapperApplicationTest {
          
          //given : member 1이 테스트하는 날짜의 아침에 먹은 식단 기록하기 위한 환경 조성
         Map<String,Object> map = new HashMap<>();
-        map.put("member_id", 1L);
+        map.put("member_id", 1);
         map.put("meal_type", MealType.BREAKFAST);
         map.put("record_date",LocalDate.of(2024,10,22));
  
-        Long diet_id = dietMapper.findDietNumber(map);
+        Integer diet_id = dietMapper.findDietNumber(map);
  
         Assertions.assertThat(diet_id).isNotNull();
  
@@ -79,7 +79,7 @@ public class DietMapperApplicationTest {
     @DisplayName("002 : 한끼 식단 삭제")
     public void testDietDelete(){
         //givne : 식단 기입
-        Long dietNumber = test();
+        Integer dietNumber = test();
         //when : 한끼 식단 삭제
         int deletRow = dietMapper.dietDelete(dietNumber);
         //then : 검증
@@ -90,7 +90,7 @@ public class DietMapperApplicationTest {
     @DisplayName("003 : 한끼 식단 식품 조회")
     public void testDietFind(){
         //given : 식단 기입
-        Long dietNumber = test();
+        Integer dietNumber = test();
         //when : 한끼 식단 조회
         List<ItemResponseDTO> list = dietMapper.itemFindAll(dietNumber);
         System.out.println("debug >>> " + list);
@@ -99,7 +99,7 @@ public class DietMapperApplicationTest {
         Assertions.assertThat(list).isNotNull();    
    
         // HashMap을 사용하여 리스트 항목을 저장, 교차 검증
-        HashMap<Long, String> itemMap = new HashMap<>();
+        HashMap<Integer, String> itemMap = new HashMap<>();
         for (ItemResponseDTO i : list) {
             itemMap.put(i.getDiet_id(), i.getItem_name());
         }
@@ -114,13 +114,13 @@ public class DietMapperApplicationTest {
     @DisplayName("004 : 식품 삭제")
     public void testItemDelete(){
         //given : 식단 기입
-        Long diet_id = test();
+        Integer diet_id = test();
         //given : 삭제할 식품 dietID, ItemName 임시 지정
         Map<String,Object> itemMap = new HashMap<>();
         itemMap.put("diet_id",diet_id);
         itemMap.put("item_name",itemRequestDTO.getItem_name());
         //then : 검증
-        int deleteNum = dietMapper.itemDelete(itemMap);
+        int deleteNum = dietMapper.itemDelete(diet_id);
         Assertions.assertThat(deleteNum).isEqualTo(1);   
     }
 
@@ -128,7 +128,7 @@ public class DietMapperApplicationTest {
     @DisplayName("005 : 식품 수정") 
     public void testItemUpdate(){
         //given : 식단 기입
-        Long dietNumber = test();
+        Integer dietNumber = test();
         //given : 수정할 식품 dietId, ItemName 임시 지정
         ItemRequestDTO itemRequestDTO = new ItemRequestDTO();
         itemRequestDTO.setDiet_id(dietNumber);
@@ -150,7 +150,7 @@ public class DietMapperApplicationTest {
         // 식사타입 breakfast
         //given : DietRequestDTO에 임의 값 입력
         DietRequestDTO dietRequestDTO = new DietRequestDTO();
-        dietRequestDTO.setMember_id(1L);
+        dietRequestDTO.setMember_id(1);
         dietRequestDTO.setMeal_type(MealType.BREAKFAST);
         //when : db에 값 insert
         int diet = dietMapper.dietInsert(dietRequestDTO);
@@ -160,11 +160,11 @@ public class DietMapperApplicationTest {
          
         //given : member 1이 테스트하는 날짜의 아침에 먹은 식단 기록하기 위한 환경 조성
         Map<String,Object> map = new HashMap<>();
-        map.put("member_id", 1L);
+        map.put("member_id", 1);
         map.put("meal_type", MealType.BREAKFAST);
         map.put("record_date",LocalDate.of(2024,10,22));
  
-        Long dietNumber = dietMapper.findDietNumber(map);
+        Integer dietNumber = dietMapper.findDietNumber(map);
  
         Assertions.assertThat(dietNumber).isNotNull();
         
@@ -184,7 +184,7 @@ public class DietMapperApplicationTest {
         // 식사타입 lunch
         //given : DietRequestDTO에 임의 값 입력
         DietRequestDTO dietRequestDTO2 = new DietRequestDTO();
-        dietRequestDTO2.setMember_id(1L);
+        dietRequestDTO2.setMember_id(1);
         dietRequestDTO2.setMeal_type(MealType.LUNCH);
         //when : db에 값 insert
         int diet2 = dietMapper.dietInsert(dietRequestDTO2);
@@ -194,11 +194,11 @@ public class DietMapperApplicationTest {
          
         //given : member 1이 테스트하는 날짜의 아침에 먹은 식단 기록하기 위한 환경 조성
         Map<String,Object> map2 = new HashMap<>();
-        map2.put("member_id", 1L);
+        map2.put("member_id", 1);
         map2.put("meal_type", MealType.LUNCH);
         map2.put("record_date",LocalDate.of(2024,10,22));
  
-        Long dietNumber2 = dietMapper.findDietNumber(map2);
+        Integer dietNumber2 = dietMapper.findDietNumber(map2);
  
         Assertions.assertThat(dietNumber2).isNotNull();
  
@@ -218,7 +218,7 @@ public class DietMapperApplicationTest {
         // 식사타입 dinner인 DietRecords만 생성, dinner의 Item는 없음
         //given : DietRequestDTO에 임의 값 입력
         DietRequestDTO dietRequestDTO3 = new DietRequestDTO();
-        dietRequestDTO3.setMember_id(1L);
+        dietRequestDTO3.setMember_id(1);
         dietRequestDTO3.setMeal_type(MealType.DINNER);
         //when : db에 값 insert
         int diet3 = dietMapper.dietInsert(dietRequestDTO3);
@@ -228,7 +228,7 @@ public class DietMapperApplicationTest {
 
         //then : 검증
         Map<String,Object> type = new HashMap<>();
-        type.put("member_id", 1L);
+        type.put("member_id", 1);
         type.put("record_date",LocalDate.of(2024,10,22));
         List<Map<String, Object>> list = dietMapper.mealNutCheck(type);
         Assertions.assertThat(list).size().isEqualTo(2);

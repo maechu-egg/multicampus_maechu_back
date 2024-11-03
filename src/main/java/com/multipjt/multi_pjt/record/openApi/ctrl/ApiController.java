@@ -2,32 +2,27 @@ package com.multipjt.multi_pjt.record.openApi.ctrl;
 
 import java.io.IOException;
 import java.io.InputStream;
-
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.io.UnsupportedEncodingException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StreamUtils;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.multipjt.multi_pjt.record.openApi.domain.NutirientDTO;
 import com.multipjt.multi_pjt.record.openApi.service.ApiService;
 
 import jakarta.validation.Valid;
-
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 
 @RestController
 @RequestMapping("record/api")
@@ -54,7 +49,7 @@ public class ApiController {
         @Valid @RequestParam(name = "foodNm") String foodNm) throws UnsupportedEncodingException{
         
         if(foodNm == null || foodNm.isEmpty()){
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("식품명을 입력해주세요.",HttpStatus.BAD_REQUEST);
         } else{    
         String encodeFoodNm = URLEncoder.encode(foodNm, "UTF-8");    
 
@@ -91,14 +86,16 @@ public class ApiController {
                 
 
                 if(responseCode == HttpURLConnection.HTTP_OK){
-                stream = http.getInputStream();
-                result = StreamUtils.copyToString(stream, Charset.forName("UTF-8"));
-                list = apiService.parseJson(result);    
+                    stream = http.getInputStream();
+                    result = StreamUtils.copyToString(stream, Charset.forName("UTF-8"));
+                    list = apiService.parseJson(result);    
                 
-                System.out.println("api list >>> " + list);
-                
-                } else{ 
-                    return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+                    System.out.println("api list >>> " + list);
+                    if(list.isEmpty()){
+                        return new ResponseEntity<>("해당 식품이 없습니다.",HttpStatus.NOT_FOUND);
+                    } 
+                }else{ 
+                    return new ResponseEntity<>("서버 오류가 발생했습니다.",HttpStatus.INTERNAL_SERVER_ERROR);
                 }
             }catch(Exception e){
                 e.printStackTrace();

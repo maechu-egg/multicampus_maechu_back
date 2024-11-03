@@ -1,8 +1,6 @@
 package com.multipjt.multi_pjt.config;
 
 import com.multipjt.multi_pjt.jwt.JwtAuthenticationFilter;
-
-import io.swagger.v3.oas.models.PathItem.HttpMethod;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -25,15 +23,15 @@ import org.springframework.web.cors.CorsConfigurationSource;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final JwtAuthenticationFilter jwtAuthenticationFilter; // JwtAuthenticationFilter ��입
+    private final JwtAuthenticationFilter jwtAuthenticationFilter; // JwtAuthenticationFilter 주입
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity
                 .csrf(csrf -> csrf.disable()) // CSRF 비활성화
                 .cors(cors -> cors.configurationSource(corsConfigurationSource())) // CORS 설정 추가
-                .formLogin(AbstractHttpConfigurer::disable)
-                .httpBasic(AbstractHttpConfigurer::disable)
+                .formLogin(AbstractHttpConfigurer::disable) // 폼 로그인 비활성화
+                .httpBasic(AbstractHttpConfigurer::disable) // HTTP 기본 인증 비활성화
                 .sessionManagement(sessionManagement -> 
                     sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS) // 세션 관리 정책 설정
                 )
@@ -41,8 +39,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(requests -> {
                     requests
                         .requestMatchers("/v2/api-docs", "/swagger-ui/**", "/swagger-resources/**").permitAll() // Swagger 관련 요청 허용
-                        .requestMatchers("/user/register", "/user/login", "/user/register/email-certification", "/user/register/email-check", "/user/register/nickname-check", "/user/register/verify-certification").permitAll() // 회원가입 및 로그인 관련 API 허용
-                        .requestMatchers("/img/**").permitAll() // 이미지 접근 허용
+                        .requestMatchers("/user/register", "/user/login", "/user/register/email-certification", "/user/register/email-check", "/user/register/nickname-check", "/user/register/verify-certification", "/user/changepw").permitAll() // 회원가입 및 로그인 관련 API 허용
+                        .requestMatchers("/static/**").permitAll() // 정적 리소스 접근 허용
                         .anyRequest().authenticated(); // 나머지 요청은 인증 필요
                 })           
                 .build();
@@ -54,18 +52,7 @@ public class SecurityConfig {
     }
 
     @Bean
-    public CorsFilter corsFilter() {
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        CorsConfiguration config = new CorsConfiguration();
-        config.setAllowCredentials(true);
-        config.addAllowedOrigin("http://localhost:3000"); // 프론트엔드 URL 지정
-        config.addAllowedHeader("*");
-        config.addAllowedMethod("*");
-        source.registerCorsConfiguration("/**", config);
-        return new CorsFilter(source);
-    }
-
-    private CorsConfigurationSource corsConfigurationSource() {
+    public CorsConfigurationSource corsConfigurationSource() {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);

@@ -1,15 +1,16 @@
 package com.multipjt.multi_pjt.badge.domain.record;
 
+import java.time.LocalDateTime;
+
 import lombok.Data;
 
 @Data
 public class UserActivityRecordResponseDTO {
-    private int record_id;
-    private String activity_type; // enum을 문자열로 처리
-    private float points;
-    private String created_date;
-    private int member_id;
+    private int recordId;
+    private String activityType;
+    private LocalDateTime createdDate;
+    private int memberId;
 
-
-    
+    // 추가: 운동 기록의 날짜를 비교하기 위한 필드
+    private LocalDateTime activityDate;
 }

@@ -17,6 +17,7 @@ public class PostResponseDTO {
     private Date    post_date;
     private Date    post_modify_date;
     private String  post_hashtag;
+    private int     post_unlike_counts;
     private int     post_like_counts;
     private int     post_views;
     private String  post_sport;
@@ -26,9 +27,12 @@ public class PostResponseDTO {
     
     // 댓글 목록
     private List<CommentResponseDTO> comments; 
+    // 좋아요 상태
+    private boolean likeStatus;
     
     // 외래키
     private int member_id;
     
     private String post_nickname;
+    private int comments_count;
 }
