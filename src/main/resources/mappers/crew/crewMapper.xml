@@ -177,12 +177,14 @@
             crew_post_title,
             crew_post_content,
             crew_post_img,
+            crew_post_state,
             crew_id,
             member_id
         ) VALUES (
             #{crew_post_title},
             #{crew_post_content},
             #{crew_post_img},
+            #{crew_post_state},
             #{crew_id},
             #{member_id}
         );

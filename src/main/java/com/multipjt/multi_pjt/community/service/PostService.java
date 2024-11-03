@@ -84,7 +84,7 @@ public class PostService {
     public int postInsert(PostRequestDTO pdto, UserActivityRecordRequsetDTO uadto){
         System.out.println("service - postInsert");
         int result = postMapper.postInsert(pdto);
-        userActivityRecordMapper.insertActivity(uadto);
+        // userActivityRecordMapper.insertActivity(uadto);
 
         if(result == 1){
             System.out.println("service : 게시글이 성공적으로 등록되었습니다.");

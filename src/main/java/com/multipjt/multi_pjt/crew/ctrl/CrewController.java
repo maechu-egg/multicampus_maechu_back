@@ -1,5 +1,6 @@
 package com.multipjt.multi_pjt.crew.ctrl;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -61,7 +62,8 @@ public class CrewController {
 
     // 크루 리스트 전체 조회
     @GetMapping("/list")
-    public ResponseEntity<List<CrewResponseDTO>> getCrewList(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
+    public ResponseEntity<List<CrewResponseDTO>> getCrewList(
+        @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
         
         System.out.println("client endpoint: /crew/list");
 
@@ -105,7 +107,7 @@ public class CrewController {
         }
     }
 
-    // 크루원 추가
+    // 크루원 신청
     @PostMapping("/member/add")
     public ResponseEntity<Void> addCrewMember(
             @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader,
@@ -143,7 +145,7 @@ public class CrewController {
 
     // 크루 소개 수정
     @PatchMapping("/intro/update")
-    public ResponseEntity<Void> updateCrewIntro(
+    public ResponseEntity<Map<String, Object>> updateCrewIntro(
             @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader,
             @RequestBody CrewRequestDTO param) {
 
@@ -151,16 +153,26 @@ public class CrewController {
         System.out.println("debug>>> updateCrewIntro + " + param);
 
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
-            crewService.updateCrewIntro(param);
-            return ResponseEntity.noContent().build();
+            String token = authHeader.substring(7);
+            int token_id = jwtTokenProvider.getUserIdFromToken(token);
+
+            try {
+                crewService.updateCrewIntro(param, token_id);
+                return ResponseEntity.noContent().build();
+            } catch (ResponseStatusException e) {
+                Map<String, Object> errorResponse = new HashMap<>();
+                errorResponse.put("status", e.getStatusCode().value());
+                errorResponse.put("message", e.getReason());
+                return ResponseEntity.status(e.getStatusCode()).body(errorResponse);
+            }
         } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build(); // 인증 실패 시 401 반환
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
     }
 
     // 크루 관리 수정
     @PatchMapping("/info/update")
-    public ResponseEntity<Void> updateCrewInfo(
+    public ResponseEntity<Map<String, Object>> updateCrewInfo(
             @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader,
             @RequestBody CrewRequestDTO param) {
 
@@ -168,17 +180,27 @@ public class CrewController {
         System.out.println("debug>>> updateCrewInfo + " + param);
 
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
-            crewService.updateCrewInfo(param);
-            return ResponseEntity.noContent().build();
+            String token = authHeader.substring(7);
+            int token_id = jwtTokenProvider.getUserIdFromToken(token);
+
+            try {
+                crewService.updateCrewInfo(param, token_id);
+                return ResponseEntity.noContent().build();
+            } catch (ResponseStatusException e) {
+                Map<String, Object> errorResponse = new HashMap<>();
+                errorResponse.put("status", e.getStatusCode().value());
+                errorResponse.put("message", e.getReason());
+                return ResponseEntity.status(e.getStatusCode()).body(errorResponse);
+            }
         } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build(); // 인증 실패 시 401 반환
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
     }
 
 
     // 크루 삭제
     @DeleteMapping("/delete/{crewId}")
-    public ResponseEntity<Void> deleteCrew(
+    public ResponseEntity<Map<String, Object>> deleteCrew(
             @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader,
             @PathVariable("crewId") Integer crewId) {
 
@@ -186,12 +208,20 @@ public class CrewController {
         System.out.println("debug>>> deleteCrew + " + crewId);
 
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
-            String token = authHeader.substring(7); // "Bearer " 접두사 제거
-            int token_id = jwtTokenProvider.getUserIdFromToken(token); // 토큰에서 사용자 ID 추출
-            crewService.deleteCrew(crewId, token_id);
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+            String token = authHeader.substring(7);
+            int token_id = jwtTokenProvider.getUserIdFromToken(token);
+
+            try {
+                crewService.deleteCrew(crewId, token_id);
+                return ResponseEntity.noContent().build();
+            } catch (ResponseStatusException e) {
+                Map<String, Object> errorResponse = new HashMap<>();
+                errorResponse.put("status", e.getStatusCode().value());
+                errorResponse.put("message", e.getReason());
+                return ResponseEntity.status(e.getStatusCode()).body(errorResponse);
+            }
         } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build(); // 인증 실패 시 401 반환
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
     }
 
@@ -200,7 +230,7 @@ public class CrewController {
 
     // 크루원 가입 승인
     @PatchMapping("/member/approve")
-    public ResponseEntity<Void> approveCrewMember(
+    public ResponseEntity<Map<String, Object>> approveCrewMember(
             @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader,
             @RequestBody CrewMemberRequestDTO param) {
 
@@ -208,18 +238,26 @@ public class CrewController {
         System.out.println("debug>>> approveCrewMember + " + param);
 
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
-            String token = authHeader.substring(7); // "Bearer " 접두사 제거
-            int token_id = jwtTokenProvider.getUserIdFromToken(token); // 토큰에서 사용자 ID 추출
-            crewService.approveCrewMember(param, token_id);
-            return ResponseEntity.noContent().build(); // 204 No Content
+            String token = authHeader.substring(7);
+            int token_id = jwtTokenProvider.getUserIdFromToken(token);
+            
+            try {
+                crewService.approveCrewMember(param, token_id);
+                return ResponseEntity.noContent().build();
+            } catch (ResponseStatusException e) {
+                Map<String, Object> errorResponse = new HashMap<>();
+                errorResponse.put("status", e.getStatusCode().value());
+                errorResponse.put("message", e.getReason());
+                return ResponseEntity.status(e.getStatusCode()).body(errorResponse);
+            }
         } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build(); // 인증 실패 시 401 반환
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
     }
 
     // 크루원 조회
     @GetMapping("/member/list/{crewId}")
-    public ResponseEntity<List<CrewMemberResponseDTO>> getCrewMemberList(
+    public ResponseEntity<?> getCrewMemberList(
         @PathVariable("crewId") Integer crewId,
         @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
         
@@ -228,15 +266,26 @@ public class CrewController {
         System.out.println("debug>>> Authorization Header: " + authHeader);
        
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
-            return ResponseEntity.ok(crewService.getCrewMemberList(crewId));
+            String token = authHeader.substring(7); // "Bearer " 접두사 제거
+            int token_id = jwtTokenProvider.getUserIdFromToken(token); // 토큰에서 사용자 ID 추출
+
+            try {
+                List<CrewMemberResponseDTO> crewMemberList = crewService.getCrewMemberList(crewId, token_id);
+                return ResponseEntity.ok(crewMemberList);
+            } catch (ResponseStatusException e) {
+                Map<String, Object> errorResponse = new HashMap<>();
+                errorResponse.put("status", e.getStatusCode().value());
+                errorResponse.put("message", e.getReason());
+                return ResponseEntity.status(e.getStatusCode()).body(errorResponse);
+            }
         } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build(); // 인증 실패 시 401 반환
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
     }
 
     // 크루원 삭제
     @DeleteMapping("/member/delete")
-    public ResponseEntity<Void> deleteCrewMember(
+    public ResponseEntity<Map<String, Object>> deleteCrewMember(
             @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader,
             @RequestBody CrewMemberRequestDTO param) {
 
@@ -246,10 +295,18 @@ public class CrewController {
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             String token = authHeader.substring(7); // "Bearer " 접두사 제거
             int token_id = jwtTokenProvider.getUserIdFromToken(token); // 토큰에서 사용자 ID 추출
-            crewService.deleteCrewMember(param, token_id);
-            return ResponseEntity.noContent().build(); // 204 No Content
+
+            try {
+                crewService.deleteCrewMember(param, token_id);
+                return ResponseEntity.noContent().build(); // 204 No Content
+            } catch (ResponseStatusException e) {
+                Map<String, Object> errorResponse = new HashMap<>();
+                errorResponse.put("status", e.getStatusCode().value());
+                errorResponse.put("message", e.getReason());
+                return ResponseEntity.status(e.getStatusCode()).body(errorResponse);
+            }
         } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build(); // 인증 실패 시 401 반환
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
     }
 
@@ -258,7 +315,7 @@ public class CrewController {
 
     // 크루 게시물 등록
     @PostMapping("/post/create")
-    public ResponseEntity<Object> createCrewPost(
+    public ResponseEntity<Map<String, Object>> createCrewPost(
             @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader,
             @RequestBody CrewPostRequestDTO param) {
 
@@ -273,11 +330,14 @@ public class CrewController {
                 crewService.createCrewPost(param, token_id);
                 return ResponseEntity.status(HttpStatus.CREATED).build(); // 201 Created
             } catch (ResponseStatusException e) {
-                return ResponseEntity.status(e.getStatusCode()).body(e.getMessage()); // 서비스에서 발생한 예외에 따라 상태 코드 반환
+                Map<String, Object> errorResponse = new HashMap<>();
+                errorResponse.put("status", e.getStatusCode().value());
+                errorResponse.put("message", e.getReason());
+                return ResponseEntity.status(e.getStatusCode()).body(errorResponse);
             }
             
         } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build(); // 인증 실패 시 401 반환
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
     }
 

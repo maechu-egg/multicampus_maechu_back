@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 import com.multipjt.multi_pjt.crew.dao.crew.CrewMapper;
 import com.multipjt.multi_pjt.crew.domain.crew.CrewCommentsRequestDTO;
@@ -80,24 +81,32 @@ public class CrewService {
     // --------- 크루 소개 ---------
 
     // 크루 소개 수정
-    public void updateCrewIntro(CrewRequestDTO param) {
+    public void updateCrewIntro(CrewRequestDTO param, int token_id) {
         System.out.println("debug>>> Service: updateCrewIntro + " + crewMapper);
         System.out.println("debug>>> Service: updateCrewIntro + " + param);
-        if(param.getMember_id() == crewMapper.selectCrewLeaderIdRow(param.getCrew_id())) {
+        System.out.println("debug>>> Service: updateCrewIntro + " + token_id);
+
+        int leaderId = crewMapper.selectCrewLeaderIdRow(param.getCrew_id());
+
+        if(token_id == leaderId) {
             crewMapper.updateCrewIntroRow(param);
         } else {
-            throw new IllegalArgumentException("크루장만 크루 소개를 수정할 수 있습니다.");
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "크루장만 크루 소개를 수정할 수 있습니다.");
         }
     }
 
     // 크루 관리 수정
-    public void updateCrewInfo(CrewRequestDTO param) {
+    public void updateCrewInfo(CrewRequestDTO param, Integer token_id) {
         System.out.println("debug>>> Service: updateCrewInfo + " + crewMapper);
         System.out.println("debug>>> Service: updateCrewInfo + " + param);
-        if(param.getMember_id() == crewMapper.selectCrewLeaderIdRow(param.getCrew_id())) {
+        System.out.println("debug>>> Service: updateCrewInfo + " + token_id);
+        
+        int leaderId = crewMapper.selectCrewLeaderIdRow(param.getCrew_id());
+
+        if(token_id == leaderId) {
             crewMapper.updateCrewInfoRow(param);
         } else {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "멤버 승인된 크루원만 게시물 등록이 가능합니다.");
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "크루장만 크루 관리를 수정할 수 있습니다.");
         }
     }
 
@@ -105,10 +114,14 @@ public class CrewService {
     public void deleteCrew(Integer crewId, Integer token_id) {
         System.out.println("debug>>> Service: deleteCrew + " + crewMapper);
         System.out.println("debug>>> Service: deleteCrew + " + crewId);
-        if(token_id == crewMapper.selectCrewLeaderIdRow(crewId)) {
+        System.out.println("debug>>> Service: deleteCrew + " + token_id);
+
+        int leaderId = crewMapper.selectCrewLeaderIdRow(crewId);
+
+        if(token_id == leaderId) {
             crewMapper.deleteCrewRow(crewId);
-        }else{
-            throw new IllegalArgumentException("크루장만 크루를 삭제할 수 있습니다.");
+        } else {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "크루장만 크루를 삭제할 수 있습니다.");
         }
     }
 
@@ -118,28 +131,44 @@ public class CrewService {
     public void approveCrewMember(CrewMemberRequestDTO param, Integer token_id) {
         System.out.println("debug>>> Service: approveCrewMember + " + crewMapper);
         System.out.println("debug>>> Service: approveCrewMember + " + param);
-        if(token_id == crewMapper.selectCrewLeaderIdRow(param.getCrew_id())) {
+        System.out.println("debug>>> Service: approveCrewMember + " + token_id);
+
+        int leaderId = crewMapper.selectCrewLeaderIdRow(param.getCrew_id());
+        System.out.println("token_id: " + token_id + ", leaderId: " + leaderId);
+
+        if(token_id == leaderId) {   
             crewMapper.updateCrewMemberRow(param);
         } else {
-            throw new IllegalArgumentException("크루장만 크루원 가입을 승인할 수 있습니다.");
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "크루장만 크루원 가입을 승인할 수 있습니다.");
         }
     }
 
     // 크루원 조회
-    public List<CrewMemberResponseDTO> getCrewMemberList(Integer crewId) {
+    public List<CrewMemberResponseDTO> getCrewMemberList(Integer crewId, Integer token_id) {
         System.out.println("debug>>> Service: getCrewMemberList + " + crewMapper);
         System.out.println("debug>>> Service: getCrewMemberList + " + crewId);
-        return crewMapper.selectCrewMemberRow(crewId);
+        System.out.println("debug>>> Service: getCrewMemberList + " + token_id);
+
+        boolean isActiveMember = crewMapper.selectCrewMemberRow(crewId).stream()
+            .anyMatch(member -> member.getMember_id() == token_id && member.getCrew_member_state() == 1);
+
+        if (isActiveMember) {
+            return crewMapper.selectCrewMemberRow(crewId);
+        } else {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "크루원만 조회가 가능합니다.");
+        }
     }
 
     // 크루원 삭제
     public void deleteCrewMember(CrewMemberRequestDTO param, Integer token_id) {
         System.out.println("debug>>> Service: deleteCrewMember + " + crewMapper);
         System.out.println("debug>>> Service: deleteCrewMember + " + param);
+        System.out.println("debug>>> Service: deleteCrewMember + " + token_id);
+
         if(token_id == crewMapper.selectCrewLeaderIdRow(param.getCrew_id()) || token_id == param.getMember_id()) {
             crewMapper.deleteCrewMemberRow(param);
         } else {
-            throw new IllegalArgumentException("크루장 또는 자신만 크루원을 삭제할 수 있습니다.");
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "크루장 또는 자신만 크루원을 삭제할 수 있습니다.");
         }
     }
 
@@ -150,13 +179,14 @@ public class CrewService {
         System.out.println("debug>>> Service: createCrewPost + " + crewMapper);
         System.out.println("debug>>> Service: createCrewPost + " + param);
         
-        // 크루원 상태 확인
+        // 크루원인지, 승인 상태인지 확인
         boolean isActiveMember = crewMapper.selectCrewMemberRow(param.getCrew_id()).stream()
             .anyMatch(member -> member.getMember_id() == token_id && member.getCrew_member_state() == 1);
+
         if (isActiveMember) {
             crewMapper.insertCrewPostRow(param);
         } else {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "멤버 승인된 크루원만 게시물 등록이 가능합니다.");
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "크루원만 게시물 등록이 가능합니다.");
         }
     }
 

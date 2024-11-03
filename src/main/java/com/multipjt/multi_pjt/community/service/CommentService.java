@@ -33,7 +33,7 @@ public class CommentService {
         
         commentMapper.commentInsert(params);
 
-        userActivityRecordMapper.insertActivity(uadto);
+        // userActivityRecordMapper.insertActivity(uadto);
 
     }
 
