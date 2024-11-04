@@ -509,11 +509,29 @@ public class CrewController {
 
     // 크루 댓글 작성
     @PostMapping("/comment/create")
-    public ResponseEntity<Void> createCrewComment(@RequestBody CrewCommentsRequestDTO param) {
+    public ResponseEntity<Map<String, Object>> createCrewComment(
+            @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader,
+            @RequestBody CrewCommentsRequestDTO param) {
+
         System.out.println("client endpoint: /crew/comment/create");
         System.out.println("debug>>> createCrewComment + " + param);
-        crewService.createCrewComment(param);
-        return ResponseEntity.status(HttpStatus.CREATED).build(); // 201 Created
+
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            String token = authHeader.substring(7);
+            int token_id = jwtTokenProvider.getUserIdFromToken(token);
+
+            try {
+                crewService.createCrewComment(param, token_id);
+                return ResponseEntity.status(HttpStatus.CREATED).build();
+            } catch (ResponseStatusException e) {
+                Map<String, Object> errorResponse = new HashMap<>();
+                errorResponse.put("status", e.getStatusCode().value());
+                errorResponse.put("message", e.getReason());
+                return ResponseEntity.status(e.getStatusCode()).body(errorResponse);
+            }
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
     }
 
     // 크루 댓글 조회
