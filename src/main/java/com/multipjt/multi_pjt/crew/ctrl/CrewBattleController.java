@@ -237,10 +237,29 @@ public class CrewBattleController {
 
     // 투표
     @PostMapping("/vote/create")
-    public ResponseEntity<Void> createVote(@RequestBody CrewVoteRequestDTO param) {
+    public ResponseEntity<Map<String, Object>> createVote(
+        @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader,
+        @RequestBody CrewVoteRequestDTO param,
+        @RequestParam("crew_id") int crew_id) {
+
         System.out.println("client endpoint: /crew/battle/vote/create");
         System.out.println("debug: createVote + " + param);
-        crewBattleService.createVote(param);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            String token = authHeader.substring(7);
+            int token_id = jwtTokenProvider.getUserIdFromToken(token);
+
+            try {
+                crewBattleService.createVote(param, token_id, crew_id);
+                return ResponseEntity.status(HttpStatus.CREATED).build();
+            } catch (ResponseStatusException e) {
+                Map<String, Object> errorResponse = new HashMap<>();
+                errorResponse.put("status", e.getStatusCode().value());
+                errorResponse.put("message", e.getReason());
+                return ResponseEntity.status(e.getStatusCode()).body(errorResponse);
+            }
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
     }
 }

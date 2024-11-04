@@ -156,9 +156,19 @@ public class CrewBattleService {
     }
 
     // 투표
-    public void createVote(CrewVoteRequestDTO params) {
+    public void createVote(CrewVoteRequestDTO params, int token_id, int crew_id) {
         System.out.println("debug>>> Service: createVote + " + crewBattleMapper);
         System.out.println("debug>>> Service: createVote + " + params);
-        crewBattleMapper.createVoteRow(params);
+        System.out.println("debug>>> Service: createVote + " + token_id);
+        System.out.println("debug>>> Service: createVote + " + crew_id);
+        
+        boolean isActiveMember = crewMapper.selectCrewMemberRow(crew_id).stream()
+            .anyMatch(member -> member.getMember_id() == token_id && member.getCrew_member_state() == 1);
+
+        if (isActiveMember) {
+            crewBattleMapper.createVoteRow(params);
+        } else {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "크루원만 투표가 가능합니다.");
+        }
     }
 }
