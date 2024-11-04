@@ -62,4 +62,7 @@ public class DietService {
     public int mealUpdateRow(DietRequestDTO dietRequestDTO){
         return dietMapper.mealUpdate(dietRequestDTO);
     }
+    public List<String> getMonthDietRow(Map<String,Object> map){
+        return dietMapper.getMonthDiet(map);
+    }
 }

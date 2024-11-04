@@ -9,6 +9,7 @@ import com.multipjt.multi_pjt.record.diet.domain.ItemResponseDTO;
 
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.List;
 @Mapper
 public interface DietMapper {
     
@@ -34,4 +35,6 @@ public interface DietMapper {
     public Map<String,String> getMemberInfo(Integer memberId);
 
     public int mealUpdate(DietRequestDTO dietRequestDTO);
+
+    public List<String> getMonthDiet(Map<String,Object> map);
 }
