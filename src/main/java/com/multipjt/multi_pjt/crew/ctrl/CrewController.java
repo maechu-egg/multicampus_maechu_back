@@ -563,10 +563,28 @@ public class CrewController {
 
     // 크루 댓글 삭제
     @DeleteMapping("/comment/delete")
-    public ResponseEntity<Void> deleteCrewComment(@RequestBody CrewCommentsRequestDTO param) {
+    public ResponseEntity<?> deleteCrewComment(
+            @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader,
+            @RequestBody CrewCommentsRequestDTO param) {
+
         System.out.println("client endpoint: /crew/comment/delete");
         System.out.println("debug>>> deleteCrewComment + " + param);
-        crewService.deleteCrewComment(param);
-        return ResponseEntity.noContent().build();
+
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            String token = authHeader.substring(7);
+            int token_id = jwtTokenProvider.getUserIdFromToken(token);
+
+            try {
+                crewService.deleteCrewComment(param, token_id);
+                return ResponseEntity.noContent().build();
+            } catch (ResponseStatusException e) {
+                Map<String, Object> errorResponse = new HashMap<>();
+                errorResponse.put("status", e.getStatusCode().value());
+                errorResponse.put("message", e.getReason());
+                return ResponseEntity.status(e.getStatusCode()).body(errorResponse);
+            }
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
     }
 }
