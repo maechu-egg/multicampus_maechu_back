@@ -70,10 +70,29 @@ public class CrewBattleController {
 
     // 배틀 목록 조회
     @GetMapping("/list")
-    public ResponseEntity<List<CrewBattleResponseDTO>> getCrewBattleList(@RequestParam("crew_id") Integer crew_id) {
+    public ResponseEntity<?> getCrewBattleList(
+        @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader,
+        @RequestParam("crew_id") Integer crew_id) {
+
         System.out.println("client endpoint: /crew/battle/list");
         System.out.println("debug: getCrewBattleList + " + crew_id);
-        return ResponseEntity.ok(crewBattleService.selectCrewBattle(crew_id));
+
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            String token = authHeader.substring(7);
+            int token_id = jwtTokenProvider.getUserIdFromToken(token);
+
+            try {
+                List<CrewBattleResponseDTO> crewBattleList = crewBattleService.selectCrewBattle(crew_id, token_id);
+                return ResponseEntity.ok(crewBattleList);
+            } catch (ResponseStatusException e) {
+                Map<String, Object> errorResponse = new HashMap<>();
+                errorResponse.put("status", e.getStatusCode().value());
+                errorResponse.put("message", e.getReason());
+                return ResponseEntity.status(e.getStatusCode()).body(errorResponse);
+            }
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
     }
 
     // 특정 배틀 상세 조회

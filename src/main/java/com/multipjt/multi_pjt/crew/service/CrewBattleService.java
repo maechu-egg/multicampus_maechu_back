@@ -44,10 +44,19 @@ public class CrewBattleService {
     }
 
     // 배틀 목록 조회
-    public List<CrewBattleResponseDTO> selectCrewBattle(Integer crew_id) {
+    public List<CrewBattleResponseDTO> selectCrewBattle(Integer crew_id, Integer token_id) {
         System.out.println("debug>>> Service: selectCrewBattle + " + crewBattleMapper);
         System.out.println("debug>>> Service: selectCrewBattle + " + crew_id);
-        return crewBattleMapper.selectCrewBattleRow(crew_id);
+        System.out.println("debug>>> Service: selectCrewBattle + " + token_id);
+
+        boolean isActiveMember = crewMapper.selectCrewMemberRow(crew_id).stream()
+        .anyMatch(member -> member.getMember_id() == token_id && member.getCrew_member_state() == 1);
+
+        if (isActiveMember) {
+            return crewBattleMapper.selectCrewBattleRow(crew_id);
+        } else {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "크루원만 배틀 목록 조회가 가능합니다.");
+        }
     }
 
     
