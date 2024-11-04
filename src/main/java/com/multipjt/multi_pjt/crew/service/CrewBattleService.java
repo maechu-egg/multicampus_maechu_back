@@ -118,11 +118,25 @@ public class CrewBattleService {
     }
 
     // 피드 작성
-    public void createCrewBattleFeed(CrewBattleFeedRequestDTO params) {
+    public void createCrewBattleFeed(CrewBattleFeedRequestDTO param, int token_id) {
         System.out.println("debug>>> Service: createCrewBattleFeed + " + crewBattleMapper);
-        System.out.println("debug>>> Service: createCrewBattleFeed + " + params);
-        crewBattleMapper.createCrewBattleFeedRow(params);
+        System.out.println("debug>>> Service: createCrewBattleFeed + " + param);
+        System.out.println("debug>>> Service: createCrewBattleFeed + " + token_id);
+
+        boolean isBattleMember = crewBattleMapper.selectBattleMemberRow(param.getBattle_id()).stream()
+            .anyMatch(member -> member.getMember_id() == token_id);
+
+        if (isBattleMember) {
+            if (param.getMember_id() == token_id) {
+                crewBattleMapper.createCrewBattleFeedRow(param);
+            } else {
+                throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "자신의 피드만 작성이 가능합니다.");
+            }
+        } else {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "배틀 참가 크루원만 피드 작성이 가능합니다.");
+        }
     }
+
 
     // 피드 조회
     public List<CrewBattleFeedResponseDTO> selectCrewBattleFeed(Integer param) {

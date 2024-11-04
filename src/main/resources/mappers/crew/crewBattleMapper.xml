@@ -80,8 +80,8 @@
 
     <insert id="createCrewBattleFeedRow"
             parameterType="com.multipjt.multi_pjt.crew.domain.battle.CrewBattleFeedRequestDTO">
-            INSERT INTO CrewBattleFeed(feed_id, feed_img, feed_post, feed_kcal, feed_sport, feed_exTime, participant_id, battle_id)
-            VALUES(#{feed_id}, #{feed_img}, #{feed_post}, #{feed_kcal}, #{feed_sport}, #{feed_exTime}, #{participant_id}, #{battle_id});
+            INSERT INTO CrewBattleFeed(feed_img, feed_post, feed_kcal, feed_sport, feed_exTime, participant_id, battle_id)
+            VALUES(#{feed_img}, #{feed_post}, #{feed_kcal}, #{feed_sport}, #{feed_exTime}, #{participant_id}, #{battle_id});
     </insert>
 
     <!-- 피드 조회 --> 
