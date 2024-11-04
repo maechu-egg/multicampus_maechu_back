@@ -62,16 +62,17 @@ public class CrewBattleService {
 
     
     // 특정 배틀 상세 조회
-    public CrewBattleResponseDTO selectCrewBattleDetail(CrewBattleRequestDTO param, Integer token_id) {
+    public CrewBattleResponseDTO selectCrewBattleDetail(Integer crew_id, Integer battle_id, Integer token_id) {
         System.out.println("debug>>> Service: selectCrewBattleDetail + " + crewBattleMapper);
-        System.out.println("debug>>> Service: selectCrewBattleDetail + " + param);
+        System.out.println("debug>>> Service: selectCrewBattleDetail + " + crew_id);
+        System.out.println("debug>>> Service: selectCrewBattleDetail + " + battle_id);
         System.out.println("debug>>> Service: selectCrewBattleDetail + " + token_id);
 
-        boolean isActiveMember = crewMapper.selectCrewMemberRow(param.getCrew_id()).stream()
+        boolean isActiveMember = crewMapper.selectCrewMemberRow(crew_id).stream()
         .anyMatch(member -> member.getMember_id() == token_id && member.getCrew_member_state() == 1);
 
         if (isActiveMember) {
-            return crewBattleMapper.selectCrewBattleDetailRow(param.getBattle_id());
+            return crewBattleMapper.selectCrewBattleDetailRow(battle_id);
         } else {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "크루원만 배틀 상세 조회가 가능합니다.");
         }
@@ -97,13 +98,23 @@ public class CrewBattleService {
         }
     }
 
-    // <---- 크루 피드보기 ---->
+    // <---- 배틀 피드보기 ---->
 
     // 배틀 참가 멤버 조회
-    public List<BattleMemberResponseDTO> selectBattleMember(Integer battle_id) {
+    public List<BattleMemberResponseDTO> selectBattleMember(Integer crew_id, Integer battle_id, Integer token_id) {
         System.out.println("debug>>> Service: selectBattleMember + " + crewBattleMapper);
+        System.out.println("debug>>> Service: selectBattleMember + " + crew_id);
         System.out.println("debug>>> Service: selectBattleMember + " + battle_id);
-        return crewBattleMapper.selectBattleMemberRow(battle_id);
+        System.out.println("debug>>> Service: selectBattleMember + " + token_id);
+
+        boolean isActiveMember = crewMapper.selectCrewMemberRow(crew_id).stream()
+        .anyMatch(member -> member.getMember_id() == token_id && member.getCrew_member_state() == 1);
+
+        if (isActiveMember) {
+            return crewBattleMapper.selectBattleMemberRow(battle_id);
+        } else {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "크루원만 배틀 참가 멤버 조회가 가능합니다.");
+        }
     }
 
     // 피드 작성

@@ -99,17 +99,18 @@ public class CrewBattleController {
     @GetMapping("/list/detail")
     public ResponseEntity<?> getCrewBattleDetail(
         @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader,
-        @RequestBody CrewBattleRequestDTO param) {
+        @RequestParam("crew_id") Integer crew_id,
+        @RequestParam("battle_id") Integer battle_id) {
 
         System.out.println("client endpoint: /crew/battle/detail");
-        System.out.println("debug: getCrewBattleDetail + " + param);
+        System.out.println("debug: getCrewBattleDetail + crew_id: " + crew_id + ", battle_id: " + battle_id);
 
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             String token = authHeader.substring(7);
             int token_id = jwtTokenProvider.getUserIdFromToken(token);
 
             try {
-                CrewBattleResponseDTO crewBattleDetail = crewBattleService.selectCrewBattleDetail(param, token_id);
+                CrewBattleResponseDTO crewBattleDetail = crewBattleService.selectCrewBattleDetail(crew_id, battle_id, token_id);
                 return ResponseEntity.ok(crewBattleDetail);
             } catch (ResponseStatusException e) {
                 Map<String, Object> errorResponse = new HashMap<>();
@@ -153,10 +154,30 @@ public class CrewBattleController {
 
     // 배틀 참가 멤버 조회
     @GetMapping("/member/list")
-    public ResponseEntity<List<BattleMemberResponseDTO>> getBattleMemberList(@RequestParam("battle_id") Integer battle_id) {
+    public ResponseEntity<?> getBattleMemberList(
+        @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader,
+        @RequestParam("crew_id") Integer crew_id,
+        @RequestParam("battle_id") Integer battle_id) {
+
         System.out.println("client endpoint: /crew/battle/member/list");
-        System.out.println("debug: getBattleMemberList + " + battle_id);
-        return ResponseEntity.ok(crewBattleService.selectBattleMember(battle_id));
+        System.out.println("debug: getBattleMemberList + crew_id: " + crew_id + ", battle_id: " + battle_id);
+
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            String token = authHeader.substring(7);
+            int token_id = jwtTokenProvider.getUserIdFromToken(token);
+
+            try {
+                List<BattleMemberResponseDTO> battleMemberList = crewBattleService.selectBattleMember(crew_id, battle_id, token_id);
+                return ResponseEntity.ok(battleMemberList);
+            } catch (ResponseStatusException e) {
+                Map<String, Object> errorResponse = new HashMap<>();
+                errorResponse.put("status", e.getStatusCode().value());
+                errorResponse.put("message", e.getReason());
+                return ResponseEntity.status(e.getStatusCode()).body(errorResponse);
+            }
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
     }
 
     // 피드 작성
