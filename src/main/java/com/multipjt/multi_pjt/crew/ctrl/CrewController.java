@@ -453,11 +453,29 @@ public class CrewController {
 
     // 크루 게시물 수정
     @PatchMapping("/post/update")
-    public ResponseEntity<Void> updateCrewPost(@RequestBody CrewPostRequestDTO param) {
+    public ResponseEntity<?> updateCrewPost(
+            @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader,
+            @RequestBody CrewPostRequestDTO param) {
+
         System.out.println("client endpoint: /crew/post/update");
         System.out.println("debug>>> updateCrewPost + " + param);
-        crewService.updateCrewPost(param);
-        return ResponseEntity.noContent().build();
+
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            String token = authHeader.substring(7);
+            int token_id = jwtTokenProvider.getUserIdFromToken(token);
+
+            try {
+                crewService.updateCrewPost(param, token_id);
+                return ResponseEntity.noContent().build();
+            } catch (ResponseStatusException e) {
+                Map<String, Object> errorResponse = new HashMap<>();
+                errorResponse.put("status", e.getStatusCode().value());
+                errorResponse.put("message", e.getReason());
+                return ResponseEntity.status(e.getStatusCode()).body(errorResponse);
+            }
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
     }
 
     // 크루 게시물 삭제

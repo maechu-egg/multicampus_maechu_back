@@ -165,7 +165,10 @@ public class CrewService {
         System.out.println("debug>>> Service: deleteCrewMember + " + param);
         System.out.println("debug>>> Service: deleteCrewMember + " + token_id);
 
-        if(token_id == crewMapper.selectCrewLeaderIdRow(param.getCrew_id()) || token_id == param.getMember_id()) {
+        int leaderId = crewMapper.selectCrewLeaderIdRow(param.getCrew_id());
+        int memberId = param.getMember_id();
+
+        if(token_id == leaderId || token_id == memberId) {
             crewMapper.deleteCrewMemberRow(param);
         } else {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "크루장 또는 자신만 크루원을 삭제할 수 있습니다.");
@@ -255,10 +258,18 @@ public class CrewService {
     }
 
     // 크루 게시물 수정
-    public void updateCrewPost(CrewPostRequestDTO param) {
+    public void updateCrewPost(CrewPostRequestDTO param, Integer token_id) {
         System.out.println("debug>>> Service: updateCrewPost + " + crewMapper);
         System.out.println("debug>>> Service: updateCrewPost + " + param);
-        crewMapper.updateCrewPostRow(param);
+        System.out.println("debug>>> Service: updateCrewPost + " + token_id);
+
+        int writerId = param.getMember_id();
+
+        if(token_id == writerId) {
+            crewMapper.updateCrewPostRow(param);
+        } else {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "작성자만 게시물 수정이 가능합니다.");
+        }
     }
 
     // 크루 게시물 삭제
