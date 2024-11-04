@@ -239,10 +239,19 @@ public class CrewService {
     }
 
     // 크루 게시물 상세 조회
-    public CrewPostResponseDTO getCrewPost(CrewPostRequestDTO param) {
+    public CrewPostResponseDTO getCrewPost(CrewPostRequestDTO param, Integer token_id) {
         System.out.println("debug>>> Service: getCrewPost + " + crewMapper);
         System.out.println("debug>>> Service: getCrewPost + " + param);
-        return crewMapper.selectCrewPostRow(param);
+        System.out.println("debug>>> Service: getCrewPost + " + token_id);
+
+        boolean isActiveMember = crewMapper.selectCrewMemberRow(param.getCrew_id()).stream()
+            .anyMatch(member -> member.getMember_id() == token_id && member.getCrew_member_state() == 1);
+
+        if (isActiveMember) {
+            return crewMapper.selectCrewPostRow(param);
+        } else {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "크루원만 게시물 조회가 가능합니다.");
+        }
     }
 
     // 크루 게시물 수정

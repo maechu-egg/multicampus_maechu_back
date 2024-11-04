@@ -426,10 +426,29 @@ public class CrewController {
 
     // 크루 게시물 상세 조회
     @GetMapping("/post/detail")
-    public ResponseEntity<CrewPostResponseDTO> getCrewPost(@RequestBody CrewPostRequestDTO params) {
+    public ResponseEntity<?> getCrewPost(
+            @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader,
+            @RequestBody CrewPostRequestDTO params) {
+
         System.out.println("client endpoint: /crew/post/detail/");
         System.out.println("debug>>> getCrewPost + " + params);
-        return ResponseEntity.ok(crewService.getCrewPost(params));
+
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            String token = authHeader.substring(7);
+            int token_id = jwtTokenProvider.getUserIdFromToken(token);
+
+            try {
+                CrewPostResponseDTO crewPost = crewService.getCrewPost(params, token_id);
+                return ResponseEntity.ok(crewPost);
+            } catch (ResponseStatusException e) {
+                Map<String, Object> errorResponse = new HashMap<>();
+                errorResponse.put("status", e.getStatusCode().value());
+                errorResponse.put("message", e.getReason());
+                return ResponseEntity.status(e.getStatusCode()).body(errorResponse);
+            }
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
     }
 
     // 크루 게시물 수정
