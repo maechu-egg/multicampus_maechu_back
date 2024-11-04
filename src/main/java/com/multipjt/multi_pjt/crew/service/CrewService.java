@@ -273,10 +273,18 @@ public class CrewService {
     }
 
     // 크루 게시물 삭제
-    public void deleteCrewPost(CrewPostRequestDTO param) {
+    public void deleteCrewPost(CrewPostRequestDTO param, Integer token_id) {
         System.out.println("debug>>> Service: deleteCrewPost + " + crewMapper);
         System.out.println("debug>>> Service: deleteCrewPost + " + param);
-        crewMapper.deleteCrewPostRow(param);
+        System.out.println("debug>>> Service: deleteCrewPost + " + token_id);
+
+        int writerId = param.getMember_id();
+
+        if(token_id == writerId) {
+            crewMapper.deleteCrewPostRow(param);
+        } else {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "작성자만 게시물 삭제가 가능합니다.");
+        }
     }
 
     // --------- 크루 댓글 ---------
