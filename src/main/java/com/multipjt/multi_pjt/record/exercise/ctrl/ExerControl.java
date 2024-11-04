@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 
 
 @RestController
@@ -350,6 +351,20 @@ public class ExerControl {
             return new ResponseEntity<>(list, HttpStatus.OK);
         } else {
             return new ResponseEntity<>(list, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    // 특정 달 운동 기록 날짜 조회
+    @PostMapping("/get/month")
+    public ResponseEntity<List<String>> getMonthExer(@RequestBody Map<String,Object> map){
+        System.out.println("class endPoint >> " + "/record/exercise/get/month");
+        System.out.println("map >> " + map);
+        List<String> result = exerService.getMonthExerRow(map);
+        System.out.println("result >> " + result);
+        if(result != null){
+            return new ResponseEntity<>(result, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
         }
     }
 }
