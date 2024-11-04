@@ -44,6 +44,23 @@
 
     </select>
 
+
+     <!-- 댓글 확인 EXISTS - boolean 값 반환-->
+    <select id="commitComment" parameterType="java.util.HashMap" resultType="Boolean">
+        SELECT EXISTS (
+            SELECT 1
+            FROM UserActivity
+            WHERE member_id = #{member_id}
+            AND comment_id = #{comment_id}
+        ) As existsLike
+    </select>
+
+      <!-- 전체 게시글 수 -->
+    <select id="countCommentPost" resultType="int">
+        SELECT COUNT(*)
+        FROM Comments
+        WHERE post_id = #{post_id}
+    </select>
     
    
 </mapper>
