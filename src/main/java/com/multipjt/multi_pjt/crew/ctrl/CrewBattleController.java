@@ -209,10 +209,30 @@ public class CrewBattleController {
 
     // 피드 조회
     @GetMapping("/feed/list")
-    public ResponseEntity<List<CrewBattleFeedResponseDTO>> getCrewBattleFeedList(@RequestParam("participant_id") Integer param) {
+    public ResponseEntity<?> getCrewBattleFeedList(
+        @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader,
+        @RequestParam("participant_id") int param,
+        @RequestParam("crew_id") int crew_id) {
+
         System.out.println("client endpoint: /crew/battle/feed/list");
         System.out.println("debug: getCrewBattleFeedList + " + param);
-        return ResponseEntity.ok(crewBattleService.selectCrewBattleFeed(param));
+
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            String token = authHeader.substring(7);
+            int token_id = jwtTokenProvider.getUserIdFromToken(token);
+
+            try {
+                List<CrewBattleFeedResponseDTO> crewBattleFeedList = crewBattleService.selectCrewBattleFeed(crew_id, param, token_id);
+                return ResponseEntity.ok(crewBattleFeedList);
+            } catch (ResponseStatusException e) {
+                Map<String, Object> errorResponse = new HashMap<>();
+                errorResponse.put("status", e.getStatusCode().value());
+                errorResponse.put("message", e.getReason());
+                return ResponseEntity.status(e.getStatusCode()).body(errorResponse);
+            }
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
     }
 
     // 투표

@@ -139,9 +139,20 @@ public class CrewBattleService {
 
 
     // 피드 조회
-    public List<CrewBattleFeedResponseDTO> selectCrewBattleFeed(Integer param) {
+    public List<CrewBattleFeedResponseDTO> selectCrewBattleFeed(int crew_id, int param, int token_id) {
         System.out.println("debug>>> Service: selectCrewBattleFeed + " + crewBattleMapper);
-        return crewBattleMapper.selectCrewBattleFeedRow(param);
+        System.out.println("debug>>> Service: selectCrewBattleFeed + " + crew_id);
+        System.out.println("debug>>> Service: selectCrewBattleFeed + " + param);
+        System.out.println("debug>>> Service: selectCrewBattleFeed + " + token_id);
+
+        boolean isActiveMember = crewMapper.selectCrewMemberRow(crew_id).stream()
+            .anyMatch(member -> member.getMember_id() == token_id && member.getCrew_member_state() == 1);
+
+        if (isActiveMember) {
+            return crewBattleMapper.selectCrewBattleFeedRow(param);
+        } else {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "크루원만 피드 조회가 가능합니다.");
+        }
     }
 
     // 투표
