@@ -399,10 +399,29 @@ public class CrewController {
 
     // 크루 게시물 공지/인기/일반 조회
     @GetMapping("/post/notice")
-    public ResponseEntity<List<CrewPostResponseDTO>> getCrewNoticePostList(@RequestBody CrewPostRequestDTO params) {
+    public ResponseEntity<?> getCrewNoticePostList(
+            @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader,
+            @RequestBody CrewPostRequestDTO params) {
+
         System.out.println("client endpoint: /crew/post/notice/");
         System.out.println("debug>>> getCrewNoticePostList + " + params);
-        return ResponseEntity.ok(crewService.getCrewNoticePostList(params));
+
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            String token = authHeader.substring(7);
+            int token_id = jwtTokenProvider.getUserIdFromToken(token);
+
+            try {
+                List<CrewPostResponseDTO> crewNoticePostList = crewService.getCrewNoticePostList(params, token_id);
+                return ResponseEntity.ok(crewNoticePostList);
+            } catch (ResponseStatusException e) {
+                Map<String, Object> errorResponse = new HashMap<>();
+                errorResponse.put("status", e.getStatusCode().value());
+                errorResponse.put("message", e.getReason());
+                return ResponseEntity.status(e.getStatusCode()).body(errorResponse);
+            }
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
     }
 
     // 크루 게시물 상세 조회
