@@ -3,9 +3,12 @@ package com.multipjt.multi_pjt.crew.service;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.multipjt.multi_pjt.crew.dao.battle.CrewBattleMapper;
+import com.multipjt.multi_pjt.crew.dao.crew.CrewMapper;
 import com.multipjt.multi_pjt.crew.domain.battle.BattleMemberRequestDTO;
 import com.multipjt.multi_pjt.crew.domain.battle.BattleMemberResponseDTO;
 import com.multipjt.multi_pjt.crew.domain.battle.CrewBattleRequestDTO;
@@ -19,13 +22,25 @@ public class CrewBattleService {
     @Autowired
     private CrewBattleMapper crewBattleMapper;
 
+    @Autowired
+    private CrewMapper crewMapper;
+
     // <---- 크루 배틀 ---->
 
     // 배틀 생성
-    public void createCrewBattle(CrewBattleRequestDTO params) {
+    public void createCrewBattle(CrewBattleRequestDTO param, Integer token_id) {
         System.out.println("debug>>> Service: createCrewBattle + " + crewBattleMapper);
-        System.out.println("debug>>> Service: createCrewBattle + " + params);
-        crewBattleMapper.createCrewBattleRow(params);
+        System.out.println("debug>>> Service: createCrewBattle + " + param);
+        System.out.println("debug>>> Service: createCrewBattle + " + token_id);
+
+        boolean isActiveMember = crewMapper.selectCrewMemberRow(param.getCrew_id()).stream()
+        .anyMatch(member -> member.getMember_id() == token_id && member.getCrew_member_state() == 1);
+        
+        if (isActiveMember) {
+            crewBattleMapper.createCrewBattleRow(param);
+        } else {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "크루원만 배틀 생성이 가능합니다.");
+        }
     }
 
     // 배틀 목록 조회
