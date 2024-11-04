@@ -40,7 +40,7 @@ public class BadgeService implements IBadgeService {
 
     // 사용자 점수 조회
     @Override
-    public BigDecimal getCurrentPoints(Long memberId) {
+    public BigDecimal getCurrentPoints(int memberId) {
         BigDecimal currentPoints = memberBadgeMapper.getCurrentPoints(memberId);
         return currentPoints != null ? currentPoints : BigDecimal.ZERO;
     }
@@ -69,14 +69,14 @@ public class BadgeService implements IBadgeService {
 
     // 사용자 점수 업데이트
     @Override
-    public void updateUserPoints(Long memberId, BigDecimal points) {
+    public void updateUserPoints(int memberId, BigDecimal points) {
         UserActivityRecordRequestDTO activityRecord = new UserActivityRecordRequestDTO();
-        activityRecord.setMemberId(memberId.intValue());
+        activityRecord.setMemberId(memberId);
         activityRecord.setCreatedDate(LocalDateTime.now());
         userActivityRecordMapper.insertActivity(activityRecord);
 
         MemberBadgeRequestDTO badgeRequest = new MemberBadgeRequestDTO();
-        badgeRequest.setMember_id(memberId.intValue());
+        badgeRequest.setMember_id(memberId);
         badgeRequest.setCurrent_points(points.floatValue());
         memberBadgeMapper.updateBadge(badgeRequest);
     }
@@ -99,7 +99,7 @@ public class BadgeService implements IBadgeService {
 
     // 사용자 활동을 처리하는 메서드
     @Transactional
-    public void processUserActivities(Long memberId) {
+    public void processUserActivities(int memberId) {
         // 1. 회원의 운동 기록 조회
         List<UserActivityRecordResponseDTO> exerciseActivities = userActivityRecordMapper.getActivitiesFromExercises(memberId);
         
@@ -112,7 +112,7 @@ public class BadgeService implements IBadgeService {
             // 점수 부여 로직
             UserActivityRecordRequestDTO activityRecord = new UserActivityRecordRequestDTO();
             activityRecord.setActivityType("exercise");
-            activityRecord.setMemberId(memberId.intValue());
+            activityRecord.setMemberId(memberId);
             activityRecord.setCreatedDate(LocalDateTime.now());
             userActivityRecordMapper.insertActivity(activityRecord);
         }
@@ -135,21 +135,21 @@ public class BadgeService implements IBadgeService {
         updateMemberBadgePoints(memberId);
     }
 
-    private void insertActivityRecord(Long memberId, UserActivityRecordResponseDTO activity) {
+    private void insertActivityRecord(int memberId, UserActivityRecordResponseDTO activity) {
         UserActivityRecordRequestDTO activityRecord = new UserActivityRecordRequestDTO();
         activityRecord.setActivityType(activity.getActivityType());
-        activityRecord.setMemberId(memberId.intValue());
+        activityRecord.setMemberId(memberId);
         activityRecord.setCreatedDate(activity.getCreatedDate());
         userActivityRecordMapper.insertActivity(activityRecord);
     }
 
-    private void updateMemberBadgePoints(Long memberId) {
+    private void updateMemberBadgePoints(int memberId) {
         // 사용자의 총 점수 계산
         List<BigDecimal> pointsList = userActivityRecordMapper.getTotalPointsByMemberId(memberId);
         BigDecimal totalPoints = pointsList.isEmpty() ? BigDecimal.ZERO : pointsList.get(0);
         
         // 현재 뱃지 정보 조회
-        MemberBadgeResponseDTO currentBadge = memberBadgeMapper.getBadgeByMemberId(memberId.intValue());
+        MemberBadgeResponseDTO currentBadge = memberBadgeMapper.getBadgeByMemberId(memberId);
         // 뱃지 레벨 결정
         String newBadgeLevel = getBadgeLevel(totalPoints);
         
@@ -157,7 +157,7 @@ public class BadgeService implements IBadgeService {
         if (currentBadge != null) {
             // 현재 점수와 뱃지 레벨 업데이트
             MemberBadgeRequestDTO badgeRequest = new MemberBadgeRequestDTO();
-            badgeRequest.setMember_id(memberId.intValue());
+            badgeRequest.setMember_id(memberId);
             badgeRequest.setCurrent_points(totalPoints.floatValue());
             badgeRequest.setBadge_level(newBadgeLevel);
             
@@ -170,14 +170,14 @@ public class BadgeService implements IBadgeService {
     }
 
     @Override
-    public void createBadge(Long memberId) {
+    public void createBadge(int memberId) {
         // 기본 점수와 뱃지 레벨 설정
         float defaultPoints = 0.0f; // 기본 점수
         String defaultBadgeLevel = "기본"; // 기본 뱃지 레벨
 
         // 뱃지 생성 요청 DTO
         MemberBadgeRequestDTO badgeRequest = new MemberBadgeRequestDTO();
-        badgeRequest.setMember_id(memberId.intValue());
+        badgeRequest.setMember_id(memberId);
         badgeRequest.setCurrent_points(defaultPoints);
         badgeRequest.setBadge_level(defaultBadgeLevel);
 
