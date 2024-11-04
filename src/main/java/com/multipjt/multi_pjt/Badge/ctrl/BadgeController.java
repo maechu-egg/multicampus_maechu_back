@@ -53,7 +53,7 @@ public class BadgeController {
             // 활동을 처리하고 포인트를 업데이트
             memberBadgeManager.processActivity(request.getMemberId(), request.getActivityType());
             // 뱃지 등급은 자동으로 업데이트되므로, 현재 점수만 조회
-            BigDecimal currentPoints = badgeService.getCurrentPoints(Long.valueOf(request.getMemberId()));
+            BigDecimal currentPoints = badgeService.getCurrentPoints(request.getMemberId());
             
             // 성공 응답
             return ResponseEntity.ok(Map.of(
@@ -73,7 +73,7 @@ public class BadgeController {
     @PostMapping("/create")
     public ResponseEntity<String> createBadge(@RequestBody MemberBadgeRequestDTO badgeRequest) {
         try {
-            badgeService.createBadge(Long.valueOf(badgeRequest.getMember_id()));
+            badgeService.createBadge(badgeRequest.getMember_id());
             return ResponseEntity.status(HttpStatus.CREATED).body("뱃지가 생성되었습니다.");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -83,7 +83,7 @@ public class BadgeController {
 
     // 1. 사용자 점수 및 등급 조회
     @GetMapping("/user/{memberId}/status")
-    public ResponseEntity<Map<String, Object>> getUserBadgeStatus(@PathVariable("memberId") Long memberId) {
+    public ResponseEntity<Map<String, Object>> getUserBadgeStatus(@PathVariable("memberId") int memberId) {
         BigDecimal currentPoints = badgeService.getCurrentPoints(memberId);
         String badgeLevel = badgeService.getBadgeLevel(currentPoints);
         BigDecimal pointsToNextBadge = badgeService.getPointsToNextBadge(currentPoints);
@@ -97,7 +97,7 @@ public class BadgeController {
 
     // 2. 사용자 점수 업데이트
     @PutMapping("/user/{memberId}/updatePoints")
-    public ResponseEntity<String> updateUserPoints(@PathVariable("memberId") Long memberId, @RequestBody BigDecimal points) {
+    public ResponseEntity<String> updateUserPoints(@PathVariable("memberId") int memberId, @RequestBody BigDecimal points) {
         badgeService.updateUserPoints(memberId, points);
         return ResponseEntity.ok("점수가 업데이트되었습니다.");
     }
@@ -111,15 +111,15 @@ public class BadgeController {
 
     // 4. 사용자 활동 기록 조회
     @GetMapping("/user/{memberId}/activities")
-    public ResponseEntity<List<UserActivityRecordResponseDTO>> getUserActivities(@PathVariable("memberId") Long memberId) {
+    public ResponseEntity<List<UserActivityRecordResponseDTO>> getUserActivities(@PathVariable("memberId") int memberId) {
         List<UserActivityRecordResponseDTO> activities = userActivityRecordMapper.getActivitiesByMemberId(memberId);
         return ResponseEntity.ok(activities);
     }
 
     // 5. 사용자 뱃지 정보 조회
     @GetMapping("/user/{memberId}/badge")
-    public ResponseEntity<MemberBadgeResponseDTO> getUserBadge(@PathVariable("memberId") Long memberId) {
-        MemberBadgeResponseDTO badge = memberBadgeMapper.getBadgeByMemberId(memberId.intValue());
+    public ResponseEntity<MemberBadgeResponseDTO> getUserBadge(@PathVariable("memberId") int memberId) {
+        MemberBadgeResponseDTO badge = memberBadgeMapper.getBadgeByMemberId(memberId);
         return ResponseEntity.ok(badge);
     }
 
@@ -131,7 +131,7 @@ public class BadgeController {
 
     // 회원의 모든 활동 처리
     @PostMapping("/user/{memberId}/activities")
-    public ResponseEntity<Map<String, Object>> processUserActivities(@PathVariable("memberId") Long memberId) {
+    public ResponseEntity<Map<String, Object>> processUserActivities(@PathVariable("memberId") int memberId) {
         try {
             badgeService.processUserActivities(memberId);
             // 모든 활동 처리 후 현재 점수와 뱃지 등급 조회
@@ -161,7 +161,7 @@ public class BadgeController {
             ));
 
             // 현재 점수 조회
-            BigDecimal currentPoints = badgeService.getCurrentPoints(Long.valueOf(memberId));
+            BigDecimal currentPoints = badgeService.getCurrentPoints(memberId);
             
             // 성공 응답
             return ResponseEntity.ok(Map.of(
