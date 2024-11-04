@@ -369,13 +369,33 @@ public class CrewController {
         }
     }
 
-    // 크루 게시물 상단 공지, 일반 고정 3개씩
+    // 크루 게시물 상단 공지, 인기 고정 3개씩 조회
     @GetMapping("/post/top")
-    public ResponseEntity<List<CrewPostResponseDTO>> getCrewTopPostList(@RequestBody CrewPostRequestDTO params) {
+    public ResponseEntity<?> getCrewTopPostList(
+            @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader,
+            @RequestBody CrewPostRequestDTO params) {
+
         System.out.println("client endpoint: /crew/post/top/");
         System.out.println("debug>>> getCrewTopPostList + " + params);
-        return ResponseEntity.ok(crewService.getCrewTopPostList(params));
+
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            String token = authHeader.substring(7);
+            int token_id = jwtTokenProvider.getUserIdFromToken(token);
+
+            try {
+                List<CrewPostResponseDTO> crewTopPostList = crewService.getCrewTopPostList(params, token_id);
+                return ResponseEntity.ok(crewTopPostList);
+            } catch (ResponseStatusException e) {
+                Map<String, Object> errorResponse = new HashMap<>();
+                errorResponse.put("status", e.getStatusCode().value());
+                errorResponse.put("message", e.getReason());
+                return ResponseEntity.status(e.getStatusCode()).body(errorResponse);
+            }
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
     }
+
 
     // 크루 게시물 공지/인기/일반 조회
     @GetMapping("/post/notice")

@@ -69,7 +69,7 @@ public interface CrewMapper {
     // 크루 게시판 게시물 전체 조회
     public List<CrewPostResponseDTO> selectCrewPostListRow(Integer crewId);
     
-    // 크루 게시판 상단 공지, 일반 고정 3개씩
+    // 크루 게시판 상단 공지, 인기 고정 3개씩 조회
     public List<CrewPostResponseDTO> selectCrewTopPostRow(CrewPostRequestDTO param);
 
     // 크루 게시판 공지/인기/일반 게시물 조회

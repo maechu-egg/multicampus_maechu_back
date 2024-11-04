@@ -207,10 +207,19 @@ public class CrewService {
     }
 
     // 크루 게시물 상단 공지, 일반 고정 3개씩
-    public List<CrewPostResponseDTO> getCrewTopPostList(CrewPostRequestDTO param) {
+    public List<CrewPostResponseDTO> getCrewTopPostList(CrewPostRequestDTO param, Integer token_id) {
         System.out.println("debug>>> Service: getCrewTopPostList + " + crewMapper);
         System.out.println("debug>>> Service: getCrewTopPostList + " + param);
-        return crewMapper.selectCrewTopPostRow(param);
+        System.out.println("debug>>> Service: getCrewTopPostList + " + token_id);
+
+        boolean isActiveMember = crewMapper.selectCrewMemberRow(param.getCrew_id()).stream()
+            .anyMatch(member -> member.getMember_id() == token_id && member.getCrew_member_state() == 1);
+
+        if (isActiveMember) {
+            return crewMapper.selectCrewTopPostRow(param);
+        } else {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "크루원만 게시물 조회가 가능합니다.");
+        }
     }
 
     // 크루 게시물 공지/인기/일반 조회
