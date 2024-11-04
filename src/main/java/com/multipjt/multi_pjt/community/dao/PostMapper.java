@@ -75,4 +75,7 @@ public interface PostMapper {
     // 비회원 추천 
     List<PostResponseDTO> nonMemberRCPost();
 
+    // 키워드 검색
+    List<PostResponseDTO> searchKeyword(Map<String, Object> map);
+
 }

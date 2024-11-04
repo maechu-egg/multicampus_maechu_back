@@ -25,5 +25,11 @@ public interface CommentMapper {
     public CommentResponseDTO getCommentById(int cid);
 
 
+    // 댓글 존재 확인
+    public Boolean commitComment(Map<String, Integer> map);
+
+
+    // 댓글 개수
+    public int countCommentPost(Map<String, Integer> map);
     
 } 
