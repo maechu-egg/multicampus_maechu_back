@@ -306,10 +306,19 @@ public class CrewService {
     }
 
     // 크루 댓글 조회
-    public List<CrewCommentsResponseDTO> getCrewCommentList(CrewCommentsRequestDTO param) {
+    public List<CrewCommentsResponseDTO> getCrewCommentList(CrewCommentsRequestDTO param, Integer token_id) {
         System.out.println("debug>>> Service: getCrewCommentList + " + crewMapper);
         System.out.println("debug>>> Service: getCrewCommentList + " + param);
-        return crewMapper.selectCrewCommentsRow(param);
+        System.out.println("debug>>> Service: getCrewCommentList + " + token_id);
+
+        boolean isActiveMember = crewMapper.selectCrewMemberRow(param.getCrew_id()).stream()
+            .anyMatch(member -> member.getMember_id() == token_id && member.getCrew_member_state() == 1);
+
+        if (isActiveMember) {
+            return crewMapper.selectCrewCommentsRow(param);
+        } else {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "크루원만 댓글 조회가 가능합니다.");
+        }
     }
 
     // 크루 댓글 삭제
