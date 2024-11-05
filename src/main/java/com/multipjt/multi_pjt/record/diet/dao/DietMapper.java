@@ -32,7 +32,7 @@ public interface DietMapper {
 
     public ArrayList<Map<String,Object>> mealNutCheck(Map<String,Object> map);
 
-    public Map<String,String> getMemberInfo(Integer memberId);
+//    public Map<String,String> getMemberInfo(Integer memberId);
 
     public int mealUpdate(DietRequestDTO dietRequestDTO);
 

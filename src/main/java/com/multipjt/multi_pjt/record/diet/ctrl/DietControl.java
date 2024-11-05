@@ -258,7 +258,7 @@ public class DietControl {
         // 다이어트 목표에 따른 칼로리 조정
     switch (info.get("profile_goal").toString().toLowerCase()) {
         case "다이어트":
-            recommendedCalories = (int) Math.round(tdee * 0.8);
+            recommendedCalories = (int) Math.round(tdee * 0.75);
 
             carbRate = 3;
             proteinRate = 5;
@@ -269,7 +269,7 @@ public class DietControl {
             recommendedFat = (recommendedCalories * fatRate) / 9;
             break;
         case "벌크업":
-            recommendedCalories = (int) Math.round(tdee * 1.2);
+            recommendedCalories = (int) Math.round(tdee * 1.1);
             carbRate = 6;
             proteinRate = 3;
             fatRate = 1;
@@ -279,7 +279,7 @@ public class DietControl {
             recommendedFat = (recommendedCalories * fatRate) / 9;
             break;
         case "린매스업":
-            recommendedCalories = (int) Math.round(tdee * 1.1);
+            recommendedCalories = (int) Math.round(tdee * 1.05);
             carbRate = 4;
             proteinRate = 4;
             fatRate = 2;
