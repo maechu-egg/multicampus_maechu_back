@@ -210,22 +210,22 @@ public class DietControl {
     @GetMapping("/calculate/tdee")
     public ResponseEntity<Map<String,Object>> calculateTdee(@RequestParam(name = "member_id") Integer memberId) {
         System.out.println("class endPoint >> " + "/record/diet/calculate/tdee");
-        Map<String,String> info = dietService.getMemberInfoRow(memberId);
+        Map<String,Object> info = dietService.calculateTdeeRow(memberId);
         // 기초대사량(BMR) 계산 - 해리스-베네딕트 공식 사용
         Integer bmr;
-        if (info.get("profile_gender").equalsIgnoreCase("M")) {
-            bmr = (int) Math.round(88.362 + (13.397 * Double.parseDouble(info.get("profile_weight")))
-                        + (4.799 * Double.parseDouble(info.get("profile_height")))
-                        - (5.677 * Double.parseDouble(info.get("profile_age"))));
+        if (info.get("profile_gender").equals("M")) {
+            bmr = (int) Math.round(88.362 + (13.397 * Double.parseDouble(info.get("profile_weight").toString()))
+                        + (4.799 * Double.parseDouble(info.get("profile_height").toString()))
+                        - (5.677 * Double.parseDouble(info.get("profile_age").toString())));
         } else {
-            bmr = (int) Math.round(447.593 + (9.247 * Double.parseDouble(info.get("profile_weight")))
-                        + (3.098 * Double.parseDouble(info.get("profile_height")))
-                        - (4.330 * Double.parseDouble(info.get("profile_age"))));
+            bmr = (int) Math.round(447.593 + (9.247 * Double.parseDouble(info.get("profile_weight").toString()))
+                        + (3.098 * Double.parseDouble(info.get("profile_height").toString()))
+                        - (4.330 * Double.parseDouble(info.get("profile_age").toString())));
         }
 
         // 활동레벨에 따른 TDEE 계산
         double activityMultiplier;
-        switch (Integer.parseInt(info.get("profile_activity_level"))) {
+        switch (Integer.parseInt(info.get("profile_activity_level").toString())) {
             case 0 :
                 activityMultiplier = 1.2;     // 좌식생활
                 break;
@@ -256,7 +256,7 @@ public class DietControl {
         Integer carbRate;        
 
         // 다이어트 목표에 따른 칼로리 조정
-    switch (info.get("profile_diet_goal").toLowerCase()) {
+    switch (info.get("profile_diet_goal").toString().toLowerCase()) {
         case "다이어트":
             recommendedCalories = (int) Math.round(tdee * 0.8);
 
@@ -309,8 +309,8 @@ public class DietControl {
         result.put("recommendedProtein", recommendedProtein);
         result.put("recommendedFat", recommendedFat);
         result.put("recommendedCarb", recommendedCarb);
-        result.put("weight", Double.parseDouble(info.get("profile_weight")));
-        result.put("dietGoal", info.get("profile_diet_goal"));
+        result.put("weight", Double.parseDouble(info.get("profile_weight").toString()));
+        result.put("dietGoal", info.get("profile_diet_goal").toString());
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
