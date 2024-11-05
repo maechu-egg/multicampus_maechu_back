@@ -68,7 +68,7 @@ public class MemberBadgeMapperTest {
     public void testInsertActivityAndUpdatePoints() {
         // 테스트할 데이터 설정
         String activityType = "diet"; // 예시 활동 유형
-        Long memberId = 140L; // 예시 회원 ID
+        int memberId = 140; // 예시 회원 ID
 
         // 파라미터 맵 생성
         Map<String, Object> params = new HashMap<>();

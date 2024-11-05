@@ -74,11 +74,11 @@ public class DietPlanChatController {
             mealsPerDay,
             String.join(", ", cookingPreference)
         );
-
+        // 요청 본문 생성   
         Map<String, Object> requestBody = new HashMap<>();
         Map<String, Object> contents = new HashMap<>();
         contents.put("parts", List.of(Map.of("text", userMessage)));
-
+        
         requestBody.put("contents", List.of(contents));
 
         HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(requestBody, headers);

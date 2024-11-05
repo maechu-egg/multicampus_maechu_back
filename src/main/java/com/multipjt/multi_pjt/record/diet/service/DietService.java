@@ -65,4 +65,8 @@ public class DietService {
     public List<String> getMonthDietRow(Map<String,Object> map){
         return dietMapper.getMonthDiet(map);
     }
+
+    public Map<String,Object> calculateTdeeRow(Integer memberId){
+        return dietMapper.calculateTdee(memberId);
+    }
 }
