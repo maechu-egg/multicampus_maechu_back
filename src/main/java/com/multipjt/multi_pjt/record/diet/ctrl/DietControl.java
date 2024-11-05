@@ -312,4 +312,19 @@ public class DietControl {
 
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
+
+    // 특정 달 식단 기록 날짜 조회
+    @PostMapping("/get/month")
+    public ResponseEntity<List<String>> getMonthDiet(@RequestBody Map<String,Object> map) {
+        System.out.println("class endPoint >> " + "/record/diet/get/month");
+        List<String> result = dietService.getMonthDietRow(map);
+
+        System.out.println("result >>" + result);
+
+        if(result != null){
+            return new ResponseEntity<>(result, HttpStatus.OK);
+        } else{
+            return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
+        }
+    }
 }
