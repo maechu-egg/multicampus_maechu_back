@@ -225,7 +225,7 @@ public class DietControl {
 
         // 활동레벨에 따른 TDEE 계산
         double activityMultiplier;
-        switch (Integer.parseInt(info.get("profile_activity_level").toString())) {
+        switch (Integer.parseInt(info.get("profile_workout_frequency").toString())) {
             case 0 :
                 activityMultiplier = 1.2;     // 좌식생활
                 break;
@@ -256,7 +256,7 @@ public class DietControl {
         Integer carbRate;        
 
         // 다이어트 목표에 따른 칼로리 조정
-    switch (info.get("profile_diet_goal").toString().toLowerCase()) {
+    switch (info.get("profile_goal").toString().toLowerCase()) {
         case "다이어트":
             recommendedCalories = (int) Math.round(tdee * 0.8);
 
@@ -310,7 +310,7 @@ public class DietControl {
         result.put("recommendedFat", recommendedFat);
         result.put("recommendedCarb", recommendedCarb);
         result.put("weight", Double.parseDouble(info.get("profile_weight").toString()));
-        result.put("dietGoal", info.get("profile_diet_goal").toString());
+        result.put("goal", info.get("profile_goal").toString());
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 

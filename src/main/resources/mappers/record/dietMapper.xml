@@ -85,7 +85,7 @@
     <!-- calculateTdee --> 
 
     <select id="calculateTdee" parameterType="java.lang.Integer" resultType="java.util.Map">
-        select profile_gender, profile_age , profile_weight ,profile_height, profile_activity_level from UserProfile
+        select profile_gender, profile_age , profile_weight ,profile_height, profile_goal, profile_workout_frequency from UserProfile
         where member_id = #{member_id};
     </select>    
 
