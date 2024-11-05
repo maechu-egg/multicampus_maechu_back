@@ -208,7 +208,7 @@ public class DietControl {
     // 특정 회원의 TDEE 계산 엔드포인트
     // 회원 정보 조회를 통해 계산
     @GetMapping("/calculate/tdee")
-    public ResponseEntity<Map<String,Integer>> calculateTdee(@RequestParam Integer memberId) {
+    public ResponseEntity<Map<String,Object>> calculateTdee(@RequestParam Integer memberId) {
         System.out.println("class endPoint >> " + "/record/diet/calculate/tdee");
         Map<String,String> info = dietService.getMemberInfoRow(memberId);
         // 기초대사량(BMR) 계산 - 해리스-베네딕트 공식 사용
@@ -302,14 +302,15 @@ public class DietControl {
             throw new IllegalArgumentException("잘못된 다이어트 목표입니다");
         }
 
-        Map<String,Integer> result = new HashMap<>();
+        Map<String,Object> result = new HashMap<>();
         result.put("bmr", bmr);
         result.put("tdee", tdee);
         result.put("recommendedCalories", recommendedCalories);
         result.put("recommendedProtein", recommendedProtein);
         result.put("recommendedFat", recommendedFat);
         result.put("recommendedCarb", recommendedCarb);
-
+        result.put("weight", Double.parseDouble(info.get("profile_weight")));
+        result.put("dietGoal", info.get("profile_diet_goal"));
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
