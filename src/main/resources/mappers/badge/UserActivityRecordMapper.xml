@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
+<!-- 활동 기록 매퍼 --> 
 <mapper namespace="com.multipjt.multi_pjt.badge.dao.UserActivityRecordMapper">
    <insert id="insertActivityAndUpdatePoints" parameterType="map">
        CALL AddActivityAndUpdatePoints(#{activityType}, #{memberId});

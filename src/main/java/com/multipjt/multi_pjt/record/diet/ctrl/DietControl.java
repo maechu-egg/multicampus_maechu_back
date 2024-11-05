@@ -208,7 +208,7 @@ public class DietControl {
     // 특정 회원의 TDEE 계산 엔드포인트
     // 회원 정보 조회를 통해 계산
     @GetMapping("/calculate/tdee")
-    public ResponseEntity<Map<String,Object>> calculateTdee(@RequestParam Integer memberId) {
+    public ResponseEntity<Map<String,Object>> calculateTdee(@RequestParam(name = "member_id") Integer memberId) {
         System.out.println("class endPoint >> " + "/record/diet/calculate/tdee");
         Map<String,String> info = dietService.getMemberInfoRow(memberId);
         // 기초대사량(BMR) 계산 - 해리스-베네딕트 공식 사용
