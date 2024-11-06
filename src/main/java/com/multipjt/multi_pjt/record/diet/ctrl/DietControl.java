@@ -251,52 +251,52 @@ public class DietControl {
         Integer recommendedFat;
         Integer recommendedCarb;        
         
-        Integer proteinRate;
-        Integer fatRate;
-        Integer carbRate;        
+        Double proteinRate;
+        Double fatRate;
+        Double carbRate;        
 
         // 다이어트 목표에 따른 칼로리 조정
     switch (info.get("profile_goal").toString().toLowerCase()) {
         case "다이어트":
             recommendedCalories = (int) Math.round(tdee * 0.75);
 
-            carbRate = 3;
-            proteinRate = 5;
-            fatRate = 2;
+            carbRate = 0.3;
+            proteinRate = 0.5;
+            fatRate = 0.2;
 
-            recommendedCarb = (recommendedCalories * carbRate) / 4;
-            recommendedProtein = (recommendedCalories * proteinRate) / 4;
-            recommendedFat = (recommendedCalories * fatRate) / 9;
+            recommendedCarb = (int) Math.round(recommendedCalories * carbRate) / 4;
+            recommendedProtein = (int) Math.round(recommendedCalories * proteinRate) / 4;
+            recommendedFat = (int) Math.round(recommendedCalories * fatRate) / 9;
             break;
         case "벌크업":
             recommendedCalories = (int) Math.round(tdee * 1.1);
-            carbRate = 6;
-            proteinRate = 3;
-            fatRate = 1;
+            carbRate = 0.6;
+            proteinRate = 0.3;
+            fatRate = 0.1;
 
-            recommendedCarb = (recommendedCalories * carbRate) / 4;
-            recommendedProtein = (recommendedCalories * proteinRate) / 4;
-            recommendedFat = (recommendedCalories * fatRate) / 9;
+            recommendedCarb = (int) Math.round(recommendedCalories * carbRate) / 4;
+            recommendedProtein = (int) Math.round(recommendedCalories * proteinRate) / 4;
+            recommendedFat = (int) Math.round(recommendedCalories * fatRate) / 9;
             break;
         case "린매스업":
             recommendedCalories = (int) Math.round(tdee * 1.05);
-            carbRate = 4;
-            proteinRate = 4;
-            fatRate = 2;
+            carbRate = 0.4;
+            proteinRate = 0.4;
+            fatRate = 0.2;
 
-            recommendedCarb = (recommendedCalories * carbRate) / 4;
-            recommendedProtein = (recommendedCalories * proteinRate) / 4;
-            recommendedFat = (recommendedCalories * fatRate) / 9;
+            recommendedCarb = (int) Math.round(recommendedCalories * carbRate) / 4;
+            recommendedProtein = (int) Math.round(recommendedCalories * proteinRate) / 4;
+            recommendedFat = (int) Math.round(recommendedCalories * fatRate) / 9;
             break;
         case "유지":
             recommendedCalories = tdee;
-            carbRate = 5;
-            proteinRate = 3;
-            fatRate = 2;
+            carbRate = 0.5;
+            proteinRate = 0.3;
+            fatRate = 0.2;
 
-            recommendedCarb = (recommendedCalories * carbRate) / 4;
-            recommendedProtein = (recommendedCalories * proteinRate) / 4;
-            recommendedFat = (recommendedCalories * fatRate) / 9;
+            recommendedCarb = (int) Math.round(recommendedCalories * carbRate) / 4;
+            recommendedProtein = (int) Math.round(recommendedCalories * proteinRate) / 4;
+            recommendedFat = (int) Math.round(recommendedCalories * fatRate) / 9;
             break;
         default:
             throw new IllegalArgumentException("잘못된 다이어트 목표입니다");
@@ -314,7 +314,7 @@ public class DietControl {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
-    // 특정 달 식단 기록 날짜 조회
+    // 특정 달 식단 기록 날짜 조회  
     @PostMapping("/get/month")
     public ResponseEntity<List<String>> getMonthDiet(@RequestBody Map<String,Object> map) {
         System.out.println("class endPoint >> " + "/record/diet/get/month");
