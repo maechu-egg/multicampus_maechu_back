@@ -76,7 +76,7 @@ public class BadgeController {
     public ResponseEntity<String> createBadge(@RequestBody MemberBadgeRequestDTO badgeRequest) {
         try {
             badgeService.createBadge(badgeRequest.getMember_id());
-            return ResponseEntity.status(HttpStatus.CREATED).body("뱃지가 생성되었습니다.");
+            return ResponseEntity.status(HttpStatus.CREATED).body("뱃지 생성되었습니다.");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body("뱃지 생성 중 오류가 발생했습니다: " + e.getMessage());
@@ -112,27 +112,31 @@ public class BadgeController {
     }
 
     // 4. 사용자 활동 기록 조회
-   @GetMapping("/user/{memberId}/activities")
-    public ResponseEntity<List<UserActivityRecordResponseDTO>> getUserActivities(@PathVariable("memberId") int memberId) {
-        try {
-            List<UserActivityRecordResponseDTO> activities = userActivityRecordMapper.getActivitiesByMemberId(memberId);
-            
-            // 데이터가 없을 경우 예외 처리
-            if (activities == null || activities.isEmpty()) {
-                return ResponseEntity.ok(Collections.singletonList(new UserActivityRecordResponseDTO("활동을 하지 않았습니다.")));
-            }
-            
-            return ResponseEntity.ok(activities);
-        } catch (MyBatisSystemException e) {
-            logger.error("MyBatis error: {}", e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Collections.singletonList(new UserActivityRecordResponseDTO("활동을 하지 않았습니다.")));
-        } catch (Exception e) {
-            logger.error("Unexpected error: {}", e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Collections.singletonList(new UserActivityRecordResponseDTO("예기치 않은 오류가 발생했습니다.")));
+  
+@GetMapping("/user/{memberId}/activities")
+public ResponseEntity<?> getUserActivities(@PathVariable("memberId") int memberId) {
+    try {
+        List<UserActivityRecordResponseDTO> activities = userActivityRecordMapper.getActivitiesByMemberId(memberId);
+
+        // activities가 null이거나 비어있을 경우
+        if (activities == null || activities.isEmpty()) { // 논리 연산자 '||' 사용
+            // 데이터가 없을 경우 메시지와 함께 200 OK 반환
+            return ResponseEntity.ok(Map.of(
+                "message", "활동 기록이 없습니다.",
+                "activities", Collections.emptyList()
+            ));
         }
+
+        return ResponseEntity.ok(activities);
+
+    } catch (Exception e) {
+        logger.error("사용자 활동 조회 중 오류 발생: ", e);
+        return ResponseEntity
+            .status(HttpStatus.INTERNAL_SERVER_ERROR)
+            .body(Map.of("error", "활동 기록 조회 중 오류가 발생했습니다."));
     }
+}
+
 
     // 5. 사용자 뱃지 정보 조회
     @GetMapping("/user/{memberId}/badge")

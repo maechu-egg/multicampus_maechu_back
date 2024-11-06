@@ -27,7 +27,11 @@ public class CrewBadgeManager {
     public void processBattleWin(int memberId) {
         try {
             // 크루 멤버 테이블에서 배틀 승리 수 조회
-            Integer totalBattleWins = crewBadgeMapper.selectTotalBattleWinsByMemberId(memberId);
+            Integer crewBattleWins = crewBadgeMapper.selectTotalBattleWinsByMemberId(memberId);
+            if (crewBattleWins == null) {
+                logger.warn("Crew battle wins for member {} is null. Setting to 0.", memberId);
+                crewBattleWins = 0; // 기본값 설정
+            }
             
             // 크루 뱃지 정보 조회
             CrewBadgeResponseDTO badgeInfo = crewBadgeMapper.selectCrewBadgeByMemberId(memberId);
@@ -36,39 +40,39 @@ public class CrewBadgeManager {
             if (badgeInfo == null) {
                 CrewBadgeRequestDTO newBadge = new CrewBadgeRequestDTO();
                 newBadge.setMember_id(memberId);
-                newBadge.setCrew_current_points(totalBattleWins); // 초기 점수는 배틀 승리 수로 설정
-                newBadge.setBadge_level(determineBadgeLevel(totalBattleWins));
-                newBadge.setCrew_battle_wins(totalBattleWins); // 배틀 승리 수 설정
+                newBadge.setCrew_current_points(crewBattleWins); // 초기 점수는 배틀 승리 수로 설정
+                newBadge.setBadge_level(determineBadgeLevel(crewBattleWins));
+                newBadge.setCrew_battle_wins(crewBattleWins); // 배틀 승리 수 설정
                 crewBadgeMapper.insertBadge(newBadge);
             } else {
                 // 뱃지 정보가 있으면 업데이트
                 int previousBattleWins = badgeInfo.getCrew_battle_wins(); // 이전 배틀 승리 수
 
                 // 크루 멤버 테이블의 배틀 승리 수와 비교
-                if (totalBattleWins > previousBattleWins) {
-                    int difference = totalBattleWins - previousBattleWins; // 차이 계산
+                if (crewBattleWins > previousBattleWins) {
+                    int difference = crewBattleWins - previousBattleWins; // 차이 계산
 
                     // 점수 업데이트
                     float updatedPoints = badgeInfo.getCrew_current_points() + difference; // 차이만큼 점수 추가
                     badgeInfo.setCrew_current_points(updatedPoints);
                     badgeInfo.setBadge_level(determineBadgeLevel(updatedPoints));
-                    badgeInfo.setCrew_battle_wins(totalBattleWins); // 크루 뱃지 테이블의 배틀 승리 수 업데이트
+                    badgeInfo.setCrew_battle_wins(crewBattleWins); // 크루 뱃지 테이블의 배틀 승리 수 업데이트
 
                     CrewBadgeRequestDTO updateBadge = new CrewBadgeRequestDTO();
                     updateBadge.setCrew_badge_id(badgeInfo.getCrew_badge_id());
                     updateBadge.setCrew_current_points(updatedPoints);
                     updateBadge.setMember_id(badgeInfo.getMember_id());
                     updateBadge.setBadge_level(badgeInfo.getBadge_level());
-                    updateBadge.setCrew_battle_wins(totalBattleWins); // 크루 배틀 승리 수 업데이트 추가
+                    updateBadge.setCrew_battle_wins(crewBattleWins); // 크루 배틀 승리 수 업데이트 추가
 
                     // 크루 뱃지 테이블 업데이트
                     crewBadgeMapper.updateBadge(updateBadge);
 
                     // 배틀 승수 업데이트 호출
-                    crewBadgeMapper.updateCrewBattleWins(memberId, totalBattleWins); // 추가
-                } else if (totalBattleWins < previousBattleWins) {
+                    crewBadgeMapper.updateCrewBattleWins(memberId, crewBattleWins); // 추가
+                } else if (crewBattleWins < previousBattleWins) {
                     // 만약 배틀 승리 수가 줄어들 경우에도 업데이트
-                    crewBadgeMapper.updateCrewBattleWins(memberId, totalBattleWins); // 크루 배틀 승리 수 업데이트
+                    crewBadgeMapper.updateCrewBattleWins(memberId, crewBattleWins); // 크루 배틀 승리 수 업데이트
                 }
             }
         } catch (Exception e) {
