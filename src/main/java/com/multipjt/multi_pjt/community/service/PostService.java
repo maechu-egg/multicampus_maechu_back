@@ -1,6 +1,7 @@
 package com.multipjt.multi_pjt.community.service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -8,7 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.multipjt.multi_pjt.badge.dao.UserActivityRecordMapper;
-import com.multipjt.multi_pjt.badge.domain.record.UserActivityRecordRequsetDTO;
+
 import com.multipjt.multi_pjt.community.dao.PostMapper;
 import com.multipjt.multi_pjt.community.dao.UserActivityMapper;
 import com.multipjt.multi_pjt.community.domain.comments.CommentResponseDTO;
@@ -80,11 +81,12 @@ public class PostService {
         return sportPostList;
     }
 
-    // 게시글 등록
-    public int postInsert(PostRequestDTO pdto, UserActivityRecordRequsetDTO uadto){
+    // 게시글 등록                              
+    public int postInsert(PostRequestDTO pdto,Map<String, Object> map){
         System.out.println("service - postInsert");
         int result = postMapper.postInsert(pdto);
-        // userActivityRecordMapper.insertActivity(uadto);
+        userActivityRecordMapper.insertActivityAndUpdatePoints(map);
+
 
         if(result == 1){
             System.out.println("service : 게시글이 성공적으로 등록되었습니다.");
@@ -166,6 +168,31 @@ public class PostService {
     public List<PostResponseDTO> nonMemberRCPost(){
 
         return postMapper.nonMemberRCPost();
+    }
+
+
+    // 키워드 검색 
+    public Map<String, Object> searchKeyword(Map<String, Object> map){
+        System.out.println("service - searchKeyword");
+
+        List<PostResponseDTO> list = null;
+        list = postMapper.searchKeyword(map);
+
+        System.out.println("list : " + list);
+
+
+        Map<String, Object> result = new HashMap<>();
+
+        if(list != null){
+            result.put("result", true) ;
+            result.put("list", list);
+
+        }else if(list == null){
+            result.put("result", false);
+        }
+
+
+        return result;
     }
 
 }

@@ -74,13 +74,17 @@ public class UserController {
     @PostMapping("/register/email-certification")
     public ResponseEntity<String> emailCertification(@RequestBody EmailCertificationRequestDTO emailDTO) {
         String email = emailDTO.getEmail();
-        boolean result = loginServiceImple.sendCertificationEmail(email); // 서비스 메서드 호출
-
-        if (result) {
-            return ResponseEntity.ok("{\"Code\": \"SUCCESS\", \"Message\": \"인증 메일이 발송되었습니다.\"}");
-        } else {
+        try {
+            boolean result = loginServiceImple.sendCertificationEmail(email);
+            if (result) {
+                return ResponseEntity.ok("{\"Code\": \"SUCCESS\", \"Message\": \"인증 메일이 발송되었습니다.\"}");
+            } else {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                                     .body("{\"Code\": \"ERROR\", \"Message\": \"인증 메일 발송에 실패했습니다.\"}");
+            }
+        } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                                 .body("{\"Code\": \"ERROR\", \"Message\": \"인증 메일 발송에 실패했습니다.\"}");
+                                 .body("{\"Code\": \"ERROR\", \"Message\": \"서버 오류로 인해 인증 메일 발송에 실패했습니다.\"}");
         }
     }
 

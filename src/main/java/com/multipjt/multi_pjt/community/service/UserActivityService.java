@@ -124,7 +124,7 @@ public class UserActivityService {
                 e.printStackTrace();
             }catch(IllegalStateException e){
 
-            System.err.println("IllegalStateException 발생: " + e.getMessage());
+                System.err.println("IllegalStateException 발생: " + e.getMessage());
                 e.printStackTrace();
             } catch (Exception e) {
                 System.err.println("예기치 않은 오류 발생: " + e.getMessage());
@@ -134,6 +134,8 @@ public class UserActivityService {
         return response;
 
     }
+
+
 
     // 조회수 +1
     public void viewCount(Map<String, Integer> map){
@@ -157,6 +159,25 @@ public class UserActivityService {
         userActivityMapper.postViewInsert(map);
     } 
 
+    public void viewInAndUp(Map<String, Integer> map){
+
+        // 조회수 +1
+        System.out.println("service - viewCount : 조회수 올리기");
+        // post 의 view 수 가져오기 
+        int viewCount = userActivityMapper.viewCount(map);
+        System.out.println(viewCount);
+    
+        // +1  update
+        viewCount += 1;
+        map.put("post_views" , viewCount);
+        int viewUpdate = userActivityMapper.postViewCountAdd(map);
+        System.out.println("정상적으로 업데이트면 1 - " + viewUpdate);
+
+        // userActivity 테이블 
+        System.out.println( "service viewInsert : UserActivity");
+        
+        userActivityMapper.postViewInsert(map);
+    }    
 
 
 

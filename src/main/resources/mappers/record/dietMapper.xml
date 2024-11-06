@@ -85,7 +85,7 @@
     <!-- calculateTdee --> 
 
     <select id="calculateTdee" parameterType="java.lang.Integer" resultType="java.util.Map">
-        select profile_gender, profile_age , profile_weight ,profile_height, profile_activity_level from UserProfile
+        select profile_gender, profile_age , profile_weight ,profile_height, profile_goal, profile_workout_frequency from UserProfile
         where member_id = #{member_id};
     </select>    
 
@@ -96,4 +96,16 @@
         set meal_type = #{meal_type}
         where diet_id = #{diet_id}; 
     </update>
+
+    <!-- getMonthDiet --> 
+
+    <select id="getMonthDiet" parameterType="java.util.Map" resultType="java.lang.String">
+        SELECT DATE_FORMAT(record_date, '%Y-%m-%d') as record_date
+        FROM DietRecords
+        WHERE member_id = #{member_id}
+        AND YEAR(record_date) = #{year}
+        AND MONTH(record_date) = #{month}
+        GROUP BY record_date
+        ORDER BY record_date ASC;
+    </select>
 </mapper>

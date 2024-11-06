@@ -8,4 +8,5 @@ public class MemberBadgeResponseDTO {
     private float current_points;
     private int member_id;
     private String badge_level;
+    private String nickname;
 }
