@@ -84,7 +84,18 @@
     </select>
 
     <select id="getAllBadges" resultType="com.multipjt.multi_pjt.badge.domain.badge.MemberBadgeResponseDTO">
-        SELECT * FROM MemberBadge; 
+        SELECT 
+            mb.badge_id,
+            mb.current_points,
+            mb.badge_level,
+            mb.member_id,
+            m.nickname
+        FROM 
+            MemberBadge mb
+        JOIN 
+            Member m 
+        ON 
+            mb.member_id = m.member_id;
     </select>
 
 </mapper>

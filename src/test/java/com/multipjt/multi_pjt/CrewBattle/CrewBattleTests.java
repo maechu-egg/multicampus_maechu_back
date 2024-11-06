@@ -55,7 +55,7 @@ public class CrewBattleTests {
                                             .battle_id(1)
                                             .member_id(1)
                                             .build();
-        crewBattleMapper.createBattleMemberRow(request);
+        crewBattleMapper.insertBattleMemberRow(request);
     }
 
     @Test
