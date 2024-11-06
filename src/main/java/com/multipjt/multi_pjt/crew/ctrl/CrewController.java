@@ -506,7 +506,9 @@ public class CrewController {
         }
     }
     // --------- 크루 게시물 좋아요 ---------
-    @PatchMapping("/post/like")
+
+    // 크루 게시물 좋아요 증가/감소
+    @PatchMapping("/post/like/click")
     public ResponseEntity<Map<String, Object>> toggleLike(
             @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader,
             @RequestBody CrewPostLikeRequestDTO param) {
@@ -531,6 +533,33 @@ public class CrewController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
     }
+    
+    // 크루 게시물 좋아요 상태 확인
+    @GetMapping("/post/like/check")
+    public ResponseEntity<?> checkCrewPostLike(
+            @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader,
+            @RequestBody CrewPostLikeRequestDTO param) {
+
+        System.out.println("client endpoint: /crew/post/like/check");
+        System.out.println("debug>>> checkCrewPostLike + " + param);
+
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            String token = authHeader.substring(7);
+            int token_id = jwtTokenProvider.getUserIdFromToken(token);
+
+            try {
+                boolean isLiked = crewService.checkCrewPostLike(param, token_id);
+                return ResponseEntity.ok(isLiked);
+            } catch (ResponseStatusException e) {
+                Map<String, Object> errorResponse = new HashMap<>();
+                errorResponse.put("status", e.getStatusCode().value());
+                errorResponse.put("message", e.getReason());
+                return ResponseEntity.status(e.getStatusCode()).body(errorResponse);
+            }
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+    }   
 
     // --------- 크루 댓글 ---------
 
