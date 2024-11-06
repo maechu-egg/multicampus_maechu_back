@@ -1,9 +1,11 @@
 package com.multipjt.multi_pjt.badge.ctrl;
 
 import java.math.BigDecimal;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import org.mybatis.spring.MyBatisSystemException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -110,10 +112,26 @@ public class BadgeController {
     }
 
     // 4. 사용자 활동 기록 조회
-    @GetMapping("/user/{memberId}/activities")
+   @GetMapping("/user/{memberId}/activities")
     public ResponseEntity<List<UserActivityRecordResponseDTO>> getUserActivities(@PathVariable("memberId") int memberId) {
-        List<UserActivityRecordResponseDTO> activities = userActivityRecordMapper.getActivitiesByMemberId(memberId);
-        return ResponseEntity.ok(activities);
+        try {
+            List<UserActivityRecordResponseDTO> activities = userActivityRecordMapper.getActivitiesByMemberId(memberId);
+            
+            // 데이터가 없을 경우 예외 처리
+            if (activities == null || activities.isEmpty()) {
+                return ResponseEntity.ok(Collections.singletonList(new UserActivityRecordResponseDTO("활동을 하지 않았습니다.")));
+            }
+            
+            return ResponseEntity.ok(activities);
+        } catch (MyBatisSystemException e) {
+            logger.error("MyBatis error: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Collections.singletonList(new UserActivityRecordResponseDTO("활동을 하지 않았습니다.")));
+        } catch (Exception e) {
+            logger.error("Unexpected error: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Collections.singletonList(new UserActivityRecordResponseDTO("예기치 않은 오류가 발생했습니다.")));
+        }
     }
 
     // 5. 사용자 뱃지 정보 조회
