@@ -35,17 +35,19 @@
         );
     </insert>
 
-    <!-- 전체 크루 리스트 조회 --> 
+    <!-- 추천 크루 리스트 조회 --> 
 
     <select id="selectCrewRow"
             resultType="com.multipjt.multi_pjt.crew.domain.crew.CrewResponseDTO">
         SELECT *
         FROM Crew
         WHERE crew_state = 1
+        AND crew_sport = #{crew_sport}
+        AND crew_gender = #{crew_gender}
         ORDER BY crew_date DESC;
     </select>    
 
-    <!-- 특정 크루 리스트 조회 (종목) --> 
+    <!-- 특정 크루 리스트 조회 (종목) 
 
     <select id="selectCrewSportRow"
             parameterType="java.util.HashMap"
@@ -54,7 +56,7 @@
         FROM Crew
         WHERE crew_sport = #{crew_sport} AND crew_state = 1
         ORDER BY crew_date DESC;
-    </select>
+    </select> -->
 
     <!-- 특정 크루 정보 조회  -->
 
