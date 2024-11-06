@@ -62,5 +62,23 @@
         WHERE member_id = #{memberId};
     </update>
 
+     <!-- 크루 뱃지 랭킹 조회 쿼리 추가 -->
+    <select id="selectCrewBadgeRanking" resultType="map">
+        SELECT 
+            cb.crew_badge_id,
+            cb.crew_current_points,
+            cb.badge_level,
+            cb.member_id,
+            cb.crew_battle_wins,
+            m.nickname
+        FROM 
+            CrewBadge cb
+        JOIN 
+            Member m 
+        ON 
+            cb.member_id = m.member_id
+        ORDER BY 
+            cb.crew_current_points DESC; <!-- 점수 기준으로 내림차순 정렬 -->
+    </select>
 
 </mapper>

@@ -1,5 +1,7 @@
 package com.multipjt.multi_pjt.badge.service;
 
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.slf4j.Logger;
@@ -122,5 +124,10 @@ public class CrewBadgeManager {
     public void updateCrewBattleWins(int memberId) {
         // 배틀 승수를 업데이트하는 쿼리 호출
         crewBadgeMapper.updateCrewBattleWins(memberId, getBattleWins(memberId)); // 수정된 부분
+    }
+
+    // 크루 뱃지 랭킹 조회 메서드
+    public List<Map<String, Object>> getCrewBadgeRanking() {
+        return crewBadgeMapper.selectCrewBadgeRanking();
     }
 }
