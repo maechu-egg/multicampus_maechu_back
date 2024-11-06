@@ -1,18 +1,17 @@
-package com.multipjt.multi_pjt.crew.domain.battle;
+package com.multipjt.multi_pjt.crew.domain.crew;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
-
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class BattleMemberRequestDTO {
-    private int participant_id;
-    private int battle_id;
+public class CrewPostLikeRequestDTO {
+    private int like_id;
+    private int crew_post_id;
     private int member_id;
     private int crew_id;
 }

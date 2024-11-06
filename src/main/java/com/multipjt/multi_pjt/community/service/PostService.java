@@ -85,10 +85,8 @@ public class PostService {
     public int postInsert(PostRequestDTO pdto,Map<String, Object> map){
         System.out.println("service - postInsert");
         int result = postMapper.postInsert(pdto);
-        
+        userActivityRecordMapper.insertActivityAndUpdatePoints(map);
 
-       
-         userActivityRecordMapper.insertActivityAndUpdatePoints(map);
 
         if(result == 1){
             System.out.println("service : 게시글이 성공적으로 등록되었습니다.");
