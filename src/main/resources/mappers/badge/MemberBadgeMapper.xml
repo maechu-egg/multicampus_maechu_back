@@ -16,6 +16,7 @@
         );
     </insert>
 
+
     <!-- 멤버 ID로 뱃지 정보 조회 -->
     <select id="getBadgeByMemberId" resultType="com.multipjt.multi_pjt.badge.domain.badge.MemberBadgeResponseDTO">
         SELECT * FROM MemberBadge WHERE member_id = #{member_id};

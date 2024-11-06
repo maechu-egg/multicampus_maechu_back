@@ -12,6 +12,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import lombok.extern.slf4j.Slf4j;
 
+import com.multipjt.multi_pjt.badge.service.BadgeService;
+import com.multipjt.multi_pjt.badge.service.CrewBadgeManager;
+import com.multipjt.multi_pjt.badge.service.MemberBadgeManager;
 import com.multipjt.multi_pjt.jwt.EmailProvider;
 import com.multipjt.multi_pjt.jwt.JwtTokenProvider;
 import com.multipjt.multi_pjt.user.dao.UserMapper;
@@ -59,6 +62,12 @@ public class LoginServiceImpl implements UserDetailsService { // UserDetailsServ
 
     @Autowired
     private EmailProvider emailProvider;
+
+   @Autowired
+   private BadgeService badgeService;
+
+   @Autowired
+   private CrewBadgeManager crewBadgeManager;
 
     private final ConcurrentHashMap<String, EmailCertificationCodeDTO> emailCertificationMap = new ConcurrentHashMap<>(); // 이메일과 인증 코드를 저장할 Map
 
@@ -113,7 +122,13 @@ public class LoginServiceImpl implements UserDetailsService { // UserDetailsServ
         try {
             logger.info("Registering user: {}", userRequestDTO);
             userMapper.registerUser(userRequestDTO);
-            logger.info("User registered successfully: {}", userRequestDTO.getEmail()); // 성공 로그
+            UserResponseDTO user = userMapper.getUserByEmail(userRequestDTO.getEmail());
+            logger.info("회원가입 후 저장된 뱃지 저장용 유저의 아이디 : {}", user.getMemberId());
+             // 뱃지 생성 호출
+             badgeService.createBadge(user.getMemberId());
+             crewBadgeManager.processBattleWin(user.getMemberId());
+           
+            logger.info("성공로그 이메일 : {}", userRequestDTO.getEmail()); // 성공 로그
         } catch (DataIntegrityViolationException e) {
             logger.error("Data integrity violation: {}", e.getMessage(), e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
