@@ -24,6 +24,7 @@ import com.multipjt.multi_pjt.crew.domain.crew.CrewCommentsRequestDTO;
 import com.multipjt.multi_pjt.crew.domain.crew.CrewCommentsResponseDTO;
 import com.multipjt.multi_pjt.crew.domain.crew.CrewMemberRequestDTO;
 import com.multipjt.multi_pjt.crew.domain.crew.CrewMemberResponseDTO;
+import com.multipjt.multi_pjt.crew.domain.crew.CrewPostLikeRequestDTO;
 import com.multipjt.multi_pjt.crew.domain.crew.CrewPostRequestDTO;
 import com.multipjt.multi_pjt.crew.domain.crew.CrewPostResponseDTO;
 import com.multipjt.multi_pjt.crew.domain.crew.CrewRequestDTO;
@@ -493,6 +494,32 @@ public class CrewController {
 
             try {
                 crewService.deleteCrewPost(param, token_id);
+                return ResponseEntity.noContent().build();
+            } catch (ResponseStatusException e) {
+                Map<String, Object> errorResponse = new HashMap<>();
+                errorResponse.put("status", e.getStatusCode().value());
+                errorResponse.put("message", e.getReason());
+                return ResponseEntity.status(e.getStatusCode()).body(errorResponse);
+            }
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+    }
+    // --------- 크루 게시물 좋아요 ---------
+    @PatchMapping("/post/like")
+    public ResponseEntity<Map<String, Object>> toggleLike(
+            @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader,
+            @RequestBody CrewPostLikeRequestDTO param) {
+
+        System.out.println("client endpoint: /crew/post/like");
+        System.out.println("debug>>> toggleLike + " + param);
+
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            String token = authHeader.substring(7);
+            int token_id = jwtTokenProvider.getUserIdFromToken(token);
+
+            try {
+                crewService.toggleLike(param, token_id);
                 return ResponseEntity.noContent().build();
             } catch (ResponseStatusException e) {
                 Map<String, Object> errorResponse = new HashMap<>();

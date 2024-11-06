@@ -13,6 +13,7 @@ import com.multipjt.multi_pjt.crew.domain.crew.CrewCommentsRequestDTO;
 import com.multipjt.multi_pjt.crew.domain.crew.CrewCommentsResponseDTO;
 import com.multipjt.multi_pjt.crew.domain.crew.CrewMemberRequestDTO;
 import com.multipjt.multi_pjt.crew.domain.crew.CrewMemberResponseDTO;
+import com.multipjt.multi_pjt.crew.domain.crew.CrewPostLikeRequestDTO;
 import com.multipjt.multi_pjt.crew.domain.crew.CrewPostRequestDTO;
 import com.multipjt.multi_pjt.crew.domain.crew.CrewPostResponseDTO;
 import com.multipjt.multi_pjt.crew.domain.crew.CrewRequestDTO;
@@ -285,6 +286,46 @@ public class CrewService {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "작성자만 게시물 삭제가 가능합니다.");
         }
     }
+
+    // --------- 크루 게시물 좋아요 ---------
+
+    // 크루 게시물 좋아요 증가/감소
+    public void toggleLike(CrewPostLikeRequestDTO param, int token_id) {
+
+        boolean isActiveMember = crewMapper.selectCrewMemberRow(param.getCrew_id()).stream()
+            .anyMatch(member -> member.getMember_id() == token_id && member.getCrew_member_state() == 1);
+
+        if (isActiveMember) {
+            // 좋아요 상태 확인
+            boolean isLiked = crewMapper.selectCrewPostLikeRow(param).size() > 0;
+            
+            if (isLiked) {
+                // 좋아요 취소
+                crewMapper.decreasePostLikeRow(param.getCrew_post_id());
+                crewMapper.deleteCrewPostLikeRow(param);
+            } else {
+                // 좋아요 추가
+                crewMapper.increasePostLikeRow(param.getCrew_post_id());
+                crewMapper.insertCrewPostLikeRow(param);
+            }
+        } else {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "크루원만 게시물 좋아요가 가능합니다.");
+        }
+    }
+
+    // 크루 게시물 상태 인기 변경
+    public void updatePostStatusIfPopular(int post_id, int crew_id) {
+        System.out.println("debug>>> Service: updatePostStatusIfPopular + " + post_id);
+        System.out.println("debug>>> Service: updatePostStatusIfPopular + " + crew_id);
+
+        int memberCount = crewMapper.selectCrewMemberCountRow(crew_id);
+        int likeCount = crewMapper.selectPostLikeCountRow(post_id);
+
+        if(likeCount >= memberCount / 2) {
+            crewMapper.updatePostStatusRow(post_id);
+        }
+    }
+
 
     // --------- 크루 댓글 ---------
 

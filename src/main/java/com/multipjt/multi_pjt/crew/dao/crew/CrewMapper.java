@@ -9,6 +9,8 @@ import com.multipjt.multi_pjt.crew.domain.crew.CrewCommentsRequestDTO;
 import com.multipjt.multi_pjt.crew.domain.crew.CrewCommentsResponseDTO;
 import com.multipjt.multi_pjt.crew.domain.crew.CrewMemberRequestDTO;
 import com.multipjt.multi_pjt.crew.domain.crew.CrewMemberResponseDTO;
+import com.multipjt.multi_pjt.crew.domain.crew.CrewPostLikeRequestDTO;
+import com.multipjt.multi_pjt.crew.domain.crew.CrewPostLikeResponseDTO;
 import com.multipjt.multi_pjt.crew.domain.crew.CrewPostRequestDTO;
 import com.multipjt.multi_pjt.crew.domain.crew.CrewPostResponseDTO;
 import com.multipjt.multi_pjt.crew.domain.crew.CrewRequestDTO;
@@ -28,7 +30,7 @@ public interface CrewMapper {
     public List<CrewResponseDTO> selectCrewSportRow(Map<String, String> map);
 
     // 특정 크루 정보 조회
-    public CrewResponseDTO selectCrewInfoRow(Integer crewId);
+    public CrewResponseDTO selectCrewInfoRow(Integer crew_id);
 
     // 크루원 추가
     public void insertCrewMemberRow(CrewMemberRequestDTO param);
@@ -42,13 +44,13 @@ public interface CrewMapper {
     public void updateCrewIntroRow(CrewRequestDTO param);
 
     // 크루장 조회
-    public Integer selectCrewLeaderIdRow(Integer crewId);
+    public Integer selectCrewLeaderIdRow(Integer crew_id);
 
     // 크루 관리 수정
     public void updateCrewInfoRow(CrewRequestDTO param);
 
     // 크루 삭제
-    public void deleteCrewRow(Integer crewId);
+    public void deleteCrewRow(Integer crew_id);
 
     // --------- 크루원 정보 ---------
     
@@ -67,7 +69,7 @@ public interface CrewMapper {
     public void insertCrewPostRow(CrewPostRequestDTO param);
 
     // 크루 게시판 게시물 전체 조회
-    public List<CrewPostResponseDTO> selectCrewPostListRow(Integer crewId);
+    public List<CrewPostResponseDTO> selectCrewPostListRow(Integer crew_id);
     
     // 크루 게시판 상단 공지, 인기 고정 3개씩 조회
     public List<CrewPostResponseDTO> selectCrewTopPostRow(CrewPostRequestDTO param);
@@ -83,6 +85,32 @@ public interface CrewMapper {
 
     // 크루 게시물 삭제
     public void deleteCrewPostRow(CrewPostRequestDTO param);
+
+    // --------- 크루 게시물 좋아요 ---------
+
+    // 크루 게시물 좋아요 상태 확인
+    public List<CrewPostLikeResponseDTO> selectCrewPostLikeRow(CrewPostLikeRequestDTO param);
+    
+    // 크루 게시물 좋아요 수 증가
+    public void increasePostLikeRow(int crew_post_id);
+
+    // 크루 게시물 좋아요 수 감소
+    public void decreasePostLikeRow(int crew_post_id);
+
+    // 크루원 게시물 별 좋아요 기록 추가
+    public void insertCrewPostLikeRow(CrewPostLikeRequestDTO param);
+
+    // 크루원 게시물 별 좋아요 기록 삭제
+    public void deleteCrewPostLikeRow(CrewPostLikeRequestDTO param);
+
+    // 크루 게시물 상태 인기 변경
+    public void updatePostStatusRow(int crew_post_id);
+
+    // 크루 멤버수 조회
+    public int selectCrewMemberCountRow(int crew_id);
+
+    // 크루 게시물 좋아요수 조회
+    public int selectPostLikeCountRow(int crew_post_id);
 
     // --------- 크루 댓글 ---------
     
