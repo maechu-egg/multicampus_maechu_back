@@ -91,6 +91,7 @@ public class BadgeService implements IBadgeService {
                     map.put("memberId", badge.getMember_id());
                     map.put("currentPoints", badge.getCurrent_points());
                     map.put("badgeLevel", getBadgeLevel(BigDecimal.valueOf(badge.getCurrent_points())));
+                    map.put("nickname", badge.getNickname());
                     return map;
                 })
                 .sorted((a, b) -> Float.compare((Float) b.get("currentPoints"), (Float) a.get("currentPoints")))
