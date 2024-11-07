@@ -120,4 +120,12 @@
         SET battle_state = #{battle_state}
         WHERE battle_id = #{battle_id};
     </update>
+
+    <!-- 배틀 삭제 --> 
+
+    <delete id="deleteBattleById"
+            parameterType="Integer">
+        DELETE FROM CrewBattle
+        WHERE battle_id = #{battle_id};
+    </delete>
 </mapper>

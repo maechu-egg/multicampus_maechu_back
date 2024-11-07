@@ -2,6 +2,8 @@ package com.multipjt.multi_pjt.crew.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.stereotype.Service;
 
 import com.multipjt.multi_pjt.crew.dao.crew.CrewMapper;
@@ -12,8 +14,12 @@ import com.multipjt.multi_pjt.crew.domain.battle.CrewBattleRequestDTO;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 @Service
+@EnableAsync
 public class ScheduleService {
 
     @Autowired
@@ -22,6 +28,8 @@ public class ScheduleService {
     @Autowired
     private CrewBattleMapper crewBattleMapper;
     
+    private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+
     // 크루 게시물 상태 인기 변경 스케줄러
     @Scheduled(cron = "0 0 0/1 * * *")
     public void updatePostStatusIfPopular() {
@@ -43,11 +51,12 @@ public class ScheduleService {
 
         if(likeCount >= Math.ceil(memberCount / 2.0)) {
             crewMapper.updatePostStatusRow(post_id);
+            System.out.println("debug>>> Service: updatePostStatusIfPopular 게시물 상태 변경 완료");
         }
     }
 
     // 배틀 상태 변경 및 자동 삭제 스케줄러
-    @Scheduled(cron = "0 */1 * * * *") // 매일 자정에 실행
+    @Scheduled(cron = "0 0 0 * * *") // 매일 자정에 실행
     public void updateBattleStatus() {
         List<CrewBattleResponseDTO> battles = crewBattleMapper.selectAllCrewBattleRow();
         for (CrewBattleResponseDTO battle : battles) {
@@ -55,34 +64,41 @@ public class ScheduleService {
             requestDTO.setBattle_id(battle.getBattle_id());
             requestDTO.setBattle_state(battle.getBattle_state());
 
-            if (battle.getBattle_state() == 0 && isRecruitmentEnded(battle)) {
+            if (battle.getBattle_state() == 0 && isRecruitmentEnded(requestDTO)) {
                 requestDTO.setBattle_state(1);
                 System.out.println("debug>>> Service: updateBattleStatus 배틀 상태 변경 완료"+requestDTO.getBattle_state());
                 crewBattleMapper.updateBattleState(requestDTO);
-            } else if (battle.getBattle_state() == 1 && isBattleEnded(battle)) {
+            } else if (battle.getBattle_state() == 1 && isBattleEnded(requestDTO)) {
                 requestDTO.setBattle_state(2);
                 System.out.println("debug>>> Service: updateBattleStatus 배틀 상태 변경 완료"+requestDTO.getBattle_state());
                 crewBattleMapper.updateBattleState(requestDTO);
-                scheduleBattleDeletion(battle);
+                scheduleBattleDeletion(requestDTO);
                 // updateWinnerPoints(battle);
             }
         }
     }
 
     // 모집 종료일 확인
-    private boolean isRecruitmentEnded(CrewBattleResponseDTO battle) {
+    private boolean isRecruitmentEnded(CrewBattleRequestDTO battle) {
         return battle.getBattle_end_recruitment().isBefore(LocalDateTime.now());
     }
 
     // 배틀 종료일 확인
-    private boolean isBattleEnded(CrewBattleResponseDTO battle) {
+    private boolean isBattleEnded(CrewBattleRequestDTO battle) {
         return battle.getBattle_end_date().isBefore(LocalDateTime.now());
     }
 
     // 배틀 자동 삭제 예약
-    private void scheduleBattleDeletion(CrewBattleResponseDTO battle) {
-        // 24시간 후 삭제 예약
-        // 스프링 배치나 다른 방법으로 구현 필요
+    @Async
+    private void scheduleBattleDeletion(CrewBattleRequestDTO battle) {
+        scheduler.schedule(() -> {
+            try {
+                // 배틀 삭제
+                crewBattleMapper.deleteBattleById(battle.getBattle_id());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }, 24, TimeUnit.HOURS);
     }
 
     // // 승리 포인트 업데이트

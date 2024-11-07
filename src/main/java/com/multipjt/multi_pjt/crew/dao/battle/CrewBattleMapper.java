@@ -49,4 +49,7 @@ public interface CrewBattleMapper {
 
     // 배틀 상태 변경
     public void updateBattleState(CrewBattleRequestDTO params);
+
+    // 배틀 삭제
+    public void deleteBattleById(int battle_id);
 } 
