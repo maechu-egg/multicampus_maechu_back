@@ -51,6 +51,13 @@ public class CrewService {
         return crewMapper.selectCrewRow(token_id);
     }
 
+    // 추천 크루 리스트 조회 limit 4
+    public List<CrewResponseDTO> getCrewListForHomepage(int token_id) {
+        System.out.println("debug>>> Service: getCrewListForHomepage + " + crewMapper);
+        System.out.println("debug>>> Service: getCrewListForHomepage + " + token_id);
+        return crewMapper.selectCrewRowForHomepageRow(token_id);
+    }
+
     // // 특정 크루 리스트 조회 (종목)
     // public List<CrewResponseDTO> getCrewSportList(Map<String, String> map) {
     //     System.out.println("debug>>> Service: getCrewSportList + " + crewMapper);

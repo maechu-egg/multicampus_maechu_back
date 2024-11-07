@@ -49,7 +49,24 @@
                 WHERE member_id = #{member_id}
             )
         ORDER BY c.crew_date DESC;
-    </select>    
+    </select>
+
+    <!-- 추천 크루 리스트 조회 limit 4 --> 
+
+    <select id="selectCrewRowForHomepageRow"
+            parameterType="int"
+            resultType="com.multipjt.multi_pjt.crew.domain.crew.CrewResponseDTO">
+        SELECT *
+        FROM Crew c
+        WHERE c.crew_state = 1
+            AND c.crew_location = (
+                SELECT profile_region
+                FROM UserProfile    
+                WHERE member_id = #{member_id}
+            )
+        ORDER BY c.crew_date DESC
+        LIMIT 4;
+    </select>
 
     <!-- 특정 크루 리스트 조회 (종목) 
 

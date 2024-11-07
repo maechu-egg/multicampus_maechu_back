@@ -25,6 +25,9 @@ public interface CrewMapper {
     // 추천 크루 리스트 조회
     public List<CrewResponseDTO> selectCrewRow(int member_id);
 
+    // 추천 크루 리스트 조회 limit 4
+    public List<CrewResponseDTO> selectCrewRowForHomepageRow(int member_id);
+
     // 특정 크루 리스트 조회 (종목)
     // public List<CrewResponseDTO> selectCrewSportRow(Map<String, String> map);
 

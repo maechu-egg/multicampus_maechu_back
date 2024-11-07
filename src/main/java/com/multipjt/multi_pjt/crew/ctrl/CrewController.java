@@ -77,6 +77,22 @@ public class CrewController {
         }
     }
 
+    // 추천 크루 리스트 조회 limit 4
+    @GetMapping("/list/homepage")
+    public ResponseEntity<List<CrewResponseDTO>> getCrewListForHomepage(
+        @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
+        System.out.println("client endpoint: /crew/list/homepage");
+
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            String token = authHeader.substring(7);
+            int token_id = jwtTokenProvider.getUserIdFromToken(token);
+
+            return ResponseEntity.ok(crewService.getCrewListForHomepage(token_id));
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build(); // 인증 실패 시 401 반환
+        }
+    }
+
 
     // 크루 리스트 종목 조회
     // @GetMapping("/list/sport")
