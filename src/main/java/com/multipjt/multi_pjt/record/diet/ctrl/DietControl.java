@@ -6,10 +6,13 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.multipjt.multi_pjt.jwt.JwtTokenProvider;
 import com.multipjt.multi_pjt.record.diet.domain.DietRequestDTO;
 import com.multipjt.multi_pjt.record.diet.domain.DietResponseDTO;
 import com.multipjt.multi_pjt.record.diet.domain.ItemRequestDTO;
@@ -22,6 +25,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @RestController
@@ -30,6 +34,9 @@ public class DietControl {
     
     @Autowired
     private DietService dietService;
+
+    @Autowired
+    private JwtTokenProvider jwtTokenProvider;
 
 
     //규칙 : 한 끼에 같은 식품 중복 작성 불가, 하루에 끼니 유형은 하나씩만 가능
@@ -44,23 +51,36 @@ public class DietControl {
 
     // 식단 추가
     // member_id, meal_type 필요
-    @PostMapping("/insert/meal")
-    public ResponseEntity<Integer> mealInsert(@RequestBody DietRequestDTO dietRequestDTO) {
+    @GetMapping("/insert/meal")
+    public ResponseEntity<Object> mealInsert(@RequestParam(name = "meal_type") String meal_type,
+                            @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
         System.out.println("class endPoint >> " + "/record/diet/insert/meal");
-        int result = dietService.dietInsertRow(dietRequestDTO);
-        System.out.println("result >>" + result);
-
-        Map<String,Object> map = new HashMap<>();
-        map.put("member_id", dietRequestDTO.getMember_id());
-        map.put("meal_type", dietRequestDTO.getMeal_type());
-        map.put("record_date", LocalDate.now());
         
-        Integer dietNumber = dietService.findDietRow(map);
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            String token = authHeader.substring(7); // "Bearer " 접두사 제거
+            Integer member_id = jwtTokenProvider.getUserIdFromToken(token); // 토큰에서 사용자 ID 추출
+        
+            Map<String,Object> map = new HashMap<>();
+            map.put("member_id", member_id);
+            map.put("meal_type", meal_type);
+            
+            int result = dietService.dietInsertRow(map);
+            System.out.println("deubg >>> result : " + result);
 
-        if(result == 1){
-            return new ResponseEntity<>(dietNumber,HttpStatus.OK);
+            map.put("record_date", LocalDate.now());
+            
+            Integer dietNumber = dietService.findDietRow(map);
+            System.out.println("debug >>> dietNumber : " + dietNumber);
+
+            if(result == 1){
+                // 추가 성공
+                return new ResponseEntity<>(dietNumber,HttpStatus.OK);
+            } else{
+                // 추가 실패
+                return new ResponseEntity<>("추가 실패",HttpStatus.BAD_REQUEST);
+            }
         } else{
-            return new ResponseEntity<>(null,HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("인증실패",HttpStatus.UNAUTHORIZED);
         }
     }
     // 식품 추가
@@ -83,15 +103,33 @@ public class DietControl {
     // 식단 번호 찾기
     // 일일 식단 조회를 통해 식단 번호를 갖기 때문에 프론트에서는 사용할 일이 없다
     @GetMapping("/get/dietnumber")
-    public ResponseEntity<Integer> findDietNumber(@RequestBody Map<String,Object> map) {
+    public ResponseEntity<Object> findDietNumber(@RequestBody Map<String,Object> map,
+                                                 @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
         System.out.println("class endPoint >> " + "/record/diet/get/dietnumber");
-        Integer result = dietService.findDietRow(map);
-        System.out.println("result >>" + result);
-        if(result != null){
-            return new ResponseEntity<>(result,HttpStatus.OK);
+        
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            String token = authHeader.substring(7); // "Bearer " 접두사 제거
+            Integer member_id = jwtTokenProvider.getUserIdFromToken(token); // 토큰에서 사용자 ID 추출
+
+            System.out.println("debug >>> member_id : " + member_id);
+            System.out.println("debug >>> token : " + token);
+
+            map.put("member_id", member_id);
+
+            Integer result = dietService.findDietRow(map);
+            System.out.println("result >>" + result);
+
+            if(result != null){
+                // 값이 있을 때
+                return new ResponseEntity<>(result,HttpStatus.OK);
+            } else{
+                // 값이 없을 때
+                return new ResponseEntity<>(result,HttpStatus.BAD_REQUEST);
+            }
         } else{
-            return new ResponseEntity<>(result,HttpStatus.BAD_REQUEST);
-        }
+            // 인증 실패
+            return new ResponseEntity<>("인증실패",HttpStatus.UNAUTHORIZED);
+        }    
     }
 
     // 식단 조회
@@ -189,14 +227,39 @@ public class DietControl {
     // 특정 회원이 특정 날짜에 식사 타입별로 섭취한 영양성분 조회
     // record_date, member_id 필요
     @GetMapping("/get/meal/nutrients")
-        public ResponseEntity<List<Map<String,Object>>> mealNutCheck(@RequestBody Map<String,Object> map) {
-        System.out.println("class endPoint >> " + "/record/diet/get/meal/nutrients");
-        List<Map<String,Object>> result = dietService.mealNutCheckRow(map);
-        System.out.println("result >>" + result);
-        if(result != null){
-            return new ResponseEntity<>(result,HttpStatus.OK);
-        } else{
-            return new ResponseEntity<>(result,HttpStatus.BAD_REQUEST);
+        public ResponseEntity<Object> mealNutCheck(@RequestParam(name = "record_date") String record_date,
+        @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
+
+            System.out.println("class endPoint >> " + "/record/diet/get/meal/nutrients");
+
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            String token = authHeader.substring(7); // "Bearer " 접두사 제거
+            Integer member_id = jwtTokenProvider.getUserIdFromToken(token); // 토큰에서 사용자 ID 추출
+
+            System.out.println("debug >>> member_id : " + member_id);
+            System.out.println("debug >>> token : " + token);
+            try{
+
+                Map<String,Object> map = new HashMap<>();
+                map.put("member_id",member_id);
+                System.out.println("debug >>> map : " + map);
+
+                List<Map<String,Object>> result = dietService.mealNutCheckRow(map);
+                System.out.println("result >>" + result);
+                if(result != null){
+                    // 값이 있을 때
+                    return new ResponseEntity<>(result,HttpStatus.OK);
+                } else{
+                    // 값이 없을 때
+                    return new ResponseEntity<>(result,HttpStatus.BAD_REQUEST);
+                }
+            } catch(Exception e){
+                // 3. 서버 내부 오류 발생
+                System.out.println("서버 오류 발생: " + e.getMessage());
+                return new ResponseEntity<>("서버 오류 발생", HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        } else {
+            return new ResponseEntity<>("인증실패",HttpStatus.UNAUTHORIZED);
         }
     }
     
@@ -217,24 +280,54 @@ public class DietControl {
     // 특정 회원의 TDEE 계산 엔드포인트
     // 회원 정보 조회를 통해 계산
     @GetMapping("/calculate/tdee")
-    public ResponseEntity<Map<String,Object>> calculateTdee(@RequestParam(name = "member_id") Integer memberId) {
+    public ResponseEntity<Object> calculateTdee(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
+
         System.out.println("class endPoint >> " + "/record/diet/calculate/tdee");
-        Map<String,Object> result = dietService.calculateTdeeRow(memberId);
-        return new ResponseEntity<>(result, HttpStatus.OK);
-    }
 
-    // 특정 달 식단 기록 날짜 조회  
-    @PostMapping("/get/month")
-    public ResponseEntity<List<Map<String,Object>>> getMonthDiet(@RequestBody Map<String,Object> map) {
-        System.out.println("class endPoint >> " + "/record/diet/get/month");
-        List<Map<String,Object>> result = dietService.getMonthDietRow(map);
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            String token = authHeader.substring(7); // "Bearer " 접두사 제거
+            Integer member_id = jwtTokenProvider.getUserIdFromToken(token); // 토큰에서 사용자 ID 추출
 
-        System.out.println("result >>" + result);
+            System.out.println("debug >>> member_id : " + member_id);
+            System.out.println("debug >>> token : " + token);
 
-        if(result != null){
+            Map<String,Object> result = dietService.calculateTdeeRow(member_id);
+
             return new ResponseEntity<>(result, HttpStatus.OK);
         } else{
-            return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("인증실패",HttpStatus.UNAUTHORIZED);
+        }
+    }
+    // 특정 달 식단 기록 날짜 조회  
+    @PostMapping("/get/month")
+    public ResponseEntity<Object> getMonthDiet(@RequestBody Map<String,Object> map,
+                                                                @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
+        System.out.println("class endPoint >> " + "/record/diet/get/month");
+        
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            String token = authHeader.substring(7); // "Bearer " 접두사 제거
+            Integer member_id = jwtTokenProvider.getUserIdFromToken(token); // 토큰에서 사용자 ID 추출
+
+            System.out.println("debug >>> member_id : " + member_id);
+            System.out.println("debug >>> token : " + token);
+
+            map.put("member_id", member_id);
+            System.out.println("debug >>> map : " + map);
+
+            List<Map<String,Object>> result = dietService.getMonthDietRow(map);
+
+            System.out.println("result >>" + result);
+
+            if(result != null){
+                // 기록이 있을 때
+                return new ResponseEntity<>(result, HttpStatus.OK);
+            } else{
+                // 기록이 없을 때
+                return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
+            }
+        } else {
+            // 인증 실패
+            return new ResponseEntity<>("인증실패",HttpStatus.UNAUTHORIZED);
         }
     }
 }

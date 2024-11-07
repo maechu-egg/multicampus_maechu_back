@@ -5,7 +5,7 @@
 
     <!-- dietRow --> 
 
-    <insert id="dietInsert" parameterType="com.multipjt.multi_pjt.record.diet.domain.DietRequestDTO">
+    <insert id="dietInsert" parameterType="java.util.Map">
         insert into DietRecords(meal_type,member_id)
         values(#{meal_type},#{member_id});
     </insert>
