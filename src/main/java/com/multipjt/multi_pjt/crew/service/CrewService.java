@@ -58,13 +58,6 @@ public class CrewService {
         return crewMapper.selectCrewRowForHomepageRow(token_id);
     }
 
-    // // 특정 크루 리스트 조회 (종목)
-    // public List<CrewResponseDTO> getCrewSportList(Map<String, String> map) {
-    //     System.out.println("debug>>> Service: getCrewSportList + " + crewMapper);
-    //     System.out.println("debug>>> Service: getCrewSportList + " + map);
-    //     return crewMapper.selectCrewSportRow(map);
-    // }
-
     // 특정 크루 정보 조회
     public CrewResponseDTO getCrewInfo(Integer crewId) {
         System.out.println("debug>>> Service: getCrewInfo + " + crewMapper);
