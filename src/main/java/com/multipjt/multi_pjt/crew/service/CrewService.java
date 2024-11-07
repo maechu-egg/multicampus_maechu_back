@@ -44,18 +44,26 @@ public class CrewService {
         crewMapper.insertCrewMemberRow(crewMember); // 크루 멤버 추가
     }
 
-    // 크루 리스트 전체 조회
-    public List<CrewResponseDTO> getCrewList() {
+    // 추천 크루 리스트 조회
+    public List<CrewResponseDTO> getCrewList(int token_id) {
         System.out.println("debug>>> Service: getCrewList + " + crewMapper);
-        return crewMapper.selectCrewRow();
+        System.out.println("debug>>> Service: getCrewList + " + token_id);
+        return crewMapper.selectCrewRow(token_id);
     }
 
-    // 특정 크루 리스트 조회 (종목)
-    public List<CrewResponseDTO> getCrewSportList(Map<String, String> map) {
-        System.out.println("debug>>> Service: getCrewSportList + " + crewMapper);
-        System.out.println("debug>>> Service: getCrewSportList + " + map);
-        return crewMapper.selectCrewSportRow(map);
+    // 추천 크루 리스트 조회 limit 4
+    public List<CrewResponseDTO> getCrewListForHomepage(int token_id) {
+        System.out.println("debug>>> Service: getCrewListForHomepage + " + crewMapper);
+        System.out.println("debug>>> Service: getCrewListForHomepage + " + token_id);
+        return crewMapper.selectCrewRowForHomepageRow(token_id);
     }
+
+    // // 특정 크루 리스트 조회 (종목)
+    // public List<CrewResponseDTO> getCrewSportList(Map<String, String> map) {
+    //     System.out.println("debug>>> Service: getCrewSportList + " + crewMapper);
+    //     System.out.println("debug>>> Service: getCrewSportList + " + map);
+    //     return crewMapper.selectCrewSportRow(map);
+    // }
 
     // 특정 크루 정보 조회
     public CrewResponseDTO getCrewInfo(Integer crewId) {

@@ -61,15 +61,33 @@ public class CrewController {
         }
     }
 
-    // 크루 리스트 전체 조회
+    // 추천 크루 리스트 조회
     @GetMapping("/list")
     public ResponseEntity<List<CrewResponseDTO>> getCrewList(
         @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
-        
         System.out.println("client endpoint: /crew/list");
 
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
-            return ResponseEntity.ok(crewService.getCrewList());
+            String token = authHeader.substring(7);
+            int token_id = jwtTokenProvider.getUserIdFromToken(token);
+
+            return ResponseEntity.ok(crewService.getCrewList(token_id));
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build(); // 인증 실패 시 401 반환
+        }
+    }
+
+    // 추천 크루 리스트 조회 limit 4
+    @GetMapping("/list/homepage")
+    public ResponseEntity<List<CrewResponseDTO>> getCrewListForHomepage(
+        @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
+        System.out.println("client endpoint: /crew/list/homepage");
+
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            String token = authHeader.substring(7);
+            int token_id = jwtTokenProvider.getUserIdFromToken(token);
+
+            return ResponseEntity.ok(crewService.getCrewListForHomepage(token_id));
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build(); // 인증 실패 시 401 반환
         }
@@ -77,20 +95,20 @@ public class CrewController {
 
 
     // 크루 리스트 종목 조회
-    @GetMapping("/list/sport")
-    public ResponseEntity<List<CrewResponseDTO>> getCrewSportList(
-            @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader,
-            @RequestParam Map<String, String> map) {
+    // @GetMapping("/list/sport")
+    // public ResponseEntity<List<CrewResponseDTO>> getCrewSportList(
+    //         @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader,
+    //         @RequestParam Map<String, String> map) {
 
-        System.out.println("client endpoint: /crew/list/sport");
-        System.out.println("debug>>> getCrewSportList + " + map);
+    //     System.out.println("client endpoint: /crew/list/sport");
+    //     System.out.println("debug>>> getCrewSportList + " + map);
 
-        if (authHeader != null && authHeader.startsWith("Bearer ")) {
-            return ResponseEntity.ok(crewService.getCrewSportList(map));
-        } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build(); // 인증 실패 시 401 반환
-        }
-    }
+    //     if (authHeader != null && authHeader.startsWith("Bearer ")) {
+    //         return ResponseEntity.ok(crewService.getCrewSportList(map));
+    //     } else {
+    //         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build(); // 인증 실패 시 401 반환
+    //     }
+    // }
 
     // 특정 크루 정보 조회
     @GetMapping("/info/{crewId}")

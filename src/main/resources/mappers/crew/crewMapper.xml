@@ -35,17 +35,40 @@
         );
     </insert>
 
-    <!-- 전체 크루 리스트 조회 --> 
+    <!-- 추천 크루 리스트 조회 --> 
 
     <select id="selectCrewRow"
+            parameterType="int"
             resultType="com.multipjt.multi_pjt.crew.domain.crew.CrewResponseDTO">
         SELECT *
-        FROM Crew
-        WHERE crew_state = 1
-        ORDER BY crew_date DESC;
-    </select>    
+        FROM Crew c
+        WHERE c.crew_state = 1
+            AND c.crew_location = (
+                SELECT profile_region
+                FROM UserProfile    
+                WHERE member_id = #{member_id}
+            )
+        ORDER BY c.crew_date DESC;
+    </select>
 
-    <!-- 특정 크루 리스트 조회 (종목) --> 
+    <!-- 추천 크루 리스트 조회 limit 4 --> 
+
+    <select id="selectCrewRowForHomepageRow"
+            parameterType="int"
+            resultType="com.multipjt.multi_pjt.crew.domain.crew.CrewResponseDTO">
+        SELECT *
+        FROM Crew c
+        WHERE c.crew_state = 1
+            AND c.crew_location = (
+                SELECT profile_region
+                FROM UserProfile    
+                WHERE member_id = #{member_id}
+            )
+        ORDER BY c.crew_date DESC
+        LIMIT 4;
+    </select>
+
+    <!-- 특정 크루 리스트 조회 (종목) 
 
     <select id="selectCrewSportRow"
             parameterType="java.util.HashMap"
@@ -54,7 +77,7 @@
         FROM Crew
         WHERE crew_sport = #{crew_sport} AND crew_state = 1
         ORDER BY crew_date DESC;
-    </select>
+    </select> -->
 
     <!-- 특정 크루 정보 조회  -->
 
@@ -201,7 +224,7 @@
         ORDER BY crew_post_date DESC;
     </select>
 
-    <!-- 크루 게시판 상단 공지, 인기 ���정 3개씩 조회 --> 
+    <!-- 크루 게시판 상단 공지, 인기 정 3개씩 조회 --> 
 
     <select id="selectCrewTopPostRow"
             parameterType="com.multipjt.multi_pjt.crew.domain.crew.CrewPostRequestDTO"
