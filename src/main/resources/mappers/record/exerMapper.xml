@@ -99,5 +99,16 @@
         from UserProfile 
         where member_id = #{member_id};
     </select>
-    
-    </mapper>
+
+    <!-- getMonthExer --> 
+
+    <select id="getMonthExer" parameterType="java.util.Map" resultType="java.lang.String">
+        SELECT DATE_FORMAT(record_date, '%Y-%m-%d') as record_date
+        FROM ExerciseRecords
+        WHERE member_id = #{member_id}
+        AND YEAR(record_date) = #{year}
+        AND MONTH(record_date) = #{month}
+        GROUP BY record_date
+        ORDER BY record_date ASC;
+    </select>    
+</mapper>

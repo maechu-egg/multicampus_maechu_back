@@ -36,8 +36,6 @@ public class CommentService {
         int result = commentMapper.commentInsert(params);
         System.out.println("result : " + result);
 
-        
-
         if(result == 1 ){
             response.put("result", true);
             // userActivityRecordMapper.insertActivityAndUpdatePoints(map);
@@ -46,6 +44,7 @@ public class CommentService {
         }
         
         return response;
+
 
     }
 

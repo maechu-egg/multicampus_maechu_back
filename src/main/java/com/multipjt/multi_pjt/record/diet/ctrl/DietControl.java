@@ -208,24 +208,24 @@ public class DietControl {
     // 특정 회원의 TDEE 계산 엔드포인트
     // 회원 정보 조회를 통해 계산
     @GetMapping("/calculate/tdee")
-    public ResponseEntity<Map<String,Integer>> calculateTdee(@RequestParam Integer memberId) {
+    public ResponseEntity<Map<String,Object>> calculateTdee(@RequestParam(name = "member_id") Integer memberId) {
         System.out.println("class endPoint >> " + "/record/diet/calculate/tdee");
-        Map<String,String> info = dietService.getMemberInfoRow(memberId);
+        Map<String,Object> info = dietService.calculateTdeeRow(memberId);
         // 기초대사량(BMR) 계산 - 해리스-베네딕트 공식 사용
         Integer bmr;
-        if (info.get("profile_gender").equalsIgnoreCase("M")) {
-            bmr = (int) Math.round(88.362 + (13.397 * Double.parseDouble(info.get("profile_weight")))
-                        + (4.799 * Double.parseDouble(info.get("profile_height")))
-                        - (5.677 * Double.parseDouble(info.get("profile_age"))));
+        if (info.get("profile_gender").equals("M")) {
+            bmr = (int) Math.round(88.362 + (13.397 * Double.parseDouble(info.get("profile_weight").toString()))
+                        + (4.799 * Double.parseDouble(info.get("profile_height").toString()))
+                        - (5.677 * Double.parseDouble(info.get("profile_age").toString())));
         } else {
-            bmr = (int) Math.round(447.593 + (9.247 * Double.parseDouble(info.get("profile_weight")))
-                        + (3.098 * Double.parseDouble(info.get("profile_height")))
-                        - (4.330 * Double.parseDouble(info.get("profile_age"))));
+            bmr = (int) Math.round(447.593 + (9.247 * Double.parseDouble(info.get("profile_weight").toString()))
+                        + (3.098 * Double.parseDouble(info.get("profile_height").toString()))
+                        - (4.330 * Double.parseDouble(info.get("profile_age").toString())));
         }
 
         // 활동레벨에 따른 TDEE 계산
         double activityMultiplier;
-        switch (Integer.parseInt(info.get("profile_activity_level"))) {
+        switch (Integer.parseInt(info.get("profile_workout_frequency").toString())) {
             case 0 :
                 activityMultiplier = 1.2;     // 좌식생활
                 break;
@@ -251,65 +251,81 @@ public class DietControl {
         Integer recommendedFat;
         Integer recommendedCarb;        
         
-        Integer proteinRate;
-        Integer fatRate;
-        Integer carbRate;        
+        Double proteinRate;
+        Double fatRate;
+        Double carbRate;        
 
         // 다이어트 목표에 따른 칼로리 조정
-    switch (info.get("profile_diet_goal").toLowerCase()) {
+    switch (info.get("profile_goal").toString().toLowerCase()) {
         case "다이어트":
-            recommendedCalories = (int) Math.round(tdee * 0.8);
+            recommendedCalories = (int) Math.round(tdee * 0.75);
 
-            carbRate = 3;
-            proteinRate = 5;
-            fatRate = 2;
+            carbRate = 0.3;
+            proteinRate = 0.5;
+            fatRate = 0.2;
 
-            recommendedCarb = (recommendedCalories * carbRate) / 4;
-            recommendedProtein = (recommendedCalories * proteinRate) / 4;
-            recommendedFat = (recommendedCalories * fatRate) / 9;
+            recommendedCarb = (int) Math.round(recommendedCalories * carbRate) / 4;
+            recommendedProtein = (int) Math.round(recommendedCalories * proteinRate) / 4;
+            recommendedFat = (int) Math.round(recommendedCalories * fatRate) / 9;
             break;
         case "벌크업":
-            recommendedCalories = (int) Math.round(tdee * 1.2);
-            carbRate = 6;
-            proteinRate = 3;
-            fatRate = 1;
+            recommendedCalories = (int) Math.round(tdee * 1.1);
+            carbRate = 0.6;
+            proteinRate = 0.3;
+            fatRate = 0.1;
 
-            recommendedCarb = (recommendedCalories * carbRate) / 4;
-            recommendedProtein = (recommendedCalories * proteinRate) / 4;
-            recommendedFat = (recommendedCalories * fatRate) / 9;
+            recommendedCarb = (int) Math.round(recommendedCalories * carbRate) / 4;
+            recommendedProtein = (int) Math.round(recommendedCalories * proteinRate) / 4;
+            recommendedFat = (int) Math.round(recommendedCalories * fatRate) / 9;
             break;
         case "린매스업":
-            recommendedCalories = (int) Math.round(tdee * 1.1);
-            carbRate = 4;
-            proteinRate = 4;
-            fatRate = 2;
+            recommendedCalories = (int) Math.round(tdee * 1.05);
+            carbRate = 0.4;
+            proteinRate = 0.4;
+            fatRate = 0.2;
 
-            recommendedCarb = (recommendedCalories * carbRate) / 4;
-            recommendedProtein = (recommendedCalories * proteinRate) / 4;
-            recommendedFat = (recommendedCalories * fatRate) / 9;
+            recommendedCarb = (int) Math.round(recommendedCalories * carbRate) / 4;
+            recommendedProtein = (int) Math.round(recommendedCalories * proteinRate) / 4;
+            recommendedFat = (int) Math.round(recommendedCalories * fatRate) / 9;
             break;
         case "유지":
             recommendedCalories = tdee;
-            carbRate = 5;
-            proteinRate = 3;
-            fatRate = 2;
+            carbRate = 0.5;
+            proteinRate = 0.3;
+            fatRate = 0.2;
 
-            recommendedCarb = (recommendedCalories * carbRate) / 4;
-            recommendedProtein = (recommendedCalories * proteinRate) / 4;
-            recommendedFat = (recommendedCalories * fatRate) / 9;
+            recommendedCarb = (int) Math.round(recommendedCalories * carbRate) / 4;
+            recommendedProtein = (int) Math.round(recommendedCalories * proteinRate) / 4;
+            recommendedFat = (int) Math.round(recommendedCalories * fatRate) / 9;
             break;
         default:
             throw new IllegalArgumentException("잘못된 다이어트 목표입니다");
         }
 
-        Map<String,Integer> result = new HashMap<>();
+        Map<String,Object> result = new HashMap<>();
         result.put("bmr", bmr);
         result.put("tdee", tdee);
         result.put("recommendedCalories", recommendedCalories);
         result.put("recommendedProtein", recommendedProtein);
         result.put("recommendedFat", recommendedFat);
         result.put("recommendedCarb", recommendedCarb);
-
+        result.put("weight", Double.parseDouble(info.get("profile_weight").toString()));
+        result.put("goal", info.get("profile_goal").toString());
         return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+    // 특정 달 식단 기록 날짜 조회  
+    @PostMapping("/get/month")
+    public ResponseEntity<List<String>> getMonthDiet(@RequestBody Map<String,Object> map) {
+        System.out.println("class endPoint >> " + "/record/diet/get/month");
+        List<String> result = dietService.getMonthDietRow(map);
+
+        System.out.println("result >>" + result);
+
+        if(result != null){
+            return new ResponseEntity<>(result, HttpStatus.OK);
+        } else{
+            return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
+        }
     }
 }

@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 
 
 @RestController
@@ -193,16 +194,26 @@ public class ExerControl {
 
     // 일일 운동 조회
     // 일일 운동 조회 시 운동 정보를 프론트가 가지고 있는 상태가 됨
-    @GetMapping("/get/exerday")
+    @PostMapping("/get/exerday")
     public ResponseEntity<List<ExerResponseDTO>> exerDayGet(@RequestBody Map<String,Object> map){
         System.out.println("class endPoint >> " + "/record/exercise/get/exerday");
         System.out.println("map >> " + map);
-        List<ExerResponseDTO> exerResponseDTOs = exerService.exerDayGetRow(map);
-        System.out.println("exerResponseDTOs >> " + exerResponseDTOs);
-        if(exerResponseDTOs != null && !exerResponseDTOs.isEmpty()){
-            return new ResponseEntity<>(exerResponseDTOs, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(exerResponseDTOs, HttpStatus.BAD_REQUEST);
+        
+        try {
+            List<ExerResponseDTO> exerResponseDTOs = exerService.exerDayGetRow(map);
+            System.out.println("exerResponseDTOs >> " + exerResponseDTOs);
+            
+            if(exerResponseDTOs != null && !exerResponseDTOs.isEmpty()){
+                // 1. 데이터를 정상적으로 찾은 경우
+                return new ResponseEntity<>(exerResponseDTOs, HttpStatus.OK);
+            } else {
+                // 2. 데이터가 없는 경우
+                return new ResponseEntity<>(exerResponseDTOs, HttpStatus.NO_CONTENT);
+            }
+        } catch (Exception e) {
+            // 3. 서버 내부 오류 발생
+            System.out.println("서버 오류 발생: " + e.getMessage());
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -350,6 +361,20 @@ public class ExerControl {
             return new ResponseEntity<>(list, HttpStatus.OK);
         } else {
             return new ResponseEntity<>(list, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    // 특정 달 운동 기록 날짜 조회
+    @PostMapping("/get/month")
+    public ResponseEntity<List<String>> getMonthExer(@RequestBody Map<String,Object> map){
+        System.out.println("class endPoint >> " + "/record/exercise/get/month");
+        System.out.println("map >> " + map);
+        List<String> result = exerService.getMonthExerRow(map);
+        System.out.println("result >> " + result);
+        if(result != null){
+            return new ResponseEntity<>(result, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
         }
     }
 }

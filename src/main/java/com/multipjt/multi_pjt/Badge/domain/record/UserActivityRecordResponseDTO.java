@@ -13,4 +13,11 @@ public class UserActivityRecordResponseDTO {
 
     // 추가: 운동 기록의 날짜를 비교하기 위한 필드
     private LocalDateTime activityDate;
+
+    private String message;
+
+    public UserActivityRecordResponseDTO(String message) {
+        this.message = message;
+    }
 }
+

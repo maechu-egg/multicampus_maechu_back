@@ -1,6 +1,7 @@
 package com.multipjt.multi_pjt.badge.ctrl;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -37,20 +38,22 @@ public class CrewBadgeController {
     public ResponseEntity<Map<String, Object>> createCrewBadge(@Valid @RequestBody CrewBadgeRequestDTO badgeRequest) {
         try {
             logger.info("Creating crew badge for member: {}", badgeRequest.getMember_id());
-            // 배틀 승리 수를 포함하여 뱃지 생성
-            crewBadgeManager.processBattleWin(badgeRequest.getMember_id());
-            
+        
+            // 크루 뱃지 생성 메서드 호출
+            crewBadgeManager.createCrewBadge(badgeRequest.getMember_id());
+        
             Map<String, Object> response = new HashMap<>();
-            response.put("status", "생성 성공");
+            response.put("status", "success");
             response.put("message", "크루 뱃지가 생성되었습니다.");
-            
+        
             return ResponseEntity.status(HttpStatus.CREATED).body(response);
         } catch (IllegalArgumentException e) {
             logger.warn("Invalid request for crew badge creation: {}", e.getMessage());
             return ResponseEntity.badRequest().body(Map.of("status", "error", "message", e.getMessage()));
         } catch (Exception e) {
-            logger.error("Error creating crew badge", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("status", "error", "message", "크루 뱃지 생성 중 오류가 발생했습니다."));
+        logger.error("Error creating crew badge", e);
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(Map.of("status", "error", "message", "크루 뱃지 생성 중 오류가 발생했습니다."));
         }
     }
 
@@ -103,6 +106,13 @@ public class CrewBadgeController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("status", "error", "message", "크루 뱃지 조회 중 오류가 발생했습니다."));
         }
     }
+
+     // 크루 뱃지 랭킹 API
+     @GetMapping("/ranking")
+     public ResponseEntity<List<Map<String, Object>>> getCrewBadgeRanking() {
+         List<Map<String, Object>> ranking = crewBadgeManager.getCrewBadgeRanking();
+         return ResponseEntity.ok(ranking);
+     }
 
     // 전역 예외 처리 핸들러
     @ExceptionHandler(Exception.class)

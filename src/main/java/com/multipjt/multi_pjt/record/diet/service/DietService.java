@@ -55,11 +55,18 @@ public class DietService {
         return dietMapper.mealNutCheck(map);
     }
 
-    public Map<String,String> getMemberInfoRow(Integer memberId){
-        return dietMapper.getMemberInfo(memberId);
-    }
+    // public Map<String,String> getMemberInfoRow(Integer memberId){
+    //     return dietMapper.getMemberInfo(memberId);
+    // }
 
     public int mealUpdateRow(DietRequestDTO dietRequestDTO){
         return dietMapper.mealUpdate(dietRequestDTO);
+    }
+    public List<String> getMonthDietRow(Map<String,Object> map){
+        return dietMapper.getMonthDiet(map);
+    }
+
+    public Map<String,Object> calculateTdeeRow(Integer memberId){
+        return dietMapper.calculateTdee(memberId);
     }
 }

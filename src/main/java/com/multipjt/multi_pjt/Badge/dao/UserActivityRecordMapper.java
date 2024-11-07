@@ -24,22 +24,22 @@ public interface UserActivityRecordMapper {
     int countTodayActivity(@Param("memberId") int memberId, @Param("activityType") String activityType);
 
     // 특정 회원의 활동 기록을 조회하는 메서드
-    List<UserActivityRecordResponseDTO> getActivitiesByMemberId(Long memberId);
+    List<UserActivityRecordResponseDTO> getActivitiesByMemberId(int memberId);
 
     // 특정 회원의 포스트에서 활동 기록을 조회하는 메서드
-    List<UserActivityRecordResponseDTO> getActivitiesFromPosts(Long memberId);
+    List<UserActivityRecordResponseDTO> getActivitiesFromPosts(int memberId);
 
     // 특정 회원의 댓글에서 활동 기록을 조회하는 메서드
-    List<UserActivityRecordResponseDTO> getActivitiesFromComments(Long memberId);
+    List<UserActivityRecordResponseDTO> getActivitiesFromComments(int memberId);
 
     // 특정 회원의 운동 기록을 조회하는 메서드
-    List<UserActivityRecordResponseDTO> getActivitiesFromExercises(Long memberId);
+    List<UserActivityRecordResponseDTO> getActivitiesFromExercises(int memberId);
 
     // 특정 회원의 식단 기록을 조회하는 메서드
-    List<UserActivityRecordResponseDTO> getActivitiesFromDiets(Long memberId);
+    List<UserActivityRecordResponseDTO> getActivitiesFromDiets(int memberId);
 
     // 특정 회원의 총 점수를 조회하는 메서드
-    List<BigDecimal> getTotalPointsByMemberId(Long memberId);
+    List<BigDecimal> getTotalPointsByMemberId(int memberId);
 
 }
 

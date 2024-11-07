@@ -12,4 +12,6 @@ public class CrewMemberResponseDTO {
     private int battle_wins;
     private int crew_member_state;
     private String badge_level;
+    private String email;
+    private String phone;
 }

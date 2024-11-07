@@ -36,4 +36,6 @@ public interface ExerMapper {
     public List<Map<String,Object>> metGet(String exercise_name);
 
     public Double getMemberInfo(Integer member_id);
+
+    public List<String> getMonthExer(Map<String,Object> map);
 }

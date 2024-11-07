@@ -1,5 +1,8 @@
 package com.multipjt.multi_pjt.badge.dao;
 
+import java.util.List;
+import java.util.Map;
+
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -27,4 +30,7 @@ public interface CrewBadgeMapper {
 
      // 특정 회원의 배틀 승리 수 업데이트
      public void updateCrewBattleWins(@Param("memberId") int memberId, @Param("newBattleWins") int newBattleWins);
+
+     // 크루 뱃지 랭킹 조회
+     List<Map<String, Object>> selectCrewBadgeRanking();
 }
