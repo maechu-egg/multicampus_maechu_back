@@ -126,7 +126,7 @@ public class LoginServiceImpl implements UserDetailsService { // UserDetailsServ
             logger.info("회원가입 후 저장된 뱃지 저장용 유저의 아이디 : {}", user.getMemberId());
              // 뱃지 생성 호출
              badgeService.createBadge(user.getMemberId());
-             crewBadgeManager.processBattleWin(user.getMemberId());
+             crewBadgeManager.createCrewBadge(user.getMemberId());
            
             logger.info("성공로그 이메일 : {}", userRequestDTO.getEmail()); // 성공 로그
         } catch (DataIntegrityViolationException e) {
