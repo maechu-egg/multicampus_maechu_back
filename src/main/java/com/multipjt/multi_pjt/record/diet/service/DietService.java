@@ -19,8 +19,8 @@ public class DietService {
     @Autowired
     private DietMapper dietMapper;
 
-    public int dietInsertRow(DietRequestDTO dietRequestDTO){
-        return dietMapper.dietInsert(dietRequestDTO);
+    public int dietInsertRow(Map<String,Object> map){
+        return dietMapper.dietInsert(map);
     } 
 
 
@@ -67,12 +67,12 @@ public class DietService {
         return dietMapper.getMonthDiet(map);
     }
 
-    public Map<String,Object> memberDataGetRow(Integer memberId){
-        return dietMapper.memberDataGet(memberId);
-    }
+//    public Map<String,Object> memberDataGetRow(Integer memberId){
+//        return dietMapper.memberDataGet(memberId);
+//    }
 
     public Map<String,Object> calculateTdeeRow(Integer memberId){
-        Map<String,Object> info = memberDataGetRow(memberId);
+        Map<String,Object> info = dietMapper.memberDataGet(memberId);
         // 기초대사량(BMR) 계산 - 해리스-베네딕트 공식 사용
         Integer bmr;
         if (info.get("profile_gender").equals("M")) {

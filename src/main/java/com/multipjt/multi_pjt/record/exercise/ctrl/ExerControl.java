@@ -1,11 +1,16 @@
 package com.multipjt.multi_pjt.record.exercise.ctrl;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpHeaders;
+
+import com.multipjt.multi_pjt.jwt.JwtTokenProvider;
+
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -15,6 +20,9 @@ import com.multipjt.multi_pjt.record.exercise.domain.ExerResponseDTO;
 import com.multipjt.multi_pjt.record.exercise.domain.SetRequestDTO;
 import com.multipjt.multi_pjt.record.exercise.domain.SetResponseDTO;
 import com.multipjt.multi_pjt.record.exercise.service.ExerService;
+
+
+
 
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -31,36 +39,45 @@ public class ExerControl {
     @Autowired
     private ExerService exerService;
     
+    @Autowired
+    private JwtTokenProvider jwtTokenProvider;
+
     //규칙 : 세트는 칼로리 계산에 포함되지 않음, 하루에 같은 운동 여러번 가능(운동 번호를 통해 순서 구분), 세트 기입은 선택 사항
 
 
     // 운동 추가
     @PostMapping("/insert/type")
-    public ResponseEntity<Integer> exerInsert(@RequestBody ExerRequestDTO exerRequestDTO){
+    public ResponseEntity<Object> exerInsert(@RequestBody ExerRequestDTO exerRequestDTO,
+                                              @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader){
         System.out.println("class endPoint >> " + "/record/exercise/insert/type");
-        // 강도, 시간, 운동 종류, member_id 만 입력받고, 칼로리는 계산해서 넣어야 함
-        System.out.println("exerRequestDTO >> " + exerRequestDTO);
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
 
-        // met 값 계산
-        List<Map<String,Object>> info = exerService.metGetRow(exerRequestDTO.getExercise_type());
-        System.out.println("ExerciseMet info >> " + info);
+            String token = authHeader.substring(7); // "Bearer " 접두사 제거
+            exerRequestDTO.setMember_id(jwtTokenProvider.getUserIdFromToken(token));
 
-        Double met = null;
-        // 사용자가 입력한 운동이 csv에 존재하는 운동이면 met 값 가져오기
-        // 사용자가 입력한 강도와 csv 파일에 있는 강도가 같으면 met 값 가져오기
-        if(info != null && !info.isEmpty()){
-            System.out.println("csv에 존재하는 운동입니다");
-            Double tempMet = null;
-            for(Map<String,Object> map : info){
-                String intensity = (String) map.get("intensity");
-                if(intensity != null && intensity.equalsIgnoreCase(exerRequestDTO.getIntensity().toString())){
-                    System.out.println("강도도 존재하는 운동입니다");
-                    met = (Double) map.get("exercise_met");
-                    break;
-                }
-                else if(intensity == null){
-                    tempMet = (Double) map.get("exercise_met");
-                }
+            // 강도, 시간, 운동 종류, member_id 만 입력받고, 칼로리는 계산해서 넣어야 함
+            System.out.println("exerRequestDTO >> " + exerRequestDTO);
+
+            // met 값 계산
+            List<Map<String,Object>> info = exerService.metGetRow(exerRequestDTO.getExercise_type());
+            System.out.println("ExerciseMet info >> " + info);
+
+            Double met = null;
+            // 사용자가 입력한 운동이 csv에 존재하는 운동이면 met 값 가져오기
+            // 사용자가 입력한 강도와 csv 파일에 있는 강도가 같으면 met 값 가져오기
+            if(info != null && !info.isEmpty()){
+                System.out.println("csv에 존재하는 운동입니다");
+                Double tempMet = null;
+                for(Map<String,Object> map : info){
+                    String intensity = (String) map.get("intensity");
+                    if(intensity != null && intensity.equalsIgnoreCase(exerRequestDTO.getIntensity().toString())){
+                        System.out.println("강도도 존재하는 운동입니다");
+                        met = (Double) map.get("exercise_met");
+                        break;
+                    }
+                    else if(intensity == null){
+                        tempMet = (Double) map.get("exercise_met");
+                    }
             }
             if(met == null){
                 System.out.println("강도는 존재하지 않는 운동입니다");
@@ -126,6 +143,9 @@ public class ExerControl {
         
         // 운동 번호 반환
         return new ResponseEntity<>(exercise_id, HttpStatus.OK);
+        } else {
+        return new ResponseEntity<>("인증 실패",HttpStatus.UNAUTHORIZED);
+        }
     }
 
     // 운동 찾기
@@ -194,26 +214,43 @@ public class ExerControl {
 
     // 일일 운동 조회
     // 일일 운동 조회 시 운동 정보를 프론트가 가지고 있는 상태가 됨
-    @PostMapping("/get/exerday")
-    public ResponseEntity<List<ExerResponseDTO>> exerDayGet(@RequestBody Map<String,Object> map){
+    @GetMapping("/get/exerday")
+    public ResponseEntity<Object> exerDayGet(@RequestParam(name = "record_date") String record_date,
+                                                            @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader){
         System.out.println("class endPoint >> " + "/record/exercise/get/exerday");
-        System.out.println("map >> " + map);
-        
-        try {
-            List<ExerResponseDTO> exerResponseDTOs = exerService.exerDayGetRow(map);
-            System.out.println("exerResponseDTOs >> " + exerResponseDTOs);
+
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
             
-            if(exerResponseDTOs != null && !exerResponseDTOs.isEmpty()){
-                // 1. 데이터를 정상적으로 찾은 경우
-                return new ResponseEntity<>(exerResponseDTOs, HttpStatus.OK);
-            } else {
-                // 2. 데이터가 없는 경우
-                return new ResponseEntity<>(exerResponseDTOs, HttpStatus.NO_CONTENT);
+            String token = authHeader.substring(7); // "Bearer " 접두사 제거
+            Integer member_id = jwtTokenProvider.getUserIdFromToken(token);
+            
+            System.out.println("debug >>> token : " + token);
+            System.out.println("debug >>> member_id : " + member_id);
+
+            Map<String,Object> map = new HashMap<>();
+            map.put("member_id",member_id);
+            map.put("record_date",record_date);
+
+            System.out.println("debug >>> map : " + map);
+
+            try {
+                List<ExerResponseDTO> exerResponseDTOs = exerService.exerDayGetRow(map);
+                System.out.println("exerResponseDTOs >> " + exerResponseDTOs);
+            
+                if(exerResponseDTOs != null && !exerResponseDTOs.isEmpty()){
+                    // 1. 데이터를 정상적으로 찾은 경우
+                    return new ResponseEntity<>(exerResponseDTOs, HttpStatus.OK);
+                } else {
+                    // 2. 데이터가 없는 경우
+                    return new ResponseEntity<>(exerResponseDTOs, HttpStatus.NO_CONTENT);
+                }
+            } catch (Exception e) {
+                // 3. 서버 내부 오류 발생
+                System.out.println("서버 오류 발생: " + e.getMessage());
+                return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
             }
-        } catch (Exception e) {
-            // 3. 서버 내부 오류 발생
-            System.out.println("서버 오류 발생: " + e.getMessage());
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        } else {   
+            return new ResponseEntity<>("인증 실패",HttpStatus.UNAUTHORIZED);
         }
     }
 
@@ -352,29 +389,78 @@ public class ExerControl {
 
     // 특정회원의 일일 운동 별 칼로리 총합 출력 
     @GetMapping("/get/exerCalories")
-    public ResponseEntity<List<Map<String,Object>>> exerCaloriesGet(@RequestBody Map<String,Object> map){
+    public ResponseEntity<Object> exerCaloriesGet(@RequestParam(name = "record_date") String record_date,
+                                                                    @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader){
         System.out.println("class endPoint >> " + "/record/exercise/get/exerCalories");
-        System.out.println("map >> " + map);
-        List<Map<String,Object>> list = exerService.exerCaloriesGetRow(map);
-        System.out.println("exer list >> " + list);
-        if(list != null && !list.isEmpty()){
-            return new ResponseEntity<>(list, HttpStatus.OK);
+        
+        Map<String,Object> map = new HashMap<>();
+
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            try{
+                String token = authHeader.substring(7); // "Bearer " 접두사 제거
+                Integer member_id = jwtTokenProvider.getUserIdFromToken(token); // 토큰에서 사용자 ID 추출
+                
+                System.out.println("debug >>> token : " + token);
+                System.out.println("debug >>> member_id : " + member_id);
+
+                map.put("member_id", member_id);
+                map.put("record_date", record_date);
+                System.out.println("map >> " + map);
+
+                List<Map<String,Object>> list = exerService.exerCaloriesGetRow(map);
+                System.out.println("exer list >> " + list);
+                if(list != null && !list.isEmpty()){
+                    // 값이 존재할 경우
+                    return new ResponseEntity<>(list, HttpStatus.OK);
+                } else {
+                    // 값이 없을 경우
+                    return new ResponseEntity<>(list, HttpStatus.BAD_REQUEST);
+                }
+            } catch(Exception e){
+                // 서버 에러
+                System.out.println("서버 오류 발생: " + e.getMessage());
+                return new ResponseEntity<>("내부 오류", HttpStatus.INTERNAL_SERVER_ERROR);            }
         } else {
-            return new ResponseEntity<>(list, HttpStatus.BAD_REQUEST);
+            // 인증 실패
+            return new ResponseEntity<>("인증 실패",HttpStatus.UNAUTHORIZED);
         }
     }
 
     // 특정 달 운동 기록 날짜 조회
     @PostMapping("/get/month")
-    public ResponseEntity<List<Map<String,Object>>> getMonthExer(@RequestBody Map<String,Object> map){
+    public ResponseEntity<Object> getMonthExer(@RequestBody Map<String,Object> date,
+                                                                @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader){
         System.out.println("class endPoint >> " + "/record/exercise/get/month");
-        System.out.println("map >> " + map);
-        List<Map<String,Object>> result = exerService.getMonthExerRow(map);
-        System.out.println("result >> " + result);
-        if(result != null){
-            return new ResponseEntity<>(result, HttpStatus.OK);
+
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+
+            try{
+                String token = authHeader.substring(7); // "Bearer " 접두사 제거
+                Integer member_id = jwtTokenProvider.getUserIdFromToken(token); // 토큰에서 사용자 ID 추출
+                
+                System.out.println("debug >>> token : " + token);
+                System.out.println("debug >>> member_id : " + member_id);
+
+                date.put("member_id",member_id);
+                System.out.println("map >> " + date);
+
+                List<Map<String,Object>> result = exerService.getMonthExerRow(date);
+                System.out.println("result >> " + result);
+                if(result != null){
+                    // 값이 있을 때
+                    return new ResponseEntity<>(result, HttpStatus.OK);
+                } else {
+                    // 값이 없을 때
+                    return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
+                }
+            } catch(Exception e){
+                // 서버 에러
+                System.out.println("서버 오류 발생: " + e.getMessage());
+                return new ResponseEntity<>("내부 오류", HttpStatus.INTERNAL_SERVER_ERROR);
+            }
         } else {
-            return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
+        // 인증 실패
+        return new ResponseEntity<>("인증 실패",HttpStatus.UNAUTHORIZED);
         }
     }
 }

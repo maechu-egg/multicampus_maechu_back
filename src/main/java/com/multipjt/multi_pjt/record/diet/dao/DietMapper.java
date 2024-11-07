@@ -14,7 +14,7 @@ import java.util.List;
 public interface DietMapper {
     
     // DietRecords 삽입
-    public int dietInsert(DietRequestDTO requestDTO);
+    public int dietInsert(Map<String,Object> map);
     // DietItems 삽입
     public int itemInsert(ItemRequestDTO requestDTO);
     // diet_id 찾기
