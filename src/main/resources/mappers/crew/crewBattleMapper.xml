@@ -101,4 +101,23 @@
         INSERT INTO Vote(vote_id, battle_id, participant_id, member_id)
         VALUES(#{vote_id}, #{battle_id}, #{participant_id}, #{member_id});
     </insert>
+
+    <!-- @@@@@@@@@ 스케줄러 @@@@@@@@@ -->
+
+    <!-- 모든 배틀 조회 --> 
+
+    <select id="selectAllCrewBattleRow"
+            resultType="com.multipjt.multi_pjt.crew.domain.battle.CrewBattleResponseDTO">
+        SELECT *
+        FROM CrewBattle;
+    </select>
+
+    <!-- 배틀 상태 변경 --> 
+
+    <update id="updateBattleState"
+            parameterType="com.multipjt.multi_pjt.crew.domain.battle.CrewBattleRequestDTO">
+        UPDATE CrewBattle
+        SET battle_state = #{battle_state}
+        WHERE battle_id = #{battle_id};
+    </update>
 </mapper>

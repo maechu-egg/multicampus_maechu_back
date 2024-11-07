@@ -41,4 +41,12 @@ public interface CrewBattleMapper {
 
     // 투표
     public void createVoteRow(CrewVoteRequestDTO params);
+
+    // <---- 스케줄러 ---->
+
+    // 모든 배틀 조회
+    public List<CrewBattleResponseDTO> selectAllCrewBattleRow();
+
+    // 배틀 상태 변경
+    public void updateBattleState(CrewBattleRequestDTO params);
 } 

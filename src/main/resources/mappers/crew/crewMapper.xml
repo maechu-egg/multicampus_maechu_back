@@ -75,7 +75,7 @@
             resultType="com.multipjt.multi_pjt.crew.domain.crew.CrewResponseDTO">
         SELECT *
         FROM Crew
-        WHERE crew_id = #{crew_id} AND crew_state = 1;
+        WHERE crew_id = #{crew_id};
     </select>
 
     <!-- 크루원 신청 --> 
