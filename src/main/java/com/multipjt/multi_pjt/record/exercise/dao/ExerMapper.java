@@ -37,5 +37,5 @@ public interface ExerMapper {
 
     public Double getMemberInfo(Integer member_id);
 
-    public List<String> getMonthExer(Map<String,Object> map);
+    public List<Map<String,Object>> getMonthExer(Map<String,Object> map);
 }

@@ -102,8 +102,9 @@
 
     <!-- getMonthExer --> 
 
-    <select id="getMonthExer" parameterType="java.util.Map" resultType="java.lang.String">
+    <select id="getMonthExer" parameterType="java.util.Map" resultType="java.util.Map">
         SELECT DATE_FORMAT(record_date, '%Y-%m-%d') as record_date
+        , SUM(calories) as totalCalories
         FROM ExerciseRecords
         WHERE member_id = #{member_id}
         AND YEAR(record_date) = #{year}
