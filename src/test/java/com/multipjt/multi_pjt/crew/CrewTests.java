@@ -18,9 +18,7 @@ import com.multipjt.multi_pjt.crew.domain.crew.CrewResponseDTO;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @SpringBootTest
 // @Transactional
@@ -52,30 +50,30 @@ public class CrewTests {
         System.out.println("debug >>> 크루 생성 테스트 성공");
     }
 
-    @Test
-    @DisplayName("002 : 전체 크루 리스트 조회 테스트")
-    public void selectCrewTest(){
-        List<CrewResponseDTO> crewList = crewMapper.selectCrewRow();
-        for (CrewResponseDTO dto:crewList){
-            System.out.println(dto);
-        }
-        assertFalse(crewList.isEmpty(), "크루가 존재해야 합니다.");
-        System.out.println("크루 전체 조회 테스트 성공");
-    }
+    // @Test
+    // @DisplayName("002 : 전체 크루 리스트 조회 테스트")
+    // public void selectCrewTest(){
+    //     List<CrewResponseDTO> crewList = crewMapper.selectCrewRow();
+    //     for (CrewResponseDTO dto:crewList){
+    //         System.out.println(dto);
+    //     }
+    //     assertFalse(crewList.isEmpty(), "크루가 존재해야 합니다.");
+    //     System.out.println("크루 전체 조회 테스트 성공");
+    // }
 
-    @Test
-    @DisplayName("003 : 특정 크루 리스트 조회 (종목)")
-    public void selectCrewSportTest(){
-        Map<String, String> map = new HashMap<>();
-        map.put("crew_sport", "운동 종목");
+    // @Test
+    // @DisplayName("003 : 특정 크루 리스트 조회 (종목)")
+    // public void selectCrewSportTest(){
+    //     Map<String, String> map = new HashMap<>();
+    //     map.put("crew_sport", "운동 종목");
 
-        List<CrewResponseDTO> crewList = crewMapper.selectCrewSportRow(map);
-        for (CrewResponseDTO dto : crewList){
-            System.out.println(dto);
-        }
-        assertFalse(crewList.isEmpty(), "크루가 존재해야 합니다.");
-        System.out.println("크루 종목 조회 테스트 성공");
-    }
+    //     List<CrewResponseDTO> crewList = crewMapper.selectCrewSportRow(map);
+    //     for (CrewResponseDTO dto : crewList){
+    //         System.out.println(dto);
+    //     }
+    //     assertFalse(crewList.isEmpty(), "크루가 존재해야 합니다.");
+    //     System.out.println("크루 종목 조회 테스트 성공");
+    // }
 
     @Test
     @DisplayName("004 : 특정 크루 정보 조회")

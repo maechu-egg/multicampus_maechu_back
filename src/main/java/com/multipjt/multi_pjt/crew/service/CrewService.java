@@ -45,9 +45,10 @@ public class CrewService {
     }
 
     // 추천 크루 리스트 조회
-    public List<CrewResponseDTO> getCrewList() {
+    public List<CrewResponseDTO> getCrewList(int token_id) {
         System.out.println("debug>>> Service: getCrewList + " + crewMapper);
-        return crewMapper.selectCrewRow();
+        System.out.println("debug>>> Service: getCrewList + " + token_id);
+        return crewMapper.selectCrewRow(token_id);
     }
 
     // // 특정 크루 리스트 조회 (종목)

@@ -3,7 +3,6 @@ package com.multipjt.multi_pjt.crew.dao.crew;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
-import java.util.Map;
 
 import com.multipjt.multi_pjt.crew.domain.crew.CrewCommentsRequestDTO;
 import com.multipjt.multi_pjt.crew.domain.crew.CrewCommentsResponseDTO;
@@ -24,7 +23,7 @@ public interface CrewMapper {
     public void createCrewRow(CrewRequestDTO param);
 
     // 추천 크루 리스트 조회
-    public List<CrewResponseDTO> selectCrewRow();
+    public List<CrewResponseDTO> selectCrewRow(int member_id);
 
     // 특정 크루 리스트 조회 (종목)
     // public List<CrewResponseDTO> selectCrewSportRow(Map<String, String> map);
