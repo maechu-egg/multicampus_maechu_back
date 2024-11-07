@@ -4,8 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.multipjt.multi_pjt.badge.dao.UserActivityRecordMapper;
-import com.multipjt.multi_pjt.badge.domain.record.UserActivityRecordRequestDTO;
-import com.multipjt.multi_pjt.badge.domain.record.UserActivityRecordRequsetDTO;
+
 import com.multipjt.multi_pjt.community.dao.CommentMapper;
 import com.multipjt.multi_pjt.community.dao.PostMapper;
 import com.multipjt.multi_pjt.community.domain.comments.CommentRequestDTO;
@@ -41,7 +40,7 @@ public class CommentService {
 
         if(result == 1 ){
             response.put("result", true);
-            userActivityRecordMapper.insertActivityAndUpdatePoints(map);
+            // userActivityRecordMapper.insertActivityAndUpdatePoints(map);
         }else{
             response.put("result", false);
         }

@@ -41,7 +41,7 @@ public interface UserActivityMapper {
     // view 클릭시 좋아요 수 +1 
     int postViewCountAdd(Map<String, Integer> map);
 
-
+    // 싫어요 존재 
     boolean commitUnLike(Map<String, Integer> map);
 
     // 테이블에 좋아요 추가
