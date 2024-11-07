@@ -366,10 +366,10 @@ public class ExerControl {
 
     // 특정 달 운동 기록 날짜 조회
     @PostMapping("/get/month")
-    public ResponseEntity<List<String>> getMonthExer(@RequestBody Map<String,Object> map){
+    public ResponseEntity<List<Map<String,Object>>> getMonthExer(@RequestBody Map<String,Object> map){
         System.out.println("class endPoint >> " + "/record/exercise/get/month");
         System.out.println("map >> " + map);
-        List<String> result = exerService.getMonthExerRow(map);
+        List<Map<String,Object>> result = exerService.getMonthExerRow(map);
         System.out.println("result >> " + result);
         if(result != null){
             return new ResponseEntity<>(result, HttpStatus.OK);

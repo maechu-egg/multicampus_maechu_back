@@ -100,9 +100,12 @@
 
     <!-- getMonthDiet --> 
 
-    <select id="getMonthDiet" parameterType="java.util.Map" resultType="java.lang.String">
+    <select id="getMonthDiet" parameterType="java.util.Map" resultType="java.util.Map">
         SELECT DATE_FORMAT(record_date, '%Y-%m-%d') as record_date
+        , SUM(calories) as totalCalories
         FROM DietRecords
+        JOIN DietItems
+            ON DietRecords.diet_id = DietItems.diet_id
         WHERE member_id = #{member_id}
         AND YEAR(record_date) = #{year}
         AND MONTH(record_date) = #{month}

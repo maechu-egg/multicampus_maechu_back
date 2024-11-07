@@ -68,7 +68,7 @@ public class ExerService {
         return exerMapper.getMemberInfo(memberId);
     }
 
-    public List<String> getMonthExerRow(Map<String,Object> map){
+    public List<Map<String,Object>> getMonthExerRow(Map<String,Object> map){
         return exerMapper.getMonthExer(map);
     }
 }

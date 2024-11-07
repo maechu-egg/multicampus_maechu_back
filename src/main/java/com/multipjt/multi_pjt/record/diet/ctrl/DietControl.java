@@ -225,9 +225,9 @@ public class DietControl {
 
     // 특정 달 식단 기록 날짜 조회  
     @PostMapping("/get/month")
-    public ResponseEntity<List<String>> getMonthDiet(@RequestBody Map<String,Object> map) {
+    public ResponseEntity<List<Map<String,Object>>> getMonthDiet(@RequestBody Map<String,Object> map) {
         System.out.println("class endPoint >> " + "/record/diet/get/month");
-        List<String> result = dietService.getMonthDietRow(map);
+        List<Map<String,Object>> result = dietService.getMonthDietRow(map);
 
         System.out.println("result >>" + result);
 

@@ -36,7 +36,7 @@ public interface DietMapper {
 
     public int mealUpdate(DietRequestDTO dietRequestDTO);
 
-    public List<String> getMonthDiet(Map<String,Object> map);
+    public List<Map<String,Object>> getMonthDiet(Map<String,Object> map);
 
     public Map<String,Object> memberDataGet(Integer memberId);
 }
