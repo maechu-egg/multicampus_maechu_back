@@ -30,7 +30,12 @@ public class PostResponseDTO {
     private List<CommentResponseDTO> comments; 
     // 좋아요 상태
     private boolean likeStatus;
+    // 싫어요 상태
+    private boolean unlikeStatus;
     
+    private boolean author;
+
+
     // 외래키
     private int member_id;
     

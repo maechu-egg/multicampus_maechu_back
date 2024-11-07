@@ -30,21 +30,21 @@ public class PostService {
     private UserActivityRecordMapper userActivityRecordMapper;
 
     // 전체 페이지 
-    public List<PostResponseDTO> getAllPagePosts(int page, int size){
+    public List<PostResponseDTO> getAllPagePosts(Map<String, Object> map){
         System.out.println("service : getAllPagePosts 조회");
        
-        int offset = (page - 1 ) * size ;
         
-        List<PostResponseDTO>  list = postMapper.postAllSelect(size, offset);
+        
+        List<PostResponseDTO>  list = postMapper.postAllSelect(map);
         System.out.println("service   list - " + list );
         return list;
     }
 
 
     // 전체 페이지 수
-    public int countPosts(){
+    public int countPosts(Map<String, Object> map){
         System.out.println("service : countPosts 조회");
-        int total = postMapper.countPosts();
+        int total = postMapper.countPosts(map);
 
         return total;
     }
@@ -65,30 +65,12 @@ public class PostService {
         return searchList;
     }
 
-
-    // 운동 페이지 조회 
-    public List<PostResponseDTO> postSelectSport(Map<String, Object> map){
-        System.out.println("service : post_sports 조회");
-        int page = (int)map.get("page");
-        int size = (int)map.get("size");
-        System.out.println("page : " + page);
-        System.out.println("size : " + size);
-
-        int offset = (page - 1) * size;
-        map.put("offset", offset);
-        List<PostResponseDTO> sportPostList = postMapper.postSelectSport(map);
-
-        return sportPostList;
-    }
-
     // 게시글 등록                              
     public int postInsert(PostRequestDTO pdto,Map<String, Object> map){
         System.out.println("service - postInsert");
         int result = postMapper.postInsert(pdto);
-        
-
-       
-         userActivityRecordMapper.insertActivityAndUpdatePoints(map);
+            
+        // userActivityRecordMapper.insertActivityAndUpdatePoints(map);
 
         if(result == 1){
             System.out.println("service : 게시글이 성공적으로 등록되었습니다.");
@@ -102,10 +84,34 @@ public class PostService {
 
     // 게시글 수정
     public int postUpdate(PostRequestDTO pdto){
-
+    
         System.out.println("service : postUpdate");
         return postMapper.postUpdate(pdto);
+    
     }
+
+    // 업데이트 게시글 조회
+    public PostResponseDTO updatePostResult(PostRequestDTO pdto){
+        System.out.println("sevice : result - postupdate - select");
+
+        return postMapper.updatePostResult(pdto);
+    }
+
+    // 게시글 삭제
+    public boolean postDelete(Map<String, Integer> map){
+
+        int result = 0;
+
+        result = postMapper.postDelete(map);
+
+        if(result >= 1){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+
 
     // 상세 페이지 조회 
     public PostResponseDTO postDetail(Map<String, Integer> map){
@@ -113,6 +119,7 @@ public class PostService {
         System.out.println("map : " + map);
         // 게시글 정보
         PostResponseDTO result = postMapper.postDetailSelect(map);
+
         // 댓글 정보
         List<CommentResponseDTO> list = postMapper.postDetailComment(map);
         
@@ -121,13 +128,22 @@ public class PostService {
         return result;
     }
 
-    // 상세 페이지 - 좋아요 상태
-    public boolean postDetailLike(Map<String, Integer> map){
+    // 상세 페이지 - 좋아요 / 싫어요 상태
+    public Map<String, Object> postDetailLike(Map<String, Integer> map){
+        
+        Map<String,Object> status = new HashMap<>();
+        
         // 좋아요 정보
         boolean like = userActivityMapper.commitLike(map);
         System.out.println("좋아요 상태 1. true있다 / 없다. false " + like);
+        status.put("likeStatus", like);
+        
+        // 싫어요 정보 
+        boolean unlike = userActivityMapper.commitUnLike(map);
+        System.out.println("싫어요 상태 1. true있다 / 없다. false " + unlike);
+        status.put("unlikeStatus", unlike);
 
-        return like;
+        return status;
 
     }
 

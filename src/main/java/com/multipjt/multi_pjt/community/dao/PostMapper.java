@@ -25,11 +25,14 @@ public interface PostMapper {
     // 게시글 수정
     public int postUpdate(PostRequestDTO pdto);
 
+    // 게시글 수정 post 조회
+    public PostResponseDTO updatePostResult(PostRequestDTO pdto);
+
+    // 게시글 삭제
+    public int postDelete(Map<String, Integer> map);
+
     // 게시글 번호로 조회
     PostResponseDTO getPostById(@Param("post_id") int pid);
-
-    // 운동 종목 별 게시글 조회
-    List<PostResponseDTO> postSelectSport(Map<String, Object> map);
     
 
     // 단어 검색 - 글 제목 / 글 내용 / 해시태그  
@@ -39,10 +42,10 @@ public interface PostMapper {
     int postLikeCount(@Param("post_id") int pid);
     
     // 전체 페이지 
-    List<PostResponseDTO> postAllSelect(@Param("size") int size, @Param("offset") int offset);
+    List<PostResponseDTO> postAllSelect(Map<String,Object> map);
 
     // 전체 페이지 수
-    int countPosts();
+    int countPosts(Map<String, Object> map);
 
 
     // 상세 페이지
