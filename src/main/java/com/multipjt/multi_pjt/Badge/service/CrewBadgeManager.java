@@ -83,11 +83,11 @@ public class CrewBadgeManager {
     }
 
     // 새로운 배틀 승리 수를 측정하는 메서드
-    private int measureNewBattleWins(int memberId) {
-        Integer newWins = crewBadgeMapper.selectNewBattleWinsByMemberId(memberId);
-        logger.info("New Battle Wins for member {}: {}", memberId, newWins); // 로그 추가
-        return (newWins != null && newWins > 0) ? newWins : 0; // null일 경우 0 반환
-    }
+    // private int measureNewBattleWins(int memberId) {
+    //     Integer newWins = crewBadgeMapper.selectNewBattleWinsByMemberId(memberId);
+    //     logger.info("New Battle Wins for member {}: {}", memberId, newWins); // 로그 추가
+    //     return (newWins != null && newWins > 0) ? newWins : 0; // null일 경우 0 반환
+    // }
 
     // 점수에 따른 뱃지 등급 결정 메서드
     private String determineBadgeLevel(float points) {
@@ -129,5 +129,30 @@ public class CrewBadgeManager {
     // 크루 뱃지 랭킹 조회 메서드
     public List<Map<String, Object>> getCrewBadgeRanking() {
         return crewBadgeMapper.selectCrewBadgeRanking();
+    }
+    // 크루 뱃지 생성
+    public void createCrewBadge(int memberId) {
+        try {
+            // 크루 뱃지 정보가 이미 존재하는지 확인
+            CrewBadgeResponseDTO existingBadge = crewBadgeMapper.selectCrewBadgeByMemberId(memberId);
+            
+            if (existingBadge != null) {
+                logger.warn("Crew badge for member {} already exists. No new badge created.", memberId);
+                return; // 이미 존재하는 경우, 새로운 뱃지를 생성하지 않음
+            }
+    
+            // 새로운 뱃지 생성
+            CrewBadgeRequestDTO newBadge = new CrewBadgeRequestDTO();
+            newBadge.setMember_id(memberId);
+            newBadge.setCrew_current_points(0); // 초기 점수는 0으로 설정
+            newBadge.setBadge_level("기본"); // 기본 뱃지 레벨 설정
+            newBadge.setCrew_battle_wins(0); // 초기 배틀 승리 수는 0으로 설정
+    
+            // 뱃지 정보를 데이터베이스에 삽입
+            crewBadgeMapper.insertBadge(newBadge);
+            logger.info("New crew badge created for member {}.", memberId);
+        } catch (Exception e) {
+            logger.error("Error creating crew badge for member {}: {}", memberId, e.getMessage());
+        }
     }
 }
