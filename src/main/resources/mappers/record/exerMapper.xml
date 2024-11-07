@@ -75,7 +75,7 @@
     <select id="exerCaloriesGet" parameterType="java.util.Map" resultType="java.util.Map">
         SELECT 
             exercise_type,
-            SUM(calories) AS total_calories
+            SUM(calories) AS totalCalories
         FROM 
             ExerciseRecords
         WHERE 

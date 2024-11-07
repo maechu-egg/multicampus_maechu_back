@@ -38,5 +38,5 @@ public interface DietMapper {
 
     public List<String> getMonthDiet(Map<String,Object> map);
 
-    public Map<String,Object> calculateTdee(Integer memberId);
+    public Map<String,Object> memberDataGet(Integer memberId);
 }

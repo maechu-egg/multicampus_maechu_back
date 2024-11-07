@@ -70,10 +70,11 @@
     <select id="mealNutCheck" parameterType="java.util.Map" resultType="java.util.Map">
         SELECT 
             d.meal_type AS mealType,
-            SUM(i.calories) AS totalCalories,
-            SUM(i.carbs) AS totalCarbs,
+            SUM(i.calories) AS totalCalorie,
+            SUM(i.carbs) AS totalCarb,
             SUM(i.protein) AS totalProtein,
-            SUM(i.fat) AS totalFat
+            SUM(i.fat) AS totalFat,
+            SUM(i.quantity) AS totalQuantity
         FROM DietRecords d
         JOIN DietItems i
             ON d.diet_id = i.diet_id
@@ -82,9 +83,9 @@
         GROUP BY d.meal_type;
     </select>
 
-    <!-- calculateTdee --> 
+    <!-- memberDataGet --> 
 
-    <select id="calculateTdee" parameterType="java.lang.Integer" resultType="java.util.Map">
+    <select id="memberDataGet" parameterType="java.lang.Integer" resultType="java.util.Map">
         select profile_gender, profile_age , profile_weight ,profile_height, profile_goal, profile_workout_frequency from UserProfile
         where member_id = #{member_id};
     </select>    
