@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.http.HttpStatus;
+import org.springframework.scheduling.annotation.Scheduled;
 
 import com.multipjt.multi_pjt.crew.dao.crew.CrewMapper;
 import com.multipjt.multi_pjt.crew.domain.crew.CrewCommentsRequestDTO;
@@ -328,6 +329,7 @@ public class CrewService {
     }
 
     // 크루 게시물 상태 인기 변경
+    @Scheduled(cron = "0 0 0/6 * * *")
     public void updatePostStatusIfPopular(int post_id, int crew_id) {
         System.out.println("debug>>> Service: updatePostStatusIfPopular + " + post_id);
         System.out.println("debug>>> Service: updatePostStatusIfPopular + " + crew_id);

@@ -326,7 +326,7 @@
             parameterType="int">
         UPDATE CrewPost
         SET crew_post_state = 1
-        WHERE crew_post_id = #{crew_post_id};
+        WHERE crew_post_id = #{crew_post_id} AND crew_post_state = 2;
     </update>
     
     <!-- 크루 멤버수 조회 -->
