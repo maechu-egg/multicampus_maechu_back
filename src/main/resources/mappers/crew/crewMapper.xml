@@ -320,6 +320,16 @@
         WHERE crew_post_id = #{crew_post_id} AND member_id = #{member_id};
     </delete>
 
+    <!-- 일반 게시물 조회 --> 
+
+    <select id="selectPopularPostRow"
+            resultType="com.multipjt.multi_pjt.crew.domain.crew.CrewPostResponseDTO">
+        SELECT *
+        FROM CrewPost
+        WHERE crew_post_state = 2
+        ORDER BY crew_post_like DESC;
+    </select>    
+
     <!-- 크루 게시물 상태 인기 변경 --> 
 
     <update id="updatePostStatusRow"

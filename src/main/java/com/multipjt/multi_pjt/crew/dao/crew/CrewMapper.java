@@ -102,6 +102,9 @@ public interface CrewMapper {
     // 크루원 게시물 별 좋아요 기록 삭제
     public void deleteCrewPostLikeRow(CrewPostLikeRequestDTO param);
 
+    // 일반 게시물 조회
+    public List<CrewPostResponseDTO> selectPopularPostRow();
+
     // 크루 게시물 상태 인기 변경
     public void updatePostStatusRow(int crew_post_id);
 

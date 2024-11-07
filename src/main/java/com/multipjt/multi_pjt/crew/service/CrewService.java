@@ -328,21 +328,6 @@ public class CrewService {
         }
     }
 
-    // 크루 게시물 상태 인기 변경
-    @Scheduled(cron = "0 0 0/6 * * *")
-    public void updatePostStatusIfPopular(int post_id, int crew_id) {
-        System.out.println("debug>>> Service: updatePostStatusIfPopular + " + post_id);
-        System.out.println("debug>>> Service: updatePostStatusIfPopular + " + crew_id);
-
-        int memberCount = crewMapper.selectCrewMemberCountRow(crew_id);
-        int likeCount = crewMapper.selectPostLikeCountRow(post_id);
-
-        if(likeCount >= memberCount / 2) {
-            crewMapper.updatePostStatusRow(post_id);
-        }
-    }
-
-
     // --------- 크루 댓글 ---------
 
     // 크루 댓글 작성
