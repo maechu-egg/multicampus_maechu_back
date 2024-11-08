@@ -17,6 +17,7 @@ import com.multipjt.multi_pjt.record.diet.domain.DietRequestDTO;
 import com.multipjt.multi_pjt.record.diet.domain.DietResponseDTO;
 import com.multipjt.multi_pjt.record.diet.domain.ItemRequestDTO;
 import com.multipjt.multi_pjt.record.diet.domain.ItemResponseDTO;
+import com.multipjt.multi_pjt.record.diet.domain.MealType;
 import com.multipjt.multi_pjt.record.diet.service.DietService;
 import com.multipjt.multi_pjt.record.openApi.domain.FoodCalculateDTO;
 
@@ -52,7 +53,7 @@ public class DietControl {
     // 식단 추가
     // member_id, meal_type 필요
     @GetMapping("/insert/meal")
-    public ResponseEntity<Object> mealInsert(@RequestParam(name = "meal_type") String meal_type,
+    public ResponseEntity<Object> mealInsert(@RequestParam(name = "meal_type") MealType meal_type,
                             @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
         System.out.println("class endPoint >> " + "/record/diet/insert/meal");
         
