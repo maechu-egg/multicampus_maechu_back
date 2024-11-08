@@ -1,5 +1,6 @@
 package com.multipjt.multi_pjt.crew.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -172,13 +173,23 @@ public class CrewBattleService {
         System.out.println("debug>>> Service: createVote + " + token_id);
         System.out.println("debug>>> Service: createVote + " + crew_id);
         
+        // 크루원 확인
         boolean isActiveMember = crewMapper.selectCrewMemberRow(crew_id).stream()
             .anyMatch(member -> member.getMember_id() == token_id && member.getCrew_member_state() == 1);
 
-        if (isActiveMember) {
-            crewBattleMapper.createVoteRow(params);
-        } else {
+        if (!isActiveMember) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "크루원만 투표가 가능합니다.");
         }
+
+        // 배틀 종료일 확인
+        LocalDateTime battleEndDate = crewBattleMapper.selectCrewBattleDetailRow(params.getBattle_id()).getBattle_end_date();
+        LocalDateTime votingStartDate = battleEndDate.minusDays(7);
+
+        if (LocalDateTime.now().isBefore(votingStartDate)) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "투표는 배틀 종료일 7일 전부터 가능합니다.");
+        }
+
+        // 투표 생성
+        crewBattleMapper.createVoteRow(params);
     }
 }
