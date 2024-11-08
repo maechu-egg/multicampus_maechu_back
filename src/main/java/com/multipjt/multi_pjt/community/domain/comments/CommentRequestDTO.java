@@ -11,7 +11,7 @@ public class CommentRequestDTO {
     private Date        comments_date;
     
     // 외래키 
-    private Integer     member_id;
+    private int         member_id;
     private int         post_id;
 
 }

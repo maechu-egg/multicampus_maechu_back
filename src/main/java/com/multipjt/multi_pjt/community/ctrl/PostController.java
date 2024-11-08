@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,8 +28,10 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.multipjt.multi_pjt.community.domain.comments.CommentResponseDTO;
 import com.multipjt.multi_pjt.community.domain.posts.PostRequestDTO;
 import com.multipjt.multi_pjt.community.domain.posts.PostResponseDTO;
+import com.multipjt.multi_pjt.community.service.CommentService;
 import com.multipjt.multi_pjt.community.service.PostService;
 import com.multipjt.multi_pjt.community.service.UserActivityService;
 import com.multipjt.multi_pjt.jwt.JwtTokenProvider;
@@ -52,6 +55,9 @@ public class PostController {
         @Autowired
         private JwtTokenProvider jwtTokenProvider;
 
+        @Autowired
+        private CommentService commentService;
+
         // 전체 페이지 조회
         @GetMapping("/posts")
         public ResponseEntity<Map<String, Object>> Posts(
@@ -64,6 +70,8 @@ public class PostController {
 
             System.out.println("Controller - All posts 조회");
             Map<String, Object> response = new HashMap<>();
+            System.out.println("post_up_sport : " + post_up_sport);
+            System.out.println("post_sport" + post_sport);
 
             if (authHeader != null && authHeader.startsWith("Bearer ")) {
                 String token = authHeader.substring(7); // "Bearer " 접두사 제거
@@ -78,6 +86,9 @@ public class PostController {
             map.put("size", size);
             map.put("post_up_sport", post_up_sport);
             map.put("post_sport", post_sport);
+            System.out.println("map 입력후 ");
+            System.out.println("post_up_sport : " + post_up_sport);
+            System.out.println("post_sport" + post_sport);
             List<PostResponseDTO> allList = postService.getAllPagePosts(map);
            
             int totalpage = postService.countPosts(map);
@@ -122,6 +133,7 @@ public class PostController {
                 if(searchList == null || searchList.isEmpty()){
                     response.put("message" ,"검색결과가 없습니다");
                     response.put("status", HttpStatus.NOT_FOUND);
+                    response.put("posts", new ArrayList<>());
                   
                 }else if(searchList != null) {
                     
@@ -281,7 +293,7 @@ public class PostController {
                 System.out.println("post id - " + postId);
             
                 
-                Map<String, Integer> map = new HashMap<>();
+                Map<String, Object> map = new HashMap<>();
                 map.put("post_id", postId);
                 map.put("member_id", userId);
                 //  상세 페이지 조회 
@@ -296,15 +308,22 @@ public class PostController {
                 
 
                 postdetail.setAuthor(isAuthor);
-
+                Map<String, Integer> viewLikeMap = new HashMap<>();
+                viewLikeMap.put("post_id", postId);
+                viewLikeMap.put("member_id", userId);
                 // 조회수 &  UserActivity 테이블에 넣기 
-                userActivityService.viewInAndUp(map);
-                
-                   
-               
+                userActivityService.viewInAndUp(viewLikeMap);
+                  
                 // 좋아요 상태 true false 값 넘기기
-                status= postService.postDetailLike(map);
-                                                        
+                status= postService.postDetailLike(viewLikeMap);
+                
+                // 댓글 list
+                List<CommentResponseDTO> comments = commentService.postDetailComment(map);
+
+                if (comments != null && !comments.isEmpty()) {
+                        postdetail.setComments(comments);
+                }
+
                 if(status.get("likeStatus") != null && (boolean)status.get("likeStatus")){
                     postdetail.setLikeStatus(true);
                 }else if(status.get("unlikeStatus") != null && (boolean)status.get("unlikeStatus")){
@@ -408,13 +427,13 @@ public class PostController {
             return ResponseEntity.ok(list);
         }
         
-
+        // 키워드 검색
         @GetMapping("/posts/sport/{post_sports_keyword}")
         public ResponseEntity<Map<String, Object>> searchKeyword(
                                                 @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader,    
                                                 @PathVariable("post_sports_keyword") String post_sports_keyword,
-                                                @RequestParam(name="post_up_sport") String post_up_sport,
-                                                @RequestParam(name="post_sport") String post_sport,
+                                                // @RequestParam(name="post_up_sport") String post_up_sport,
+                                                // @RequestParam(name="post_sport") String post_sport,
                                                 @RequestParam(name="page", defaultValue = "1") int page,
                                                 @RequestParam(name="size", defaultValue = "10") int size) {
                 System.out.println("Controller - posts/searchKeyword");
@@ -427,17 +446,29 @@ public class PostController {
                 int userId = jwtTokenProvider.getUserIdFromToken(token); // 토큰에서 사용자 ID 추출 (int형으로 변경)
                 System.out.println("userId : " + userId);
 
-                map.put("post_up_sport", post_up_sport);
-                map.put("post_sport", post_sport);
+                // map.put("post_up_sport", post_up_sport);
+                // map.put("post_sport", post_sport);
+                
+                int offset = (page - 1 ) * size ;
+                map.put("offset", offset);
+                map.put("size", size);
                 map.put("post_sports_keyword", post_sports_keyword);
+                
 
-                // 수정 해야 한다.....
+        
                 map = postService.searchKeyword(map);
                 if(map.get("result") != null && (boolean)map.get("result")){
                     map.put("searchList", map.get("list"));
+                   
                     map.put("message", "searchKeyword 성공!");
+                    map.put("status", HttpStatus.OK);
+                    System.out.println("map 출력");
+                    System.out.println( map.get("list"));
+                    
                 }else if(map.get("result") != null && !(boolean)map.get("result")){
                     map.put("message", "searchKeyword 실패!!");
+                    map.put("searchList", map.get("list"));
+                    map.put("status",HttpStatus.NOT_FOUND );
                 }
 
 
