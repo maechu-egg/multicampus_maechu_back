@@ -219,4 +219,106 @@ public class PostService {
         return result;
     }
 
+        // 오운완 검색 
+        public Map<String, Object> searchToday(){
+            System.out.println("service - searchToday");
+
+            List<PostResponseDTO> list = null;
+            list = postMapper.searchToday();
+
+            System.out.println("list : " + list);
+
+
+            Map<String, Object> result = new HashMap<>();
+
+            if(list != null){
+                result.put("result", true) ;
+                result.put("list", list);
+
+            }else if(list == null){
+                result.put("result", false);
+                result.put("list", new ArrayList<>());
+            }
+
+
+            return result;
+        }
+
+
+        // 중고장터 검색
+        public Map<String, Object> searchMarketplace(){
+            System.out.println("service - searchToday");
+
+            List<PostResponseDTO> list = null;
+            list = postMapper.searchMarketplace();
+
+            System.out.println("list : " + list);
+
+
+            Map<String, Object> result = new HashMap<>();
+
+            if(list != null){
+                result.put("result", true) ;
+                result.put("list", list);
+
+            }else if(list == null){
+                result.put("result", false);
+                result.put("list", new ArrayList<>());
+            }
+
+
+            return result;
+        }
+
+        // 사용자 본인 게시글 검색
+        public Map<String, Object> myPosts(int member_id){
+            System.out.println("service - searchToday");
+
+            List<PostResponseDTO> list = null;
+            list = postMapper.myPosts(member_id);
+
+            System.out.println("list : " + list);
+
+
+            Map<String, Object> result = new HashMap<>();
+
+            if(list != null){
+                result.put("result", true) ;
+                result.put("list", list);
+
+            }else if(list == null){
+                result.put("result", false);
+                result.put("list", new ArrayList<>());
+            }
+
+
+            return result;
+        }
+
+
+        // 사용자 - 좋아요한 게시글 검색
+        public Map<String, Object> myLikePosts(int member_id){
+            System.out.println("service - searchToday");
+
+            List<PostResponseDTO> list = null;
+            list = postMapper.myLikePosts(member_id);
+
+            System.out.println("list : " + list);
+
+
+            Map<String, Object> result = new HashMap<>();
+
+            if(list != null){
+                result.put("result", true) ;
+                result.put("list", list);
+
+            }else if(list == null){
+                result.put("result", false);
+                result.put("list", new ArrayList<>());
+            }
+
+
+            return result;
+        }
+
 }

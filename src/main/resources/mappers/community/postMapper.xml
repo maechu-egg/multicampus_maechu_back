@@ -471,4 +471,132 @@
         LIMIT #{size} OFFSET #{offset}) Posts, (SELECT @rownum := 0 )r
     
     </select>
+
+        <!-- 키워드 - 오운완 - 좋아요 기준 -->
+     <select id="searchToday" resultType="com.multipjt.multi_pjt.community.domain.posts.PostResponseDTO">
+ 
+        SELECT 
+            p.post_id AS post_id,
+            p.post_title AS post_title,
+            p.post_sport AS post_sport,
+            p.post_date AS post_date,
+            p.post_up_sport AS post_up_sport,
+            p.post_sports_keyword AS post_sports_keyword,
+            p.post_like_counts AS post_like_count,
+            p.post_views AS post_views,
+            COUNT(c.comments_id) AS comments_count,
+            m.nickname AS post_nickname,
+            m.member_id AS member_id
+        FROM 
+            Posts p
+        LEFT JOIN 
+            Comments c ON p.post_id = c.post_id
+        JOIN 
+            Member m ON p.member_id = m.member_id
+        WHERE
+             p.post_sports_keyword = "오운완"
+        GROUP BY 
+            p.post_id, p.post_title, p.post_sport, p.post_sports_keyword, p.post_date, p.post_up_sport,
+            p.post_like_counts, p.post_views, m.nickname, m.member_id
+        ORDER BY 
+            p.post_like_counts DESC
+        LIMIT 4
+    
+    </select>
+
+
+
+    <!-- 키워드 - 중고장터 - 작성일자 기준 -->
+    <select id="searchMarketplace" resultType="com.multipjt.multi_pjt.community.domain.posts.PostResponseDTO">
+        SELECT 
+            p.post_id AS post_id,
+            p.post_title AS post_title,
+            p.post_sport AS post_sport,
+            p.post_date AS post_date,
+            p.post_up_sport AS post_up_sport,
+            p.post_sports_keyword AS post_sports_keyword,
+            p.post_like_counts AS post_like_count,
+            p.post_views AS post_views,
+            COUNT(c.comments_id) AS comments_count,
+            m.nickname AS post_nickname,
+            m.member_id AS member_id
+        FROM 
+            Posts p
+        LEFT JOIN 
+            Comments c ON p.post_id = c.post_id
+        JOIN 
+            Member m ON p.member_id = m.member_id
+        WHERE
+             p.post_sports_keyword = "중고장터"
+        GROUP BY 
+            p.post_id, p.post_title, p.post_sport, p.post_sports_keyword, p.post_date, p.post_up_sport,
+            p.post_like_counts, p.post_views, m.nickname, m.member_id
+        ORDER BY 
+            p.post_date DESC
+        LIMIT 4
+    </select>
+
+      <!-- 사용자 작성 게시글 -->
+    <select id="myPosts" parameterType="int" resultType="com.multipjt.multi_pjt.community.domain.posts.PostResponseDTO">
+        SELECT 
+            p.post_id AS post_id,
+            p.post_title AS post_title,
+            p.post_sport AS post_sport,
+            p.post_date AS post_date,
+            p.post_up_sport AS post_up_sport,
+            p.post_sports_keyword AS post_sports_keyword,
+            p.post_like_counts AS post_like_count,
+            p.post_views AS post_views,
+            COUNT(c.comments_id) AS comments_count,
+            m.nickname AS post_nickname,
+            m.member_id AS member_id
+        FROM 
+            Posts p
+        LEFT JOIN 
+            Comments c ON p.post_id = c.post_id
+        JOIN 
+            Member m ON p.member_id = m.member_id
+        WHERE
+             p.member_id = #{member_id}
+        GROUP BY 
+            p.post_id, p.post_title, p.post_sport, p.post_sports_keyword, p.post_date, p.post_up_sport,
+            p.post_like_counts, p.post_views, m.nickname, m.member_id
+        ORDER BY 
+            p.post_date DESC
+    </select>
+
+    <!-- 사용자가 좋아요를 누른 게시글 -->
+        <select id="myLikePosts" parameterType="int" resultType="com.multipjt.multi_pjt.community.domain.posts.PostResponseDTO">
+            SELECT 
+                p.post_id AS post_id,
+                p.post_title AS post_title,
+                p.post_sport AS post_sport,
+                p.post_date AS post_date,
+                p.post_up_sport AS post_up_sport,
+                p.post_sports_keyword AS post_sports_keyword,
+                p.post_like_counts AS post_like_count,
+                p.post_views AS post_views,
+                COUNT(c.comments_id) AS comments_count,
+                m.nickname AS post_nickname,
+                m.member_id AS member_id
+            FROM 
+                Posts p
+            LEFT JOIN 
+                Comments c ON p.post_id = c.post_id
+            JOIN 
+                Member m ON p.member_id = m.member_id
+            JOIN 
+                UserActivity ua ON p.post_id = ua.post_id
+            WHERE
+                ua.user_activity = 'like'  
+                AND 
+                ua.member_id = #{member_id}
+            GROUP BY 
+                p.post_id, p.post_title, p.post_sport, p.post_sports_keyword, p.post_date, p.post_up_sport,
+                p.post_like_counts, p.post_views, m.nickname, m.member_id
+            ORDER BY 
+                p.post_date DESC
+        </select>
+
+
 </mapper>

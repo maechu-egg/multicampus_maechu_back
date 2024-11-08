@@ -384,6 +384,7 @@ public class PostController {
         }
 
 
+         
 
 
 
@@ -478,5 +479,144 @@ public class PostController {
             return ResponseEntity.ok(map);
 
         }
+ 
         
+
+    // 오운완
+   @GetMapping("/posts/sport/searchToday")
+   public ResponseEntity<Map<String, Object>> searchToday(
+                                           @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader   
+                                           ) {
+           System.out.println("Controller - posts/searchKeyword");
+           Map<String, Object> map = new HashMap<>();
+
+       if (authHeader != null && authHeader.startsWith("Bearer ")) {
+           String token = authHeader.substring(7); // "Bearer " 접두사 제거
+           int userId = jwtTokenProvider.getUserIdFromToken(token); // 토큰에서 사용자 ID 추출 (int형으로 변경)
+           System.out.println("userId : " + userId);
+
+
+   
+           map = postService.searchToday();
+           if(map.get("result") != null && (boolean)map.get("result")){
+               map.put("searchList", map.get("list"));
+              
+               map.put("message", "오운완 조회 성공 !");
+               map.put("status", HttpStatus.OK);
+               System.out.println("map 출력");
+               System.out.println( map.get("list"));
+               
+           }else if(map.get("result") != null && !(boolean)map.get("result")){
+               map.put("message", "오운완 조회 실패!!");
+               map.put("searchList", map.get("list"));
+               map.put("status",HttpStatus.NOT_FOUND );
+           }
+       }
+       return ResponseEntity.ok(map);
+
+   }
+       
+    // 중고장터
+   @GetMapping("/posts/sport/searchMarketplace")
+   public ResponseEntity<Map<String, Object>> searchMarketplace(
+                                           @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader    
+                                           ) {
+           System.out.println("Controller - posts/searchMarketplace");
+           Map<String, Object> map = new HashMap<>();
+
+       if (authHeader != null && authHeader.startsWith("Bearer ")) {
+           String token = authHeader.substring(7); // "Bearer " 접두사 제거
+           int userId = jwtTokenProvider.getUserIdFromToken(token); // 토큰에서 사용자 ID 추출 (int형으로 변경)
+           System.out.println("userId : " + userId);
+
+   
+           map = postService.searchMarketplace();
+           if(map.get("result") != null && (boolean)map.get("result")){
+               map.put("searchList", map.get("list"));
+              
+               map.put("message", "중고장터 조회 성공!");
+               map.put("status", HttpStatus.OK);
+               System.out.println("map 출력");
+               System.out.println( map.get("list"));
+               
+           }else if(map.get("result") != null && !(boolean)map.get("result")){
+               map.put("message", "중고장터 조회 실패!!");
+               map.put("searchList", map.get("list"));
+               map.put("status",HttpStatus.NOT_FOUND );
+           }
+
+
+       }
+
+
+       return ResponseEntity.ok(map);
+
+   }
+        // 사용자 - 좋아요한 게시글 조회
+        @GetMapping("/myPage/myLikePosts")
+        public ResponseEntity<Map<String, Object>> myLikePosts(
+                                                @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader    
+        ) {
+                System.out.println("Controller - posts/myPosts");
+                Map<String, Object> map = new HashMap<>();
+
+            if (authHeader != null && authHeader.startsWith("Bearer ")) {
+                String token = authHeader.substring(7); // "Bearer " 접두사 제거
+                int userId = jwtTokenProvider.getUserIdFromToken(token); // 토큰에서 사용자 ID 추출 (int형으로 변경)
+                System.out.println("userId : " + userId);
+
+        
+                map = postService.myLikePosts(userId);
+                if(map.get("result") != null && (boolean)map.get("result")){
+                    map.put("searchList", map.get("list"));
+                    
+                    map.put("message", "myLikePosts 조회 성공!");
+                    map.put("status", HttpStatus.OK);
+                    System.out.println("map 출력");
+                    System.out.println( map.get("list"));
+                    
+                }else if(map.get("result") != null && !(boolean)map.get("result")){
+                    map.put("message", "myLikePosts 조회 실패!!");
+                    map.put("searchList", map.get("list"));
+                    map.put("status",HttpStatus.NOT_FOUND );
+                }
+            }
+
+            return ResponseEntity.ok(map);
+        }
+
+        // 사용자 본인 게시글 조회
+        @GetMapping("/myPage/myPosts")
+        public ResponseEntity<Map<String, Object>> myPosts(
+                                                @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader    
+        ) {
+                System.out.println("Controller - posts/myPosts");
+                Map<String, Object> map = new HashMap<>();
+
+            if (authHeader != null && authHeader.startsWith("Bearer ")) {
+                String token = authHeader.substring(7); // "Bearer " 접두사 제거
+                int userId = jwtTokenProvider.getUserIdFromToken(token); // 토큰에서 사용자 ID 추출 (int형으로 변경)
+                System.out.println("userId : " + userId);
+
+        
+                map = postService.myPosts(userId);
+                if(map.get("result") != null && (boolean)map.get("result")){
+                    map.put("searchList", map.get("list"));
+                    
+                    map.put("message", "myPosts 조회 성공!");
+                    map.put("status", HttpStatus.OK);
+                    System.out.println("map 출력");
+                    System.out.println( map.get("list"));
+                    
+                }else if(map.get("result") != null && !(boolean)map.get("result")){
+                    map.put("message", "myPosts 조회 실패!!");
+                    map.put("searchList", map.get("list"));
+                    map.put("status",HttpStatus.NOT_FOUND );
+                }
+
+            }
+            return ResponseEntity.ok(map);
+
+        }
+
 }
