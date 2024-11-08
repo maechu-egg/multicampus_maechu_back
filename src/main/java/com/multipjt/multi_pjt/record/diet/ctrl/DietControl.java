@@ -94,8 +94,10 @@ public class DietControl {
         int result = dietService.itemInsertRow(itemRequestDTO);
         System.out.println("result >>" + result);
         if(result == 1){
+            // 추가 성공
             return new ResponseEntity<>(result,HttpStatus.OK);
         } else{
+            // 추가 실패
             return new ResponseEntity<>(result,HttpStatus.BAD_REQUEST);
         }
     }
@@ -106,43 +108,56 @@ public class DietControl {
     public ResponseEntity<Object> findDietNumber(@RequestBody Map<String,Object> map,
                                                  @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
         System.out.println("class endPoint >> " + "/record/diet/get/dietnumber");
-        
-        if (authHeader != null && authHeader.startsWith("Bearer ")) {
-            String token = authHeader.substring(7); // "Bearer " 접두사 제거
-            Integer member_id = jwtTokenProvider.getUserIdFromToken(token); // 토큰에서 사용자 ID 추출
+        try{
+            if (authHeader != null && authHeader.startsWith("Bearer ")) {
+                String token = authHeader.substring(7); // "Bearer " 접두사 제거
+                Integer member_id = jwtTokenProvider.getUserIdFromToken(token); // 토큰에서 사용자 ID 추출
 
-            System.out.println("debug >>> member_id : " + member_id);
-            System.out.println("debug >>> token : " + token);
+                System.out.println("debug >>> member_id : " + member_id);
+                System.out.println("debug >>> token : " + token);
 
-            map.put("member_id", member_id);
+                map.put("member_id", member_id);
 
-            Integer result = dietService.findDietRow(map);
-            System.out.println("result >>" + result);
+                Integer result = dietService.findDietRow(map);
+                System.out.println("result >>" + result);
 
-            if(result != null){
-                // 값이 있을 때
-                return new ResponseEntity<>(result,HttpStatus.OK);
+                if(result != null){
+                    // 값이 있을 때
+                    return new ResponseEntity<>(result,HttpStatus.OK);
+                } else{
+                    // 값이 없을 때
+                    return new ResponseEntity<>(result,HttpStatus.NOT_FOUND);
+                }
             } else{
-                // 값이 없을 때
-                return new ResponseEntity<>(result,HttpStatus.BAD_REQUEST);
+                // 인증 실패
+                return new ResponseEntity<>("인증실패",HttpStatus.UNAUTHORIZED);
             }
-        } else{
-            // 인증 실패
-            return new ResponseEntity<>("인증실패",HttpStatus.UNAUTHORIZED);
-        }    
+        } catch(Exception e){
+            // 서버 내부 오류 발생
+            System.out.println("서버 오류 발생: " + e.getMessage());
+            return new ResponseEntity<>("서버 오류 발생", HttpStatus.INTERNAL_SERVER_ERROR);
+        } 
     }
 
     // 식단 조회
     // 일일 식단 조회를 통해 식단 번호를 가지게 됨
-    @GetMapping("/get/diet")
-    public ResponseEntity<List<DietResponseDTO>> findDiet(@RequestBody Map<String,Object> map) {
+    @PostMapping("/get/diet")
+    public ResponseEntity<Object> findDiet(@RequestBody Map<String,Object> map) {
         System.out.println("class endPoint >> " + "/record/diet/get/diet");
         List<DietResponseDTO> result = dietService.dietFindAllRow(map);
         System.out.println("result >>" + result);
-        if(result != null){
-            return new ResponseEntity<>(result,HttpStatus.OK);
-        } else{
-            return new ResponseEntity<>(result,HttpStatus.BAD_REQUEST);
+        try{
+            if(!result.isEmpty()){
+                // 값이 있을 때
+                return new ResponseEntity<>(result,HttpStatus.OK);
+            } else{
+                // 값이 없을 때
+                return new ResponseEntity<>(result,HttpStatus.NOT_FOUND);
+            }
+        } catch(Exception e){
+                // 서버 내부 오류 발생
+                System.out.println("서버 오류 발생: " + e.getMessage());
+                return new ResponseEntity<>("서버 오류 발생", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -150,14 +165,22 @@ public class DietControl {
     // 일일 식단 조회를 통해 식단 번호를 알고 있는 상태
     // 이 엔드포인트를 통해 식품 번호를 알 수 있게 됨
     @GetMapping("/get/items")
-    public ResponseEntity<List<ItemResponseDTO>> findDietItems(@RequestParam(name = "diet_id") Integer diet_id) {
+    public ResponseEntity<Object> findDietItems(@RequestParam(name = "diet_id") Integer diet_id) {
         System.out.println("class endPoint >> " + "/record/diet/get/items");
         List<ItemResponseDTO> result = dietService.itemFindAllRow(diet_id);
         System.out.println("result >>" + result);
-        if(result != null){
-            return new ResponseEntity<>(result,HttpStatus.OK);
-        } else{
-            return new ResponseEntity<>(result,HttpStatus.BAD_REQUEST);
+        try{
+            if(!result.isEmpty()){
+                // 값이 있을 때
+                return new ResponseEntity<>(result,HttpStatus.OK);
+            } else{
+                // 값이 없을 때
+                return new ResponseEntity<>(result,HttpStatus.NOT_FOUND);
+            }
+        } catch(Exception e){
+                // 서버 내부 오류 발생
+                System.out.println("서버 오류 발생: " + e.getMessage());
+                return new ResponseEntity<>("서버 오류 발생", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -166,14 +189,16 @@ public class DietControl {
     // 식사타입만 변경 가능
     // 식단 조회를 통해 식단 타입들을 알고 있는 상태
     @PutMapping("/update/meal")
-    public ResponseEntity<Integer> mealUpdate(@RequestBody DietRequestDTO dietRequestDTO) {
+    public ResponseEntity<Object> mealUpdate(@RequestBody DietRequestDTO dietRequestDTO) {
         System.out.println("class endPoint >> " + "/record/diet/update/meal");
         int result = dietService.mealUpdateRow(dietRequestDTO);
         System.out.println("result >>" + result);
         if(result == 1){
+            // 수정 성공
             return new ResponseEntity<>(result,HttpStatus.OK);
         } else{
-            return new ResponseEntity<>(result,HttpStatus.BAD_REQUEST);
+            // 수정 실패
+            return new ResponseEntity<>("수정 실패",HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -183,30 +208,34 @@ public class DietControl {
     // 이거는 그냥 구해져있는 영양성분에 수정된 칼로리 / 현재 칼로리 한 비율 다 곱해주면 되겠네
     // 프론트에서 처리하고 값 넣으면 되겠네
     @PutMapping("/update/item")
-    public ResponseEntity<Integer> itemUpdate(@RequestBody ItemRequestDTO itemRequestDTO) {
+    public ResponseEntity<Object> itemUpdate(@RequestBody ItemRequestDTO itemRequestDTO) {
     
         System.out.println("class endPoint >> " + "/record/diet/update/item");
     
         int result = dietService.itemUpdateRow(itemRequestDTO);
         System.out.println("result >>" + result);
         if(result == 1){
+            // 수정 성공
             return new ResponseEntity<>(result,HttpStatus.OK);
         } else{
-            return new ResponseEntity<>(result,HttpStatus.BAD_REQUEST);
+            // 수정 실패
+            return new ResponseEntity<>("수정 실패",HttpStatus.BAD_REQUEST);
         }
     }
 
     // 식품 삭제
     // 식품 조회를 통해 식품 번호를 알고 있는 상태
     @DeleteMapping("/delete/item")
-    public ResponseEntity<Integer> deleteItem(@RequestParam(name = "item_id") Integer item_id) {
+    public ResponseEntity<Object> deleteItem(@RequestParam(name = "item_id") Integer item_id) {
         System.out.println("class endPoint >> " + "/record/diet/delete/item");
         int result = dietService.itemDeleteRow(item_id);
         System.out.println("result >>" + result);
         if(result == 1){
+            // 삭제 성공
             return new ResponseEntity<>(result,HttpStatus.OK);
         } else{
-            return new ResponseEntity<>(result,HttpStatus.BAD_REQUEST);
+            // 삭제 실패
+            return new ResponseEntity<>("삭제 실패",HttpStatus.BAD_REQUEST);
         }
     }       
 
@@ -218,8 +247,10 @@ public class DietControl {
         int result = dietService.deleteRecordRow(diet_id);
         System.out.println("result >>" + result);
         if(result == 1){
+            // 삭제 성공
             return new ResponseEntity<>(result,HttpStatus.OK);
         } else{
+            // 삭제 실패
             return new ResponseEntity<>(result,HttpStatus.BAD_REQUEST);
         }
     }
@@ -230,7 +261,7 @@ public class DietControl {
         public ResponseEntity<Object> mealNutCheck(@RequestParam(name = "record_date") String record_date,
         @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
 
-            System.out.println("class endPoint >> " + "/record/diet/get/meal/nutrients");
+        System.out.println("class endPoint >> " + "/record/diet/get/meal/nutrients");
 
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             String token = authHeader.substring(7); // "Bearer " 접두사 제거
@@ -246,12 +277,12 @@ public class DietControl {
 
                 List<Map<String,Object>> result = dietService.mealNutCheckRow(map);
                 System.out.println("result >>" + result);
-                if(result != null){
+                if(!result.isEmpty()){
                     // 값이 있을 때
                     return new ResponseEntity<>(result,HttpStatus.OK);
                 } else{
                     // 값이 없을 때
-                    return new ResponseEntity<>(result,HttpStatus.BAD_REQUEST);
+                    return new ResponseEntity<>(result,HttpStatus.NOT_FOUND);
                 }
             } catch(Exception e){
                 // 3. 서버 내부 오류 발생
@@ -271,8 +302,10 @@ public class DietControl {
         System.out.println("class endPoint >> " + "/record/diet/calculate/nutrients");
         try {
             ItemRequestDTO calculatedItem = foodCalcDTO.calculateNutrients();
+            // 계산 성공
             return new ResponseEntity<>(calculatedItem, HttpStatus.OK);
         } catch (Exception e) {
+            // 계산 실패
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         }
     }
@@ -292,7 +325,7 @@ public class DietControl {
             System.out.println("debug >>> token : " + token);
 
             Map<String,Object> result = dietService.calculateTdeeRow(member_id);
-
+            // TDEE 계산 성공
             return new ResponseEntity<>(result, HttpStatus.OK);
         } else{
             return new ResponseEntity<>("인증실패",HttpStatus.UNAUTHORIZED);
@@ -305,26 +338,32 @@ public class DietControl {
         System.out.println("class endPoint >> " + "/record/diet/get/month");
         
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
-            String token = authHeader.substring(7); // "Bearer " 접두사 제거
-            Integer member_id = jwtTokenProvider.getUserIdFromToken(token); // 토큰에서 사용자 ID 추출
+            try{
+                String token = authHeader.substring(7); // "Bearer " 접두사 제거
+                Integer member_id = jwtTokenProvider.getUserIdFromToken(token); // 토큰에서 사용자 ID 추출
 
-            System.out.println("debug >>> member_id : " + member_id);
-            System.out.println("debug >>> token : " + token);
+                System.out.println("debug >>> member_id : " + member_id);
+                System.out.println("debug >>> token : " + token);
 
-            map.put("member_id", member_id);
-            System.out.println("debug >>> map : " + map);
+                map.put("member_id", member_id);
+                System.out.println("debug >>> map : " + map);
 
-            List<Map<String,Object>> result = dietService.getMonthDietRow(map);
+                List<Map<String,Object>> result = dietService.getMonthDietRow(map);
 
-            System.out.println("result >>" + result);
+                System.out.println("result >>" + result);
 
-            if(result != null){
-                // 기록이 있을 때
-                return new ResponseEntity<>(result, HttpStatus.OK);
-            } else{
-                // 기록이 없을 때
-                return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
-            }
+                if(!result.isEmpty()){
+                    // 기록이 있을 때
+                    return new ResponseEntity<>(result, HttpStatus.OK);
+                } else{
+                    // 기록이 없을 때
+                    return new ResponseEntity<>(result, HttpStatus.NOT_FOUND);
+                }
+            } catch(Exception e){
+                // 3. 서버 내부 오류 발생
+                System.out.println("서버 오류 발생: " + e.getMessage());
+                return new ResponseEntity<>("서버 오류 발생", HttpStatus.INTERNAL_SERVER_ERROR);    
+            } 
         } else {
             // 인증 실패
             return new ResponseEntity<>("인증실패",HttpStatus.UNAUTHORIZED);

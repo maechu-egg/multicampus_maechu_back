@@ -13,7 +13,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.multipjt.multi_pjt.record.diet.dao.DietMapper;
-import com.multipjt.multi_pjt.record.diet.domain.DietRequestDTO;
 import com.multipjt.multi_pjt.record.diet.domain.ItemRequestDTO;
 import com.multipjt.multi_pjt.record.diet.domain.ItemResponseDTO;
 import com.multipjt.multi_pjt.record.diet.domain.MealType;
@@ -30,19 +29,16 @@ public class DietMapperApplicationTest {
     private Integer test(){
 
          //given : DietRequestDTO에 임의 값 입력
-         DietRequestDTO dietRequestDTO = new DietRequestDTO();
-         dietRequestDTO.setMember_id(1);
-         dietRequestDTO.setMeal_type(MealType.BREAKFAST);
+         Map<String,Object> map = new HashMap<>();
+         map.put("member_id",1);
+         map.put("meal_type",MealType.BREAKFAST);
          //when : db에 값 insert
-         int diet = dietMapper.dietInsert(dietRequestDTO);
+         int diet = dietMapper.dietInsert(map);
  
          //then : sql 쿼리 결과 반환
          Assertions.assertThat(diet).isEqualTo(1);
          
          //given : member 1이 테스트하는 날짜의 아침에 먹은 식단 기록하기 위한 환경 조성
-        Map<String,Object> map = new HashMap<>();
-        map.put("member_id", 1);
-        map.put("meal_type", MealType.BREAKFAST);
         map.put("record_date",LocalDate.of(2024,10,22));
  
         Integer diet_id = dietMapper.findDietNumber(map);
@@ -149,19 +145,16 @@ public class DietMapperApplicationTest {
     public void testItemCheckNutr(){
         // 식사타입 breakfast
         //given : DietRequestDTO에 임의 값 입력
-        DietRequestDTO dietRequestDTO = new DietRequestDTO();
-        dietRequestDTO.setMember_id(1);
-        dietRequestDTO.setMeal_type(MealType.BREAKFAST);
-        //when : db에 값 insert
-        int diet = dietMapper.dietInsert(dietRequestDTO);
+        Map<String,Object> map = new HashMap<>();
+        map.put("member_id",1);
+        map.put("meal_type",MealType.BREAKFAST);
+       //when : db에 값 insert
+        int diet = dietMapper.dietInsert(map);
  
         //then : sql 쿼리 결과 반환
         Assertions.assertThat(diet).isEqualTo(1);
          
         //given : member 1이 테스트하는 날짜의 아침에 먹은 식단 기록하기 위한 환경 조성
-        Map<String,Object> map = new HashMap<>();
-        map.put("member_id", 1);
-        map.put("meal_type", MealType.BREAKFAST);
         map.put("record_date",LocalDate.of(2024,10,22));
  
         Integer dietNumber = dietMapper.findDietNumber(map);
@@ -182,21 +175,20 @@ public class DietMapperApplicationTest {
         Assertions.assertThat(item).isEqualTo(1);
 
         // 식사타입 lunch
-        //given : DietRequestDTO에 임의 값 입력
-        DietRequestDTO dietRequestDTO2 = new DietRequestDTO();
-        dietRequestDTO2.setMember_id(1);
-        dietRequestDTO2.setMeal_type(MealType.LUNCH);
-        //when : db에 값 insert
-        int diet2 = dietMapper.dietInsert(dietRequestDTO2);
+        Map<String,Object> map2 = new HashMap<>();
+        map2.put("member_id",1);
+        map2.put("meal_type",MealType.LUNCH);
+       //when : db에 값 insert
+        int diet2 = dietMapper.dietInsert(map2);
  
         //then : sql 쿼리 결과 반환
         Assertions.assertThat(diet2).isEqualTo(1);
          
         //given : member 1이 테스트하는 날짜의 아침에 먹은 식단 기록하기 위한 환경 조성
-        Map<String,Object> map2 = new HashMap<>();
-        map2.put("member_id", 1);
-        map2.put("meal_type", MealType.LUNCH);
-        map2.put("record_date",LocalDate.of(2024,10,22));
+        Map<String,Object> map3 = new HashMap<>();
+        map3.put("member_id", 1);
+        map3.put("meal_type", MealType.LUNCH);
+        map3.put("record_date",LocalDate.of(2024,10,22));
  
         Integer dietNumber2 = dietMapper.findDietNumber(map2);
  
@@ -217,11 +209,11 @@ public class DietMapperApplicationTest {
 
         // 식사타입 dinner인 DietRecords만 생성, dinner의 Item는 없음
         //given : DietRequestDTO에 임의 값 입력
-        DietRequestDTO dietRequestDTO3 = new DietRequestDTO();
-        dietRequestDTO3.setMember_id(1);
-        dietRequestDTO3.setMeal_type(MealType.DINNER);
-        //when : db에 값 insert
-        int diet3 = dietMapper.dietInsert(dietRequestDTO3);
+        Map<String,Object> map4 = new HashMap<>();
+        map4.put("member_id",1);
+        map4.put("meal_type",MealType.DINNER);
+       //when : db에 값 insert
+        int diet3 = dietMapper.dietInsert(map4);
  
         //then : sql 쿼리 결과 반환
         Assertions.assertThat(diet3).isEqualTo(1);
