@@ -38,7 +38,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter { // 요청당
             requestURI.equals("/user/register/email-check") ||
             requestURI.equals("/user/register/nickname-check") ||
             requestURI.equals("/user/changepw") ||
-            requestURI.equals("/user/register/verify-certification")) {
+            requestURI.equals("/user/register/verify-certification") ||
+            requestURI.startsWith("/static/")) { // 정적 리소스 경로 필터 통과
             filterChain.doFilter(request, response); // 다음 필터로 요청 전달
             return; // 필터 체인 진행 중단
         }
