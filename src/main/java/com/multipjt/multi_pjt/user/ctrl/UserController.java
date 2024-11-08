@@ -25,7 +25,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Map;
 
 @RestController
-@RequestMapping("user")
 public class UserController {
     @Autowired
     private LoginServiceImpl loginServiceImple;
@@ -33,13 +32,13 @@ public class UserController {
     @Autowired
     private JwtTokenProvider jwtTokenProvider;
 
-    @PostMapping("/register")
+    @PostMapping("/user/register")
     public ResponseEntity<String> registerUser(@ModelAttribute UserRequestDTO userRequestDTO,
                                                @RequestParam(value = "memberImgFile", required = false) MultipartFile memberImgFile) {
         return loginServiceImple.registerUser(userRequestDTO, memberImgFile); // 회원가입 처리
     }
 
-    @PostMapping("/register/email-check")
+    @PostMapping("/user/register/email-check")
     public ResponseEntity<String> checkEmail(@RequestBody EmailRequestDTO emailRequest) {
         String email = emailRequest.getEmail(); // DTO에서 이메일 가져오기
         boolean isValid = loginServiceImple.isValidEmail(email); // 이메일 형식 검증
@@ -57,7 +56,7 @@ public class UserController {
         }
     }
 
-    @PostMapping("/register/nickname-check") 
+    @PostMapping("/user/register/nickname-check") 
     public ResponseEntity<String> checkNickname(@RequestBody NicknameRequestDTO nicknameRequestDTO) {
         String nickname = nicknameRequestDTO.getNickname();
         boolean exists = loginServiceImple.existsByNickname(nickname);
@@ -71,7 +70,7 @@ public class UserController {
 
 
 
-    @PostMapping("/register/email-certification")
+    @PostMapping("/user/register/email-certification")
     public ResponseEntity<String> emailCertification(@RequestBody EmailCertificationRequestDTO emailDTO) {
         String email = emailDTO.getEmail();
         try {
@@ -89,7 +88,7 @@ public class UserController {
     }
 
 
-    @PostMapping("/register/verify-certification")
+    @PostMapping("/user/register/verify-certification")
     public ResponseEntity<String> verifyCertification(@RequestBody EmailCertificationInputDTO emailDTO) {
         String email = emailDTO.getEmail();
         String code = emailDTO.getCertificationCode(); // 인증 코드를 가져옴
@@ -104,7 +103,7 @@ public class UserController {
         }
     }
 
-    @PostMapping("/login")
+    @PostMapping("/user/login")
     public ResponseEntity<Map<String, Object>> loginUser(@RequestBody LoginDTO loginDTO) {
         // 로그인 메서드 호출
         ResponseEntity<Map<String, Object>> responseEntity = loginServiceImple.login(loginDTO);
@@ -113,6 +112,7 @@ public class UserController {
         return responseEntity; // JSON 형식으로 응답 반환
     }
 
+    //로그인 되어있어야함 
     @PatchMapping("/update") 
     public ResponseEntity<String> updateUser(@RequestBody UserRequestDTO userUpdateRequestDTO,
                                               @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
@@ -130,30 +130,13 @@ public class UserController {
         }
     }
 
-    @PatchMapping("/changepw")
+    @PatchMapping("/user/changepw")
     public ResponseEntity<String> changePw(@RequestBody ChangePwDTO changePwDTO) {
         return loginServiceImple.changePw(changePwDTO); // 서비스 메서드 호출
     }
-
-
-    @PostMapping("/test") 
-    public ResponseEntity<String> test() {
-        // 현재 인증된 사용자의 정보를 가져옵니다.
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        
-        if (authentication != null && authentication.isAuthenticated()) {
-            // principal을 UserDetails로 캐스팅
-            CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
-            String email = userDetails.getUsername(); // 이메일을 가져니다.
-            return ResponseEntity.ok("인증 성공! 사용자: " + email);
-        } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("인증 실패");
-        }
-    } 
-
     
     
-
+//로그인 되어 있어야함 
       @PostMapping("/logout")
     public ResponseEntity<String> logout(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
@@ -165,7 +148,7 @@ public class UserController {
         }
     }
 
-    @DeleteMapping("/delete")
+    @DeleteMapping("/user/delete")
     public ResponseEntity<String> delete(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             String token = authHeader.substring(7); // "Bearer " 접두사 제거
@@ -193,8 +176,6 @@ public class UserController {
             // 사용자 정보 조회
             UserResponseDTO userInfo = loginServiceImple.getUserInfo(userId);
             if (userInfo != null) {
-                // 이미지 URL을 포함하여 반환
-                //userInfo.setMemberImg(userInfo.getMemberImg()); // 이미지 URL 설정
                 return ResponseEntity.ok(userInfo); // 사용자 정보 반환
             } else {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND)
