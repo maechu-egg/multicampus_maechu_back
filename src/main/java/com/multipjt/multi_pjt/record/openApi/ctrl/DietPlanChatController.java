@@ -65,7 +65,10 @@ public class DietPlanChatController {
             "| 간식     | 과일 | 1개 | 100 |\n\n" +
             "**합계**\n" +
             "- 열량: 약 2200 kcal\n" +
-            "- 단백질: 100~120g (변동 가능)",
+            "- 단백질: 100~120g (변동 가능)\n\n" +
+            "### **주의 사항:**(식단의 주의사항)\n" +
+            "- 이 식단 계획은 일반적인 지침이며, 개인적인 요구 사항에 따라 조정될 수 있습니다.\n\n" +
+            "- 식단 계획은 칼로리 함량 및 주요 영양소와 같은 영양 정보를 포함해야 합니다.\n\n",
             calories,
             ingredients,
             String.join(", ", dietaryRestrictions),
