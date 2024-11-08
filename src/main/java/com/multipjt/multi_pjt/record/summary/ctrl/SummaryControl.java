@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,8 +32,7 @@ public class SummaryControl {
 
 
     @GetMapping("/daily")
-    public ResponseEntity<Object> getDailySummary(@RequestParam(name = "record_date") String record_date, 
-                                        @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
+    public ResponseEntity<Object> getDailySummary(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
     
         System.out.println("class endPoint >> " + "/record/summary/daily");
     
@@ -45,7 +45,7 @@ public class SummaryControl {
 
             Map<String,Object> map = new HashMap<>();
             map.put("member_id",member_id);
-            map.put("record_date",record_date);
+            map.put("record_date",LocalDate.now());
 
             try {
                 // 1. TDEE와 권장 영양소 계산
