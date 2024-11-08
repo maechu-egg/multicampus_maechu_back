@@ -114,4 +114,17 @@
         where mb.member_id = #{member_id};
     </select>
 
+    <select id = "getrankpercentage" resultType="map" parameterType="map" >
+    SELECT 
+        mb1.member_id,
+        mb1.current_points,
+        (
+            SELECT COUNT(*) * 100.0 / (SELECT COUNT(*) FROM MemberBadge)
+            FROM MemberBadge mb2
+            WHERE mb2.current_points > mb1.current_points
+        ) as rank_percentage
+        FROM MemberBadge mb1
+        WHERE mb1.member_id = #{member_id};
+    </select>
+
 </mapper>

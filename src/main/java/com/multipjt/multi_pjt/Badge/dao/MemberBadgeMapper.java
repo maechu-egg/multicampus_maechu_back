@@ -39,5 +39,8 @@ public interface MemberBadgeMapper {
 
     // 특정 회원의 특정 뱃지 조회
     public Map<String, Object> getBadgeIdPoint(@Param("member_id") int memberId);
+
+    // 특정 회원의 뱃지 퍼센트 조회
+    public Map<String, Object> getrankpercentage(@Param("member_id") int memberId);
 }
 

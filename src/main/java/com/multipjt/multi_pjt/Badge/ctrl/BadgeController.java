@@ -204,4 +204,10 @@ public ResponseEntity<?> getUserActivities(@PathVariable("memberId") int memberI
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping("/getrankpercentage")
+    public ResponseEntity<Map<String, Object>> getRankPercentage(@RequestParam("member_id") int memberId) {
+        Map<String, Object> response = memberBadgeMapper.getrankpercentage(memberId);
+        return ResponseEntity.ok(response);
+    }
+
 }
