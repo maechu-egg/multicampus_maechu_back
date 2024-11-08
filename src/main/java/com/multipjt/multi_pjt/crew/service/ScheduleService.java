@@ -60,8 +60,8 @@ public class ScheduleService {
     }
 
     // 배틀 상태 변경 및 자동 삭제 스케줄러
-    // @Scheduled(cron = "*/10 * * * * *")
-    @Scheduled(cron = "0 0 */1 * * *") // 매 1시간마다 실행
+    // @Scheduled(cron = "*/30 * * * * *")
+    @Scheduled(cron = "0 0 0 * * *")
     public void updateBattleStatus() {
         List<CrewBattleResponseDTO> battles = crewBattleMapper.selectAllCrewBattleRow();
         System.out.println("debug>>> Service: updateBattleStatus 배틀 조회 완료" + battles);
