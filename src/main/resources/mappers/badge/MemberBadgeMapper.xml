@@ -98,13 +98,13 @@
             mb.member_id = m.member_id;
     </select>
 
-    <select id ="getBadgeIdPoint" resultType="com.multipjt.multi_pjt.badge.domain.badge.MemberBadgeResponseDTO">
+    <select id ="getBadgeIdPoint" resultType="map">
         select 
 	        mb.member_id,
             mb.current_points,
             cb.crew_current_points,
-            mb.badge_level,
-            cb.badge_level
+            mb.badge_level as memberbadge_level,
+            cb.badge_level as crewbadge_level
         from
 	        MemberBadge mb
         join
