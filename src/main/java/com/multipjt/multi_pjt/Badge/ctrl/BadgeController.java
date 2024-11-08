@@ -5,7 +5,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import org.mybatis.spring.MyBatisSystemException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -17,6 +16,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.multipjt.multi_pjt.badge.dao.MemberBadgeMapper;
@@ -198,4 +198,11 @@ public ResponseEntity<?> getUserActivities(@PathVariable("memberId") int memberI
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", "예기치 않은 오류가 발생했습니다."));
         }
     }
+     @GetMapping("/getBadge")
+    public ResponseEntity<MemberBadgeResponseDTO> getBadgeIdPoint(
+            @RequestParam("member_id") int memberId) {
+        MemberBadgeResponseDTO response = memberBadgeMapper.getBadgeIdPoint(memberId);
+        return ResponseEntity.ok(response);
+    }
+
 }
