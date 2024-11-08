@@ -199,9 +199,8 @@ public ResponseEntity<?> getUserActivities(@PathVariable("memberId") int memberI
         }
     }
      @GetMapping("/getBadge")
-    public ResponseEntity<MemberBadgeResponseDTO> getBadgeIdPoint(
-            @RequestParam("member_id") int memberId) {
-        MemberBadgeResponseDTO response = memberBadgeMapper.getBadgeIdPoint(memberId);
+    public ResponseEntity<Map<String, Object>> getBadgeIdPoint(@RequestParam("member_id") int memberId) {
+        Map<String, Object> response = memberBadgeMapper.getBadgeIdPoint(memberId);
         return ResponseEntity.ok(response);
     }
 
