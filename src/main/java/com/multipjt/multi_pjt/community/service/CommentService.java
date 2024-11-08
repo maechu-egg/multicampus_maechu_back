@@ -38,7 +38,8 @@ public class CommentService {
 
         if(result == 1 ){
             response.put("result", true);
-            // userActivityRecordMapper.insertActivityAndUpdatePoints(map);
+            userActivityRecordMapper.insertActivityAndUpdatePoints(map);
+       
         }else{
             response.put("result", false);
         }
@@ -49,7 +50,7 @@ public class CommentService {
     }
 
     // 댓글 list
-    public List<CommentResponseDTO> postDetailComment(Map<String, Integer> map){
+    public List<CommentResponseDTO> postDetailComment(Map<String, Object> map){
         System.out.println("service - postDetailComment");
 
         List<CommentResponseDTO> list = postMapper.postDetailComment(map);

@@ -42,7 +42,7 @@ public interface PostMapper {
     int postLikeCount(@Param("post_id") int pid);
     
     // 전체 페이지 
-    List<PostResponseDTO> postAllSelect(Map<String,Object> map);
+    List<PostResponseDTO> postAllSelect(Map<String, Object> map);
 
     // 전체 페이지 수
     int countPosts(Map<String, Object> map);
@@ -50,9 +50,10 @@ public interface PostMapper {
 
     // 상세 페이지
     List<PostResponseDTO> postDetailSelectTest(Map<String, Integer> map);
-    public PostResponseDTO          postDetailSelect(Map<String, Integer> map);
+    public PostResponseDTO          postDetailSelect(Map<String, Object> map);
 
-    public List<CommentResponseDTO> postDetailComment(Map<String, Integer> map);
+    // 댓글
+    public List<CommentResponseDTO> postDetailComment(Map<String, Object> map);
     
 
     // Memberid 구하기

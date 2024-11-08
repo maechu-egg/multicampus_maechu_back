@@ -32,7 +32,7 @@ public class PostService {
     // 전체 페이지 
     public List<PostResponseDTO> getAllPagePosts(Map<String, Object> map){
         System.out.println("service : getAllPagePosts 조회");
-       
+        System.out.println(map);
         
         
         List<PostResponseDTO>  list = postMapper.postAllSelect(map);
@@ -56,12 +56,14 @@ public class PostService {
         int size = (int)map.get("size");
         System.out.println("page : " + page);
         System.out.println("size : " + size);
-        System.out.println("keywor : " + map.get("keyword") );
+        System.out.println("keyword : " + map.get("keyword") );
         int offset = (page - 1) * size;
         map.put("offset", offset);
 
         List<PostResponseDTO> searchList = postMapper.postSelectTCH(map);
+        System.out.println("searchList" + searchList);
 
+        
         return searchList;
     }
 
@@ -71,7 +73,7 @@ public class PostService {
         int result = postMapper.postInsert(pdto);
 
             
-        // userActivityRecordMapper.insertActivityAndUpdatePoints(map);
+        userActivityRecordMapper.insertActivityAndUpdatePoints(map);
 
 
 
@@ -117,7 +119,7 @@ public class PostService {
 
 
     // 상세 페이지 조회 
-    public PostResponseDTO postDetail(Map<String, Integer> map){
+    public PostResponseDTO postDetail(Map<String, Object> map){
         System.out.println(" service postDetail - "   );
         System.out.println("map : " + map);
         // 게시글 정보
@@ -210,6 +212,7 @@ public class PostService {
 
         }else if(list == null){
             result.put("result", false);
+            result.put("list", new ArrayList<>());
         }
 
 

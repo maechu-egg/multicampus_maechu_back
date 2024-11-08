@@ -2,6 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
+
 <mapper namespace="com.multipjt.multi_pjt.community.dao.PostMapper">
 
     <!-- 게시물 등록 -->
@@ -198,9 +199,9 @@
         JOIN 
             Member m ON p.member_id = m.member_id
         WHERE
-            1=1
+           
         <if test="post_up_sport != null and post_up_sport != ''">
-            AND p.post_up_sport = #{post_up_sport}
+            p.post_up_sport = #{post_up_sport}
         </if>
         <if test="post_sport != null and post_sport != ''">
             AND p.post_sport = #{post_sport}
@@ -448,7 +449,7 @@
             p.post_sport AS post_sport,
             p.post_date AS post_date,
             p.post_up_sport AS post_up_sport,
-            p.post_sports_keyword AS sport_keyword,
+            p.post_sports_keyword AS post_sports_keyword,
             p.post_like_counts AS post_like_count,
             p.post_views AS post_views,
             COUNT(c.comments_id) AS comments_count,
@@ -460,11 +461,7 @@
             Comments c ON p.post_id = c.post_id
         JOIN 
             Member m ON p.member_id = m.member_id
-        WHERE 
-            p.post_up_sport = #{post_up_sport}
-        AND 
-            p.post_sport = #{post_sport}
-        And 
+        WHERE
              p.post_sports_keyword = #{post_sports_keyword}
         GROUP BY 
             p.post_id, p.post_title, p.post_sport, p.post_sports_keyword, p.post_date, p.post_up_sport,

@@ -38,13 +38,13 @@ public class CommentController {
 
     // 댓글 저장
     @PostMapping("/saveComment")
-    public ResponseEntity<String> saveComment(@RequestBody CommentRequestDTO cdto,
+    public ResponseEntity< Map<String, Object>> saveComment(@RequestBody CommentRequestDTO cdto,
                                             @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
         
         
         System.out.println("Controller endpoint : /community/commnet/saveComment");
         System.out.println("cdto - " + cdto);
-        
+        List<CommentResponseDTO> list = null;
         Map<String, Object> response = new HashMap<>();
         ResponseEntity<String> result = null;
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
@@ -52,24 +52,36 @@ public class CommentController {
             int userId = jwtTokenProvider.getUserIdFromToken(token); // 토큰에서 사용자 ID 추출 (int형으로 변경)
             System.out.println("userId : " + userId);
          
-
+            cdto.setMember_id(userId);
             Map<String, Object> map = new HashMap<>();
             map.put("activityType", "comment");
-            map.put("memberId", userId);
-           
+            map.put("memberId", userId); 
             response = commentService.createComment(cdto, map);
 
+            Map<String, Object> listmap = new HashMap<>();
+            listmap.put("post_id", cdto.getPost_id());
+            System.out.println("post_id" + listmap.get("post_id"));
+            listmap.put("member_id", userId);
+            System.out.println("member_id" + listmap.get("member_id"));
+            listmap.put("comments_contents", cdto.getComments_contents());
+            System.out.println("comments_contents" + listmap.get("comments_contents"));
+            list = commentService.postDetailComment(listmap);
             if(response.get("result") != null && (boolean)response.get("result")){
-                result = ResponseEntity.status(HttpStatus.CREATED).body("댓글이 성공적으로 추가되었습니다");
+                response.put("message", "댓글이 성공적으로 추가되었습니다.");
+                response.put("commentList", list);
+                return ResponseEntity.status(HttpStatus.CREATED).body(response);
             }else{
-                result = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("댓글 추가가 실패 했습니다. ");
+                response.put("message", "댓글 추가가 실패했습니다.");
+                response.put("commentList", list);
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
             }
 
             
         }else{
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인 한 사용자만 글쓰기가 가능합니다.");
+            response.put("message", "로그인 한 사용자만 글쓰기가 가능합니다. ");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
         }
-        return result;
+        
     }
 
     // 댓글 list
@@ -84,7 +96,7 @@ public class CommentController {
             int userId = jwtTokenProvider.getUserIdFromToken(token); // 토큰에서 사용자 ID 추출 (int형으로 변경)
             System.out.println("userId : " + userId);
         
-            Map<String, Integer> map = new HashMap<>();
+            Map<String, Object> map = new HashMap<>();
             map.put("post_id" , postId);
 
             list = commentService.postDetailComment(map);
