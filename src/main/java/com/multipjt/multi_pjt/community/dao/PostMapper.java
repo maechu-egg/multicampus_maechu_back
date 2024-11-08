@@ -82,4 +82,16 @@ public interface PostMapper {
     // 키워드 검색
     List<PostResponseDTO> searchKeyword(Map<String, Object> map);
 
+    // 오운완 검색
+    List<PostResponseDTO> searchToday();
+
+    // 중고장터 
+    List<PostResponseDTO> searchMarketplace();
+
+    // 사용자 본인 게시글 검색 
+    List<PostResponseDTO> myPosts(int member_id);
+
+
+     // 사용자 본인 좋아요 게시글 검색 
+     List<PostResponseDTO> myLikePosts(int member_id);
 }
