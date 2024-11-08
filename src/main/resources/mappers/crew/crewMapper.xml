@@ -68,17 +68,6 @@
         LIMIT 4;
     </select>
 
-    <!-- 특정 크루 리스트 조회 (종목) 
-
-    <select id="selectCrewSportRow"
-            parameterType="java.util.HashMap"
-            resultType="com.multipjt.multi_pjt.crew.domain.crew.CrewResponseDTO">
-        SELECT *
-        FROM Crew
-        WHERE crew_sport = #{crew_sport} AND crew_state = 1
-        ORDER BY crew_date DESC;
-    </select> -->
-
     <!-- 특정 크루 정보 조회  -->
 
     <select id="selectCrewInfoRow"
@@ -86,7 +75,7 @@
             resultType="com.multipjt.multi_pjt.crew.domain.crew.CrewResponseDTO">
         SELECT *
         FROM Crew
-        WHERE crew_id = #{crew_id} AND crew_state = 1;
+        WHERE crew_id = #{crew_id};
     </select>
 
     <!-- 크루원 신청 --> 
@@ -331,13 +320,23 @@
         WHERE crew_post_id = #{crew_post_id} AND member_id = #{member_id};
     </delete>
 
+    <!-- 일반 게시물 조회 --> 
+
+    <select id="selectPopularPostRow"
+            resultType="com.multipjt.multi_pjt.crew.domain.crew.CrewPostResponseDTO">
+        SELECT *
+        FROM CrewPost
+        WHERE crew_post_state = 2
+        ORDER BY crew_post_like DESC;
+    </select>    
+
     <!-- 크루 게시물 상태 인기 변경 --> 
 
     <update id="updatePostStatusRow"
             parameterType="int">
         UPDATE CrewPost
         SET crew_post_state = 1
-        WHERE crew_post_id = #{crew_post_id};
+        WHERE crew_post_id = #{crew_post_id} AND crew_post_state = 2;
     </update>
     
     <!-- 크루 멤버수 조회 -->

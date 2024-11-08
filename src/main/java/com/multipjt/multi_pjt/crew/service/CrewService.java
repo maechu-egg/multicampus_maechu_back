@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.http.HttpStatus;
+import org.springframework.scheduling.annotation.Scheduled;
 
 import com.multipjt.multi_pjt.crew.dao.crew.CrewMapper;
 import com.multipjt.multi_pjt.crew.domain.crew.CrewCommentsRequestDTO;
@@ -57,13 +58,6 @@ public class CrewService {
         System.out.println("debug>>> Service: getCrewListForHomepage + " + token_id);
         return crewMapper.selectCrewRowForHomepageRow(token_id);
     }
-
-    // // 특정 크루 리스트 조회 (종목)
-    // public List<CrewResponseDTO> getCrewSportList(Map<String, String> map) {
-    //     System.out.println("debug>>> Service: getCrewSportList + " + crewMapper);
-    //     System.out.println("debug>>> Service: getCrewSportList + " + map);
-    //     return crewMapper.selectCrewSportRow(map);
-    // }
 
     // 특정 크루 정보 조회
     public CrewResponseDTO getCrewInfo(Integer crewId) {
@@ -333,20 +327,6 @@ public class CrewService {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "크루원만 게시물 좋아요 상태 확인이 가능합니다.");
         }
     }
-
-    // 크루 게시물 상태 인기 변경
-    public void updatePostStatusIfPopular(int post_id, int crew_id) {
-        System.out.println("debug>>> Service: updatePostStatusIfPopular + " + post_id);
-        System.out.println("debug>>> Service: updatePostStatusIfPopular + " + crew_id);
-
-        int memberCount = crewMapper.selectCrewMemberCountRow(crew_id);
-        int likeCount = crewMapper.selectPostLikeCountRow(post_id);
-
-        if(likeCount >= memberCount / 2) {
-            crewMapper.updatePostStatusRow(post_id);
-        }
-    }
-
 
     // --------- 크루 댓글 ---------
 

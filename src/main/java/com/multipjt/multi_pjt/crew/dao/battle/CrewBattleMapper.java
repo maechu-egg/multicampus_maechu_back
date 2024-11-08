@@ -9,6 +9,7 @@ import com.multipjt.multi_pjt.crew.domain.battle.BattleMemberResponseDTO;
 import com.multipjt.multi_pjt.crew.domain.battle.CrewBattleFeedRequestDTO;
 import com.multipjt.multi_pjt.crew.domain.battle.CrewBattleRequestDTO;
 import com.multipjt.multi_pjt.crew.domain.battle.CrewVoteRequestDTO;
+import com.multipjt.multi_pjt.crew.domain.battle.CrewVoteResponseDTO;
 import com.multipjt.multi_pjt.crew.domain.battle.CrewBattleFeedResponseDTO;
 import com.multipjt.multi_pjt.crew.domain.battle.CrewBattleResponseDTO;
 
@@ -24,6 +25,9 @@ public interface CrewBattleMapper {
 
     // 특정 배틀 상세 조회
     public CrewBattleResponseDTO selectCrewBattleDetailRow(Integer battle_id);
+
+    // 사용자 참여 배틀 조회
+    public List<CrewBattleResponseDTO> selectMyBattleRow(int member_id);
 
     // 배틀 참가
     public void insertBattleMemberRow(BattleMemberRequestDTO params);
@@ -41,4 +45,24 @@ public interface CrewBattleMapper {
 
     // 투표
     public void createVoteRow(CrewVoteRequestDTO params);
+
+    // <---- 스케줄러 ---->
+
+    // 모든 배틀 조회
+    public List<CrewBattleResponseDTO> selectAllCrewBattleRow();
+
+    // 배틀 상태 변경
+    public void updateBattleState(CrewBattleRequestDTO params);
+
+    // 배틀 삭제
+    public void deleteBattleById(int battle_id);
+
+    // 크루 멤버 승리 포인트 업데이트
+    public void updateWinnerPointsRow(int member_id);
+
+    // 크루 배지 승리 포인트 업데이트
+    public void updateBadgeWinnerPointsRow(int member_id);
+
+    // 특정 배틀에 대한 모든 투표 조회
+    public List<CrewVoteResponseDTO> selectCrewVoteRow(int battle_id);
 } 
