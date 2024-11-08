@@ -34,6 +34,20 @@
             WHERE battle_id = #{battle_id};
     </select>
 
+    <!-- 사용자 참여 배틀 조회 -->
+
+    <select id="selectMyBattleRow"
+            parameterType="int"
+            resultType="com.multipjt.multi_pjt.crew.domain.battle.CrewBattleResponseDTO">
+            SELECT *
+            FROM CrewBattle
+            WHERE battle_id IN (
+                SELECT battle_id
+                FROM BattleMember
+                WHERE member_id = #{member_id}
+            );
+    </select>
+
     <!-- 배틀 참가 --> 
 
     <insert id="insertBattleMemberRow"

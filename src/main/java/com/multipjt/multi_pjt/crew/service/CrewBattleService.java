@@ -78,6 +78,16 @@ public class CrewBattleService {
         }
     }
 
+    // 사용자 참여 배틀 조회
+    public List<CrewBattleResponseDTO> selectMyBattle(int member_id) {
+        System.out.println("debug>>> Service: selectMyBattle + " + member_id);
+        List<CrewBattleResponseDTO> battles = crewBattleMapper.selectMyBattleRow(member_id);
+        if (battles == null || battles.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "참여한 배틀이 없습니다.");
+        }
+        return battles;
+    }
+
     // 배틀 참가
     public void createBattleMember(BattleMemberRequestDTO params, Integer token_id) {
         System.out.println("debug>>> Service: createBattleMember + " + crewBattleMapper);

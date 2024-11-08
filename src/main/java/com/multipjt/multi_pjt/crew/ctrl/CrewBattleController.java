@@ -122,6 +122,31 @@ public class CrewBattleController {
         }
     }
 
+    // 사용자 참여 배틀 조회
+    @GetMapping("/list/my")
+    public ResponseEntity<?> getCrewBattleByMemberId(
+        @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) { 
+
+        System.out.println("client endpoint: /crew/battle/list/my");
+
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            String token = authHeader.substring(7);
+            int token_id = jwtTokenProvider.getUserIdFromToken(token);
+
+            try {
+                List<CrewBattleResponseDTO> myBattle = crewBattleService.selectMyBattle(token_id);
+                return ResponseEntity.ok(myBattle);
+            } catch (ResponseStatusException e) {
+                Map<String, Object> errorResponse = new HashMap<>();
+                errorResponse.put("status", e.getStatusCode().value());
+                errorResponse.put("message", e.getReason());
+                return ResponseEntity.status(e.getStatusCode()).body(errorResponse);
+            }
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+    }
+
     // 배틀 참가
     @PostMapping("/member/join")
     public ResponseEntity<Map<String, Object>> createBattleMember(
