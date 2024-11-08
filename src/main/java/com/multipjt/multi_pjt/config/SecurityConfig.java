@@ -38,7 +38,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(requests -> {
                     requests
                         .requestMatchers("/v2/api-docs", "/swagger-ui/**", "/swagger-resources/**").permitAll() // Swagger 관련 요청 허용
-                        .requestMatchers("/user/register", "/user/login", "/user/register/email-certification", "/user/register/email-check", "/user/register/nickname-check", "/user/register/verify-certification", "/user/changepw").permitAll() // 회원가입 및 로그인 관련 API 허용
+                        .requestMatchers("/user/**").permitAll()
+                        .requestMatchers("/community/home/posts/**").permitAll()
                         .requestMatchers("/static/**").permitAll() // 정적 리소스 접근 허용
                         .anyRequest().authenticated(); // 나머지 요청은 인증 필요
                 })           

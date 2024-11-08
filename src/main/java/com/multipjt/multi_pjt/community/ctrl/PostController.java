@@ -483,20 +483,10 @@ public class PostController {
         
 
     // 오운완
-   @GetMapping("/posts/sport/searchToday")
-   public ResponseEntity<Map<String, Object>> searchToday(
-                                           @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader   
-                                           ) {
+   @GetMapping("/home/posts/searchToday")
+   public ResponseEntity<Map<String, Object>> searchToday( ) {
            System.out.println("Controller - posts/searchKeyword");
            Map<String, Object> map = new HashMap<>();
-
-       if (authHeader != null && authHeader.startsWith("Bearer ")) {
-           String token = authHeader.substring(7); // "Bearer " 접두사 제거
-           int userId = jwtTokenProvider.getUserIdFromToken(token); // 토큰에서 사용자 ID 추출 (int형으로 변경)
-           System.out.println("userId : " + userId);
-
-
-   
            map = postService.searchToday();
            if(map.get("result") != null && (boolean)map.get("result")){
                map.put("searchList", map.get("list"));
@@ -511,25 +501,16 @@ public class PostController {
                map.put("searchList", map.get("list"));
                map.put("status",HttpStatus.NOT_FOUND );
            }
-       }
+       
        return ResponseEntity.ok(map);
 
    }
        
     // 중고장터
-   @GetMapping("/posts/sport/searchMarketplace")
-   public ResponseEntity<Map<String, Object>> searchMarketplace(
-                                           @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader    
-                                           ) {
+   @GetMapping("/home/posts/searchMarketplace")
+   public ResponseEntity<Map<String, Object>> searchMarketplace(){
            System.out.println("Controller - posts/searchMarketplace");
-           Map<String, Object> map = new HashMap<>();
-
-       if (authHeader != null && authHeader.startsWith("Bearer ")) {
-           String token = authHeader.substring(7); // "Bearer " 접두사 제거
-           int userId = jwtTokenProvider.getUserIdFromToken(token); // 토큰에서 사용자 ID 추출 (int형으로 변경)
-           System.out.println("userId : " + userId);
-
-   
+           Map<String, Object> map = new HashMap<>(); 
            map = postService.searchMarketplace();
            if(map.get("result") != null && (boolean)map.get("result")){
                map.put("searchList", map.get("list"));
@@ -544,10 +525,6 @@ public class PostController {
                map.put("searchList", map.get("list"));
                map.put("status",HttpStatus.NOT_FOUND );
            }
-
-
-       }
-
 
        return ResponseEntity.ok(map);
 
