@@ -98,4 +98,20 @@
             mb.member_id = m.member_id;
     </select>
 
+    <select id ="getBadgeIdPoint" resultType="map">
+        select 
+	        mb.member_id,
+            mb.current_points,
+            cb.crew_current_points,
+            mb.badge_level as memberbadge_level,
+            cb.badge_level as crewbadge_level
+        from
+	        MemberBadge mb
+        join
+	        CrewBadge cb
+        on
+	        mb.member_id = cb.member_id
+        where mb.member_id = #{member_id};
+    </select>
+
 </mapper>

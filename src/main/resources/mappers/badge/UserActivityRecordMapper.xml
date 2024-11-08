@@ -8,25 +8,25 @@
    </insert>
 
    
-<update id="updateMemberBadgePoints" parameterType="Long">
+<update id="updateMemberBadgePoints" parameterType="int">
     UPDATE MemberBadge
     SET current_points = current_points + 0.5
     WHERE member_id = #{value};
 </update>
 
-<select id="getActivitiesFromPosts" parameterType="Long" resultType="com.multipjt.multi_pjt.badge.domain.record.UserActivityRecordResponseDTO">
+<select id="getActivitiesFromPosts" parameterType="int" resultType="com.multipjt.multi_pjt.badge.domain.record.UserActivityRecordResponseDTO">
     SELECT 'post' AS activityType, 0.5 AS points, post_date AS createdDate
     FROM Posts
     WHERE member_id = #{value}
 </select>
 
-<select id="getActivitiesFromComments" parameterType="Long" resultType="com.multipjt.multi_pjt.badge.domain.record.UserActivityRecordResponseDTO">
+<select id="getActivitiesFromComments" parameterType="int" resultType="com.multipjt.multi_pjt.badge.domain.record.UserActivityRecordResponseDTO">
     SELECT 'comment' AS activityType, 0.5 AS points, comments_date AS createdDate
     FROM Comments
     WHERE member_id = #{value}
 </select>
 
-<select id="getActivitiesFromExercises" parameterType="Long" resultType="com.multipjt.multi_pjt.badge.domain.record.UserActivityRecordResponseDTO">
+<select id="getActivitiesFromExercises" parameterType="int" resultType="com.multipjt.multi_pjt.badge.domain.record.UserActivityRecordResponseDTO">
     SELECT 'exercise' AS activityType, 
            0.5 AS points,  
            record_date AS createdDate
@@ -34,7 +34,7 @@
     WHERE member_id = #{value}
 </select>
 
-<select id="getActivitiesFromDiets" parameterType="Long" resultType="com.multipjt.multi_pjt.badge.domain.record.UserActivityRecordResponseDTO">
+<select id="getActivitiesFromDiets" parameterType="int" resultType="com.multipjt.multi_pjt.badge.domain.record.UserActivityRecordResponseDTO">
     SELECT 'diet' AS activityType, 
            0.5 AS points,  
            record_date AS createdDate
@@ -42,11 +42,11 @@
     WHERE member_id = #{value}
 </select>
 
-<select id="getTotalPointsByMemberId" parameterType="Long" resultType="java.math.BigDecimal">
+<select id="getTotalPointsByMemberId" parameterType="int" resultType="java.math.BigDecimal">
     SELECT COALESCE(SUM(points), 0) FROM UserActivityRecord WHERE member_id = #{memberId};
 </select>
 
-<select id="getActivitiesByMemberId" parameterType="Long" resultMap="UserActivityRecordResponseDTOMap">
+<select id="getActivitiesByMemberId" parameterType="int" resultMap="UserActivityRecordResponseDTOMap">
     SELECT * FROM UserActivityRecord WHERE member_id = #{memberId}
 </select>
 

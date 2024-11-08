@@ -35,5 +35,9 @@ public interface MemberBadgeMapper {
 
     // comments 테이블에서 활동 가져오기
     List<Map<String, Object>> getActivitiesFromComments(int memberId);
+
+
+    // 특정 회원의 특정 뱃지 조회
+    public Map<String, Object> getBadgeIdPoint(@Param("member_id") int memberId);
 }
 
