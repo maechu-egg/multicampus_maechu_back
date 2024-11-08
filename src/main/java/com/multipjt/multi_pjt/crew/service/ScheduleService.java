@@ -10,6 +10,8 @@ import com.multipjt.multi_pjt.crew.dao.crew.CrewMapper;
 import com.multipjt.multi_pjt.crew.dao.battle.CrewBattleMapper;
 import com.multipjt.multi_pjt.crew.domain.crew.CrewPostResponseDTO;
 import com.multipjt.multi_pjt.crew.domain.battle.CrewBattleResponseDTO;
+import com.multipjt.multi_pjt.crew.domain.battle.CrewVoteResponseDTO;
+import com.multipjt.multi_pjt.crew.domain.battle.BattleMemberResponseDTO;
 import com.multipjt.multi_pjt.crew.domain.battle.CrewBattleRequestDTO;
 
 import java.time.LocalDateTime;
@@ -17,6 +19,8 @@ import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @EnableAsync
@@ -56,13 +60,20 @@ public class ScheduleService {
     }
 
     // 배틀 상태 변경 및 자동 삭제 스케줄러
-    @Scheduled(cron = "0 0 0 * * *") // 매일 자정에 실행
+    // @Scheduled(cron = "*/10 * * * * *")
+    @Scheduled(cron = "0 0 */1 * * *") // 매 1시간마다 실행
     public void updateBattleStatus() {
         List<CrewBattleResponseDTO> battles = crewBattleMapper.selectAllCrewBattleRow();
+        System.out.println("debug>>> Service: updateBattleStatus 배틀 조회 완료" + battles);
         for (CrewBattleResponseDTO battle : battles) {
             CrewBattleRequestDTO requestDTO = new CrewBattleRequestDTO();
             requestDTO.setBattle_id(battle.getBattle_id());
             requestDTO.setBattle_state(battle.getBattle_state());
+            requestDTO.setBattle_end_recruitment(battle.getBattle_end_recruitment());
+            requestDTO.setBattle_end_date(battle.getBattle_end_date());
+            System.out.println("debug>>> Service: updateBattleStatus 배틀 조회 완료" + requestDTO);
+            System.out.println("debug>>> Service: updateBattleStatus 배틀 id+ " + requestDTO.getBattle_id());
+            System.out.println("debug>>> Service: updateBattleStatus 배틀 상태+ " + requestDTO.getBattle_state());
 
             if (battle.getBattle_state() == 0 && isRecruitmentEnded(requestDTO)) {
                 requestDTO.setBattle_state(1);
@@ -73,7 +84,9 @@ public class ScheduleService {
                 System.out.println("debug>>> Service: updateBattleStatus 배틀 상태 변경 완료"+requestDTO.getBattle_state());
                 crewBattleMapper.updateBattleState(requestDTO);
                 scheduleBattleDeletion(requestDTO);
-                // updateWinnerPoints(battle);
+                System.out.println("debug>>> Service: updateBattleStatus 배틀 삭제 예약 완료");
+                updateWinnerPoints(requestDTO);
+                System.out.println("debug>>> Service: updateBattleStatus 승리 포인트 업데이트 완료");
             }
         }
     }
@@ -98,12 +111,43 @@ public class ScheduleService {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        }, 24, TimeUnit.HOURS);
+        }, 10, TimeUnit.SECONDS);
     }
 
-    // // 승리 포인트 업데이트
-    // private void updateWinnerPoints(Battle battle) {
-    //     // 투표 결과 확인 및 포인트 업데이트 로직 구현
-    //     // 동점자 처리 로직 포함
-    // }
+    // 승리 포인트 업데이트
+    private void updateWinnerPoints(CrewBattleRequestDTO battle) {
+        System.out.println("debug>>> Service: updateWinnerPoints 배틀 id+ " + battle.getBattle_id());
+
+        // 특정 배틀에 대한 모든 투표를 가져옴
+        List<CrewVoteResponseDTO> votes = crewBattleMapper.selectCrewVoteRow(battle.getBattle_id());
+
+        // 투표 수 집계
+        Map<Integer, Long> voteCountMap = votes.stream()
+            .collect(Collectors.groupingBy(CrewVoteResponseDTO::getParticipant_id, Collectors.counting()));
+
+        // 최다 투표 수 찾기
+        long maxVotes = voteCountMap.values().stream()
+            .max(Long::compare)
+            .orElse(0L);
+
+        // 공동 우승자 찾기
+        List<Integer> winnerParticipantIds = voteCountMap.entrySet().stream()
+            .filter(entry -> entry.getValue() == maxVotes)
+            .map(Map.Entry::getKey)
+            .collect(Collectors.toList());
+
+        if (!winnerParticipantIds.isEmpty()) {
+            List<BattleMemberResponseDTO> battleMembers = crewBattleMapper.selectBattleMemberRow(battle.getBattle_id());
+
+            for (Integer winnerParticipantId : winnerParticipantIds) {
+                battleMembers.stream()
+                    .filter(member -> member.getParticipant_id().equals(winnerParticipantId))
+                    .findFirst()
+                    .ifPresent(winner -> {
+                        crewBattleMapper.updateWinnerPointsRow(winner.getMember_id());
+                        crewBattleMapper.updateBadgeWinnerPointsRow(winner.getMember_id());
+                    });
+            }
+        }
+    }
 }

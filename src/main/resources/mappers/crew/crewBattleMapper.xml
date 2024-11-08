@@ -128,4 +128,32 @@
         DELETE FROM CrewBattle
         WHERE battle_id = #{battle_id};
     </delete>
+
+    <!-- 크루 멤버 승리 포인트 업데이트 --> 
+
+    <update id="updateWinnerPointsRow"
+            parameterType="com.multipjt.multi_pjt.crew.domain.battle.CrewBattleRequestDTO">
+        UPDATE CrewMember
+        SET battle_wins = battle_wins + 1
+        WHERE member_id = #{member_id};
+    </update>
+
+    <!-- 크루 배지 승리 포인트 업데이트 --> 
+
+    <update id="updateBadgeWinnerPointsRow"
+            parameterType="com.multipjt.multi_pjt.crew.domain.battle.CrewBattleRequestDTO">
+        UPDATE CrewBadge
+        SET crew_battle_wins = crew_battle_wins + 1
+        WHERE member_id = #{member_id};
+    </update>
+
+    <!-- 특정 배틀에 대한 모든 투표 조회 --> 
+
+    <select id="selectCrewVoteRow"
+            parameterType="Integer"
+            resultType="com.multipjt.multi_pjt.crew.domain.battle.CrewVoteResponseDTO">
+        SELECT *
+        FROM Vote
+        WHERE battle_id = #{battle_id};
+    </select>
 </mapper>

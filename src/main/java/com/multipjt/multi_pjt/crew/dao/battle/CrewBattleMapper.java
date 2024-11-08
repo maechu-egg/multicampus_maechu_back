@@ -9,6 +9,7 @@ import com.multipjt.multi_pjt.crew.domain.battle.BattleMemberResponseDTO;
 import com.multipjt.multi_pjt.crew.domain.battle.CrewBattleFeedRequestDTO;
 import com.multipjt.multi_pjt.crew.domain.battle.CrewBattleRequestDTO;
 import com.multipjt.multi_pjt.crew.domain.battle.CrewVoteRequestDTO;
+import com.multipjt.multi_pjt.crew.domain.battle.CrewVoteResponseDTO;
 import com.multipjt.multi_pjt.crew.domain.battle.CrewBattleFeedResponseDTO;
 import com.multipjt.multi_pjt.crew.domain.battle.CrewBattleResponseDTO;
 
@@ -52,4 +53,13 @@ public interface CrewBattleMapper {
 
     // 배틀 삭제
     public void deleteBattleById(int battle_id);
+
+    // 크루 멤버 승리 포인트 업데이트
+    public void updateWinnerPointsRow(int member_id);
+
+    // 크루 배지 승리 포인트 업데이트
+    public void updateBadgeWinnerPointsRow(int member_id);
+
+    // 특정 배틀에 대한 모든 투표 조회
+    public List<CrewVoteResponseDTO> selectCrewVoteRow(int battle_id);
 } 
