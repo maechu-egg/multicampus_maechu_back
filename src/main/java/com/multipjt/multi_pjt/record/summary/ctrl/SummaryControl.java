@@ -132,10 +132,11 @@ public class SummaryControl {
                 summary.put("burnedCalories", totalBurnedCalories);
                 System.out.println("debug >>> summary " + summary);
                 System.out.println("소모한 칼로리 정보 추가 완료");
-                
+                // 성공
                 return new ResponseEntity<>(summary, HttpStatus.OK);
                 
             } catch (Exception e) {
+                // 서버오류 발생
                 System.out.println("서버오류 발생: " + e.getMessage());
                 return new ResponseEntity<>("서버오류 발생", HttpStatus.INTERNAL_SERVER_ERROR);
             }

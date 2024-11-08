@@ -65,7 +65,7 @@ public class ExerControl {
             Double met = null;
             // 사용자가 입력한 운동이 csv에 존재하는 운동이면 met 값 가져오기
             // 사용자가 입력한 강도와 csv 파일에 있는 강도가 같으면 met 값 가져오기
-            if(info != null && !info.isEmpty()){
+            if(!info.isEmpty()){
                 System.out.println("csv에 존재하는 운동입니다");
                 Double tempMet = null;
                 for(Map<String,Object> map : info){
@@ -108,59 +108,70 @@ public class ExerControl {
                     }
                 }       
             }
-        }
-        else{  // 사용자가 입력한 운동이 csv에 존재하지 않는 운동이면 기본 met 값 설정
-            System.out.println("csv에 존재하지 않는 운동입니다");
-            switch(exerRequestDTO.getIntensity().toString()){
-                case "LOW":
-                    met = 3.0;
-                    break;
-                case "GENERAL":
-                    met = 5.0;
-                    break;
-                case "HIGH":
-                    met = 7.0;
-                    break;
             }
-        }
-        System.out.println("met >> " + met);
-        exerRequestDTO.setMet(met);
-        
-        // 몸무게 가져오기
-        Double weight = exerService.getMemberInfoRow(exerRequestDTO.getMember_id());
-        System.out.println("weight >> " + weight);
+            else{  // 사용자가 입력한 운동이 csv에 존재하지 않는 운동이면 기본 met 값 설정
+                System.out.println("csv에 존재하지 않는 운동입니다");
+                switch(exerRequestDTO.getIntensity().toString()){
+                    case "LOW":
+                        met = 3.0;
+                        break;
+                    case "GENERAL":
+                        met = 5.0;
+                        break;
+                    case "HIGH":
+                        met = 7.0;
+                        break;
+                }
+            }
+            System.out.println("met >> " + met);
+            exerRequestDTO.setMet(met);
+            
+            // 몸무게 가져오기
+            Double weight = exerService.getMemberInfoRow(exerRequestDTO.getMember_id());
+            System.out.println("weight >> " + weight);
 
-        // 칼로리 계산, met * 3.5 * 몸무게 * 운동 시간 * 5
-        if (met != null) {
-            Integer calories = (int) ((met * 3.5 * weight * exerRequestDTO.getDuration()) / 1000 * 5);
-            System.out.println("calories >> " + calories);
-            exerRequestDTO.setCalories(calories);
-        }
+            // 칼로리 계산, met * 3.5 * 몸무게 * 운동 시간 * 5
+            if (met != null) {
+                Integer calories = (int) ((met * 3.5 * weight * exerRequestDTO.getDuration()) / 1000 * 5);
+                System.out.println("calories >> " + calories);
+                exerRequestDTO.setCalories(calories);
+            }
 
-        Integer exercise_id = exerService.exerInsertRow(exerRequestDTO);
-        System.out.println("exercise_id >> " + exercise_id);
-        System.out.println("Result exerRequestDTO >> " + exerRequestDTO);
+            Integer exercise_id = exerService.exerInsertRow(exerRequestDTO);
+            System.out.println("exercise_id >> " + exercise_id);
+            System.out.println("Result exerRequestDTO >> " + exerRequestDTO);
         
-        // 운동 번호 반환
-        return new ResponseEntity<>(exercise_id, HttpStatus.OK);
+            // 운동 번호 반환
+            // 운동 추가 성공
+            return new ResponseEntity<>(exercise_id, HttpStatus.OK);
         } else {
-        return new ResponseEntity<>("인증 실패",HttpStatus.UNAUTHORIZED);
+            // 인증 실패
+            return new ResponseEntity<>("인증 실패",HttpStatus.UNAUTHORIZED);
         }
     }
 
     // 운동 찾기
     // 일일 운동 조회를 통해 exercise_id를 프론트가 가지고 있는 상태
     @GetMapping("/get/exercise")
-    public ResponseEntity<ExerResponseDTO> exerGet(@RequestParam(name = "exercise_id") Integer exercise_id){
+    public ResponseEntity<Object> exerGet(@RequestParam(name = "exercise_id") Integer exercise_id){
         // exercise_id만 입력
         System.out.println("class endPoint >> " + "/record/exercise/get/exerciseId");
         System.out.println("exercise_id >> " + exercise_id);
+        try{
         ExerResponseDTO exerResponseDTO = exerService.exerGetRow(exercise_id);
-        if(exerResponseDTO != null){
-            System.out.println("exerResponseDTO >> " + exerResponseDTO);
-            return new ResponseEntity<>(exerResponseDTO, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(exerResponseDTO, HttpStatus.BAD_REQUEST);
+            if(exerResponseDTO != null){
+            
+                System.out.println("exerResponseDTO >> " + exerResponseDTO);
+                // 조회 성공
+                return new ResponseEntity<>(exerResponseDTO, HttpStatus.OK);
+            } else {
+                // 조회 실패
+                return new ResponseEntity<>(exerResponseDTO, HttpStatus.NOT_FOUND);
+            }
+        } catch(Exception e){
+            // 서버 내부 오류 발생
+            System.out.println("서버 오류 발생: " + e.getMessage());
+            return new ResponseEntity<>("서버 오류 발생", HttpStatus.INTERNAL_SERVER_ERROR);    
         }
     }
 
@@ -178,10 +189,10 @@ public class ExerControl {
             try {
                 successCount += exerService.setInsertRow(dto);
             } catch (Exception e) {
+                // 세트 추가 실패
                 System.out.println("세트 추가 실패: " + e.getMessage());
             }
         }
-        
         if (successCount == setRequestDTOs.size()) {
             System.out.println("세트 추가 성공");
             return new ResponseEntity<>(successCount, HttpStatus.OK);
@@ -200,15 +211,23 @@ public class ExerControl {
     // set_id 값을 기준으로 나열, 세트 정보 조회를 통해 set_id 값을 프론트가 가짐
     // 값이 0인 항목은 출력 x 
     @GetMapping("/get/setInfo")
-    public ResponseEntity<List<SetResponseDTO>> setInfoGet(@RequestParam(name = "exercise_id") Integer exercise_id){
+    public ResponseEntity<Object> setInfoGet(@RequestParam(name = "exercise_id") Integer exercise_id){
         System.out.println("class endPoint >> " + "/record/exercise/get/setInfo");  
         System.out.println("exercise_id >> " + exercise_id);
-        List<SetResponseDTO> setResponseDTOs = exerService.setInfoGetRow(exercise_id);
-        System.out.println("setResponseDTOs >> " + setResponseDTOs);
-        if(setResponseDTOs != null && !setResponseDTOs.isEmpty()){
-            return new ResponseEntity<>(setResponseDTOs, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(setResponseDTOs, HttpStatus.BAD_REQUEST);
+        try{
+            List<SetResponseDTO> setResponseDTOs = exerService.setInfoGetRow(exercise_id);
+            System.out.println("setResponseDTOs >> " + setResponseDTOs);
+            if(!setResponseDTOs.isEmpty()){
+                // 값이 있을 때
+                return new ResponseEntity<>(setResponseDTOs, HttpStatus.OK);
+            } else {
+                // 값이 없을 때
+                return new ResponseEntity<>(setResponseDTOs, HttpStatus.NOT_FOUND);
+            }
+        } catch(Exception e){
+            // 서버 내부 오류 발생
+            System.out.println("서버 오류 발생: " + e.getMessage());
+            return new ResponseEntity<>("서버 오류 발생", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -237,17 +256,17 @@ public class ExerControl {
                 List<ExerResponseDTO> exerResponseDTOs = exerService.exerDayGetRow(map);
                 System.out.println("exerResponseDTOs >> " + exerResponseDTOs);
             
-                if(exerResponseDTOs != null && !exerResponseDTOs.isEmpty()){
+                if(!exerResponseDTOs.isEmpty()){
                     // 1. 데이터를 정상적으로 찾은 경우
                     return new ResponseEntity<>(exerResponseDTOs, HttpStatus.OK);
                 } else {
                     // 2. 데이터가 없는 경우
-                    return new ResponseEntity<>(exerResponseDTOs, HttpStatus.NO_CONTENT);
+                    return new ResponseEntity<>(exerResponseDTOs, HttpStatus.NOT_FOUND);
                 }
             } catch (Exception e) {
                 // 3. 서버 내부 오류 발생
                 System.out.println("서버 오류 발생: " + e.getMessage());
-                return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+                return new ResponseEntity<>("서버오류 발생", HttpStatus.INTERNAL_SERVER_ERROR);
             }
         } else {   
             return new ResponseEntity<>("인증 실패",HttpStatus.UNAUTHORIZED);
@@ -288,6 +307,7 @@ public class ExerControl {
         updateExerInfo.put("calories", calories);
         System.out.println("수정 값 반영된 calories, met >> " + updateExerInfo);            
         int result = exerService.exerUpdateRow(updateExerInfo);
+        // 성공 -> 200, 실패 -> 400
         return new ResponseEntity<>(result, result == 1 ? HttpStatus.OK : HttpStatus.BAD_REQUEST);
     }
 
@@ -351,8 +371,10 @@ public class ExerControl {
         int result = exerService.setUpdateRow(map);
         System.out.println("result >> " + result);
         if(result == 1){
+            // 수정 성공
             return new ResponseEntity<>(result, HttpStatus.OK);
         } else {
+            // 수정 실패
             return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
         }
     }
@@ -366,8 +388,10 @@ public class ExerControl {
         int result = exerService.exerDeleteRow(exercise_id);
         System.out.println("result >> " + result);
         if(result == 1){
+            // 삭제 성공
             return new ResponseEntity<>(result, HttpStatus.OK);
         } else {
+            // 삭제 실패
             return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
         }
     }
@@ -381,8 +405,10 @@ public class ExerControl {
         int result = exerService.setDeleteRow(set_id);
         System.out.println("result >> " + result);
         if(result == 1){
+            // 삭제 성공
             return new ResponseEntity<>(result, HttpStatus.OK);
         } else {
+            // 삭제 실패
             return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
         }
     }
@@ -409,7 +435,7 @@ public class ExerControl {
 
                 List<Map<String,Object>> list = exerService.exerCaloriesGetRow(map);
                 System.out.println("exer list >> " + list);
-                if(list != null && !list.isEmpty()){
+                if(!list.isEmpty()){
                     // 값이 존재할 경우
                     return new ResponseEntity<>(list, HttpStatus.OK);
                 } else {
@@ -446,7 +472,7 @@ public class ExerControl {
 
                 List<Map<String,Object>> result = exerService.getMonthExerRow(date);
                 System.out.println("result >> " + result);
-                if(result != null){
+                if(!result.isEmpty()){
                     // 값이 있을 때
                     return new ResponseEntity<>(result, HttpStatus.OK);
                 } else {

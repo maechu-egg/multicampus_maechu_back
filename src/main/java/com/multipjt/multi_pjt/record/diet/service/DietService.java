@@ -56,10 +56,6 @@ public class DietService {
         return dietMapper.mealNutCheck(map);
     }
 
-    // public Map<String,String> getMemberInfoRow(Integer memberId){
-    //     return dietMapper.getMemberInfo(memberId);
-    // }
-
     public int mealUpdateRow(DietRequestDTO dietRequestDTO){
         return dietMapper.mealUpdate(dietRequestDTO);
     }
