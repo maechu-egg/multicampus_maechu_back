@@ -109,8 +109,9 @@ public class DietControl {
     public ResponseEntity<Object> findDietNumber(@RequestBody Map<String,Object> map,
                                                  @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
         System.out.println("class endPoint >> " + "/record/diet/get/dietnumber");
-        try{
-            if (authHeader != null && authHeader.startsWith("Bearer ")) {
+        
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            try{
                 String token = authHeader.substring(7); // "Bearer " 접두사 제거
                 Integer member_id = jwtTokenProvider.getUserIdFromToken(token); // 토큰에서 사용자 ID 추출
 
@@ -129,15 +130,15 @@ public class DietControl {
                     // 값이 없을 때
                     return new ResponseEntity<>(result,HttpStatus.NOT_FOUND);
                 }
-            } else{
-                // 인증 실패
-                return new ResponseEntity<>("인증실패",HttpStatus.UNAUTHORIZED);
+            } catch(Exception e){
+                // 서버 내부 오류 발생
+                System.out.println("서버 오류 발생: " + e.getMessage());
+                return new ResponseEntity<>("서버 오류 발생", HttpStatus.INTERNAL_SERVER_ERROR);
             }
-        } catch(Exception e){
-            // 서버 내부 오류 발생
-            System.out.println("서버 오류 발생: " + e.getMessage());
-            return new ResponseEntity<>("서버 오류 발생", HttpStatus.INTERNAL_SERVER_ERROR);
-        } 
+        } else{
+            // 인증 실패
+            return new ResponseEntity<>("인증실패",HttpStatus.UNAUTHORIZED); 
+        }
     }
 
     // 식단 조회
