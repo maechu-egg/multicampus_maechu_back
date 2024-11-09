@@ -7,6 +7,8 @@ import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -15,6 +17,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -27,6 +30,7 @@ import com.multipjt.multi_pjt.badge.domain.record.UserActivityRecordRequestDTO;
 import com.multipjt.multi_pjt.badge.domain.record.UserActivityRecordResponseDTO;
 import com.multipjt.multi_pjt.badge.service.IBadgeService;
 import com.multipjt.multi_pjt.badge.service.MemberBadgeManager;
+import com.multipjt.multi_pjt.jwt.JwtTokenProvider;
 
 @RestController
 @RequestMapping("/badges")
@@ -38,6 +42,8 @@ public class BadgeController {
     private final MemberBadgeManager memberBadgeManager;
     private final UserActivityRecordMapper userActivityRecordMapper;
     private final MemberBadgeMapper memberBadgeMapper;
+    @Autowired
+    private JwtTokenProvider jwtTokenProvider;
 
     // BadgeController 생성자
     public BadgeController(IBadgeService badgeService, MemberBadgeManager memberBadgeManager, 
@@ -199,10 +205,48 @@ public ResponseEntity<?> getUserActivities(@PathVariable("memberId") int memberI
         }
     }
      @GetMapping("/getBadge")
-    public ResponseEntity<Map<String, Object>> getBadgeIdPoint(@RequestParam("member_id") int memberId) {
-        Map<String, Object> response = memberBadgeMapper.getBadgeIdPoint(memberId);
-        return ResponseEntity.ok(response);
+public ResponseEntity<?> getBadgeIdPoint(
+        @RequestHeader(value = HttpHeaders.AUTHORIZATION, required = false) String authHeader,
+        @RequestParam("member_id") int memberId) {
+    
+    try {
+        // 인증 헤더가 존재하는지 확인
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            // Bearer 접두사를 제거하고 JWT 토큰을 가져옴
+            String token = authHeader.substring(7);
+            
+            // 토큰에서 사용자 ID를 추출
+            Integer extractedMemberId = jwtTokenProvider.getUserIdFromToken(token);
+
+            // 추출된 사용자 ID와 요청된 memberId가 일치하는지 확인
+            if (!extractedMemberId.equals(memberId)) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                        .body(Map.of("error", "사용자 ID가 일치하지 않습니다."));
+            }
+
+            // Mapper를 통해 데이터를 가져옴
+            Map<String, Object> response = memberBadgeMapper.getBadgeIdPoint(memberId);
+
+            if (response == null || response.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(Map.of("message", "해당 회원의 배지 정보가 없습니다."));
+            }
+
+            return ResponseEntity.ok(response);
+
+        } else {
+            // 인증 실패 시 응답
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("error", "인증 실패: 유효한 토큰이 필요합니다."));
+        }
+
+    } catch (Exception e) {
+        // 서버 내부 오류 발생 시 처리
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(Map.of("error", "배지 정보 조회 중 오류가 발생했습니다.", "details", e.getMessage()));
     }
+}
+
 
     @GetMapping("/getrankpercentage")
     public ResponseEntity<Map<String, Object>> getRankPercentage(@RequestParam("member_id") int memberId) {
