@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 import com.multipjt.multi_pjt.badge.dao.UserActivityRecordMapper;
 
 import com.multipjt.multi_pjt.community.dao.CommentMapper;
-import com.multipjt.multi_pjt.community.dao.PostMapper;
 import com.multipjt.multi_pjt.community.domain.comments.CommentRequestDTO;
 import com.multipjt.multi_pjt.community.domain.comments.CommentResponseDTO;
 
@@ -20,8 +19,6 @@ public class CommentService {
     @Autowired
     private CommentMapper commentMapper;
 
-    @Autowired
-    private PostMapper postMapper;
 
     @Autowired
     private UserActivityRecordMapper userActivityRecordMapper;
@@ -53,7 +50,7 @@ public class CommentService {
     public List<CommentResponseDTO> postDetailComment(Map<String, Object> map){
         System.out.println("service - postDetailComment");
 
-        List<CommentResponseDTO> list = postMapper.postDetailComment(map);
+        List<CommentResponseDTO> list = commentMapper.getPostById(map);
 
         return list;
     }
