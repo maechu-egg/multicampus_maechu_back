@@ -37,9 +37,11 @@ public class CommentMapperApplicationTests {
         // When : 댓글 등록 동작 수행
         int rowsAffected = commentMapper.commentInsert(request);
         Assertions.assertEquals(1, rowsAffected, "댓글이 등록 되었습니다.");
+        Map<String ,Object> map = new HashMap<>();
+        map.put("post_id" , 6);
 
         // Then : 데이터베이스에서 등록된 사용자 정보 조회 및 검증
-        List<CommentResponseDTO> registeredComments = commentMapper.getPostById(6);     
+        List<CommentResponseDTO> registeredComments = commentMapper.getPostById(map);     
         
         // Null 여부 확인
         Assertions.assertNotNull(registeredComments, "댓글 등록 성공");

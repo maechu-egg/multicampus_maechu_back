@@ -20,10 +20,20 @@
 
     <!-- 게시글 번호로 댓글 조회 -->
     <select id ="getPostById" parameterType="int" resultType="com.multipjt.multi_pjt.community.domain.comments.CommentResponseDTO">
-        SELECT * 
-        FROM Comments 
-        WHERE post_id= #{post_id}
+        SELECT  c.comments_id, 
+                c.comments_contents, 
+                c.comments_date,
+                c.post_id,
+                m.member_id, 
+                m.nickname AS c_nickname
+        FROM    
+            Comments c
+        Join 
+            Member m ON c.member_id = m.member_id
+        WHERE
+            c.post_id = #{post_id}
     </select>
+   
 
     <!-- 댓글 삭제  -->
     <delete id = "commentDelete" parameterType="java.util.HashMap">
@@ -49,9 +59,9 @@
     <select id="commitComment" parameterType="java.util.HashMap" resultType="Boolean">
         SELECT EXISTS (
             SELECT 1
-            FROM UserActivity
+            FROM Comments
             WHERE member_id = #{member_id}
-            AND comment_id = #{comment_id}
+            AND comments_id = #{comments_id}
         ) As existsLike
     </select>
 

@@ -10,6 +10,7 @@ import com.multipjt.multi_pjt.jwt.JwtTokenProvider;
 
 import java.util.List;
 import java.util.Map;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,9 +45,8 @@ public class CommentController {
         
         System.out.println("Controller endpoint : /community/commnet/saveComment");
         System.out.println("cdto - " + cdto);
-        List<CommentResponseDTO> list = null;
+
         Map<String, Object> response = new HashMap<>();
-        ResponseEntity<String> result = null;
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             String token = authHeader.substring(7); // "Bearer " 접두사 제거
             int userId = jwtTokenProvider.getUserIdFromToken(token); // 토큰에서 사용자 ID 추출 (int형으로 변경)
@@ -58,21 +58,11 @@ public class CommentController {
             map.put("memberId", userId); 
             response = commentService.createComment(cdto, map);
 
-            Map<String, Object> listmap = new HashMap<>();
-            listmap.put("post_id", cdto.getPost_id());
-            System.out.println("post_id" + listmap.get("post_id"));
-            listmap.put("member_id", userId);
-            System.out.println("member_id" + listmap.get("member_id"));
-            listmap.put("comments_contents", cdto.getComments_contents());
-            System.out.println("comments_contents" + listmap.get("comments_contents"));
-            list = commentService.postDetailComment(listmap);
             if(response.get("result") != null && (boolean)response.get("result")){
                 response.put("message", "댓글이 성공적으로 추가되었습니다.");
-                response.put("commentList", list);
                 return ResponseEntity.status(HttpStatus.CREATED).body(response);
             }else{
                 response.put("message", "댓글 추가가 실패했습니다.");
-                response.put("commentList", list);
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
             }
 
@@ -101,7 +91,9 @@ public class CommentController {
 
             list = commentService.postDetailComment(map);
 
+  
             System.out.println("result size = " + list.size());
+
         }
         return new ResponseEntity<List<CommentResponseDTO>>(list, HttpStatus.OK);
 
@@ -109,9 +101,9 @@ public class CommentController {
     
     // 댓글 삭제
     @DeleteMapping("/delete/{commentId}")
-    public ResponseEntity<Map<String, Object>> commentDelete(@PathVariable("commentId") Integer commentId,
-                                                @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader,
-                                                @RequestBody CommentRequestDTO cdto                                      
+    public ResponseEntity<Map<String, Object>> commentDelete(@PathVariable("commentId") int commentId,
+                                                @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader
+                                                                                  
     ){
         ResponseEntity<Map<String, Object>> response = null;    
         Map<String, Object> result = new HashMap<>();              
@@ -127,8 +119,8 @@ public class CommentController {
                 
                 Map<String, Integer> map = new HashMap<>();
                 map.put("comments_id", commentId);
-                map.put("member_id", (Integer)userId);
-                map.put("post_id", cdto.getPost_id());
+                map.put("member_id",userId);
+                // map.put("post_id", cdto.getPost_id());
                 
                 result = commentService.commentDelete(map);
                 if(result.get("result") != null && (boolean)result.get("result")){         
