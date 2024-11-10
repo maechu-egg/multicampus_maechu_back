@@ -166,7 +166,7 @@ public class ExerControl {
                 return new ResponseEntity<>(exerResponseDTO, HttpStatus.OK);
             } else {
                 // 조회 실패
-                return new ResponseEntity<>(exerResponseDTO, HttpStatus.NOT_FOUND);
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
             }
         } catch(Exception e){
             // 서버 내부 오류 발생
@@ -222,7 +222,7 @@ public class ExerControl {
                 return new ResponseEntity<>(setResponseDTOs, HttpStatus.OK);
             } else {
                 // 값이 없을 때
-                return new ResponseEntity<>(setResponseDTOs, HttpStatus.NOT_FOUND);
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
             }
         } catch(Exception e){
             // 서버 내부 오류 발생
@@ -261,7 +261,7 @@ public class ExerControl {
                     return new ResponseEntity<>(exerResponseDTOs, HttpStatus.OK);
                 } else {
                     // 2. 데이터가 없는 경우
-                    return new ResponseEntity<>(exerResponseDTOs, HttpStatus.NOT_FOUND);
+                    return new ResponseEntity<>(HttpStatus.NO_CONTENT);
                 }
             } catch (Exception e) {
                 // 3. 서버 내부 오류 발생
