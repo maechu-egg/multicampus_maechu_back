@@ -61,7 +61,7 @@ public class CrewService {
         }
     }
 
-    // 추천 크루 리스트 조회 limit 4
+    // 추천 크루 리스트 조회 limit 3
     public List<CrewResponseDTO> getCrewListForHomepage(int token_id) {
         System.out.println("debug>>> Service: getCrewListForHomepage + " + crewMapper);
         System.out.println("debug>>> Service: getCrewListForHomepage + " + token_id);
@@ -69,13 +69,17 @@ public class CrewService {
         // 정확한 지역과 일치하는 크루 조회
         List<CrewResponseDTO> exactMatchCrews = crewMapper.selectCrewForHomepageRow(token_id);
 
-        if (!exactMatchCrews.isEmpty()) {
-            // 정확한 지역과 일치하는 크루가 있으면 그 크루들만 반환
-            return exactMatchCrews;
-        } else {
-            // 정확한 지역과 일치하는 크루가 없으면 도 단위로 일치하는 크루 조회
+        try {
+            if (!exactMatchCrews.isEmpty()) {
+                // 정확한 지역과 일치하는 크루가 있으면 그 크루들만 반환
+                return exactMatchCrews;
+            } else {
+                // 정확한 지역과 일치하는 크루가 없으면 도 단위로 일치하는 크루 조회
             List<CrewResponseDTO> regionMatchCrews = crewMapper.selectCrewByRegionRowForHomepage(token_id);
-            return regionMatchCrews;
+                return regionMatchCrews;
+            }
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "가까운 지역에 크루가 존재하지 않습니다.");
         }
     }
 

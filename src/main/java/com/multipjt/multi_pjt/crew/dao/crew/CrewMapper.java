@@ -28,7 +28,7 @@ public interface CrewMapper {
     // 도 단위 일치 크루 리스트 조회
     public List<CrewResponseDTO> selectCrewByRegionRow(int member_id);
 
-    // 추천 크루 리스트 조회 limit 4
+    // 추천 크루 리스트 조회 limit 3
     public List<CrewResponseDTO> selectCrewForHomepageRow(int member_id);
 
     // 도 단위 일치 크루 리스트 조회 limit 4

@@ -77,9 +77,9 @@ public class CrewController {
         }
     }
 
-    // 추천 크루 리스트 조회 limit 4
+    // 추천 크루 리스트 조회 limit 3
     @GetMapping("/list/homepage")
-    public ResponseEntity<List<CrewResponseDTO>> getCrewListForHomepage(
+    public ResponseEntity<?> getCrewListForHomepage(
         @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
         System.out.println("client endpoint: /crew/list/homepage");
 
@@ -87,7 +87,14 @@ public class CrewController {
             String token = authHeader.substring(7);
             int token_id = jwtTokenProvider.getUserIdFromToken(token);
 
-            return ResponseEntity.ok(crewService.getCrewListForHomepage(token_id));
+            try {
+                return ResponseEntity.ok(crewService.getCrewListForHomepage(token_id));
+            } catch (ResponseStatusException e) {
+                Map<String, Object> errorResponse = new HashMap<>();
+                errorResponse.put("status", e.getStatusCode().value());
+                errorResponse.put("message", e.getReason());
+                return ResponseEntity.status(e.getStatusCode()).body(errorResponse);
+            }
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build(); // 인증 실패 시 401 반환
         }

@@ -67,7 +67,7 @@
         ORDER BY crew_date DESC;
     </select>
 
-    <!-- 추천 크루 리스트 조회 limit 4 --> 
+    <!-- 추천 크루 리스트 조회 limit 3 --> 
 
     <select id="selectCrewForHomepageRow"
             parameterType="int"
@@ -80,11 +80,16 @@
                 FROM UserProfile    
                 WHERE member_id = #{member_id}
             )
+            OR c.crew_location = (
+                SELECT profile_region
+                FROM UserProfile
+                WHERE member_id = #{member_id}
+            )
         ORDER BY c.crew_date DESC
-        LIMIT 4;
+        LIMIT 3;
     </select>
 
-    <!-- 도 단위 일치 크루 리스트 조회 limit 4-->
+    <!-- 도 단위 일치 크루 리스트 조회 limit 3-->
 
     <select id="selectCrewByRegionRowForHomepage"
             parameterType="int"
@@ -98,7 +103,7 @@
                 WHERE member_id = #{member_id}
             )
         ORDER BY crew_date DESC
-        LIMIT 4;
+        LIMIT 3;
     </select>
 
     <!-- 특정 크루 정보 조회  -->
