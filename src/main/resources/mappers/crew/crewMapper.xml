@@ -19,6 +19,7 @@
             crew_gender,
             crew_frequency,
             crew_age,
+            crew_intro_img,
             crew_state,
             member_id
         ) VALUES (
@@ -30,6 +31,7 @@
             #{crew_gender},
             #{crew_frequency},
             #{crew_age},
+            #{crew_intro_img},
             #{crew_state},
             #{member_id}
         );
