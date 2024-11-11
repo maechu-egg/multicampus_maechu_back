@@ -7,6 +7,7 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -154,20 +155,26 @@ public class CrewController {
     // --------- 크루 소개 ---------
 
     // 크루 소개 수정
-    @PatchMapping("/intro/update")
+    @PatchMapping(value = "/intro/update", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Map<String, Object>> updateCrewIntro(
             @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader,
-            @RequestBody CrewRequestDTO param) {
+            @ModelAttribute CrewRequestDTO param,
+            @RequestParam(value = "crewIntroImgFile", required = false) MultipartFile ImgFile) {
 
         System.out.println("client endpoint: /crew/intro/update");
+        if (ImgFile == null) {
+            System.out.println("debug>>> ImgFile is null");
+            return ResponseEntity.badRequest().body(Map.of("message", "이미지 파일이 필요합니다."));
+        }
         System.out.println("debug>>> updateCrewIntro + " + param);
+        System.out.println("debug>>> updateCrewIntro + " + ImgFile);
 
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             String token = authHeader.substring(7);
             int token_id = jwtTokenProvider.getUserIdFromToken(token);
 
             try {
-                crewService.updateCrewIntro(param, token_id);
+                crewService.updateCrewIntro(param, token_id, ImgFile);
                 return ResponseEntity.noContent().build();
             } catch (ResponseStatusException e) {
                 Map<String, Object> errorResponse = new HashMap<>();
