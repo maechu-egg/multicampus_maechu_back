@@ -159,7 +159,7 @@ public class CrewController {
     public ResponseEntity<Map<String, Object>> updateCrewIntro(
             @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader,
             @ModelAttribute CrewRequestDTO param,
-            @RequestParam(value = "crewIntroImgFile", required = false) MultipartFile ImgFile) {
+            @RequestParam(value = "ImgFile", required = false) MultipartFile ImgFile) {
 
         System.out.println("client endpoint: /crew/intro/update");
         if (ImgFile == null) {
