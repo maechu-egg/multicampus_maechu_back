@@ -164,6 +164,7 @@ public class CrewController {
 
         System.out.println("client endpoint: /crew/intro/update");
         System.out.println("debug>>> updateCrewIntro + " + param);
+        System.out.println("debug>>> crew_id 타입: " + ((Object)param.getCrew_id()).getClass().getName());
         System.out.println("debug>>> updateCrewIntro + " + ImgFile);
 
         if (ImgFile == null) {
@@ -356,7 +357,6 @@ public class CrewController {
                 errorResponse.put("message", e.getReason());
                 return ResponseEntity.status(e.getStatusCode()).body(errorResponse);
             }
-            
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
