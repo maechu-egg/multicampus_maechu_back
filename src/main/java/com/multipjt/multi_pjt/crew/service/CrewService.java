@@ -98,7 +98,18 @@ public class CrewService {
     public CrewResponseDTO getCrewInfo(Integer crewId) {
         System.out.println("debug>>> Service: getCrewInfo + " + crewMapper);
         System.out.println("debug>>> Service: getCrewInfo + " + crewId);
-        return crewMapper.selectCrewInfoRow(crewId);
+        
+        CrewResponseDTO crew = crewMapper.selectCrewInfoRow(crewId);
+        if (crew != null && crew.getCrew_intro_img() != null) {
+            // 이미지 URL 설정 (정적 파일 경로에 맞게 URL 생성)
+            crew.setCrew_intro_img(getImageUrl(crew.getCrew_intro_img()));
+        }
+        return crew;
+    }
+
+    // 이미지 URL 생성 메서드
+    private String getImageUrl(String crewIntroImg) {
+        return "/static/" + crewIntroImg; // 정적 파일 경로에 맞게 URL 생성
     }
 
     // 크루원 신청

@@ -146,7 +146,7 @@ public class CrewController {
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             String token = authHeader.substring(7);
             int token_id = jwtTokenProvider.getUserIdFromToken(token);
-            
+
             return ResponseEntity.ok(crewService.getMyCrewList(token_id));
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build(); // 인증 실패 시 401 반환
