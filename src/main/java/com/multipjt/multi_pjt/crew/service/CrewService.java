@@ -109,10 +109,15 @@ public class CrewService {
     }
 
     // 내가 속한 크루 조회
-    public List<CrewResponseDTO> getMyCrewList(Integer member_id) {
+    public List<CrewResponseDTO> getMyCrewList(Integer token_id) {
         System.out.println("debug>>> Service: getMyCrewList + " + crewMapper);
-        System.out.println("debug>>> Service: getMyCrewList + " + member_id);
-        return crewMapper.selectMyCrewRow(member_id);
+        System.out.println("debug>>> Service: getMyCrewList + " + token_id);
+
+        try {
+            return crewMapper.selectMyCrewRow(token_id);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "내가 속한 크루가 없습니다.");
+        }
     }
 
     // --------- 크루 소개 ---------
