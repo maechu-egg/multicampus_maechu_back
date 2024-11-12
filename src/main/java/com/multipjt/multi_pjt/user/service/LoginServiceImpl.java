@@ -14,7 +14,6 @@ import lombok.extern.slf4j.Slf4j;
 
 import com.multipjt.multi_pjt.badge.service.BadgeService;
 import com.multipjt.multi_pjt.badge.service.CrewBadgeManager;
-import com.multipjt.multi_pjt.badge.service.MemberBadgeManager;
 import com.multipjt.multi_pjt.jwt.EmailProvider;
 import com.multipjt.multi_pjt.jwt.JwtTokenProvider;
 import com.multipjt.multi_pjt.user.dao.UserMapper;

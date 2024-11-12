@@ -1,10 +1,13 @@
 package com.multipjt.multi_pjt.badge.service;
 
 import java.math.BigDecimal;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -62,4 +65,18 @@ public class MemberBadgeManager {
         badgeRequest.setBadge_level(badgeService.getBadgeLevel(BigDecimal.valueOf(totalPoints))); // 뱃지 레벨 업데이트
         memberBadgeMapper.updateBadge(badgeRequest);
     }
+
+    public ResponseEntity<Map<String, Object>> getPoint(int memberId) {
+        Map<String, Object> response = memberBadgeMapper.getBadgeIdPoint(memberId);
+    
+        // response가 null일 경우 처리
+        if (response == null || response.isEmpty()) {
+            logger.error("Member badge information not found for memberId: " + memberId);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                                 .body(Map.of("error", "Member badge information not found"));
+        }
+    
+        return ResponseEntity.ok(response);
+    }
+    
 }
