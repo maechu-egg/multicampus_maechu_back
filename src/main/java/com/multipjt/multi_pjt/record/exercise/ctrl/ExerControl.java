@@ -47,108 +47,24 @@ public class ExerControl {
 
     // 운동 추가
     @PostMapping("/insert/type")
-    public ResponseEntity<Object> exerInsert(@RequestBody ExerRequestDTO exerRequestDTO,
-                                              @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader){
-        System.out.println("class endPoint >> " + "/record/exercise/insert/type");
-        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+public ResponseEntity<Object> exerInsert(@RequestBody ExerRequestDTO exerRequestDTO,
+                                          @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
+    System.out.println("class endPoint >> " + "/record/exercise/insert/type");
+    if (authHeader != null && authHeader.startsWith("Bearer ")) {
+        String token = authHeader.substring(7); // "Bearer " 접두사 제거
+        exerRequestDTO.setMember_id(jwtTokenProvider.getUserIdFromToken(token));
 
-            String token = authHeader.substring(7); // "Bearer " 접두사 제거
-            exerRequestDTO.setMember_id(jwtTokenProvider.getUserIdFromToken(token));
-
-            // 강도, 시간, 운동 종류, member_id 만 입력받고, 칼로리는 계산해서 넣어야 함
-            System.out.println("exerRequestDTO >> " + exerRequestDTO);
-
-            // met 값 계산
-            List<Map<String,Object>> info = exerService.metGetRow(exerRequestDTO.getExercise_type());
-            System.out.println("ExerciseMet info >> " + info);
-
-            Double met = null;
-            // 사용자가 입력한 운동이 csv에 존재하는 운동이면 met 값 가져오기
-            // 사용자가 입력한 강도와 csv 파일에 있는 강도가 같으면 met 값 가져오기
-            if(!info.isEmpty()){
-                System.out.println("csv에 존재하는 운동입니다");
-                Double tempMet = null;
-                for(Map<String,Object> map : info){
-                    String intensity = (String) map.get("intensity");
-                    if(intensity != null && intensity.equalsIgnoreCase(exerRequestDTO.getIntensity().toString())){
-                        System.out.println("강도도 존재하는 운동입니다");
-                        met = (Double) map.get("exercise_met");
-                        break;
-                    }
-                    else if(intensity == null){
-                        tempMet = (Double) map.get("exercise_met");
-                    }
-            }
-            if(met == null){
-                System.out.println("강도는 존재하지 않는 운동입니다");
-                if (tempMet != null) {
-                    switch(exerRequestDTO.getIntensity().toString()){
-                        case "LOW":
-                            met = tempMet / 1.5;
-                            break;
-                        case "GENERAL":
-                            met = tempMet;
-                            break;
-                        case "HIGH":
-                            met = tempMet * 1.5;
-                            break;
-                    }
-                } else {
-                    // tempMet이 null인 경우 기본값 설정
-                    switch(exerRequestDTO.getIntensity().toString()){
-                        case "LOW":
-                            met = 3.0;
-                            break;
-                        case "GENERAL":
-                            met = 5.0;
-                            break;
-                        case "HIGH":
-                            met = 7.0;
-                            break;
-                    }
-                }       
-            }
-            }
-            else{  // 사용자가 입력한 운동이 csv에 존재하지 않는 운동이면 기본 met 값 설정
-                System.out.println("csv에 존재하지 않는 운동입니다");
-                switch(exerRequestDTO.getIntensity().toString()){
-                    case "LOW":
-                        met = 3.0;
-                        break;
-                    case "GENERAL":
-                        met = 5.0;
-                        break;
-                    case "HIGH":
-                        met = 7.0;
-                        break;
-                }
-            }
-            System.out.println("met >> " + met);
-            exerRequestDTO.setMet(met);
-            
-            // 몸무게 가져오기
-            Double weight = exerService.getMemberInfoRow(exerRequestDTO.getMember_id());
-            System.out.println("weight >> " + weight);
-
-            // 칼로리 계산, met * 3.5 * 몸무게 * 운동 시간 * 5
-            if (met != null) {
-                Integer calories = (int) ((met * 3.5 * weight * exerRequestDTO.getDuration()) / 1000 * 5);
-                System.out.println("calories >> " + calories);
-                exerRequestDTO.setCalories(calories);
-            }
-
-            Integer exercise_id = exerService.exerInsertRow(exerRequestDTO);
-            System.out.println("exercise_id >> " + exercise_id);
-            System.out.println("Result exerRequestDTO >> " + exerRequestDTO);
-        
-            // 운동 번호 반환
-            // 운동 추가 성공
-            return new ResponseEntity<>(exercise_id, HttpStatus.OK);
-        } else {
-            // 인증 실패
-            return new ResponseEntity<>("인증 실패",HttpStatus.UNAUTHORIZED);
+        try {
+            Integer exerciseId = exerService.processExerciseInsertion(exerRequestDTO);
+            return new ResponseEntity<>(exerciseId, HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>("운동 추가 중 오류가 발생했습니다.", HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    } else {
+        return new ResponseEntity<>("인증 실패", HttpStatus.UNAUTHORIZED);
     }
+}
 
     // 운동 찾기
     // 일일 운동 조회를 통해 exercise_id를 프론트가 가지고 있는 상태
