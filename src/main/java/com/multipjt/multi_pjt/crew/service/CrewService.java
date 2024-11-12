@@ -331,7 +331,11 @@ public class CrewService {
             .anyMatch(member -> member.getMember_id() == token_id && member.getCrew_member_state() == 1);
 
         if (isActiveMember) {
-            return crewMapper.selectCrewPostRow(param);
+            CrewPostResponseDTO crewPost = crewMapper.selectCrewPostRow(param);
+            if (crewPost != null && crewPost.getCrew_post_img() != null) {
+                crewPost.setCrew_post_img(getImageUrl(crewPost.getCrew_post_img()));
+            }
+            return crewPost;
         } else {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "크루원만 게시물 조회가 가능합니다.");
         }
