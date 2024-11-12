@@ -190,40 +190,6 @@ public class CrewController {
         }
     }
 
-    //원본 코드 
-    // @PatchMapping(value = "/intro/update", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    // public ResponseEntity<Map<String, Object>> updateCrewIntro(
-    //         @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader,
-    //         @ModelAttribute CrewRequestDTO param,
-    //         @RequestParam(value = "ImgFile", required = false) MultipartFile ImgFile) {
-
-    //     System.out.println("client endpoint: /crew/intro/update");
-    //     System.out.println("debug>>> updateCrewIntro + " + param);
-    //     System.out.println("debug>>> crew_id 타입: " + ((Object)param.getCrew_id()).getClass().getName());
-    //     System.out.println("debug>>> updateCrewIntro + " + ImgFile);
-
-    //     if (ImgFile == null) {
-    //         System.out.println("debug>>> ImgFile is null");
-    //         return ResponseEntity.badRequest().body(Map.of("message", "이미지 파일이 필요합니다."));
-    //     }
-        
-    //     if (authHeader != null && authHeader.startsWith("Bearer ")) {
-    //         String token = authHeader.substring(7);
-    //         int token_id = jwtTokenProvider.getUserIdFromToken(token);
-
-    //         try {
-    //             crewService.updateCrewIntro(param, token_id, ImgFile);
-    //             return ResponseEntity.noContent().build();
-    //         } catch (ResponseStatusException e) {
-    //             Map<String, Object> errorResponse = new HashMap<>();
-    //             errorResponse.put("status", e.getStatusCode().value());
-    //             errorResponse.put("message", e.getReason());
-    //             return ResponseEntity.status(e.getStatusCode()).body(errorResponse);
-    //         }
-    //     } else {
-    //         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-    //     }
-    // }
 
     // 크루 관리 수정
     @PatchMapping("/info/update")
