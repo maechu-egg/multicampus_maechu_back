@@ -1,14 +1,12 @@
 package com.multipjt.multi_pjt.user.ctrl;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication; // Spring Security의 Authentication 임포트
-import org.springframework.security.core.context.SecurityContextHolder;
+
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import com.multipjt.multi_pjt.jwt.JwtTokenProvider;
-import com.multipjt.multi_pjt.user.domain.CustomUserDetails;
 import com.multipjt.multi_pjt.user.domain.login.ChangePwDTO;
 import com.multipjt.multi_pjt.user.domain.login.EmailCertificationInputDTO;
 import com.multipjt.multi_pjt.user.domain.login.EmailCertificationRequestDTO;
