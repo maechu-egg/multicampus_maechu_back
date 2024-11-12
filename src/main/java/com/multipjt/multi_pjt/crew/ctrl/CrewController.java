@@ -139,14 +139,15 @@ public class CrewController {
     // 내가 속한 크루 조회
     @GetMapping("/my")
     public ResponseEntity<List<CrewResponseDTO>> getMyCrewList(
-            @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader,
-            @RequestParam("member_id") Integer member_id) {
+            @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
 
         System.out.println("client endpoint: /crew/my");
-        System.out.println("debug>>> getMyCrewList + " + member_id);
 
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
-            return ResponseEntity.ok(crewService.getMyCrewList(member_id));
+            String token = authHeader.substring(7);
+            int token_id = jwtTokenProvider.getUserIdFromToken(token);
+            
+            return ResponseEntity.ok(crewService.getMyCrewList(token_id));
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build(); // 인증 실패 시 401 반환
         }
