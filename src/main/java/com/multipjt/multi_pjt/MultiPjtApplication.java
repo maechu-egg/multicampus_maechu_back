@@ -11,5 +11,4 @@ public class MultiPjtApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(MultiPjtApplication.class, args);
 	}
-
 }

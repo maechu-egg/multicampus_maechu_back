@@ -24,4 +24,14 @@ public class CrewRequestDTO {
     private String crew_intro_img;
     private int crew_state;
     private int member_id;
+
+    public String getCrewIntroImg(){
+        return crew_intro_img;
+    }
+    
+    public void setCrewIntroImg(String crew_intro_img){
+        this.crew_intro_img = crew_intro_img;
+    }
 }
+
+

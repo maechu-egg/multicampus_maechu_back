@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,6 +21,7 @@ import com.multipjt.multi_pjt.badge.domain.badge.MemberBadgeRequestDTO;
 import com.multipjt.multi_pjt.badge.domain.badge.MemberBadgeResponseDTO;
 import com.multipjt.multi_pjt.badge.domain.record.UserActivityRecordRequestDTO;
 import com.multipjt.multi_pjt.badge.domain.record.UserActivityRecordResponseDTO;
+import org.springframework.http.HttpStatus;
 
 @Service
 public class BadgeService implements IBadgeService {
@@ -185,4 +187,6 @@ public class BadgeService implements IBadgeService {
         // 뱃지 삽입
         memberBadgeMapper.insertBadge(badgeRequest);
     }
+
+   
 }

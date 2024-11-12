@@ -98,7 +98,7 @@
             mb.member_id = m.member_id;
     </select>
 
-    <select id ="getBadgeIdPoint" resultType="map">
+    <select id ="getBadgeIdPoint" parameterType="int" resultType="map">
         select 
 	        mb.member_id,
             mb.current_points,
@@ -111,7 +111,7 @@
 	        CrewBadge cb
         on
 	        mb.member_id = cb.member_id
-        where mb.member_id = #{member_id};
+        where mb.member_id = #{memberId};
     </select>
 
     <select id = "getrankpercentage" resultType="map" parameterType="map" >

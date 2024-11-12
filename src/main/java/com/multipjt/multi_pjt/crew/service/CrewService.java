@@ -1,11 +1,18 @@
 package com.multipjt.multi_pjt.crew.service;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
+
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.multipjt.multi_pjt.crew.dao.crew.CrewMapper;
 import com.multipjt.multi_pjt.crew.domain.crew.CrewCommentsRequestDTO;
@@ -79,7 +86,7 @@ public class CrewService {
                 return regionMatchCrews;
             }
         } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "가까운 지역에 크루가 존재하지 않습니다.");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "가까운 지역에 크루 존재하지 않습니다.");
         }
     }
 
@@ -87,7 +94,18 @@ public class CrewService {
     public CrewResponseDTO getCrewInfo(Integer crewId) {
         System.out.println("debug>>> Service: getCrewInfo + " + crewMapper);
         System.out.println("debug>>> Service: getCrewInfo + " + crewId);
-        return crewMapper.selectCrewInfoRow(crewId);
+        
+        CrewResponseDTO crew = crewMapper.selectCrewInfoRow(crewId);
+        if (crew != null && crew.getCrew_intro_img() != null) {
+            // 이미지 URL 설정 (정적 파일 경로에 맞게 URL 생성)
+            crew.setCrew_intro_img(getImageUrl(crew.getCrew_intro_img()));
+        }
+        return crew;
+    }
+
+    // 이미지 URL 생성 메서드
+    private String getImageUrl(String crewIntroImg) {
+        return "/static/" + crewIntroImg; // 정적 파일 경로에 맞게 URL 생성
     }
 
     // 크루원 신청
@@ -98,23 +116,43 @@ public class CrewService {
     }
 
     // 내가 속한 크루 조회
-    public List<CrewResponseDTO> getMyCrewList(Integer member_id) {
+    public List<CrewResponseDTO> getMyCrewList(Integer token_id) {
         System.out.println("debug>>> Service: getMyCrewList + " + crewMapper);
-        System.out.println("debug>>> Service: getMyCrewList + " + member_id);
-        return crewMapper.selectMyCrewRow(member_id);
+        System.out.println("debug>>> Service: getMyCrewList + " + token_id);
+
+        try {
+            return crewMapper.selectMyCrewRow(token_id);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "내가 속한 크루가 없습니다.");
+        }
     }
 
     // --------- 크루 소개 ---------
 
     // 크루 소개 수정
-    public void updateCrewIntro(CrewRequestDTO param, int token_id) {
+    public void updateCrewIntro(CrewRequestDTO param, int token_id, MultipartFile ImgFile) {
         System.out.println("debug>>> Service: updateCrewIntro + " + crewMapper);
         System.out.println("debug>>> Service: updateCrewIntro + " + param);
         System.out.println("debug>>> Service: updateCrewIntro + " + token_id);
+        System.out.println("debug>>> Service: updateCrewIntro + " + ImgFile);
 
         int leaderId = crewMapper.selectCrewLeaderIdRow(param.getCrew_id());
 
-        if(token_id == leaderId) {
+        if (token_id == leaderId) {
+            // 크루 소개 이미지 저장
+            if (ImgFile != null && !ImgFile.isEmpty()) {
+                String introFileName = System.currentTimeMillis() + "_intro_" + ImgFile.getOriginalFilename();
+                Path introPath = Paths.get("src/main/resources/static/" + introFileName);
+                try {
+                    Files.copy(ImgFile.getInputStream(), introPath, StandardCopyOption.REPLACE_EXISTING);
+                    System.out.println("Image uploaded successfully: " + introFileName);
+                    param.setCrewIntroImg(introFileName); // CrewRequestDTO에 파일 이름 설정
+                } catch (IOException e) {
+                    throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "크루 소개 이미지 업로드 실패: ");
+                }
+            }
+
+            // 크루 소개 업데이트 로직 수행
             crewMapper.updateCrewIntroRow(param);
         } else {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "크루장만 크루 소개를 수정할 수 있습니다.");
@@ -204,15 +242,27 @@ public class CrewService {
     // --------- 크루 게시판 ---------
 
     // 크루 게시물 등록
-    public void createCrewPost(CrewPostRequestDTO param, Integer token_id) {
+    public void createCrewPost(CrewPostRequestDTO param, Integer token_id, MultipartFile ImgFile) {
         System.out.println("debug>>> Service: createCrewPost + " + crewMapper);
         System.out.println("debug>>> Service: createCrewPost + " + param);
+        System.out.println("debug>>> Service: createCrewPost + " + ImgFile);
         
         // 크루원인지, 승인 상태인지 확인
         boolean isActiveMember = crewMapper.selectCrewMemberRow(param.getCrew_id()).stream()
             .anyMatch(member -> member.getMember_id() == token_id && member.getCrew_member_state() == 1);
 
         if (isActiveMember) {
+            if (ImgFile != null && !ImgFile.isEmpty()) {
+                String postFileName = System.currentTimeMillis() + "_post_" + ImgFile.getOriginalFilename();
+                Path postPath = Paths.get("src/main/resources/static/" + postFileName);
+                try {
+                    Files.copy(ImgFile.getInputStream(), postPath, StandardCopyOption.REPLACE_EXISTING);
+                    System.out.println("Image uploaded successfully: " + postFileName);
+                    param.setCrew_post_img(postFileName); // CrewRequestDTO에 파일 이름 설정
+                } catch (IOException e) {
+                    throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "크루 게시물 이미지 업로드 실패: ");
+                }
+            }
             crewMapper.insertCrewPostRow(param);
         } else {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "크루원만 게시물 등록이 가능합니다.");
@@ -277,7 +327,11 @@ public class CrewService {
             .anyMatch(member -> member.getMember_id() == token_id && member.getCrew_member_state() == 1);
 
         if (isActiveMember) {
-            return crewMapper.selectCrewPostRow(param);
+            CrewPostResponseDTO crewPost = crewMapper.selectCrewPostRow(param);
+            if (crewPost != null && crewPost.getCrew_post_img() != null) {
+                crewPost.setCrew_post_img(getImageUrl(crewPost.getCrew_post_img()));
+            }
+            return crewPost;
         } else {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "크루원만 게시물 조회가 가능합니다.");
         }
