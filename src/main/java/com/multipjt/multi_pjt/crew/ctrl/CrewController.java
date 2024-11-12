@@ -163,13 +163,14 @@ public class CrewController {
             @RequestParam(value = "ImgFile", required = false) MultipartFile ImgFile) {
 
         System.out.println("client endpoint: /crew/intro/update");
+        System.out.println("debug>>> updateCrewIntro + " + param);
+        System.out.println("debug>>> updateCrewIntro + " + ImgFile);
+
         if (ImgFile == null) {
             System.out.println("debug>>> ImgFile is null");
             return ResponseEntity.badRequest().body(Map.of("message", "이미지 파일이 필요합니다."));
         }
-        System.out.println("debug>>> updateCrewIntro + " + param);
-        System.out.println("debug>>> updateCrewIntro + " + ImgFile);
-
+        
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             String token = authHeader.substring(7);
             int token_id = jwtTokenProvider.getUserIdFromToken(token);
@@ -332,20 +333,22 @@ public class CrewController {
     // --------- 크루 게시판 ---------
 
     // 크루 게시물 등록
-    @PostMapping("/post/create")
+    @PostMapping(value = "/post/create", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Map<String, Object>> createCrewPost(
             @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader,
-            @RequestBody CrewPostRequestDTO param) {
+            @ModelAttribute CrewPostRequestDTO param,
+            @RequestParam(value = "ImgFile", required = false) MultipartFile ImgFile) {
 
         System.out.println("client endpoint: /crew/post/create");
         System.out.println("debug>>> createCrewPost + " + param);
+        System.out.println("debug>>> createCrewPost + " + ImgFile);
 
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             String token = authHeader.substring(7); // "Bearer " 접두사 제거
             int token_id = jwtTokenProvider.getUserIdFromToken(token); // 토큰에서 사용자 ID 추출
             
             try {
-                crewService.createCrewPost(param, token_id);
+                crewService.createCrewPost(param, token_id, ImgFile);
                 return ResponseEntity.status(HttpStatus.CREATED).build(); // 201 Created
             } catch (ResponseStatusException e) {
                 Map<String, Object> errorResponse = new HashMap<>();

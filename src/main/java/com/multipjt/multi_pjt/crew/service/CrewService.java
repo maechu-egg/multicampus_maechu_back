@@ -246,15 +246,27 @@ public class CrewService {
     // --------- 크루 게시판 ---------
 
     // 크루 게시물 등록
-    public void createCrewPost(CrewPostRequestDTO param, Integer token_id) {
+    public void createCrewPost(CrewPostRequestDTO param, Integer token_id, MultipartFile ImgFile) {
         System.out.println("debug>>> Service: createCrewPost + " + crewMapper);
         System.out.println("debug>>> Service: createCrewPost + " + param);
+        System.out.println("debug>>> Service: createCrewPost + " + ImgFile);
         
         // 크루원인지, 승인 상태인지 확인
         boolean isActiveMember = crewMapper.selectCrewMemberRow(param.getCrew_id()).stream()
             .anyMatch(member -> member.getMember_id() == token_id && member.getCrew_member_state() == 1);
 
         if (isActiveMember) {
+            if (ImgFile != null && !ImgFile.isEmpty()) {
+                String postFileName = System.currentTimeMillis() + "_post_" + ImgFile.getOriginalFilename();
+                Path postPath = Paths.get("src/main/resources/static/" + postFileName);
+                try {
+                    Files.copy(ImgFile.getInputStream(), postPath, StandardCopyOption.REPLACE_EXISTING);
+                    System.out.println("Image uploaded successfully: " + postFileName);
+                    param.setCrew_post_img(postFileName); // CrewRequestDTO에 파일 이름 설정
+                } catch (IOException e) {
+                    throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "크루 게시물 이미지 업로드 실패: ");
+                }
+            }
             crewMapper.insertCrewPostRow(param);
         } else {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "크루원만 게시물 등록이 가능합니다.");
@@ -319,7 +331,11 @@ public class CrewService {
             .anyMatch(member -> member.getMember_id() == token_id && member.getCrew_member_state() == 1);
 
         if (isActiveMember) {
-            return crewMapper.selectCrewPostRow(param);
+            CrewPostResponseDTO crewPost = crewMapper.selectCrewPostRow(param);
+            if (crewPost != null && crewPost.getCrew_post_img() != null) {
+                crewPost.setCrew_post_img(getImageUrl(crewPost.getCrew_post_img()));
+            }
+            return crewPost;
         } else {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "크루원만 게시물 조회가 가능합니다.");
         }
