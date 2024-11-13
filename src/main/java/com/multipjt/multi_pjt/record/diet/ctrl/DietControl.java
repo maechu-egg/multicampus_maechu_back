@@ -144,7 +144,7 @@ public class DietControl {
     // 식단 조회
     // 일일 식단 조회를 통해 식단 번호를 가지게 됨
     @PostMapping("/get/diet")
-    public ResponseEntity<Object> findDiet(@RequestParam(name="record_date") String record_date,
+    public ResponseEntity<Object> findDiet(@RequestBody Map<String,Object> map,
     @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
         System.out.println("class endPoint >> " + "/record/diet/get/diet");
 
@@ -156,7 +156,7 @@ public class DietControl {
                     System.out.println("debug >>> member_id : " + member_id);
                     System.out.println("debug >>> token : " + token);
     
-                    Map<String,Object> map = new HashMap<>();
+                    map.put("member_id",member_id);
 
                     List<DietResponseDTO> result = dietService.dietFindAllRow(map);
                     System.out.println("result >>" + result);
@@ -166,7 +166,7 @@ public class DietControl {
                         return new ResponseEntity<>(result,HttpStatus.OK);
                     } else{
                         // 값이 없을 때
-                        return new ResponseEntity<>(result,HttpStatus.NOT_FOUND);
+                        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
                     }
                 } catch(Exception e){
                         // 서버 내부 오류 발생
