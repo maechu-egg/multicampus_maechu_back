@@ -56,6 +56,9 @@ public ResponseEntity<Object> exerInsert(@RequestBody ExerRequestDTO exerRequest
 
         try {
             Integer exerciseId = exerService.processExerciseInsertion(exerRequestDTO);
+            
+            System.out.println("debug >>> exerciseId : " + exerciseId);
+
             return new ResponseEntity<>(exerciseId, HttpStatus.OK);
         } catch (Exception e) {
             e.printStackTrace();
