@@ -127,8 +127,8 @@ public class CrewService {
     }
 
     // 이미지 URL 생성 메서드
-    private String getImageUrl(String crewIntroImg) {
-        return "/static/" + crewIntroImg; // 정적 파일 경로에 맞게 URL 생성
+    private String getImageUrl(String Img) {
+        return "/static/" + Img; // 정적 파일 경로에 맞게 URL 생성
     }
 
     // 크루원 신청

@@ -33,6 +33,10 @@ public class CrewBattleService {
     @Autowired
     private CrewMapper crewMapper;
 
+    // 이미지 URL 생성 메서드
+    private String getImageUrl(String Img) {
+        return "/static/" + Img; // 정적 파일 경로에 맞게 URL 생성
+    }
     // <---- 크루 배틀 ---->
 
     // 배틀 생성
@@ -180,7 +184,13 @@ public class CrewBattleService {
             .anyMatch(member -> member.getMember_id() == token_id && member.getCrew_member_state() == 1);
 
         if (isActiveMember) {
-            return crewBattleMapper.selectCrewBattleFeedRow(param);
+            List<CrewBattleFeedResponseDTO> crewBattleFeedList = crewBattleMapper.selectCrewBattleFeedRow(param);
+            for (CrewBattleFeedResponseDTO feed : crewBattleFeedList) {
+                if (feed != null && feed.getFeed_img() != null) {
+                    feed.setFeed_img(getImageUrl(feed.getFeed_img()));
+                }
+            }
+            return crewBattleFeedList;
         } else {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "크루원만 피드 조회가 가능합니다.");
         }
