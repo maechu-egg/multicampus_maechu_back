@@ -60,10 +60,20 @@ public class CrewService {
 
         if (!exactMatchCrews.isEmpty()) {
             // 정확한 지역과 일치하는 크루가 있으면 그 크루들만 반환
+            exactMatchCrews.forEach(crew -> {
+                if (crew != null && crew.getCrew_intro_img() != null) {
+                    crew.setCrew_intro_img(getImageUrl(crew.getCrew_intro_img()));
+                }
+            });
             return exactMatchCrews;
         } else {
             // 정확한 지역과 일치하는 크루가 없으면 도 단위로 일치하는 크루 조회
             List<CrewResponseDTO> regionMatchCrews = crewMapper.selectCrewByRegionRow(token_id);
+            regionMatchCrews.forEach(crew -> {
+                if (crew != null && crew.getCrew_intro_img() != null) {
+                    crew.setCrew_intro_img(getImageUrl(crew.getCrew_intro_img()));
+                }
+            });
             return regionMatchCrews;
         }
     }
@@ -75,16 +85,29 @@ public class CrewService {
 
         // 정확한 지역과 일치하는 크루 조회
         List<CrewResponseDTO> exactMatchCrews = crewMapper.selectCrewForHomepageRow(token_id);
+        // 도 단위로 일치하는 크루 조회
+        List<CrewResponseDTO> regionMatchCrews = crewMapper.selectCrewByRegionRowForHomepage(token_id);
 
         try {
-            if (!exactMatchCrews.isEmpty()) {
-                // 정확한 지역과 일치하는 크루가 있으면 그 크루들만 반환
-                return exactMatchCrews;
-            } else {
-                // 정확한 지역과 일치하는 크루가 없으면 도 단위로 일치하는 크루 조회
-            List<CrewResponseDTO> regionMatchCrews = crewMapper.selectCrewByRegionRowForHomepage(token_id);
-                return regionMatchCrews;
+            // 정확한 지역과 일치하는 크루가 3개 미만일 경우, 도 단위로 일치하는 크루를 추가로 가져옴
+            if (exactMatchCrews.size() < 3) {
+                for (CrewResponseDTO crew : regionMatchCrews) {
+                    if (exactMatchCrews.size() >= 3) break;
+                    if (crew != null && crew.getCrew_intro_img() != null) {
+                        crew.setCrew_intro_img(getImageUrl(crew.getCrew_intro_img()));
+                    }
+                    exactMatchCrews.add(crew);
+                }
             }
+
+            // 이미지 URL 설정
+            exactMatchCrews.forEach(crew -> {
+                if (crew != null && crew.getCrew_intro_img() != null) {
+                    crew.setCrew_intro_img(getImageUrl(crew.getCrew_intro_img()));
+                }
+            });
+
+            return exactMatchCrews;
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "가까운 지역에 크루 존재하지 않습니다.");
         }
@@ -104,8 +127,8 @@ public class CrewService {
     }
 
     // 이미지 URL 생성 메서드
-    private String getImageUrl(String crewIntroImg) {
-        return "/static/" + crewIntroImg; // 정적 파일 경로에 맞게 URL 생성
+    private String getImageUrl(String Img) {
+        return "/static/" + Img; // 정적 파일 경로에 맞게 URL 생성
     }
 
     // 크루원 신청
@@ -338,14 +361,27 @@ public class CrewService {
     }
 
     // 크루 게시물 수정
-    public void updateCrewPost(CrewPostRequestDTO param, Integer token_id) {
+    public void updateCrewPost(CrewPostRequestDTO param, Integer token_id, MultipartFile ImgFile) {
         System.out.println("debug>>> Service: updateCrewPost + " + crewMapper);
         System.out.println("debug>>> Service: updateCrewPost + " + param);
         System.out.println("debug>>> Service: updateCrewPost + " + token_id);
+        System.out.println("debug>>> Service: updateCrewPost + " + ImgFile);
 
         int writerId = param.getMember_id();
 
         if(token_id == writerId) {
+            // 게시물 이미지 저장
+            if (ImgFile != null && !ImgFile.isEmpty()) {
+                String postFileName = System.currentTimeMillis() + "_post_" + ImgFile.getOriginalFilename();
+                Path postPath = Paths.get("src/main/resources/static/" + postFileName);
+                try {
+                    Files.copy(ImgFile.getInputStream(), postPath, StandardCopyOption.REPLACE_EXISTING);
+                    System.out.println("Image uploaded successfully: " + postFileName);
+                    param.setCrew_post_img(postFileName); // 파일 이름 설정
+                } catch (IOException e) {
+                    throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "게시물 이미지 업로드 실패");
+                }
+            }
             crewMapper.updateCrewPostRow(param);
         } else {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "작성자만 게시물 수정이 가능합니다.");
