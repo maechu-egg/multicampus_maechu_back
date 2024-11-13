@@ -21,16 +21,23 @@ public class ExerService {
     private ExerMapper exerMapper;
 
     public Integer processExerciseInsertion(ExerRequestDTO exerRequestDTO) {
-    // met 값 계산
-    Double met = calculateMet(exerRequestDTO);
-    exerRequestDTO.setMet(met);
+        // met 값 계산
+        Double met = calculateMet(exerRequestDTO);
+        System.out.println("debug >>> met : " + met);
+    
+        exerRequestDTO.setMet(met);
 
-    // 회원의 몸무게 가져오기
-    Double weight = getMemberInfoRow(exerRequestDTO.getMember_id());
-    exerRequestDTO.setCalories(calculateCalories(met, weight, exerRequestDTO.getDuration()));
+        // 회원의 몸무게 가져오기
+        Double weight = getMemberInfoRow(exerRequestDTO.getMember_id());
+        System.out.println("debug >>> weight : " + weight);
 
-    // 운동 정보 DB에 저장
-    return exerInsertRow(exerRequestDTO);
+
+        exerRequestDTO.setCalories(calculateCalories(met, weight, exerRequestDTO.getDuration()));
+
+        System.out.println("debug >>> calories : " + exerRequestDTO.getCalories());
+
+        // 운동 정보 DB에 저장
+        return exerInsertRow(exerRequestDTO);
     }
 
     // met 계산 메서드

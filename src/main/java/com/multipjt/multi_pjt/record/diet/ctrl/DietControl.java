@@ -144,22 +144,38 @@ public class DietControl {
     // 식단 조회
     // 일일 식단 조회를 통해 식단 번호를 가지게 됨
     @PostMapping("/get/diet")
-    public ResponseEntity<Object> findDiet(@RequestBody Map<String,Object> map) {
+    public ResponseEntity<Object> findDiet(@RequestParam(name="record_date") String record_date,
+    @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
         System.out.println("class endPoint >> " + "/record/diet/get/diet");
-        List<DietResponseDTO> result = dietService.dietFindAllRow(map);
-        System.out.println("result >>" + result);
-        try{
-            if(!result.isEmpty()){
-                // 값이 있을 때
-                return new ResponseEntity<>(result,HttpStatus.OK);
-            } else{
-                // 값이 없을 때
-                return new ResponseEntity<>(result,HttpStatus.NOT_FOUND);
-            }
-        } catch(Exception e){
-                // 서버 내부 오류 발생
-                System.out.println("서버 오류 발생: " + e.getMessage());
-                return new ResponseEntity<>("서버 오류 발생", HttpStatus.INTERNAL_SERVER_ERROR);
+
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+                try{
+                    String token = authHeader.substring(7); // "Bearer " 접두사 제거
+                    Integer member_id = jwtTokenProvider.getUserIdFromToken(token); // 토큰에서 사용자 ID 추출
+
+                    System.out.println("debug >>> member_id : " + member_id);
+                    System.out.println("debug >>> token : " + token);
+    
+                    Map<String,Object> map = new HashMap<>();
+
+                    List<DietResponseDTO> result = dietService.dietFindAllRow(map);
+                    System.out.println("result >>" + result);
+            
+                    if(!result.isEmpty()){
+                        // 값이 있을 때
+                        return new ResponseEntity<>(result,HttpStatus.OK);
+                    } else{
+                        // 값이 없을 때
+                        return new ResponseEntity<>(result,HttpStatus.NOT_FOUND);
+                    }
+                } catch(Exception e){
+                        // 서버 내부 오류 발생
+                        System.out.println("서버 오류 발생: " + e.getMessage());
+                        return new ResponseEntity<>("서버 오류 발생", HttpStatus.INTERNAL_SERVER_ERROR);
+                }
+        } else {
+            // 인증 실패
+            return new ResponseEntity<>("인증실패",HttpStatus.UNAUTHORIZED); 
         }
     }
 
