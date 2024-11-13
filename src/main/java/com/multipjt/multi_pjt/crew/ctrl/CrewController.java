@@ -477,7 +477,8 @@ public class CrewController {
     @PatchMapping("/post/update")
     public ResponseEntity<?> updateCrewPost(
             @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader,
-            @RequestBody CrewPostRequestDTO param) {
+            @ModelAttribute CrewPostRequestDTO param,
+            @RequestParam(value = "ImgFile", required = false) MultipartFile ImgFile) {
 
         System.out.println("client endpoint: /crew/post/update");
         System.out.println("debug>>> updateCrewPost + " + param);
@@ -487,7 +488,7 @@ public class CrewController {
             int token_id = jwtTokenProvider.getUserIdFromToken(token);
 
             try {
-                crewService.updateCrewPost(param, token_id);
+                crewService.updateCrewPost(param, token_id, ImgFile);
                 return ResponseEntity.noContent().build();
             } catch (ResponseStatusException e) {
                 Map<String, Object> errorResponse = new HashMap<>();

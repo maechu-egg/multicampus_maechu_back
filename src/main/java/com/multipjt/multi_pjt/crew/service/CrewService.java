@@ -361,14 +361,27 @@ public class CrewService {
     }
 
     // 크루 게시물 수정
-    public void updateCrewPost(CrewPostRequestDTO param, Integer token_id) {
+    public void updateCrewPost(CrewPostRequestDTO param, Integer token_id, MultipartFile ImgFile) {
         System.out.println("debug>>> Service: updateCrewPost + " + crewMapper);
         System.out.println("debug>>> Service: updateCrewPost + " + param);
         System.out.println("debug>>> Service: updateCrewPost + " + token_id);
+        System.out.println("debug>>> Service: updateCrewPost + " + ImgFile);
 
         int writerId = param.getMember_id();
 
         if(token_id == writerId) {
+            // 게시물 이미지 저장
+            if (ImgFile != null && !ImgFile.isEmpty()) {
+                String postFileName = System.currentTimeMillis() + "_post_" + ImgFile.getOriginalFilename();
+                Path postPath = Paths.get("src/main/resources/static/" + postFileName);
+                try {
+                    Files.copy(ImgFile.getInputStream(), postPath, StandardCopyOption.REPLACE_EXISTING);
+                    System.out.println("Image uploaded successfully: " + postFileName);
+                    param.setCrew_post_img(postFileName); // 파일 이름 설정
+                } catch (IOException e) {
+                    throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "게시물 이미지 업로드 실패");
+                }
+            }
             crewMapper.updateCrewPostRow(param);
         } else {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "작성자만 게시물 수정이 가능합니다.");
