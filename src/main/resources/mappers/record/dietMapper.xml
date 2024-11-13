@@ -42,7 +42,7 @@
 
     <select id="dietFindAll" parameterType="java.util.Map" resultType="com.multipjt.multi_pjt.record.diet.domain.DietResponseDTO">
         select * from DietRecords
-        where member_id = #{member_id} and record_date = #{record_date}
+        where member_id = #{member_id} and record_date = #{record_date} and meal_type = #{meal_type};
     </select>
 
     <!-- itemFindAll --> 
