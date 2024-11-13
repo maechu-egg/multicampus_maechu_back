@@ -9,12 +9,14 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 
@@ -208,7 +210,8 @@ public class CrewBattleController {
     @PostMapping("/feed/create")
     public ResponseEntity<Map<String, Object>> createCrewBattleFeed(
         @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader,
-        @RequestBody CrewBattleFeedRequestDTO param) {
+        @ModelAttribute CrewBattleFeedRequestDTO param,
+        @RequestParam(value = "ImgFile", required = false) MultipartFile ImgFile) {
 
         System.out.println("client endpoint: /crew/battle/feed/create");
         System.out.println("debug: createCrewBattleFeed + " + param);
@@ -218,7 +221,7 @@ public class CrewBattleController {
             int token_id = jwtTokenProvider.getUserIdFromToken(token);
 
             try {
-                crewBattleService.createCrewBattleFeed(param, token_id);
+                crewBattleService.createCrewBattleFeed(param, token_id, ImgFile);
                 return ResponseEntity.status(HttpStatus.CREATED).build();
             } catch (ResponseStatusException e) {
                 Map<String, Object> errorResponse = new HashMap<>();

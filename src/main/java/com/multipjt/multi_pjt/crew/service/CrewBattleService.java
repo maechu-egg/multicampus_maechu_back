@@ -1,5 +1,10 @@
 package com.multipjt.multi_pjt.crew.service;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -7,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.multipjt.multi_pjt.crew.dao.battle.CrewBattleMapper;
@@ -27,6 +33,10 @@ public class CrewBattleService {
     @Autowired
     private CrewMapper crewMapper;
 
+    // 이미지 URL 생성 메서드
+    private String getImageUrl(String Img) {
+        return "/static/" + Img; // 정적 파일 경로에 맞게 URL 생성
+    }
     // <---- 크루 배틀 ---->
 
     // 배틀 생성
@@ -129,16 +139,30 @@ public class CrewBattleService {
     }
 
     // 피드 작성
-    public void createCrewBattleFeed(CrewBattleFeedRequestDTO param, int token_id) {
+    public void createCrewBattleFeed(CrewBattleFeedRequestDTO param, int token_id, MultipartFile ImgFile) {
         System.out.println("debug>>> Service: createCrewBattleFeed + " + crewBattleMapper);
         System.out.println("debug>>> Service: createCrewBattleFeed + " + param);
         System.out.println("debug>>> Service: createCrewBattleFeed + " + token_id);
+        System.out.println("debug>>> Service: createCrewBattleFeed + " + ImgFile);
 
         boolean isBattleMember = crewBattleMapper.selectBattleMemberRow(param.getBattle_id()).stream()
             .anyMatch(member -> member.getMember_id() == token_id);
 
         if (isBattleMember) {
             if (param.getMember_id() == token_id) {
+                // 이미지 저장
+                if (ImgFile != null && !ImgFile.isEmpty()) {
+                    String feedFileName = System.currentTimeMillis() + "_feed_" + ImgFile.getOriginalFilename();
+                    Path feedPath = Paths.get("src/main/resources/static/" + feedFileName);
+                    try {
+                        Files.copy(ImgFile.getInputStream(), feedPath, StandardCopyOption.REPLACE_EXISTING);
+                        System.out.println("Image uploaded successfully: " + feedFileName);
+                        param.setFeed_img(feedFileName);
+                    } catch (IOException e) {
+                        throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "피드 이미지 업로드 실패");
+                    }
+                    
+                }
                 crewBattleMapper.createCrewBattleFeedRow(param);
             } else {
                 throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "자신의 피드만 작성이 가능합니다.");
@@ -160,7 +184,13 @@ public class CrewBattleService {
             .anyMatch(member -> member.getMember_id() == token_id && member.getCrew_member_state() == 1);
 
         if (isActiveMember) {
-            return crewBattleMapper.selectCrewBattleFeedRow(param);
+            List<CrewBattleFeedResponseDTO> crewBattleFeedList = crewBattleMapper.selectCrewBattleFeedRow(param);
+            for (CrewBattleFeedResponseDTO feed : crewBattleFeedList) {
+                if (feed != null && feed.getFeed_img() != null) {
+                    feed.setFeed_img(getImageUrl(feed.getFeed_img()));
+                }
+            }
+            return crewBattleFeedList;
         } else {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "크루원만 피드 조회가 가능합니다.");
         }
