@@ -150,6 +150,7 @@
             post_sports_keyword,
             post_like_counts,
             post_views,
+            p.post_hashtag AS post_hashtag,
             p.member_id,
             m.nickname AS post_nickname,
             post_date,
@@ -169,6 +170,10 @@
             OR
             post_contents LIKE CONCAT( '%', #{keyword}, '%' )
             OR
+            post_sport LIKE CONCAT( '%', #{keyword}, '%' )
+            OR
+            post_sports_keyword LIKE CONCAT( '%', #{keyword}, '%' )
+            OR
             post_hashtag LIKE CONCAT( '%', #{keyword}, '%' )
         GROUP BY
             p.post_id 
@@ -176,7 +181,16 @@
             p.post_date DESC
         LIMIT #{size} OFFSET #{offset}) AS search_keyword, (SELECT @rownum := 0 )r
     </select>
-
+    <!-- 전체 검색 게시글 수 -->
+    <select id="countSearchPosts" parameterType="java.util.HashMap" resultType="int">
+       SELECT COUNT(DISTINCT p.post_id) AS total_count
+        FROM Posts p
+        INNER JOIN Member m ON p.member_id = m.member_id
+        LEFT JOIN Comments c ON p.post_id = c.post_id
+        WHERE post_title LIKE CONCAT('%', #{keyword}, '%')
+       OR post_contents LIKE CONCAT('%', #{keyword}, '%')
+       OR post_hashtag LIKE CONCAT('%', #{keyword}, '%')
+        </select>
     <!-- 전체 게시글 조회 -->
     <select id="postAllSelect" parameterType="java.util.HashMap"  resultType="com.multipjt.multi_pjt.community.domain.posts.PostResponseDTO">
         SELECT @rownum := @rownum +1 As rownum, Posts.* 
@@ -189,6 +203,7 @@
             p.post_sports_keyword AS sport_keyword,
             p.post_like_counts AS post_like_counts,
             p.post_views AS post_views,
+            p.post_hashtag AS post_hashtag,
             COUNT(c.comments_id) AS comments_count,
             m.nickname AS post_nickname,
             m.member_id AS member_id
@@ -263,6 +278,15 @@
             p.post_date DESC
     </select>
 
+    <update id="recommendationClick" parameterType="map">
+        UPDATE PostRecommendations
+        SET is_clicked = true
+        WHERE member_id = #{member_id}
+            AND 
+                post_id = #{post_id}
+
+    </update>
+
     <!-- 댓글 조회 -->
     <select id="postDetailComment" 
             parameterType="java.util.HashMap" 
@@ -270,6 +294,8 @@
         SELECT  c.comments_id, 
                 c.comments_contents, 
                 c.comments_date,
+                c.comment_like_counts,
+                c.comment_dislike_counts,
                 c.post_id,
                 m.member_id, 
                 m.nickname AS c_nickname
@@ -291,6 +317,7 @@
             p.post_sports_keyword AS sport_keyword,
             p.post_like_counts AS post_like_count,
             p.post_views AS post_views,
+            p.post_hashtag AS post_hashtag,
             COUNT(c.comments_id) AS comments_count,
             m.nickname AS post_nickname,
             m.member_id AS member_id,
@@ -309,49 +336,55 @@
     </select>
 
 
-
-    <!-- 회원 가입 / 활동 없는 회원 추천 -->
-        <select id="newMemberRCPost" parameterType="int"
+    <select id="newMemberRCPost" parameterType="map"
                 resultType="com.multipjt.multi_pjt.community.domain.posts.PostResponseDTO">
-            SELECT 
-                p.post_title AS post_title,
-                p.post_sport AS post_sport,
-                p.post_date AS post_date,
-                p.post_sports_keyword AS sport_keyword,
-                p.post_like_counts AS post_like_count,
-                p.post_views AS post_views,
-                COUNT(c.comments_id) AS comments_count,
-                m.nickname AS post_nickname,
-                m.member_id AS member_id,
-                ((p.post_like_counts * 1.0 + p.post_views * 0.5) *
-                    CASE 
-                        WHEN p.post_sport = pro.profile_sport1 THEN 0.7
-                        WHEN p.post_sport = pro.profile_sport2 THEN 0.2
-                        WHEN p.post_sport = pro.profile_sport3 THEN 0.1
-                        ELSE 0
-                    END
-                ) AS score
-            FROM 
-                Posts p
-            LEFT JOIN 
-                Comments c ON p.post_id = c.post_id
-            JOIN 
-                Member m ON p.member_id = m.member_id
-            WHERE 
-                p.post_sport IN(
-                    SELECT profile_sport1 FROM UserProfile WHERE member_id = #{member_id}
-                    UNION
-                    SELECT profile_sport2 FROM UserProfile WHERE member_id = #{member_id}
-                    UNION
-                    SELECT profile_sport3 FROM UserProfile WHERE member_id = #{member_id}   
-                )            
-            GROUP BY 
-                p.post_id, p.post_title, p.post_sport, p.post_sports_keyword, p.post_date, 
-                p.post_like_counts, p.post_views, m.nickname, m.member_id
-            ORDER BY 
-                    score DESC 
-            LIMIT 5
+        SELECT
+            p.post_title AS post_title,
+            p.post_sport AS post_sport,
+            p.post_date AS post_date,
+            p.post_sports_keyword AS sport_keyword,
+            p.post_up_sport AS post_up_sport,
+            p.post_like_counts AS post_like_count,
+            p.post_views AS post_views,
+            p.post_hashtag AS post_hashtag,
+            COUNT(c.comments_id) AS comments_count,
+            m.nickname AS post_nickname,
+            m.member_id AS member_id,
+            (p.post_like_counts * 1.0 + p.post_views * 0.5) AS score
+        FROM 
+            Posts p
+        LEFT JOIN 
+            Comments c ON p.post_id = c.post_id
+        JOIN 
+            Member m ON p.member_id = m.member_id
+        WHERE 
+            p.post_up_sport = #{post_up_sport}
+            AND p.post_sport = #{post_sport}
+            AND p.post_id NOT IN (
+            SELECT pr.post_id
+                FROM PostRecommendations pr
+                WHERE pr.member_id = #{member_id} AND pr.is_clicked = true
+            )
+        GROUP BY
+            p.post_id
+        ORDER BY 
+            score DESC
+        LIMIT 
+            #{limit}
+
+
     </select>
+    
+    <select id="searchUpPost" parameterType="String" resultType="String">
+        SELECT post_up_sport
+        FROM 
+            Posts
+        WHERE 
+            post_sport = #{post_sport}
+        LIMIT
+            1
+    </select>
+
 
     <!-- 회원 가입 / 활동 없는 회원 판단 -->
     <select id="isNewMember" parameterType="int" resultType="int">
@@ -367,12 +400,22 @@
         ]]>
     </select>
 
+    <!-- 회원의 관심 운동 조회 -->
+    <select id="interestSport" parameterType="int" resultType="string">
+        SELECT profile_sport1, profile_sport2, profile_sport3 
+        FROM 
+            UserProfile
+        WHERE
+            member_id = #{member_id}
+    </select>
+
+
     <!-- 활동중인 회원 키워드 -->
     <select id="exMemberData" parameterType="int" resultType="com.multipjt.multi_pjt.community.domain.posts.PostResponseDTO">
         <![CDATA[
-            SELECT post_sport, post_sports_keyword, total_score
+            SELECT post_up_sport, post_sport,  total_score
             FROM (
-                SELECT p.post_sport, p.post_sports_keyword,
+                SELECT p.post_sport, p.post_up_sport,
                     SUM(CASE WHEN ua.user_activity = 'like' THEN 1 ELSE 0 END) * 1.0 AS like_score,
                     SUM(CASE WHEN ua.user_activity = 'view' THEN 1 ELSE 0 END) * 0.5 AS view_score,
                     (SUM(CASE WHEN ua.user_activity = 'like' THEN 1 ELSE 0 END) * 1.0 + 
@@ -384,11 +427,11 @@
                     ua.member_id = #{member_id}
                     AND 
                         ua.activity_date >= DATE_SUB(CURDATE(), INTERVAL 2 DAY)
-                GROUP BY p.post_sport, p.post_sports_keyword
+                GROUP BY p.post_sport, p.post_up_sport
 
                 UNION ALL 
 
-                SELECT p.post_sport, p.post_sports_keyword,
+                SELECT p.post_sport, p.post_up_sport,
                     SUM(CASE WHEN ua.user_activity = 'like' THEN 1 ELSE 0 END) * 1.0 AS like_score,
                     SUM(CASE WHEN ua.user_activity = 'view' THEN 1 ELSE 0 END) * 0.5 AS view_score,
                     (SUM(CASE WHEN ua.user_activity = 'like' THEN 1 ELSE 0 END) * 1.0 + 
@@ -402,14 +445,15 @@
                         ua.activity_date >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)
                     AND
                         ua.activity_date < DATE_SUB(CURDATE(), INTERVAL 2 DAY)
-                GROUP BY p.post_sport, p.post_sports_keyword                
+                GROUP BY p.post_sport, p.post_up_sport                
                 ) AS RankResult
+            GROUP BY post_sport, post_up_sport
             ORDER BY total_score DESC
             LIMIT 6
         ]]>
     </select>
 
-    <select id="findRCPosts" parameterType="java.util.Map" resultType="com.multipjt.multi_pjt.community.domain.posts.PostResponseDTO">   
+    <select id="findRCPosts" parameterType="java.util.HashMap" resultType="com.multipjt.multi_pjt.community.domain.posts.PostResponseDTO">   
         SELECT 
             p.post_id AS post_id,
             p.post_title AS post_title,
@@ -418,10 +462,12 @@
             p.post_sports_keyword AS post_sports_keyword,
             p.post_like_counts AS post_like_counts,
             p.post_views AS post_views,
+            p.post_hashtag AS post_hashtag,
             COUNT(c.comments_id) AS comments_count,
             m.nickname AS post_nickname,
             m.member_id AS member_id,
-            (p.post_like_counts*1.0 + post_views*0.5) AS score
+            (p.post_like_counts*1.0 + post_views*0.5) AS score,
+             (SELECT pr.is_clicked FROM PostRecommendations pr WHERE pr.post_id = p.post_id AND pr.member_id = #{member_id}) AS is_clicked
         FROM 
             Posts p
         LEFT JOIN 
@@ -429,16 +475,47 @@
         JOIN 
             Member m ON p.member_id = m.member_id
         WHERE 
-            p.post_sport = #{postSport} 
+        
+        
+            p.post_sport = #{post_sport}    
         AND 
-            post_sports_keyword = #{postSportsKeyword}
+            post_up_sport = #{post_up_sport}
+             <if test="postIds != null and postIds.size() > 0">
+            AND p.post_id NOT IN
+           
+                <foreach collection="postIds" item="postId" open="(" separator="," close=")">
+                    #{postId}
+                </foreach>
+                
+            </if>
         GROUP BY 
             p.post_id, p.post_title, p.post_sport, p.post_sports_keyword, p.post_date, 
             p.post_like_counts, p.post_views, m.nickname, m.member_id
         ORDER BY score DESC    
         LIMIT 
-            #{slimit}  
+            #{limit}  
     </select>
+
+    <select id="notinPostID"  parameterType="int" resultType="int">
+        SELECT pr.post_id
+        FROM PostRecommendations pr
+        WHERE pr.member_id = #{member_id} AND  pr.is_clicked = 1
+    </select> 
+
+
+    <!-- 추천 테이블에 넣기 -->
+    <insert id="insertRec" parameterType="map">
+      
+        INSERT INTO PostRecommendations (post_id, member_id)
+        SELECT #{post_id}, #{member_id}
+        FROM DUAL
+        WHERE NOT EXISTS (
+            SELECT 1
+            FROM PostRecommendations
+            WHERE post_id = #{post_id} AND member_id = #{member_id}
+        )
+        
+    </insert>
 
     <!-- 키워드 검색 -->
     <select id="searchKeyword" parameterType="java.util.HashMap" resultType="com.multipjt.multi_pjt.community.domain.posts.PostResponseDTO">
@@ -452,6 +529,7 @@
             p.post_sports_keyword AS post_sports_keyword,
             p.post_like_counts AS post_like_count,
             p.post_views AS post_views,
+            p.post_hashtag AS post_hashtag,
             COUNT(c.comments_id) AS comments_count,
             m.nickname AS post_nickname,
             m.member_id AS member_id
@@ -462,6 +540,8 @@
         JOIN 
             Member m ON p.member_id = m.member_id
         WHERE
+            p.post_up_sport = #{post_up_sport}
+            AND 
              p.post_sports_keyword = #{post_sports_keyword}
         GROUP BY 
             p.post_id, p.post_title, p.post_sport, p.post_sports_keyword, p.post_date, p.post_up_sport,
@@ -470,6 +550,17 @@
             p.post_date DESC
         LIMIT #{size} OFFSET #{offset}) Posts, (SELECT @rownum := 0 )r
     
+    </select>
+
+    <!-- 전체 키워드 조회 수 -->
+    <select id="countKeyword" parameterType="java.util.HashMap" resultType="int">
+        SELECT COUNT(*)
+        FROM Posts p
+        WHERE 
+                p.post_sports_keyword= #{post_sports_keyword}
+            AND 
+                p.post_up_sport = #{post_up_sport}
+
     </select>
 
         <!-- 키워드 - 오운완 - 좋아요 기준 -->
@@ -484,6 +575,7 @@
             p.post_sports_keyword AS post_sports_keyword,
             p.post_like_counts AS post_like_count,
             p.post_views AS post_views,
+            p.post_hashtag AS post_hashtag,
             COUNT(c.comments_id) AS comments_count,
             m.nickname AS post_nickname,
             m.member_id AS member_id
@@ -517,6 +609,7 @@
             p.post_sports_keyword AS post_sports_keyword,
             p.post_like_counts AS post_like_count,
             p.post_views AS post_views,
+            p.post_hashtag AS post_hashtag,
             COUNT(c.comments_id) AS comments_count,
             m.nickname AS post_nickname,
             m.member_id AS member_id
@@ -547,6 +640,7 @@
             p.post_sports_keyword AS post_sports_keyword,
             p.post_like_counts AS post_like_count,
             p.post_views AS post_views,
+            p.post_hashtag AS post_hashtag,
             COUNT(c.comments_id) AS comments_count,
             m.nickname AS post_nickname,
             m.member_id AS member_id
@@ -576,6 +670,7 @@
                 p.post_sports_keyword AS post_sports_keyword,
                 p.post_like_counts AS post_like_count,
                 p.post_views AS post_views,
+                p.post_hashtag AS post_hashtag,
                 COUNT(c.comments_id) AS comments_count,
                 m.nickname AS post_nickname,
                 m.member_id AS member_id

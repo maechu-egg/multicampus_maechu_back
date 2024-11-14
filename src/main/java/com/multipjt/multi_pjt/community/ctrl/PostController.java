@@ -5,12 +5,15 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -35,6 +38,7 @@ import com.multipjt.multi_pjt.community.service.CommentService;
 import com.multipjt.multi_pjt.community.service.PostService;
 import com.multipjt.multi_pjt.community.service.UserActivityService;
 import com.multipjt.multi_pjt.jwt.JwtTokenProvider;
+import com.multipjt.multi_pjt.user.service.LoginServiceImpl;
 
 
 
@@ -44,7 +48,7 @@ import com.multipjt.multi_pjt.jwt.JwtTokenProvider;
 @RequestMapping("/community")
 public class PostController {
 
-        private static final String POST_IMAGE_REPO = "C:\\maechu\\community\\post_image";
+        private static final Logger logger = LoggerFactory.getLogger(LoginServiceImpl.class);
 
         @Autowired
         private PostService postService;
@@ -72,7 +76,7 @@ public class PostController {
             Map<String, Object> response = new HashMap<>();
             System.out.println("post_up_sport : " + post_up_sport);
             System.out.println("post_sport" + post_sport);
-
+            System.out.println("size : " + size +"  /  page :  " +  page);
             if (authHeader != null && authHeader.startsWith("Bearer ")) {
                 String token = authHeader.substring(7); // "Bearer " 접두사 제거
                 int userId = jwtTokenProvider.getUserIdFromToken(token); // 토큰에서 사용자 ID 추출 (int형으로 변경)
@@ -87,12 +91,16 @@ public class PostController {
             map.put("post_up_sport", post_up_sport);
             map.put("post_sport", post_sport);
             System.out.println("map 입력후 ");
+          
+            System.out.println("offset: " + offset);
+            System.out.println("size: " + size);
+
             System.out.println("post_up_sport : " + post_up_sport);
             System.out.println("post_sport" + post_sport);
             List<PostResponseDTO> allList = postService.getAllPagePosts(map);
            
             int totalpage = postService.countPosts(map);
-            System.out.println("Controller - 전체 게시글 조회 " + allList);
+            
             System.out.println("totalpage = " + totalpage);
             
             
@@ -137,7 +145,7 @@ public class PostController {
                   
                 }else if(searchList != null) {
                     
-                    totalpage = postService.countPosts(map);
+                    totalpage = postService.countSearchPosts(map);
                     System.out.println("Controller - 검색 기능 " + searchList);
                     System.out.println("totalpage = " + totalpage);
 
@@ -185,29 +193,24 @@ public class PostController {
                 if(imageFiles != null && !imageFiles.isEmpty()){
                     
                     try{
-
-                        Path directory = Paths.get(POST_IMAGE_REPO);
-                        if (!Files.exists(directory)) {
-                            Files.createDirectories(directory);
-                        }
                         
                         if(imageFiles.size() > 0 && !imageFiles.get(0).isEmpty()){
-                            String originalFileName = imageFiles.get(0).getOriginalFilename();
-                            String extension = originalFileName.substring(originalFileName.lastIndexOf("."));
-                            String uniqueFileName1 = UUID.randomUUID().toString() + extension;
-                            String filePath1 = POST_IMAGE_REPO  + "\\" +uniqueFileName1;
-                            imageFiles.get(0).transferTo(new File(filePath1));
-                            pdto.setPost_img1("/images/"+uniqueFileName1);
+                            String fileName = System.currentTimeMillis() + "_" + imageFiles.get(0).getOriginalFilename();
+                            Path filePath1 = Paths.get("src/main/resources/static/" + fileName); // 정적 폴더 경로
+                            logger.info("Attempting to save image: {} at path: {}", fileName, filePath1.toString()); // 파일 이름과 경로 로그
+                            Files.copy(imageFiles.get(0).getInputStream(), filePath1, StandardCopyOption.REPLACE_EXISTING);
+                            pdto.setPost_img1(fileName);
                             System.out.println("posts image" + pdto.getPost_img1());
+                            logger.info("Image uploaded successfully: {}", filePath1); // 성공 로그
                         }
                         if(imageFiles.size() > 1 && !imageFiles.get(1).isEmpty()){
-                            String originalFileName = imageFiles.get(1).getOriginalFilename();
-                            String extension = originalFileName.substring(originalFileName.lastIndexOf("."));
-                            String uniqueFileName2 = UUID.randomUUID().toString() + extension;
-                            String filePath2 = POST_IMAGE_REPO +"\\"+ uniqueFileName2;
-                            imageFiles.get(1).transferTo(new File(filePath2));
-                            pdto.setPost_img2("/images/"+uniqueFileName2);
+                            String fileName = System.currentTimeMillis() + "_" + imageFiles.get(1).getOriginalFilename();
+                            Path filePath2 = Paths.get("src/main/resources/static/" + fileName); // 정적 폴더 경로
+                            logger.info("Attempting to save image: {} at path: {}", fileName, filePath2.toString()); // 파일 이름과 경로 로그
+                            Files.copy(imageFiles.get(1).getInputStream(), filePath2, StandardCopyOption.REPLACE_EXISTING);
+                            pdto.setPost_img2(fileName);
                             System.out.println("posts image" + pdto.getPost_img2());
+                            logger.info("Image uploaded successfully: {}", filePath2); // 성공 로그
                         }
                     }catch(IOException e){
                         e.printStackTrace();
@@ -251,7 +254,7 @@ public class PostController {
                 
                 pdto.setPost_id(postId);
                 System.out.println("controller - pdto " + pdto);
-                // 글 수정 Service
+                
                 int result = postService.postUpdate(pdto);   
                 
                 if (result == 1) {
@@ -278,7 +281,7 @@ public class PostController {
         @GetMapping("/posts/{postId}/detail")
         public ResponseEntity<PostResponseDTO> postView(
                                                 @PathVariable("postId") Integer postId,
-                                                // @RequestBody PostRequestDTO request,
+                                                @RequestParam(name = "isRecommended") boolean isRecommended,
                                                 @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader   ) {
             
                 PostResponseDTO postdetail = null;
@@ -306,6 +309,9 @@ public class PostController {
                 
                 boolean isAuthor = (long)postdetail.getMember_id() == userId;
                 
+                if(isRecommended){
+                    postService.recommendationClick(map);
+                }
 
                 postdetail.setAuthor(isAuthor);
                 Map<String, Integer> viewLikeMap = new HashMap<>();
@@ -321,6 +327,13 @@ public class PostController {
                 List<CommentResponseDTO> comments = commentService.postDetailComment(map);
 
                 if (comments != null && !comments.isEmpty()) {
+                    for (CommentResponseDTO comment : comments) {
+                        
+                        boolean isCommentAuthor = (long)comment.getMember_id()== userId;
+                        // 댓글 작성자 여부를 CommentResponseDTO에 설정합니다.
+                        comment.setCommentAuthor(isCommentAuthor);
+                        System.out.println("댓글 작성자 true- false "+comment.isCommentAuthor());
+                    }
                         postdetail.setComments(comments);
                 }
 
@@ -397,33 +410,47 @@ public class PostController {
             return ResponseEntity.ok(result);
         }
             
-
-
         // 회원 추천 
         @GetMapping("/posts/userRC")
-        public ResponseEntity<List<PostResponseDTO>> userRecomend( @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader  ) {
+        public ResponseEntity<List<PostResponseDTO>> userRecomend(
+                                                    @RequestParam(name= "post_up_sport") String post_up_sport ,
+                                                    @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader  ) {
            
-           List<PostResponseDTO> list = null;
+            System.out.println( "추천 카테고리 접속 완료");
+            Map<String, Object> map = new HashMap<>();
+
+            List<PostResponseDTO> list = null;
             if (authHeader != null && authHeader.startsWith("Bearer ")) {
                 String token = authHeader.substring(7); // "Bearer " 접두사 제거
                 int userId = jwtTokenProvider.getUserIdFromToken(token); // 토큰에서 사용자 ID 추출 (int형으로 변경)
                 System.out.println("userId : " + userId);
-           
-            
-                System.out.println("Controller - posts/userRC 회원 추천 ");
                 
+                map.put("member_id", userId);
+                map.put("post_up_sport", post_up_sport);
                 // 신규회원 / 활동없는 회원일 경우 1 이상 반환
                 int isNew = postService.isNewMember(userId);
-                
-                
+            
+                System.out.println("Controller - posts/userRC 회원 추천 ");
+        
                 if(isNew >= 1 ){
+        
                     // 신규 회원 / 활동 없는 회원일 경우 
-                    list = postService.newMemberRCPost(userId);
+                    list = postService.newMemberRCPost(map);
+                    System.out.println("신규 회원 : "+ list);
                 }else{
-                    list = postService.exMemberData(userId);
+                    list = postService.exMemberData(map);
+                    System.out.println("활동 회원 " + list);
+                }
+                for(PostResponseDTO post : list){
+                    int post_id = post.getPost_id();
+                    Map<String, Object> recommedattionMap = new HashMap<>();
+                    recommedattionMap.put("member_id", userId);
+                    recommedattionMap.put("post_id", post_id);
+
+                    postService.insertRecommendation(recommedattionMap);
+                    
                 }
             }
-
 
             return ResponseEntity.ok(list);
         }
@@ -433,22 +460,22 @@ public class PostController {
         public ResponseEntity<Map<String, Object>> searchKeyword(
                                                 @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader,    
                                                 @PathVariable("post_sports_keyword") String post_sports_keyword,
-                                                // @RequestParam(name="post_up_sport") String post_up_sport,
-                                                // @RequestParam(name="post_sport") String post_sport,
+                                                @RequestParam(name="post_up_sport") String post_up_sport,
+                                                
                                                 @RequestParam(name="page", defaultValue = "1") int page,
                                                 @RequestParam(name="size", defaultValue = "10") int size) {
                 System.out.println("Controller - posts/searchKeyword");
-
+                int totalpage = 0;
                 List<PostResponseDTO> list = null;
                 Map<String, Object> map = new HashMap<>();
-
+                                                    System.out.println(post_up_sport +"keywordSearch--------------------");
             if (authHeader != null && authHeader.startsWith("Bearer ")) {
                 String token = authHeader.substring(7); // "Bearer " 접두사 제거
                 int userId = jwtTokenProvider.getUserIdFromToken(token); // 토큰에서 사용자 ID 추출 (int형으로 변경)
                 System.out.println("userId : " + userId);
 
-                // map.put("post_up_sport", post_up_sport);
-                // map.put("post_sport", post_sport);
+                map.put("post_up_sport", post_up_sport);
+                
                 
                 int offset = (page - 1 ) * size ;
                 map.put("offset", offset);
@@ -463,6 +490,15 @@ public class PostController {
                    
                     map.put("message", "searchKeyword 성공!");
                     map.put("status", HttpStatus.OK);
+                    totalpage = (Integer)map.get("totalpage");
+                   
+                    System.out.println("totalpage = " + totalpage);
+                    
+                    map.put("totalPage", totalpage);
+                    map.put("totalPages", (int)Math.ceil((double) totalpage/ size)); // 페이지수 계산
+                    map.put("currentPage", page);
+                
+                   
                     System.out.println("map 출력");
                     System.out.println( map.get("list"));
                     

@@ -13,5 +13,5 @@ public class CommentRequestDTO {
     // 외래키 
     private int         member_id;
     private int         post_id;
-
+    private boolean isCommentAuthor;
 }

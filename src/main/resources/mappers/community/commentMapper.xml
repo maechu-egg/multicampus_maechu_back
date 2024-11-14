@@ -24,6 +24,8 @@
                 c.comments_contents, 
                 c.comments_date,
                 c.post_id,
+                c.comment_like_counts,
+                c.comment_dislike_counts,
                 m.member_id, 
                 m.nickname AS c_nickname
         FROM    
@@ -73,4 +75,103 @@
     </select>
     
    
+
+
+
+
+
+   <!--  댓글 좋아요 확인 EXISTS - boolean 값 반환-->
+   <select id="commitCommentLike" parameterType="java.util.HashMap" resultType="Boolean">
+        SELECT EXISTS (
+            SELECT 1
+            FROM CommentActivity
+            WHERE comments_id = #{comments_id}
+            AND member_id = #{member_id}
+            AND comment_activity = 'commentLike'
+        ) As existsLike
+    </select>
+
+    <!-- 댓글 좋아요 테이블에 넣기 -->
+    <insert id="commentLikeACInsert" parameterType="java.util.HashMap" >
+        INSERT INTO CommentActivity (comment_activity,  post_id, member_id, comments_id)
+        VALUES('commentLike', #{post_id}, #{member_id}, #{comments_id});
+    </insert>
+
+    <!-- 댓글 좋아요 테이블에서 삭제 -->
+    <delete id="commentLikeACDelete"   parameterType="java.util.HashMap" >
+        DELETE FROM CommentActivity
+        WHERE 
+            comments_id = #{comments_id}
+        AND 
+            member_id = #{member_id}
+        AND 
+            comment_activity = 'commentLike'    
+    </delete>
+
+    <!-- 댓글 좋아요 수 가져오기 -->
+    <select id="commentLikeCount" parameterType="java.util.HashMap">
+        SELECT comment_like_counts 
+        FROM Comments
+        WHERE 
+            comments_id = #{comments_id}
+    </select>
+
+    <!-- 댓글 좋아요 수 변경 -->
+    <update id="commentLikeCountUpdate" parameterType="java.util.HashMap">
+        UPDATE Comments
+        SET 
+            comment_like_counts = #{comment_like_counts}
+        WHERE
+            comments_id = #{comments_id}
+    </update>
+
+  
+    <!--댓글 싫어요 확인 EXISTS - boolean 값 반환-->
+   <select id="commitCommentDisLike" parameterType="java.util.HashMap" resultType="Boolean">
+        SELECT EXISTS (
+            SELECT 1
+            FROM CommentActivity
+            WHERE comments_id = #{comments_id}
+            AND member_id = #{member_id}
+            AND comment_activity = 'commentDislike'
+        ) As existsDisLike
+    </select>
+   
+    <!-- 댓글 싫어요 수 조회-->
+    <select id="commentDisLikeCount" parameterType="java.util.HashMap">
+        SELECT comment_dislike_counts 
+        FROM Comments
+        WHERE 
+            comments_id = #{comments_id}
+    </select>
+
+
+       <!--댓글 싫어요 수 변경 -->
+    <update id="commentDisLikeCountUpdate" parameterType="java.util.HashMap">
+        UPDATE Comments
+        SET 
+            comment_dislike_counts = #{comment_dislike_counts}
+        WHERE
+            comments_id = #{comments_id}
+    </update>
+
+
+    <!--댓글 싫어요를 테이블에 넣기 -->
+    <insert id="commentDisLikeACInsert" parameterType="java.util.HashMap" >
+        INSERT INTO CommentActivity (comment_activity,  post_id, member_id, comments_id)
+        VALUES('commentDislike', #{post_id}, #{member_id}, #{comments_id});
+    </insert>
+
+    <!-- 댓글 싫어요를 테이블에서 삭제 -->
+    <delete id="commentDisLikeACDelete"   parameterType="java.util.HashMap" >
+        DELETE FROM CommentActivity
+        WHERE 
+            comments_id = #{comments_id}
+        AND 
+            member_id = #{member_id}
+        AND 
+            comment_activity = 'commentDislike'    
+    </delete>
+
+
 </mapper>

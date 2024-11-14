@@ -17,4 +17,11 @@ public class CommentResponseDTO {
     // join
     private String c_nickname;
 
+    private boolean isCommentAuthor;
+
+    private boolean comment_like_status;
+    private boolean comment_dislike_status;
+    private int     comment_like_counts;
+    private int     comment_dislike_counts; 
+
 }
