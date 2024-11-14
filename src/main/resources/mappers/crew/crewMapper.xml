@@ -129,7 +129,7 @@
     <select id="selectMyCrewRow"
             parameterType="Integer"
             resultType="com.multipjt.multi_pjt.crew.domain.crew.CrewResponseDTO">
-        SELECT cm.crew_id, c.crew_name
+        SELECT *
         FROM CrewMember cm
         JOIN Crew c ON cm.crew_id = c.crew_id
         WHERE cm.member_id = #{member_id} AND cm.crew_member_state = 1;
