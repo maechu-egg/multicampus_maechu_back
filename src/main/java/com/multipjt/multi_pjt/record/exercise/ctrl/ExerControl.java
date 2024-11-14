@@ -107,7 +107,7 @@ public ResponseEntity<Object> exerInsert(@RequestBody ExerRequestDTO exerRequest
         for (SetRequestDTO dto : setRequestDTOs) {
             try {
                 successCount += exerService.setInsertRow(dto);
-            } catch (Exception e) {
+            } catch (Exception e) { 
                 // 세트 추가 실패
                 System.out.println("세트 추가 실패: " + e.getMessage());
             }
