@@ -91,11 +91,11 @@ public class ApiController {
                     list = apiService.parseJson(result);    
                 
                     System.out.println("api list >>> " + list);
-                    if(list.isEmpty()){
+                    if(list.isEmpty()){ 
                         return new ResponseEntity<>("해당 식품이 없습니다.",HttpStatus.NOT_FOUND);
                     } 
                 }else{ 
-                    return new ResponseEntity<>("서버 오류가 발생했습니다.",HttpStatus.INTERNAL_SERVER_ERROR);
+                    return new ResponseEntity<>(HttpStatus.NO_CONTENT);
                 }
             }catch(Exception e){
                 e.printStackTrace();
