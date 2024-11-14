@@ -183,6 +183,7 @@ public class CommentController {
                    response = ResponseEntity.ok(result);
                }else if(result.get("Extable") != null && (boolean)result.get("Extable")){
                    result.put("message", "테이블에 이미 있습니다.");
+                   result.put("comment_like_status", true);
                    response =  ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result);
                }else {
                    result.put("message", "좋아요 추가 실패");
@@ -263,7 +264,7 @@ public class CommentController {
      // 싫어요 등록
      @PostMapping("{commentId}/commentdislikeinsert")
      public ResponseEntity<Map<String, Object>> unlikeInsert(@PathVariable("commentId") int commentId, 
-                                                        @RequestParam Integer post_id,
+     @RequestParam(name = "post_id") Integer post_id,
                                              @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
 
             System.out.println("Controller client endpoint :/comments/comment - dislike - insert ");
@@ -316,7 +317,7 @@ public class CommentController {
      // 싫어요 삭제
      @DeleteMapping("/{commentId}/commentdislikedelete")
      public ResponseEntity<Map<String, Object>> unlikeDelete(@PathVariable("commentId") int commentId, 
-                                                @RequestParam Integer post_id,
+     @RequestParam(name = "post_id") Integer post_id,
                                              @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader
      ){
         ResponseEntity<Map<String, Object>> response = null;

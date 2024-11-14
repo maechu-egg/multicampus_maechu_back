@@ -321,8 +321,11 @@ public class PostController {
                 userActivityService.viewInAndUp(viewLikeMap);
                   
                 // 좋아요 상태 true false 값 넘기기
+
                 status= postService.postDetailLike(viewLikeMap);
                 
+
+
                 // 댓글 list
                 List<CommentResponseDTO> comments = commentService.postDetailComment(map);
 
@@ -339,9 +342,12 @@ public class PostController {
 
                 if(status.get("likeStatus") != null && (boolean)status.get("likeStatus")){
                     postdetail.setLikeStatus(true);
+                    postdetail.setUnlikeStatus(false);
                 }else if(status.get("unlikeStatus") != null && (boolean)status.get("unlikeStatus")){
                     postdetail.setUnlikeStatus(true);
+                    postdetail.setLikeStatus(false);
                 }
+                
 
                 System.out.println("controller - postdetail : " + postdetail);   
                 
