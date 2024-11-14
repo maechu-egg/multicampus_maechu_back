@@ -145,6 +145,8 @@ public class CommentService {
                 if(Ex){
                         System.out.println("테이블에 이미 있음");
                         response.put("Extable" , true);
+                       
+
                 }else if(!Ex){
                     
                         System.out.println("Map : " + map);
@@ -194,7 +196,7 @@ public class CommentService {
         Map<String,Object> response = new HashMap<>();
 
         boolean likestatus = commentMapper.commitCommentLike(map);
-        
+        int likeCount = 0;
             try{
                 // 존재 해야 삭제 시작
                 if(likestatus){
@@ -231,12 +233,17 @@ public class CommentService {
                         System.out.println("삭제 실패 : false (deleteStatus = 0)");
                         throw new IllegalStateException("삭제 작업이 실패했습니다.");
                     }
+
                 }else if(!likestatus){
                     System.out.println("테이블에 이미 없음");    
                     response.put("Extable" , false);
                     response.put("message", "테이블에 이미 없음");
                    
                 }
+
+                    // 게시글에서 좋아요  수 가져오기        
+                    likeCount = commentMapper.commentLikeCount(map);
+                    response.put("comment_like_counts", likeCount);
 
             }catch(NullPointerException e){
                 System.err.println("NullPointerException 발생 : " + e.getMessage());
@@ -286,6 +293,7 @@ public class CommentService {
                         // 게시글에서 싫어요 수 올리기
                         unLikeCount += 1;
                         map.put("comment_dislike_counts", unLikeCount);
+                        System.out.println("unlike count " + unLikeCount);
     
                         int result = commentMapper.commentDisLikeCountUpdate(map);
     
@@ -320,7 +328,7 @@ public class CommentService {
         public Map<String, Object> commentDislikeDelete(Map<String, Integer> map){
             System.out.println(" service - unlikeDelete ");
             Map<String,Object> response = new HashMap<>();
-    
+            int unLikeCount = 0;
             boolean likestatus = commentMapper.commitCommentDisLike(map);
             
                 try{
@@ -328,7 +336,7 @@ public class CommentService {
                     if(likestatus){
                         boolean status = false;
                         // 게시글 싫어요 수 가져오기
-                        int unLikeCount = commentMapper.commentDisLikeCount(map);    
+                        unLikeCount = commentMapper.commentDisLikeCount(map);    
                         System.out.println("싫어요 수 unlikeCount: " + unLikeCount);
                         
                         // 싫어요 수 -1
@@ -365,6 +373,9 @@ public class CommentService {
                         response.put("message", "테이블에 이미 없음");
                        
                     }
+                        // 게시글에서 싫어요  수 가져오기        
+                        unLikeCount = commentMapper.commentDisLikeCount(map);
+                        response.put("comment_dislike_counts", unLikeCount);
     
                 }catch(NullPointerException e){
                     System.err.println("NullPointerException 발생 : " + e.getMessage());

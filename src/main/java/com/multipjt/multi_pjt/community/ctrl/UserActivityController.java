@@ -62,6 +62,7 @@ public class UserActivityController {
                    response = ResponseEntity.ok(result);
                }else if(result.get("Extable") != null && (boolean)result.get("Extable")){
                    result.put("message", "테이블에 이미 있습니다.");
+                   result.put("liked", true);
                    response =  ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result);
                }else {
                    result.put("message", "좋아요 추가 실패");
