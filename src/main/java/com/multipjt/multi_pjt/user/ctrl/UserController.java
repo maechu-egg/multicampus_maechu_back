@@ -15,6 +15,7 @@ import com.multipjt.multi_pjt.user.domain.login.LoginDTO;
 import com.multipjt.multi_pjt.user.domain.login.NicknameRequestDTO;
 import com.multipjt.multi_pjt.user.domain.login.UserRequestDTO;
 import com.multipjt.multi_pjt.user.domain.login.UserResponseDTO;
+import com.multipjt.multi_pjt.user.domain.login.UserUpdateRequestDTO;
 import com.multipjt.multi_pjt.user.service.LoginServiceImpl;
 
 import org.springframework.web.multipart.MultipartFile;
@@ -34,6 +35,25 @@ public class UserController {
     public ResponseEntity<String> registerUser(@ModelAttribute UserRequestDTO userRequestDTO,
                                                @RequestParam(value = "memberImgFile", required = false) MultipartFile memberImgFile) {
         return loginServiceImple.registerUser(userRequestDTO, memberImgFile); // 회원가입 처리
+    }
+
+
+    //로그인 되어있어야함 
+    @PatchMapping("/update")
+    public ResponseEntity<String> updateUser(
+            @ModelAttribute UserUpdateRequestDTO userUpdateRequestDTO,
+            @RequestParam(value = "memberImgFile", required = false) MultipartFile memberImgFile,
+            @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
+        
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            String token = authHeader.substring(7);
+            int userId = jwtTokenProvider.getUserIdFromToken(token);
+            // 사용자 정보 수정 처리
+            return loginServiceImple.updateUser(userId, userUpdateRequestDTO, memberImgFile);
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                                 .body("{\"Code\": \"UNAUTHORIZED\", \"Message\": \"인증 실패\"}");
+        }
     }
 
     @PostMapping("/user/register/email-check")
@@ -110,23 +130,6 @@ public class UserController {
         return responseEntity; // JSON 형식으로 응답 반환
     }
 
-    //로그인 되어있어야함 
-    @PatchMapping("/update") 
-    public ResponseEntity<String> updateUser(@RequestBody UserRequestDTO userUpdateRequestDTO,
-                                              @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
-        if (authHeader != null && authHeader.startsWith("Bearer ")) {
-            String token = authHeader.substring(7); // "Bearer " 접두사 제거
-            int userId = jwtTokenProvider.getUserIdFromToken(token); // 토큰에서 사용자 ID 추출
-
-            // 사용자 정보 수정 처리
-            ResponseEntity<String> response = loginServiceImple.updateUser(userId, userUpdateRequestDTO); // 서비스 메서드 호출
-
-            return response; // 서비스에서 반환된 응답을 그대로 반환
-        } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                                 .body("{\"Code\": \"UNAUTHORIZED\", \"Message\": \"인증 실패\"}");
-        }
-    }
 
     @PatchMapping("/user/changepw")
     public ResponseEntity<String> changePw(@RequestBody ChangePwDTO changePwDTO) {

@@ -18,17 +18,14 @@
     </insert>
 
 <!-- 회원 정보 수정 쿼리 -->
-    <update id="updateUser" parameterType="com.multipjt.multi_pjt.user.domain.login.UserRequestDTO">
-        UPDATE Member
-        SET 
-            member_img = #{member_img},  
-            nickname = #{nickname}, 
-            password = #{password}, 
-            phone = #{phone}, 
-            verified = #{verified}, 
-            sns_provider = #{snsProvider}
-        WHERE member_id = #{member_id} 
-    </update>
+ <update id="updateUser" parameterType="com.multipjt.multi_pjt.user.domain.login.UserUpdateRequestDTO">
+    UPDATE Member
+    SET 
+        member_img = #{member_img},  
+        nickname = #{nickname}, 
+        phone = #{phone}
+    WHERE member_id = #{member_id} 
+</update>
 
 
     <!-- 회원 삭제 -->
