@@ -2,8 +2,10 @@ package com.multipjt.multi_pjt.community.service;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -36,7 +38,7 @@ public class PostService {
         
         
         List<PostResponseDTO>  list = postMapper.postAllSelect(map);
-        System.out.println("service   list - " + list );
+        // System.out.println("service   list - " + list );
         return list;
     }
 
@@ -59,12 +61,17 @@ public class PostService {
         System.out.println("keyword : " + map.get("keyword") );
         int offset = (page - 1) * size;
         map.put("offset", offset);
-
+ 
         List<PostResponseDTO> searchList = postMapper.postSelectTCH(map);
         System.out.println("searchList" + searchList);
-
-        
         return searchList;
+    }
+
+
+    public int countSearchPosts(Map<String, Object> map){
+        int totalpost= postMapper.countSearchPosts(map);
+    
+        return totalpost;
     }
 
     // 게시글 등록                              
@@ -133,6 +140,12 @@ public class PostService {
         return result;
     }
 
+    public void recommendationClick(Map<String, Object> map){
+        System.out.println("service - isRecommendation True");
+
+        postMapper.recommendationClick(map);
+    }
+
     // 상세 페이지 - 좋아요 / 싫어요 상태
     public Map<String, Object> postDetailLike(Map<String, Integer> map){
         
@@ -159,31 +172,239 @@ public class PostService {
     }
 
     // new 회원 / 일주일 이상 활동이 없는 회원 추천 리스트
-    public List<PostResponseDTO> newMemberRCPost(int member_id){
-        return postMapper.newMemberRCPost(member_id);
+    public List<PostResponseDTO> newMemberRCPost(Map<String, Object> map ){
+     
+        List<String> interestSport = postMapper.interestSport(map);
+
+        List<PostResponseDTO> recPosts = new ArrayList<>();
+        recPosts.clear();
+        Map<String, Object> RCS = new HashMap<>();
+        RCS.put("member_id", map.get("member_id"));
+        RCS.put("post_up_sport", map.get("post_up_sport"));
+        String post_up_sport = (String)map.get("post_up_sport");
+    
+        if(interestSport.isEmpty()){
+            // 빈 리스트 
+            return recPosts;
+        }
+        
+        
+        if(interestSport.size() == 1){
+            System.out.println("size() = " + interestSport.size());
+            System.out.println("관심 운동 1 - " + interestSport.get(0));
+            RCS.put("post_sport", interestSport.get(0));
+            RCS.put("limit", 5);
+            recPosts = postMapper.newMemberRCPost(RCS);
+           
+        }else if(interestSport.size() == 2){
+            System.out.println("size() = " + interestSport.size());
+            System.out.println("관심 운동 1 - " + interestSport.get(0));
+            System.out.println("관심 운동 2 - " + interestSport.get(1));
+            String upPost1 = postMapper.searchUpPost(interestSport.get(0));
+            String upPost2 = postMapper.searchUpPost(interestSport.get(1));
+            if(upPost1.equals(post_up_sport) && upPost2.equals(post_up_sport)){
+                RCS.put("limit", 3);
+                recPosts.addAll(postMapper.newMemberRCPost(RCS));
+                RCS.put("limit",2);
+                recPosts.addAll(postMapper.newMemberRCPost(RCS));
+            }else if(upPost1.equals(post_up_sport)){
+                RCS.put("limit", 5);
+                recPosts.addAll(postMapper.newMemberRCPost(RCS));
+            }else if(upPost2.equals(post_up_sport)){
+                RCS.put("limit", 5);
+                recPosts.addAll(postMapper.newMemberRCPost(RCS));
+            }
+            
+
+        }else if(interestSport.size() == 3){
+            String upPost1 = postMapper.searchUpPost(interestSport.get(0));
+            String upPost2 = postMapper.searchUpPost(interestSport.get(1));
+            String upPost3 = postMapper.searchUpPost(interestSport.get(2));
+            if(upPost1.equals(post_up_sport) && upPost2.equals(post_up_sport) && upPost3.equals(post_up_sport)){
+                RCS.put("limit", 3);
+                recPosts.addAll(postMapper.newMemberRCPost(RCS));
+                RCS.put("limit",1);
+                recPosts.addAll(postMapper.newMemberRCPost(RCS));
+                RCS.put("limit",1);
+                recPosts.addAll(postMapper.newMemberRCPost(RCS));
+                
+            }else if(upPost1.equals(post_up_sport) && upPost2.equals(post_up_sport)){
+                RCS.put("limit", 3);
+                recPosts.addAll(postMapper.newMemberRCPost(RCS));
+                RCS.put("limit",2);
+                recPosts.addAll(postMapper.newMemberRCPost(RCS));
+            }else if(upPost2.equals(post_up_sport) && upPost3.equals(post_up_sport)){
+                RCS.put("limit", 3);
+                recPosts.addAll(postMapper.newMemberRCPost(RCS));
+                RCS.put("limit",2);
+                recPosts.addAll(postMapper.newMemberRCPost(RCS));
+            }else if(upPost1.equals(post_up_sport) && upPost3.equals(post_up_sport)){
+                RCS.put("limit", 3);
+                recPosts.addAll(postMapper.newMemberRCPost(RCS));
+                RCS.put("limit",2);
+                recPosts.addAll(postMapper.newMemberRCPost(RCS));
+            }else if(upPost1.equals(post_up_sport)){
+                RCS.put("limit", 5);
+                recPosts.addAll(postMapper.newMemberRCPost(RCS));
+            }else if(upPost2.equals(post_up_sport)){
+                RCS.put("limit", 5);
+                recPosts.addAll(postMapper.newMemberRCPost(RCS));
+            }else if(upPost3.equals(post_up_sport)){
+                RCS.put("limit", 5);
+                recPosts.addAll(postMapper.newMemberRCPost(RCS));
+            }
+        }
+        Set<PostResponseDTO> uniquePosts = new LinkedHashSet<>(recPosts);
+        recPosts = new ArrayList<>(uniquePosts);
+        return recPosts;
     }
 
     // 활동 중인 회원 추천
-    public List<PostResponseDTO> exMemberData(int member_id){
-        System.out.println("service - exMemberData : member_id : " + member_id);
-        // 운동 종목, 키워드  추출 하기
+    public List<PostResponseDTO> exMemberData(Map<String, Object> map){
+        System.out.println("service - exMemberData : member_id : " + map.get("member_id"));
+    
+
+        int member_id = (Integer)map.get("member_id");
+        String post_up_sport = (String)map.get("post_up_sport");
+        System.out.println("react pass - post_up_sport : " + post_up_sport);
+
         List<PostResponseDTO> searchKey = postMapper.exMemberData(member_id);
-        System.err.println("list size" + searchKey.size());
-          
+        System.err.println("list size : " + searchKey.size());
+        System.out.println("seachKey : " + searchKey);
+        String upPost1;
+        String upPost2;
+        String upPost3;
+        String soPost1;
+        String soPost2;
+        String soPost3;
+        Map<String, Object> next = new HashMap<>();
+      
+    
         List<PostResponseDTO> recommendPost = new ArrayList<>();
-        if(searchKey.size() > 0){
-            recommendPost.addAll(postMapper.findRCPosts(
-                searchKey.get(0).getPost_sport(), searchKey.get(0).getPost_sports_keyword(), 3 ));
+
+        // 제외
+        List<Integer> notinPostId = postMapper.notinPostID(member_id);
+        System.out.println(notinPostId);
+        if(notinPostId != null && notinPostId.size() > 0){
+            next.put("postIds", notinPostId);
         }
-        if(searchKey.size() > 1){
-            recommendPost.addAll(postMapper.findRCPosts(
-                searchKey.get(1).getPost_sport(), searchKey.get(1).getPost_sports_keyword(), 1 ));
+
+        if(searchKey.isEmpty()){
+            // 빈 리스트 
+            return recommendPost;
         }
-        if(searchKey.size() > 2){
-            recommendPost.addAll(postMapper.findRCPosts(
-                searchKey.get(2).getPost_sport(), searchKey.get(2).getPost_sports_keyword(), 1 ));
-        }
+        recommendPost.clear();
+       
+        if(searchKey.size() == 1){
+            System.out.println("size() = " + searchKey.size());
+            System.out.println("대분류 1 - " + searchKey.get(0).getPost_up_sport());
+            System.out.println("소분류 1 - " + searchKey.get(0).getPost_sport());
+ 
+            if(searchKey.get(0).getPost_up_sport().equals(post_up_sport)){
+                next.put("post_sport",(String)searchKey.get(0).getPost_sport() );
+                next.put("post_up_sport",(String)searchKey.get(0).getPost_up_sport() );
+                next.put("limit", 5);
+
+                recommendPost.addAll(postMapper.findRCPosts(next));
+            }
+        }else if(searchKey.size() == 2){
+            System.out.println("size() = " + searchKey.size());
+            System.out.println("대분류 1 - " + searchKey.get(0).getPost_up_sport());
+            System.out.println("소분류 1 - " + searchKey.get(0).getPost_sport());
+            System.out.println("대분류 2 - " + searchKey.get(1).getPost_up_sport());
+            System.out.println("소분류 2 - " + searchKey.get(1).getPost_sport());
+            upPost1 = (String)searchKey.get(0).getPost_up_sport();
+            upPost2 = (String)searchKey.get(1).getPost_up_sport();
+            soPost1 = (String)searchKey.get(0).getPost_sport();
+            soPost2 = (String)searchKey.get(1).getPost_sport();
         
+            if(upPost1.equals(post_up_sport) && upPost2.equals(post_up_sport)){
+                next.put("post_sport",soPost1 );
+                next.put("post_up_sport",upPost1 );
+                next.put("limit", 3);
+                recommendPost.addAll(postMapper.findRCPosts(next));
+                next.put("post_sport",soPost2 );
+                next.put("limit", 2);
+                recommendPost.addAll(postMapper.findRCPosts(next));
+            }else if(upPost1.equals(post_up_sport)){
+                next.put("post_sport",soPost1 );
+                next.put("post_up_sport",upPost1 );
+                next.put("limit", 5);
+                recommendPost.addAll(postMapper.findRCPosts(next));
+            }else if(upPost2.equals(post_up_sport)){
+                next.put("post_sport",soPost2 );
+                next.put("post_up_sport",upPost2 );
+                next.put("limit", 5);
+                recommendPost.addAll(postMapper.findRCPosts(next));
+            }
+            
+        }else if(searchKey.size() >= 3){
+            upPost1 = (String)searchKey.get(0).getPost_up_sport();
+            upPost2 = (String)searchKey.get(1).getPost_up_sport();
+            upPost3 = (String)searchKey.get(2).getPost_up_sport();
+            soPost1 = (String)searchKey.get(0).getPost_sport();
+            soPost2 = (String)searchKey.get(1).getPost_sport();
+            soPost3 = (String)searchKey.get(2).getPost_sport();
+        
+            if(upPost1.equals(post_up_sport) && upPost2.equals(post_up_sport) && upPost3.equals(post_up_sport)){
+                next.put("post_sport",soPost1 );
+                next.put("post_up_sport",upPost1 );
+                next.put("limit", 3);
+                recommendPost.addAll(postMapper.findRCPosts(next));
+                next.put("post_sport",soPost2 );
+                next.put("limit", 1);
+                recommendPost.addAll(postMapper.findRCPosts(next));
+                next.put("post_sport",soPost3 );
+                next.put("limit", 1);
+                recommendPost.addAll(postMapper.findRCPosts(next));
+             
+            }else if(upPost1.equals(post_up_sport) && upPost2.equals(post_up_sport)){
+                next.put("post_sport",soPost1 );
+                next.put("post_up_sport",upPost1 );
+                next.put("limit", 3);
+                recommendPost.addAll(postMapper.findRCPosts(next));
+                next.put("post_sport",soPost2 );
+                next.put("limit", 2);
+                recommendPost.addAll(postMapper.findRCPosts(next));
+
+            }else if(upPost2.equals(post_up_sport) && upPost3.equals(post_up_sport)){
+                next.put("post_sport",soPost2 );
+                next.put("post_up_sport",upPost2 );
+                next.put("limit", 3);
+                recommendPost.addAll(postMapper.findRCPosts(next));
+                next.put("post_sport",soPost3 );
+                next.put("limit", 2);
+                recommendPost.addAll(postMapper.findRCPosts(next));
+            }else if(upPost1.equals(post_up_sport) && upPost3.equals(post_up_sport)){
+                next.put("post_sport",soPost1 );
+                next.put("post_up_sport",upPost1 );
+                next.put("limit", 3);
+                recommendPost.addAll(postMapper.findRCPosts(next));
+                next.put("post_sport",soPost3 );
+                next.put("limit", 2);
+                recommendPost.addAll(postMapper.findRCPosts(next));
+            }else if(upPost1.equals(post_up_sport)){
+                next.put("post_sport",soPost1 );
+                next.put("post_up_sport",upPost1 );
+                next.put("limit", 5);
+                recommendPost.addAll(postMapper.findRCPosts(next));
+            }else if(upPost2.equals(post_up_sport)){
+                next.put("post_sport",soPost2 );
+                next.put("post_up_sport",upPost2 );
+                next.put("limit", 5);
+                recommendPost.addAll(postMapper.findRCPosts(next));
+            }else if(upPost3.equals(post_up_sport)){
+                next.put("post_sport",soPost3 );
+                next.put("post_up_sport",upPost3 );
+                next.put("limit", 5);
+                recommendPost.addAll(postMapper.findRCPosts(next));
+            }
+
+            Set<PostResponseDTO> uniquePosts = new LinkedHashSet<>(recommendPost);
+            recommendPost = new ArrayList<>(uniquePosts);
+            System.out.println("recommendPost : " + recommendPost);
+        }
+    
         return recommendPost;
     }
 
@@ -192,8 +413,18 @@ public class PostService {
 
         return postMapper.nonMemberRCPost();
     }
+    // 추천 테이블에 넣기
+    public String insertRecommendation(Map<String, Object> map){
 
+       int result =  postMapper.insertRec(map);
 
+       if(result == 1 ){
+            return "중복 없음 - 성공";
+       }else{
+            return "중복 있음 - 실패";
+       }
+
+    }
     // 키워드 검색 
     public Map<String, Object> searchKeyword(Map<String, Object> map){
         System.out.println("service - searchKeyword");
@@ -202,14 +433,16 @@ public class PostService {
         list = postMapper.searchKeyword(map);
 
         System.out.println("list : " + list);
-
-
+       
+       
         Map<String, Object> result = new HashMap<>();
 
         if(list != null){
             result.put("result", true) ;
             result.put("list", list);
-
+            int totalpage = postMapper.countKeyword(map);
+            result.put("totalpage", totalpage);
+        
         }else if(list == null){
             result.put("result", false);
             result.put("list", new ArrayList<>());

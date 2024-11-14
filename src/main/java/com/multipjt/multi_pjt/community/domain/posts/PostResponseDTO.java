@@ -41,4 +41,6 @@ public class PostResponseDTO {
     
     private String post_nickname;
     private int comments_count;
+
+    private boolean is_click;
 }
