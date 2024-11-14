@@ -2,6 +2,7 @@ package com.multipjt.multi_pjt.user.dao;
 
 import com.multipjt.multi_pjt.user.domain.login.UserRequestDTO;
 import com.multipjt.multi_pjt.user.domain.login.UserResponseDTO;
+import com.multipjt.multi_pjt.user.domain.login.UserUpdateRequestDTO;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -22,7 +23,7 @@ public interface UserMapper {
 
 
     //회원 정보 수정
-    void updateUser(UserRequestDTO userRequestDTO);
+    void updateUser(UserUpdateRequestDTO userRequestDTO);
 
    // ID로 회원 조회
    UserResponseDTO getUserById(Integer member_id);  // memberId를 매개변수로 받음
