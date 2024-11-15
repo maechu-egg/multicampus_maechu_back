@@ -89,7 +89,7 @@ public interface CrewMapper {
     public List<CrewPostResponseDTO> selectCrewNoticePostRow(Map<String, Object> params);
 
     // 크루 게시물 상세 조회
-    public CrewPostResponseDTO selectCrewPostRow(CrewPostRequestDTO param);
+    public CrewPostResponseDTO selectCrewPostRow(Map<String, Object> params);
 
     // 크루 게시물 수정
     public void updateCrewPostRow(CrewPostRequestDTO param);

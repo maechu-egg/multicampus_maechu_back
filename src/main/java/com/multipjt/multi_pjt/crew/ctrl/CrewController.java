@@ -458,17 +458,19 @@ public class CrewController {
     @GetMapping("/post/detail")
     public ResponseEntity<?> getCrewPost(
             @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader,
-            @RequestBody CrewPostRequestDTO params) {
+            @RequestParam("crew_id") int crew_id,
+            @RequestParam("crew_post_id") int crew_post_id) {
 
         System.out.println("client endpoint: /crew/post/detail/");
-        System.out.println("debug>>> getCrewPost + " + params);
+        System.out.println("debug>>> getCrewPost + " + crew_id);
+        System.out.println("debug>>> getCrewPost + " + crew_post_id);
 
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             String token = authHeader.substring(7);
             int token_id = jwtTokenProvider.getUserIdFromToken(token);
 
             try {
-                CrewPostResponseDTO crewPost = crewService.getCrewPost(params, token_id);
+                CrewPostResponseDTO crewPost = crewService.getCrewPost(crew_id, crew_post_id, token_id);
                 return ResponseEntity.ok(crewPost);
             } catch (ResponseStatusException e) {
                 Map<String, Object> errorResponse = new HashMap<>();

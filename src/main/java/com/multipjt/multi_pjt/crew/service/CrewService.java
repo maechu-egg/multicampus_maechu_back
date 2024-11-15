@@ -392,16 +392,22 @@ public class CrewService {
     }
 
     // 크루 게시물 상세 조회
-    public CrewPostResponseDTO getCrewPost(CrewPostRequestDTO param, Integer token_id) {
+    public CrewPostResponseDTO getCrewPost(int crew_id, int crew_post_id, Integer token_id) {
         System.out.println("debug>>> Service: getCrewPost + " + crewMapper);
-        System.out.println("debug>>> Service: getCrewPost + " + param);
+        System.out.println("debug>>> Service: getCrewPost + " + crew_id);
+        System.out.println("debug>>> Service: getCrewPost + " + crew_post_id);
         System.out.println("debug>>> Service: getCrewPost + " + token_id);
 
-        boolean isActiveMember = crewMapper.selectCrewMemberRow(param.getCrew_id()).stream()
+        boolean isActiveMember = crewMapper.selectCrewMemberRow(crew_id).stream()
             .anyMatch(member -> member.getMember_id() == token_id && member.getCrew_member_state() == 1);
 
         if (isActiveMember) {
-            CrewPostResponseDTO crewPost = crewMapper.selectCrewPostRow(param);
+            Map<String, Object> params = new HashMap<>();
+            params.put("crew_id", crew_id);
+            params.put("crew_post_id", crew_post_id);
+            CrewPostResponseDTO crewPost = crewMapper.selectCrewPostRow(params);
+
+            // 이미지 URL 설정
             if (crewPost != null && crewPost.getCrew_post_img() != null) {
                 crewPost.setCrew_post_img(getImageUrl(crewPost.getCrew_post_img()));
             }

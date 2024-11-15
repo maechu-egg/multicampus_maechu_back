@@ -291,7 +291,7 @@
     <!-- 크루 게시물 상세 조회 --> 
 
     <select id="selectCrewPostRow"
-            parameterType="com.multipjt.multi_pjt.crew.domain.crew.CrewPostRequestDTO"
+            parameterType="map"
             resultType="com.multipjt.multi_pjt.crew.domain.crew.CrewPostResponseDTO">
         SELECT cp.*, m.nickname
         FROM CrewPost cp
