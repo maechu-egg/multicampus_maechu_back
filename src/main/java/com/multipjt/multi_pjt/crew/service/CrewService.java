@@ -487,16 +487,17 @@ public class CrewService {
     }
 
     // 크루 댓글 조회
-    public List<CrewCommentsResponseDTO> getCrewCommentList(CrewCommentsRequestDTO param, Integer token_id) {
+    public List<CrewCommentsResponseDTO> getCrewCommentList(int crewPostId, int crewId, Integer token_id) {
         System.out.println("debug>>> Service: getCrewCommentList + " + crewMapper);
-        System.out.println("debug>>> Service: getCrewCommentList + " + param);
+        System.out.println("debug>>> Service: getCrewCommentList + " + crewPostId);
+        System.out.println("debug>>> Service: getCrewCommentList + " + crewId);
         System.out.println("debug>>> Service: getCrewCommentList + " + token_id);
 
-        boolean isActiveMember = crewMapper.selectCrewMemberRow(param.getCrew_id()).stream()
+        boolean isActiveMember = crewMapper.selectCrewMemberRow(crewId).stream()
             .anyMatch(member -> member.getMember_id() == token_id && member.getCrew_member_state() == 1);
 
         if (isActiveMember) {
-            return crewMapper.selectCrewCommentsRow(param);
+            return crewMapper.selectCrewCommentsRow(crewPostId);
         } else {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "크루원만 댓글 조회가 가능합니다.");
         }

@@ -131,7 +131,7 @@ public interface CrewMapper {
     public void insertCrewCommentRow(CrewCommentsRequestDTO param);
 
     // 크루 게시판 게시물 댓글 조회
-    public List<CrewCommentsResponseDTO> selectCrewCommentsRow(CrewCommentsRequestDTO param);
+    public List<CrewCommentsResponseDTO> selectCrewCommentsRow(int crew_post_id);
 
     // 크루 게시판 게시물 댓글 삭제
     public void deleteCrewCommentRow(CrewCommentsRequestDTO param);
