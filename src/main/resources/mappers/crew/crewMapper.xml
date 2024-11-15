@@ -277,12 +277,13 @@
     <!-- 크루 게시판 공지/인기/일반 게시물 조회 --> 
 
     <select id="selectCrewNoticePostRow"
-            parameterType="com.multipjt.multi_pjt.crew.domain.crew.CrewPostRequestDTO"
+            parameterType="map"
             resultType="com.multipjt.multi_pjt.crew.domain.crew.CrewPostResponseDTO">
-        Select *
-        FROM CrewPost
-        WHERE crew_id = #{crew_id} AND crew_post_state = #{crew_post_state}
-        ORDER BY crew_post_date DESC;
+        Select cp.*, m.nickname
+        FROM CrewPost cp
+        LEFT JOIN Member m ON cp.member_id = m.member_id
+        WHERE cp.crew_id = #{crew_id} AND cp.crew_post_state = #{crew_post_state}
+        ORDER BY cp.crew_post_date DESC;
     </select>
 
     
