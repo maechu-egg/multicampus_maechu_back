@@ -43,14 +43,15 @@
 
     <select id="getUserById" parameterType="int" resultType="com.multipjt.multi_pjt.user.domain.mypage.ProfileResponseDTO">
         SELECT 
-        profile_id
-        profile_gender,
+            profile_id,
+            profile_gender,
             profile_age,
             profile_region,
             profile_weight,
             profile_height,
             profile_goal,
             profile_allergy,
+            member_id,
             profile_sport1,
             profile_workout_frequency,
             profile_sport2,
