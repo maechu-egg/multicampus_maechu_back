@@ -13,6 +13,7 @@ public class FoodCalculateDTO {
     private Double carbs;
     private Double protein;
     private Double fat;
+    private Integer diet_id;
     
     // 영양소 계산 메서드
     public ItemRequestDTO calculateNutrients() {
@@ -27,7 +28,7 @@ public class FoodCalculateDTO {
         item.setCarbs((int) Math.round(carbs * ratio));
         item.setProtein((int) Math.round(protein * ratio));
         item.setFat((int) Math.round(fat * ratio));
-        
+        item.setDiet_id(diet_id);
         return item;
     }
 }
