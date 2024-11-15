@@ -432,7 +432,7 @@
             resultType="com.multipjt.multi_pjt.crew.domain.crew.CrewCommentsResponseDTO">
         SELECT *
         FROM CrewComments
-        WHERE crew_post_id = #{crew_post_id} AND member_id = #{member_id}
+        WHERE crew_post_id = #{crew_post_id}
         ORDER BY crew_comments_date ASC;
     </select>
 
