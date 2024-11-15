@@ -439,16 +439,21 @@ public class CrewService {
 
         if (isActiveMember) {
             // 좋아요 상태 확인
-            boolean isLiked = crewMapper.selectCrewPostLikeRow(param).size() > 0;
+            Map<String, Object> params = new HashMap<>();
+            params.put("crew_post_id", param.getCrew_post_id());
+            params.put("member_id", param.getMember_id());
+            boolean isLiked = crewMapper.selectCrewPostLikeRow(params).size() > 0;
             
             if (isLiked) {
                 // 좋아요 취소
                 crewMapper.decreasePostLikeRow(param.getCrew_post_id());
                 crewMapper.deleteCrewPostLikeRow(param);
+                System.out.println("좋아요 취소");
             } else {
                 // 좋아요 추가
                 crewMapper.increasePostLikeRow(param.getCrew_post_id());
                 crewMapper.insertCrewPostLikeRow(param);
+                System.out.println("좋아요 추가");
             }
         } else {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "크루원만 게시물 좋아요가 가능합니다.");
@@ -456,13 +461,16 @@ public class CrewService {
     }
 
     // 크루 좋아요 상태 확인
-    public boolean checkCrewPostLike(CrewPostLikeRequestDTO param, int token_id) {
+    public boolean checkCrewPostLike(int crew_post_id, int member_id, int crew_id, int token_id) {
         
-        boolean isActiveMember = crewMapper.selectCrewMemberRow(param.getCrew_id()).stream()
+        boolean isActiveMember = crewMapper.selectCrewMemberRow(crew_id).stream()
             .anyMatch(member -> member.getMember_id() == token_id && member.getCrew_member_state() == 1);
 
         if (isActiveMember) {
-            return crewMapper.selectCrewPostLikeRow(param).size() > 0;
+            Map<String, Object> params = new HashMap<>();
+            params.put("crew_post_id", crew_post_id);
+            params.put("member_id", member_id);
+            return crewMapper.selectCrewPostLikeRow(params).size() > 0;
         } else {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "크루원만 게시물 좋아요 상태 확인이 가능합니다.");
         }

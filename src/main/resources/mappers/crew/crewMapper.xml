@@ -323,7 +323,7 @@
 
     <!-- 크루 게시물 좋아요 상태 확인 -->
     <select id="selectCrewPostLikeRow"
-            parameterType="com.multipjt.multi_pjt.crew.domain.crew.CrewPostLikeRequestDTO"
+            parameterType="map"
             resultType="com.multipjt.multi_pjt.crew.domain.crew.CrewPostLikeResponseDTO">
         SELECT *
         FROM CrewPostLike

@@ -286,7 +286,7 @@ public class CrewTests {
         comment.setCrew_post_id(10);
         comment.setMember_id(17);
 
-        List<CrewCommentsResponseDTO> postList = crewMapper.selectCrewCommentsRow(comment);
+        List<CrewCommentsResponseDTO> postList = crewMapper.selectCrewCommentsRow(10);
         for (CrewCommentsResponseDTO dto:postList){
             System.out.println(dto);
         }

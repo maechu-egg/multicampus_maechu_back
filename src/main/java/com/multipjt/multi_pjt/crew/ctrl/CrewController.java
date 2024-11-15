@@ -564,17 +564,20 @@ public class CrewController {
     @GetMapping("/post/like/check")
     public ResponseEntity<?> checkCrewPostLike(
             @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader,
-            @RequestBody CrewPostLikeRequestDTO param) {
+            @RequestParam("crew_post_id") int crew_post_id,
+            @RequestParam("member_id") int member_id,
+            @RequestParam("crew_id") int crew_id) {
 
         System.out.println("client endpoint: /crew/post/like/check");
-        System.out.println("debug>>> checkCrewPostLike + " + param);
-
+        System.out.println("debug>>> checkCrewPostLike + " + crew_post_id);
+        System.out.println("debug>>> checkCrewPostLike + " + member_id);
+        System.out.println("debug>>> checkCrewPostLike + " + crew_id);
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             String token = authHeader.substring(7);
             int token_id = jwtTokenProvider.getUserIdFromToken(token);
 
             try {
-                boolean isLiked = crewService.checkCrewPostLike(param, token_id);
+                boolean isLiked = crewService.checkCrewPostLike(crew_post_id, member_id, crew_id, token_id);
                 return ResponseEntity.ok(isLiked);
             } catch (ResponseStatusException e) {
                 Map<String, Object> errorResponse = new HashMap<>();

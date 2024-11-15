@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.data.domain.Page;
+import org.springframework.data.repository.query.Param;
 
 import com.multipjt.multi_pjt.crew.domain.crew.CrewCommentsRequestDTO;
 import com.multipjt.multi_pjt.crew.domain.crew.CrewCommentsResponseDTO;
@@ -99,7 +100,7 @@ public interface CrewMapper {
     // --------- 크루 게시물 좋아요 ---------
 
     // 크루 게시물 좋아요 상태 확인
-    public List<CrewPostLikeResponseDTO> selectCrewPostLikeRow(CrewPostLikeRequestDTO param);
+    public List<CrewPostLikeResponseDTO> selectCrewPostLikeRow(Map<String, Object> params);
     
     // 크루 게시물 좋아요 수 증가
     public void increasePostLikeRow(int crew_post_id);
