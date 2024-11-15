@@ -263,33 +263,35 @@
         WHERE crew_id = #{crew_id};
     </select>
 
-    <!-- 크루 게시판 상단 공지, 인기 정 3개씩 조회 --> 
+    <!-- 크루 게시판 상단 공지, 인기 고정 3개씩 조회 --> 
 
     <select id="selectCrewTopPostRow"
-            parameterType="com.multipjt.multi_pjt.crew.domain.crew.CrewPostRequestDTO"
+            parameterType="map"
             resultType="com.multipjt.multi_pjt.crew.domain.crew.CrewPostResponseDTO">
-        Select *
-        FROM CrewPost
-        WHERE crew_id = #{crew_id} AND crew_post_state = #{crew_post_state}
-        ORDER BY crew_post_date DESC limit 3;
+        Select cp.*, m.nickname
+        FROM CrewPost cp
+        LEFT JOIN Member m ON cp.member_id = m.member_id
+        WHERE cp.crew_id = #{crew_id} AND cp.crew_post_state = #{crew_post_state}
+        ORDER BY cp.crew_post_date DESC limit 3;
     </select>
 
     <!-- 크루 게시판 공지/인기/일반 게시물 조회 --> 
 
     <select id="selectCrewNoticePostRow"
-            parameterType="com.multipjt.multi_pjt.crew.domain.crew.CrewPostRequestDTO"
+            parameterType="map"
             resultType="com.multipjt.multi_pjt.crew.domain.crew.CrewPostResponseDTO">
-        Select *
-        FROM CrewPost
-        WHERE crew_id = #{crew_id} AND crew_post_state = #{crew_post_state}
-        ORDER BY crew_post_date DESC;
+        Select cp.*, m.nickname
+        FROM CrewPost cp
+        LEFT JOIN Member m ON cp.member_id = m.member_id
+        WHERE cp.crew_id = #{crew_id} AND cp.crew_post_state = #{crew_post_state}
+        ORDER BY cp.crew_post_date DESC;
     </select>
 
     
     <!-- 크루 게시물 상세 조회 --> 
 
     <select id="selectCrewPostRow"
-            parameterType="com.multipjt.multi_pjt.crew.domain.crew.CrewPostRequestDTO"
+            parameterType="map"
             resultType="com.multipjt.multi_pjt.crew.domain.crew.CrewPostResponseDTO">
         SELECT cp.*, m.nickname
         FROM CrewPost cp
@@ -323,7 +325,7 @@
 
     <!-- 크루 게시물 좋아요 상태 확인 -->
     <select id="selectCrewPostLikeRow"
-            parameterType="com.multipjt.multi_pjt.crew.domain.crew.CrewPostLikeRequestDTO"
+            parameterType="map"
             resultType="com.multipjt.multi_pjt.crew.domain.crew.CrewPostLikeResponseDTO">
         SELECT *
         FROM CrewPostLike
@@ -432,7 +434,7 @@
             resultType="com.multipjt.multi_pjt.crew.domain.crew.CrewCommentsResponseDTO">
         SELECT *
         FROM CrewComments
-        WHERE crew_post_id = #{crew_post_id} AND member_id = #{member_id}
+        WHERE crew_post_id = #{crew_post_id}
         ORDER BY crew_comments_date ASC;
     </select>
 
