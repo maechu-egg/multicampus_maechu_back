@@ -6,9 +6,13 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.List;
-
+import java.util.HashMap;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -144,7 +148,16 @@ public class CrewService {
         System.out.println("debug>>> Service: getMyCrewList + " + token_id);
 
         try {
-            return crewMapper.selectMyCrewRow(token_id);
+            List<CrewResponseDTO> crewList = crewMapper.selectMyCrewRow(token_id);
+            
+            // 이미지 URL 설정
+            crewList.forEach(crew -> {
+                if (crew != null && crew.getCrew_intro_img() != null) {
+                    crew.setCrew_intro_img(getImageUrl(crew.getCrew_intro_img()));
+                }
+            });
+
+            return crewList;
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "내가 속한 크루가 없습니다.");
         }
@@ -292,8 +305,8 @@ public class CrewService {
         }
     }
 
-    // 크루 게시물 전체 조회
-    public List<CrewPostResponseDTO> getCrewPostList(Integer crewId, Integer token_id) {
+    // 크루 게시물 전체 조회 (페이지네이션 적용)
+    public Page<CrewPostResponseDTO> getCrewPostList(Integer crewId, Integer token_id, Pageable pageable) {
         System.out.println("debug>>> Service: getCrewPostList + " + crewMapper);
         System.out.println("debug>>> Service: getCrewPostList + " + crewId);
         System.out.println("debug>>> Service: getCrewPostList + " + token_id);
@@ -302,7 +315,12 @@ public class CrewService {
             .anyMatch(member -> member.getMember_id() == token_id && member.getCrew_member_state() == 1);
 
         if (isActiveMember) {
-            return crewMapper.selectCrewPostListRow(crewId);
+            Map<String, Object> params = new HashMap<>();
+            params.put("crew_id", crewId); // crew_id를 Map에 추가
+            params.put("pageable", pageable); // pageable을 Map에 추가
+
+            List<CrewPostResponseDTO> crewPostList = crewMapper.selectCrewPostListRow(params);
+            return new PageImpl<>(crewPostList, pageable, crewMapper.selectCrewPostListCountRow(crewId));
         } else {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "크루원만 게시물 조회가 가능합니다.");
         }
