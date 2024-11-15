@@ -334,17 +334,29 @@ public class CrewService {
         }
     }
 
-    // 크루 게시물 상단 공지, 일반 고정 3개씩
-    public List<CrewPostResponseDTO> getCrewTopPostList(CrewPostRequestDTO param, Integer token_id) {
+    // 크루 게시물 상단 공지, 인기 고정 3개씩
+    public List<CrewPostResponseDTO> getCrewTopPostList(int crew_id, int crew_post_state, Integer token_id) {
         System.out.println("debug>>> Service: getCrewTopPostList + " + crewMapper);
-        System.out.println("debug>>> Service: getCrewTopPostList + " + param);
+        System.out.println("debug>>> Service: getCrewTopPostList + " + crew_id);
+        System.out.println("debug>>> Service: getCrewTopPostList + " + crew_post_state);
         System.out.println("debug>>> Service: getCrewTopPostList + " + token_id);
 
-        boolean isActiveMember = crewMapper.selectCrewMemberRow(param.getCrew_id()).stream()
+        boolean isActiveMember = crewMapper.selectCrewMemberRow(crew_id).stream()
             .anyMatch(member -> member.getMember_id() == token_id && member.getCrew_member_state() == 1);
 
         if (isActiveMember) {
-            return crewMapper.selectCrewTopPostRow(param);
+            Map<String, Object> params = new HashMap<>();
+            params.put("crew_id", crew_id);
+            params.put("crew_post_state", crew_post_state);
+            List<CrewPostResponseDTO> crewTopPostList = crewMapper.selectCrewTopPostRow(params);
+            
+            // 이미지 URL 설정
+            crewTopPostList.forEach(post -> {
+                if (post != null && post.getCrew_post_img() != null) {
+                    post.setCrew_post_img(getImageUrl(post.getCrew_post_img()));
+                }
+            });
+            return crewTopPostList;
         } else {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "크루원만 게시물 조회가 가능합니다.");
         }
