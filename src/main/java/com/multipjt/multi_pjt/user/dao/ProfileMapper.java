@@ -1,7 +1,7 @@
 package com.multipjt.multi_pjt.user.dao;
 
 import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
+
 
 
 import com.multipjt.multi_pjt.user.domain.mypage.ProfileRequestDTO;
@@ -13,7 +13,7 @@ public interface ProfileMapper {
     int registerProfile(ProfileRequestDTO profileRequestDTO);
 
     // ID로 사용자 프로필 조회
-    ProfileResponseDTO getUserById(@Param("member_id") int memberId);
+    ProfileResponseDTO getUserById(Integer member_id);
 
      //회원 프로필 수정
     int updateProfile(ProfileRequestDTO profileRequestDTO);
