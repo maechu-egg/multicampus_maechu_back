@@ -167,10 +167,13 @@ public class DietControl {
                 if (dietResult != null) {
                     // 2. 식품 조회
                     Integer diet_id = dietResult.getDiet_id(); // diet_id 가져오기
+                    Map<String,Object> result = new HashMap<>();
+                    result.put("diet_id", diet_id);
                     List<ItemResponseDTO> itemsResult = dietService.itemFindAllRow(diet_id);
+                    result.put("itemList", itemsResult);
                     System.out.println("itemsResult >> " + itemsResult);
         
-                    return new ResponseEntity<>(itemsResult, HttpStatus.OK);
+                    return new ResponseEntity<>(result, HttpStatus.OK);
                 } else {
                     // 식단 조회 결과가 없을 때
                     return new ResponseEntity<>(HttpStatus.NO_CONTENT);

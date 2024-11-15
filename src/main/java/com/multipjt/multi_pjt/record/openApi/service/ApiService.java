@@ -61,7 +61,6 @@ public class ApiService {
     public FoodCalculateDTO convertToCalculateDTO(NutirientDTO nutrientDTO) {
         FoodCalculateDTO calcDTO = new FoodCalculateDTO();
         calcDTO.setFoodNm(nutrientDTO.getFoodNm());
-        calcDTO.setOriginalQuantity(nutrientDTO.getQuantity());
         calcDTO.setEnergy(nutrientDTO.getEnergy());
         calcDTO.setCarbs(nutrientDTO.getCarbs());
         calcDTO.setProtein(nutrientDTO.getProtein());
