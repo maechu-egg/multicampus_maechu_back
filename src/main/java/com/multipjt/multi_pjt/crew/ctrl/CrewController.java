@@ -5,6 +5,9 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -364,11 +367,12 @@ public class CrewController {
     }
 
 
-    // 크루 게시물 전체 조회
+    // 크루 게시물 전체 조회 (페이지네이션 적용)
     @GetMapping("/post/list/{crewId}")
     public ResponseEntity<?> getCrewPostList(
             @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader,
-            @PathVariable("crewId") Integer crewId) {
+            @PathVariable("crewId") Integer crewId,
+            @PageableDefault(size = 10) Pageable pageable) { // 기본 페이지 크기 설정
 
         System.out.println("client endpoint: /crew/post/list/" + crewId);
         System.out.println("debug>>> getCrewPostList + " + crewId);
@@ -378,8 +382,8 @@ public class CrewController {
             int token_id = jwtTokenProvider.getUserIdFromToken(token);
 
             try {
-                List<CrewPostResponseDTO> crewPostList = crewService.getCrewPostList(crewId, token_id);
-                return ResponseEntity.ok(crewPostList);
+                Page<CrewPostResponseDTO> crewPostPage = crewService.getCrewPostList(crewId, token_id, pageable);
+                return ResponseEntity.ok(crewPostPage);
             } catch (ResponseStatusException e) {
                 Map<String, Object> errorResponse = new HashMap<>();
                 errorResponse.put("status", e.getStatusCode().value());

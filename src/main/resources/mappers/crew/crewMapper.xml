@@ -243,12 +243,24 @@
     <!-- 크루 게시판 게시물 전체 조회 --> 
 
     <select id="selectCrewPostListRow"
-            parameterType="Integer"
+            parameterType="map"
             resultType="com.multipjt.multi_pjt.crew.domain.crew.CrewPostResponseDTO">
-        SELECT *
+        SELECT cp.*, m.nickname
+        FROM CrewPost cp
+        LEFT JOIN Member m ON cp.member_id = m.member_id
+        WHERE cp.crew_id = #{crew_id}
+        ORDER BY cp.crew_post_date DESC
+        LIMIT #{pageable.pageSize} OFFSET #{pageable.offset};
+    </select>
+
+    <!-- 크루 게시판 게시물 전체 조회 개수 --> 
+
+    <select id="selectCrewPostListCountRow"
+            parameterType="int"
+            resultType="int">
+        SELECT COUNT(*)
         FROM CrewPost
-        WHERE crew_id = #{crew_id}
-        ORDER BY crew_post_date DESC;
+        WHERE crew_id = #{crew_id};
     </select>
 
     <!-- 크루 게시판 상단 공지, 인기 정 3개씩 조회 --> 
@@ -279,9 +291,10 @@
     <select id="selectCrewPostRow"
             parameterType="com.multipjt.multi_pjt.crew.domain.crew.CrewPostRequestDTO"
             resultType="com.multipjt.multi_pjt.crew.domain.crew.CrewPostResponseDTO">
-        SELECT *
-        FROM CrewPost
-        WHERE crew_id = #{crew_id} AND crew_post_id = #{crew_post_id};
+        SELECT cp.*, m.nickname
+        FROM CrewPost cp
+        LEFT JOIN Member m ON cp.member_id = m.member_id
+        WHERE cp.crew_id = #{crew_id} AND cp.crew_post_id = #{crew_post_id};
     </select>
 
     <!-- 크루 게시판 게시물 수정 --> 

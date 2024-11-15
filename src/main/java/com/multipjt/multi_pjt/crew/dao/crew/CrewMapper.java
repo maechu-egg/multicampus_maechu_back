@@ -1,8 +1,10 @@
 package com.multipjt.multi_pjt.crew.dao.crew;
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.springframework.data.domain.Page;
 
 import com.multipjt.multi_pjt.crew.domain.crew.CrewCommentsRequestDTO;
 import com.multipjt.multi_pjt.crew.domain.crew.CrewCommentsResponseDTO;
@@ -73,8 +75,11 @@ public interface CrewMapper {
     // 크루 게시물 등록
     public void insertCrewPostRow(CrewPostRequestDTO param);
 
-    // 크루 게시판 게시물 전체 조회
-    public List<CrewPostResponseDTO> selectCrewPostListRow(Integer crew_id);
+    // 크루 게시판 게시물 전체 조회 (페이지네이션 적용)
+    public List<CrewPostResponseDTO> selectCrewPostListRow(Map<String, Object> params);
+
+    // 크루 게시판 게시물 전체 조회 개수
+    public int selectCrewPostListCountRow(int crew_id);
     
     // 크루 게시판 상단 공지, 인기 고정 3개씩 조회
     public List<CrewPostResponseDTO> selectCrewTopPostRow(CrewPostRequestDTO param);
