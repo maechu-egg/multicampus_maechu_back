@@ -211,11 +211,11 @@ public class CrewTests {
     @Test
     @DisplayName("019 : 크루 게시판 상단 TOP 3 조회")
     public void selectCrewTopPostTest() {
-        CrewPostRequestDTO Post = new CrewPostRequestDTO();
-        Post.setCrew_id(2);
-        Post.setCrew_post_state(0);
 
-        List<CrewPostResponseDTO> postList = crewMapper.selectCrewTopPostRow(Post);
+        Map<String, Object> params = new HashMap<>();
+        params.put("crew_id", 2);
+        params.put("crew_post_state", 0);
+        List<CrewPostResponseDTO> postList = crewMapper.selectCrewTopPostRow(params);
         for (CrewPostResponseDTO dto:postList){
             System.out.println(dto);
         }
@@ -226,11 +226,11 @@ public class CrewTests {
     @Test
     @DisplayName("013 : 크루 게시판 공지: 0/인기: 1 /일반: 2 게시글 조회")
     public void selectCrewNoticePostTest() {
-        CrewPostRequestDTO Post = new CrewPostRequestDTO();
-        Post.setCrew_id(2);
-        Post.setCrew_post_state(1);
+        Map<String, Object> params = new HashMap<>();
+        params.put("crew_id", 2);
+        params.put("crew_post_state", 1);
 
-        List<CrewPostResponseDTO> postList = crewMapper.selectCrewNoticePostRow(Post);
+        List<CrewPostResponseDTO> postList = crewMapper.selectCrewNoticePostRow(params);
         for (CrewPostResponseDTO dto:postList){
             System.out.println(dto);
         }

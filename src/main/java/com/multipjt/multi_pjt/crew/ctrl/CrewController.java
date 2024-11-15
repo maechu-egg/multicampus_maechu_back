@@ -545,7 +545,7 @@ public class CrewController {
             @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader,
             @RequestBody CrewPostLikeRequestDTO param) {
 
-        System.out.println("client endpoint: /crew/post/like");
+        System.out.println("client endpoint: /crew/post/like/click");
         System.out.println("debug>>> toggleLike + " + param);
 
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
