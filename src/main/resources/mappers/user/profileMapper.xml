@@ -42,7 +42,20 @@
     <!-- getUserById --> 
 
     <select id="getUserById" parameterType="int" resultType="com.multipjt.multi_pjt.user.domain.mypage.ProfileResponseDTO">
-        SELECT * FROM UserProfile WHERE member_id = #{member_id};
+        SELECT 
+        profile_id
+        profile_gender,
+            profile_age,
+            profile_region,
+            profile_weight,
+            profile_height,
+            profile_goal,
+            profile_allergy,
+            profile_sport1,
+            profile_workout_frequency,
+            profile_sport2,
+            profile_sport3
+             FROM UserProfile WHERE member_id = #{member_id};
     </select>
     
     <!-- 프로필 수정 -->

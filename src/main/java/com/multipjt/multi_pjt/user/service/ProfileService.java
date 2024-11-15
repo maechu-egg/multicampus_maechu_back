@@ -53,4 +53,15 @@ public class ProfileService {
                                  .body("{\"Code\": \"Internal Server Error\", \"Message\": \"프로필 수정에 실패했습니다.\"}");
         }
     }
+
+    public ProfileResponseDTO getProfile(int member_id) {
+        ProfileResponseDTO profile = profileMapper.getUserById(member_id); 
+        if (profile != null) {
+            logger.info("User info retrieved successfully for userId: {}", member_id);
+            logger.info("User info retrieved successfully for profileUser: {}", profile);
+        } else {
+            logger.warn("User not found for userId: {}", member_id);
+        }
+        return profile;
+    }
 }

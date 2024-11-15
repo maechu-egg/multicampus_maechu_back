@@ -1,8 +1,11 @@
 package com.multipjt.multi_pjt.crew.dao.crew;
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.repository.query.Param;
 
 import com.multipjt.multi_pjt.crew.domain.crew.CrewCommentsRequestDTO;
 import com.multipjt.multi_pjt.crew.domain.crew.CrewCommentsResponseDTO;
@@ -73,17 +76,20 @@ public interface CrewMapper {
     // 크루 게시물 등록
     public void insertCrewPostRow(CrewPostRequestDTO param);
 
-    // 크루 게시판 게시물 전체 조회
-    public List<CrewPostResponseDTO> selectCrewPostListRow(Integer crew_id);
+    // 크루 게시판 게시물 전체 조회 (페이지네이션 적용)
+    public List<CrewPostResponseDTO> selectCrewPostListRow(Map<String, Object> params);
+
+    // 크루 게시판 게시물 전체 조회 개수
+    public int selectCrewPostListCountRow(int crew_id);
     
     // 크루 게시판 상단 공지, 인기 고정 3개씩 조회
-    public List<CrewPostResponseDTO> selectCrewTopPostRow(CrewPostRequestDTO param);
+    public List<CrewPostResponseDTO> selectCrewTopPostRow(Map<String, Object> params);
 
     // 크루 게시판 공지/인기/일반 게시물 조회
-    public List<CrewPostResponseDTO> selectCrewNoticePostRow(CrewPostRequestDTO param);
+    public List<CrewPostResponseDTO> selectCrewNoticePostRow(Map<String, Object> params);
 
     // 크루 게시물 상세 조회
-    public CrewPostResponseDTO selectCrewPostRow(CrewPostRequestDTO param);
+    public CrewPostResponseDTO selectCrewPostRow(Map<String, Object> params);
 
     // 크루 게시물 수정
     public void updateCrewPostRow(CrewPostRequestDTO param);
@@ -94,7 +100,7 @@ public interface CrewMapper {
     // --------- 크루 게시물 좋아요 ---------
 
     // 크루 게시물 좋아요 상태 확인
-    public List<CrewPostLikeResponseDTO> selectCrewPostLikeRow(CrewPostLikeRequestDTO param);
+    public List<CrewPostLikeResponseDTO> selectCrewPostLikeRow(Map<String, Object> params);
     
     // 크루 게시물 좋아요 수 증가
     public void increasePostLikeRow(int crew_post_id);
@@ -126,7 +132,7 @@ public interface CrewMapper {
     public void insertCrewCommentRow(CrewCommentsRequestDTO param);
 
     // 크루 게시판 게시물 댓글 조회
-    public List<CrewCommentsResponseDTO> selectCrewCommentsRow(CrewCommentsRequestDTO param);
+    public List<CrewCommentsResponseDTO> selectCrewCommentsRow(int crew_post_id);
 
     // 크루 게시판 게시물 댓글 삭제
     public void deleteCrewCommentRow(CrewCommentsRequestDTO param);

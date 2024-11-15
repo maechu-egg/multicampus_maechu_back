@@ -18,7 +18,9 @@ import com.multipjt.multi_pjt.crew.domain.crew.CrewResponseDTO;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @SpringBootTest
 // @Transactional
@@ -196,7 +198,9 @@ public class CrewTests {
     @Test
     @DisplayName("012 : 크루 게시판 게시글 전체 조회")
     public void selectCrewPostListTest() {
-        List<CrewPostResponseDTO> postList = crewMapper.selectCrewPostListRow(19);
+        Map<String, Object> params = new HashMap<>();
+        params.put("crew_id", 36);
+        List<CrewPostResponseDTO> postList = crewMapper.selectCrewPostListRow(params);
         for (CrewPostResponseDTO dto:postList){
             System.out.println(dto);
         }
@@ -282,7 +286,7 @@ public class CrewTests {
         comment.setCrew_post_id(10);
         comment.setMember_id(17);
 
-        List<CrewCommentsResponseDTO> postList = crewMapper.selectCrewCommentsRow(comment);
+        List<CrewCommentsResponseDTO> postList = crewMapper.selectCrewCommentsRow(10);
         for (CrewCommentsResponseDTO dto:postList){
             System.out.println(dto);
         }
