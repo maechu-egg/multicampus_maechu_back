@@ -320,6 +320,14 @@ public class CrewService {
             params.put("pageable", pageable); // pageable을 Map에 추가
 
             List<CrewPostResponseDTO> crewPostList = crewMapper.selectCrewPostListRow(params);
+            
+            // 이미지 URL 설정
+            crewPostList.forEach(post -> {
+                if (post != null && post.getCrew_post_img() != null) {
+                    post.setCrew_post_img(getImageUrl(post.getCrew_post_img()));
+                }
+            });
+
             return new PageImpl<>(crewPostList, pageable, crewMapper.selectCrewPostListCountRow(crewId));
         } else {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "크루원만 게시물 조회가 가능합니다.");
