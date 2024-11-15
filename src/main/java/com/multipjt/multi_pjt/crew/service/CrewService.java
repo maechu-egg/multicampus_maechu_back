@@ -97,9 +97,6 @@ public class CrewService {
             if (exactMatchCrews.size() < 3) {
                 for (CrewResponseDTO crew : regionMatchCrews) {
                     if (exactMatchCrews.size() >= 3) break;
-                    if (crew != null && crew.getCrew_intro_img() != null) {
-                        crew.setCrew_intro_img(getImageUrl(crew.getCrew_intro_img()));
-                    }
                     exactMatchCrews.add(crew);
                 }
             }
