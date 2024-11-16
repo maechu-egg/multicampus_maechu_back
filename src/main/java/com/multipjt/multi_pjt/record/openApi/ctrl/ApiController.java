@@ -41,7 +41,7 @@ public class ApiController {
     private JwtTokenProvider jwtTokenProvider;
 
 
-    @Value("${openApi.servicekey}")
+    @Value("${openApi.serviceKey}")
     private String  serviceKey;
 
     @Value("${openApi.callBackUrl}")
