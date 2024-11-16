@@ -172,21 +172,36 @@ public class CrewService {
         int leaderId = crewMapper.selectCrewLeaderIdRow(param.getCrew_id());
 
         if (token_id == leaderId) {
-            // 크루 소개 이미지 저장
+            // 이미지 파일이 있는 경우에만 기존 이미지 파일 삭제 및 새 이미지 저장
             if (ImgFile != null && !ImgFile.isEmpty()) {
-                String introFileName = System.currentTimeMillis() + "_intro_" + ImgFile.getOriginalFilename();
-                Path introPath = Paths.get("src/main/resources/static/" + introFileName);
-                try {
-                    Files.copy(ImgFile.getInputStream(), introPath, StandardCopyOption.REPLACE_EXISTING);
-                    System.out.println("Image uploaded successfully: " + introFileName);
-                    param.setCrewIntroImg(introFileName); // CrewRequestDTO에 파일 이름 설정
-                } catch (IOException e) {
-                    throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "크루 소개 이미지 업로드 실패: ");
+                // 기존 이미지 파일 삭제
+                String currentImgFileName = crewMapper.selectCurrentCrewIntroImg(param.getCrew_id());
+                if (currentImgFileName != null && !currentImgFileName.equals("CrewDefault")) {
+                    Path currentImgPath = Paths.get("src/main/resources/static/" + currentImgFileName);
+                    try {
+                        Files.deleteIfExists(currentImgPath);
+                        System.out.println("Old image deleted successfully: " + currentImgFileName);
+                    } catch (IOException e) {
+                        throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "기존 이미지 삭제 실패: ");
+                    }
                 }
-            }
 
-            // 크루 소개 업데이트 로직 수행
-            crewMapper.updateCrewIntroRow(param);
+                // 크루 소개 이미지 저장
+                if (ImgFile != null && !ImgFile.isEmpty()) {
+                    String introFileName = System.currentTimeMillis() + "_intro_" + ImgFile.getOriginalFilename();
+                    Path introPath = Paths.get("src/main/resources/static/" + introFileName);
+                    try {
+                        Files.copy(ImgFile.getInputStream(), introPath, StandardCopyOption.REPLACE_EXISTING);
+                        System.out.println("Image uploaded successfully: " + introFileName);
+                        param.setCrewIntroImg(introFileName); // CrewRequestDTO에 파일 이름 설정
+                    } catch (IOException e) {
+                        throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "크루 소개 이미지 업로드 실패: ");
+                    }
+                }
+
+                // 크루 소개 업데이트 로직 수행
+                crewMapper.updateCrewIntroRow(param);
+            }   
         } else {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "크루장만 크루 소개를 수정할 수 있습니다.");
         }
