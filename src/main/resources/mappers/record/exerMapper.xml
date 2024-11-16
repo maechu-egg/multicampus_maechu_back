@@ -65,7 +65,7 @@
 
     <!-- setDelete --> 
 
-    <delete id="setDelete" parameterType="java.lang.Long">
+    <delete id="setDelete" parameterType="java.lang.Integer">
         delete from ExerciseSet
         where set_id = #{set_id};
     </delete>
