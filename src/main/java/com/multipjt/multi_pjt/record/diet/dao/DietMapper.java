@@ -20,7 +20,7 @@ public interface DietMapper {
     // diet_id 찾기
     public Integer findDietNumber(Map<String,Object> map);
     // DietRecords 출력
-    public ArrayList<DietResponseDTO> dietFindAll(Map<String,Object> map);
+    public DietResponseDTO dietFindAll(Map<String,Object> map);
     // DietItems 출력
     public ArrayList<ItemResponseDTO> itemFindAll(Integer dietId);
     // DietRecords 삭제

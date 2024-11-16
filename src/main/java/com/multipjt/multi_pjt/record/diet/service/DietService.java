@@ -32,7 +32,7 @@ public class DietService {
         return dietMapper.findDietNumber(map);
     }
 
-    public List<DietResponseDTO> dietFindAllRow(Map<String,Object> map){
+    public DietResponseDTO dietFindAllRow(Map<String,Object> map){
         return dietMapper.dietFindAll(map);
     }
         
