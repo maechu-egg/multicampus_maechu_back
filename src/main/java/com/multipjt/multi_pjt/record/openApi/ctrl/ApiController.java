@@ -35,8 +35,8 @@ public class ApiController {
     @Value("${openApi.keyId}")
     private String keyId;
 
-    @Value("${openApi.serviceId}")
-    private String  serviceId;
+    @Value("${openApi.serviceKey}")
+    private String  serviceKey;
 
     @Value("${openApi.callBackUrl}")
     private String callBackUrl ;
@@ -55,7 +55,7 @@ public class ApiController {
 
         System.out.println("client Request path : /record/api/nutrient");
         System.out.println("keyId >>> " + keyId);
-        System.out.println("serviceId >>> " + serviceId);
+        System.out.println("serviceKey >>> " + serviceKey);
         System.out.println("callBackUrl >>> " + callBackUrl);   
         System.out.println("dataType >>> " + dataType);
         System.out.println("params >>" + encodeFoodNm);
@@ -65,7 +65,7 @@ public class ApiController {
 
         String requestUrl = callBackUrl 
                             + keyId 
-                            + "/" + serviceId 
+                            + "/" + serviceKey 
                             + "/" + dataType 
                             + "/" + startIdx
                             + "/" + endIdx
