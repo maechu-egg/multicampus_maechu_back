@@ -187,21 +187,18 @@ public class CrewService {
                 }
 
                 // 크루 소개 이미지 저장
-                if (ImgFile != null && !ImgFile.isEmpty()) {
-                    String introFileName = System.currentTimeMillis() + "_intro_" + ImgFile.getOriginalFilename();
-                    Path introPath = Paths.get("src/main/resources/static/" + introFileName);
-                    try {
-                        Files.copy(ImgFile.getInputStream(), introPath, StandardCopyOption.REPLACE_EXISTING);
-                        System.out.println("Image uploaded successfully: " + introFileName);
-                        param.setCrewIntroImg(introFileName); // CrewRequestDTO에 파일 이름 설정
-                    } catch (IOException e) {
-                        throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "크루 소개 이미지 업로드 실패: ");
-                    }
+                String introFileName = System.currentTimeMillis() + "_intro_" + ImgFile.getOriginalFilename();
+                Path introPath = Paths.get("src/main/resources/static/" + introFileName);
+                try {
+                    Files.copy(ImgFile.getInputStream(), introPath, StandardCopyOption.REPLACE_EXISTING);
+                    System.out.println("Image uploaded successfully: " + introFileName);
+                    param.setCrewIntroImg(introFileName); // CrewRequestDTO에 파일 이름 설정
+                } catch (IOException e) {
+                    throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "크루 소개 이미지 업로드 실패: ");
                 }
-
-                // 크루 소개 업데이트 로직 수행
-                crewMapper.updateCrewIntroRow(param);
-            }   
+            }
+            // 크루 소개 업데이트 로직 수행
+            crewMapper.updateCrewIntroRow(param);
         } else {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "크루장만 크루 소개를 수정할 수 있습니다.");
         }
