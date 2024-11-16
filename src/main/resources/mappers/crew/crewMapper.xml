@@ -148,6 +148,16 @@
         WHERE crew_id = #{crew_id}
     </update>
 
+    <!-- 소개 수정 시 현재 크루 소개 이미지 조회 -->
+
+    <select id="selectCurrentCrewIntroImg"
+            parameterType="Integer"
+            resultType="String">
+        SELECT crew_intro_img
+        FROM Crew
+        WHERE crew_id = #{crew_id};
+    </select>
+
     <!-- 크루장 조회 -->
 
     <select id="selectCrewLeaderIdRow"
