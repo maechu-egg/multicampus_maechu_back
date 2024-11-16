@@ -438,9 +438,25 @@ public class CrewService {
 
         int writerId = param.getMember_id();
 
-        if(token_id == writerId) {
-            // 게시물 이미지 저장
+        if (token_id == writerId) {
+            // 이미지 파일이 있는 경우에만 기존 이미지 파일 삭제 및 새 이미지 저장
             if (ImgFile != null && !ImgFile.isEmpty()) {
+                // 기존 이미지 파일 삭제
+                Map<String, Object> params = new HashMap<>();
+                params.put("crew_id", param.getCrew_id());
+                params.put("crew_post_id", param.getCrew_post_id());
+                String currentImgFileName = crewMapper.selectCrewPostRow(params).getCrew_post_img();
+                if (currentImgFileName != null && !currentImgFileName.isEmpty()) {
+                    Path currentImgPath = Paths.get("src/main/resources/static/" + currentImgFileName);
+                    try {
+                        Files.deleteIfExists(currentImgPath);
+                        System.out.println("Old image deleted successfully: " + currentImgFileName);
+                    } catch (IOException e) {
+                        throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "기존 이미지 삭제 실패");
+                    }
+                }
+
+                // 새 이미지 파일 저장
                 String postFileName = System.currentTimeMillis() + "_post_" + ImgFile.getOriginalFilename();
                 Path postPath = Paths.get("src/main/resources/static/" + postFileName);
                 try {
@@ -450,6 +466,8 @@ public class CrewService {
                 } catch (IOException e) {
                     throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "게시물 이미지 업로드 실패");
                 }
+            } else {
+               System.out.println("debug>>> Service: updateCrewPost + 기존 이미지로 설정");
             }
             crewMapper.updateCrewPostRow(param);
         } else {

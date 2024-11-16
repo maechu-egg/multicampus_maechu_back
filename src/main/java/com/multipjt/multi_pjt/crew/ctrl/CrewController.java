@@ -492,6 +492,7 @@ public class CrewController {
 
         System.out.println("client endpoint: /crew/post/update");
         System.out.println("debug>>> updateCrewPost + " + param);
+        System.out.println("debug>>> updateCrewPost 이미지 파일+ " + ImgFile);
 
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             String token = authHeader.substring(7);
