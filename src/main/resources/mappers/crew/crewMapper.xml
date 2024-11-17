@@ -442,7 +442,7 @@
     <!-- 크루 게시글 댓글 조회 --> 
 
     <select id="selectCrewCommentsRow"
-            parameterType="com.multipjt.multi_pjt.crew.domain.crew.CrewCommentsRequestDTO"
+            parameterType="int"
             resultType="com.multipjt.multi_pjt.crew.domain.crew.CrewCommentsResponseDTO">
         SELECT cc.*, m.nickname
         FROM CrewComments cc
@@ -451,11 +451,20 @@
         ORDER BY cc.crew_comments_date ASC;
     </select>
 
-    <!-- 크루 댓글 삭제 --> 
+    <!-- 특정 크루 댓글 조회 -->
+    <select id="selectCrewCommentById"
+            parameterType="int"
+            resultType="com.multipjt.multi_pjt.crew.domain.crew.CrewCommentsResponseDTO">
+        SELECT cc.*, m.nickname
+        FROM CrewComments cc
+        LEFT JOIN Member m ON cc.member_id = m.member_id
+        WHERE cc.crew_comments_id = #{crew_comment_id};
+    </select>
 
+    <!-- 크루 댓글 삭제 --> 
     <delete id="deleteCrewCommentRow"
-            parameterType="com.multipjt.multi_pjt.crew.domain.crew.CrewCommentsResponseDTO">
+            parameterType="map">
         DELETE FROM CrewComments
-        WHERE crew_post_id = #{crew_post_id} AND member_id = #{member_id} AND crew_comments_id = #{crew_comments_id};
+        WHERE crew_comments_id = #{crew_comment_id} AND crew_post_id = #{crew_post_id} AND member_id = #{member_id};
     </delete>
 </mapper>

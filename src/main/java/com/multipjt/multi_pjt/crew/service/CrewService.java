@@ -576,15 +576,27 @@ public class CrewService {
     }
 
     // 크루 댓글 삭제
-    public void deleteCrewComment(CrewCommentsRequestDTO param, Integer token_id) {
+    public void deleteCrewComment(int crew_comment_id, int crew_post_id, int token_id) {
         System.out.println("debug>>> Service: deleteCrewComment + " + crewMapper);
-        System.out.println("debug>>> Service: deleteCrewComment + " + param);
+        System.out.println("debug>>> Service: deleteCrewComment + " + crew_comment_id);
+        System.out.println("debug>>> Service: deleteCrewComment + " + crew_post_id);
         System.out.println("debug>>> Service: deleteCrewComment + " + token_id);
 
-        int writerId = param.getMember_id();
+        // 특정 댓글 조회하여 작성자 확인
+        CrewCommentsResponseDTO comment = crewMapper.selectCrewCommentById(crew_comment_id);
+        if (comment == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "댓글이 존재하지 않습니다.");
+        }
 
-        if(token_id == writerId) {
-            crewMapper.deleteCrewCommentRow(param);
+        int writerId = comment.getMember_id();
+
+        if (token_id == writerId) {
+            Map<String, Object> params = new HashMap<>();
+            params.put("crew_comment_id", crew_comment_id);
+            params.put("crew_post_id", crew_post_id);
+            params.put("member_id", token_id); // 현재 접속자
+
+            crewMapper.deleteCrewCommentRow(params);
         } else {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "작성자만 댓글 삭제가 가능합니다.");
         }
