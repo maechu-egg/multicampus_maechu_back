@@ -318,9 +318,11 @@
         UPDATE CrewPost
         SET crew_post_title = #{crew_post_title},
             crew_post_content = #{crew_post_content},
-            crew_post_img = #{crew_post_img},
             crew_post_like = #{crew_post_like},
             crew_post_state = #{crew_post_state}
+            <if test="crew_post_img != null">
+                , crew_post_img = #{crew_post_img}
+            </if>
         WHERE crew_id = #{crew_id} AND member_id = #{member_id} AND crew_post_id = #{crew_post_id};
     </update>
 
