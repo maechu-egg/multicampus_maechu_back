@@ -9,4 +9,5 @@ public class CrewCommentsResponseDTO {
     private String crew_comments_date;
     private int crew_post_id;
     private int member_id;
+    private String nickname;
 }

@@ -444,10 +444,11 @@
     <select id="selectCrewCommentsRow"
             parameterType="com.multipjt.multi_pjt.crew.domain.crew.CrewCommentsRequestDTO"
             resultType="com.multipjt.multi_pjt.crew.domain.crew.CrewCommentsResponseDTO">
-        SELECT *
-        FROM CrewComments
-        WHERE crew_post_id = #{crew_post_id}
-        ORDER BY crew_comments_date ASC;
+        SELECT cc.*, m.nickname
+        FROM CrewComments cc
+        LEFT JOIN Member m ON cc.member_id = m.member_id
+        WHERE cc.crew_post_id = #{crew_post_id}
+        ORDER BY cc.crew_comments_date ASC;
     </select>
 
     <!-- 크루 댓글 삭제 --> 
