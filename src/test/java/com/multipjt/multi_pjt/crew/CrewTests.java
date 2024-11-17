@@ -301,7 +301,11 @@ public class CrewTests {
         deleteComment.setCrew_comments_id(3);
         deleteComment.setMember_id(17);
 
-        crewMapper.deleteCrewCommentRow(deleteComment);
+        Map<String, Object> params = new HashMap<>();
+        params.put("crew_post_id", 10);
+        params.put("crew_comments_id", 3);
+        params.put("member_id", 17);
+        crewMapper.deleteCrewCommentRow(params);
         System.out.println("크루 게시판 댓글 삭제 완료");
     }
 }
