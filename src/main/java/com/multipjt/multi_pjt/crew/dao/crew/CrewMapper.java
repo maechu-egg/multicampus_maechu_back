@@ -98,7 +98,7 @@ public interface CrewMapper {
     public void updateCrewPostRow(CrewPostRequestDTO param);
 
     // 크루 게시물 삭제
-    public void deleteCrewPostRow(CrewPostRequestDTO param);
+    public void deleteCrewPostRow(Map<String, Object> params);
 
     // --------- 크루 게시물 좋아요 ---------
 

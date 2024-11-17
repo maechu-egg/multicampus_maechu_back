@@ -143,8 +143,10 @@
             parameterType="com.multipjt.multi_pjt.crew.domain.crew.CrewRequestDTO">
         UPDATE Crew
         SET crew_intro_post = #{crew_intro_post},
-            crew_intro_img = #{crew_intro_img},
             crew_name = #{crew_name}
+        <if test="crew_intro_img != null">
+            , crew_intro_img = #{crew_intro_img}
+        </if>
         WHERE crew_id = #{crew_id}
     </update>
 
@@ -326,7 +328,7 @@
     <!-- 크루 게시물 삭제 --> 
 
     <delete id="deleteCrewPostRow"
-            parameterType="com.multipjt.multi_pjt.crew.domain.crew.CrewPostRequestDTO">
+            parameterType="map">
         DELETE FROM CrewPost
         WHERE crew_id = #{crew_id} AND member_id = #{member_id} AND crew_post_id = #{crew_post_id};
     </delete>
@@ -442,10 +444,11 @@
     <select id="selectCrewCommentsRow"
             parameterType="com.multipjt.multi_pjt.crew.domain.crew.CrewCommentsRequestDTO"
             resultType="com.multipjt.multi_pjt.crew.domain.crew.CrewCommentsResponseDTO">
-        SELECT *
-        FROM CrewComments
-        WHERE crew_post_id = #{crew_post_id}
-        ORDER BY crew_comments_date ASC;
+        SELECT cc.*, m.nickname
+        FROM CrewComments cc
+        LEFT JOIN Member m ON cc.member_id = m.member_id
+        WHERE cc.crew_post_id = #{crew_post_id}
+        ORDER BY cc.crew_comments_date ASC;
     </select>
 
     <!-- 크루 댓글 삭제 --> 

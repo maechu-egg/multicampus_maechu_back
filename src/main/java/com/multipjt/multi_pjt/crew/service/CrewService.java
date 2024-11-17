@@ -187,21 +187,18 @@ public class CrewService {
                 }
 
                 // 크루 소개 이미지 저장
-                if (ImgFile != null && !ImgFile.isEmpty()) {
-                    String introFileName = System.currentTimeMillis() + "_intro_" + ImgFile.getOriginalFilename();
-                    Path introPath = Paths.get("src/main/resources/static/" + introFileName);
-                    try {
-                        Files.copy(ImgFile.getInputStream(), introPath, StandardCopyOption.REPLACE_EXISTING);
-                        System.out.println("Image uploaded successfully: " + introFileName);
-                        param.setCrewIntroImg(introFileName); // CrewRequestDTO에 파일 이름 설정
-                    } catch (IOException e) {
-                        throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "크루 소개 이미지 업로드 실패: ");
-                    }
+                String introFileName = System.currentTimeMillis() + "_intro_" + ImgFile.getOriginalFilename();
+                Path introPath = Paths.get("src/main/resources/static/" + introFileName);
+                try {
+                    Files.copy(ImgFile.getInputStream(), introPath, StandardCopyOption.REPLACE_EXISTING);
+                    System.out.println("Image uploaded successfully: " + introFileName);
+                    param.setCrewIntroImg(introFileName); // CrewRequestDTO에 파일 이름 설정
+                } catch (IOException e) {
+                    throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "크루 소개 이미지 업로드 실패: ");
                 }
-
-                // 크루 소개 업데이트 로직 수행
-                crewMapper.updateCrewIntroRow(param);
-            }   
+            }
+            // 크루 소개 업데이트 로직 수행
+            crewMapper.updateCrewIntroRow(param);
         } else {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "크루장만 크루 소개를 수정할 수 있습니다.");
         }
@@ -438,9 +435,25 @@ public class CrewService {
 
         int writerId = param.getMember_id();
 
-        if(token_id == writerId) {
-            // 게시물 이미지 저장
+        if (token_id == writerId) {
+            // 이미지 파일이 있는 경우에만 기존 이미지 파일 삭제 및 새 이미지 저장
             if (ImgFile != null && !ImgFile.isEmpty()) {
+                // 기존 이미지 파일 삭제
+                Map<String, Object> params = new HashMap<>();
+                params.put("crew_id", param.getCrew_id());
+                params.put("crew_post_id", param.getCrew_post_id());
+                String currentImgFileName = crewMapper.selectCrewPostRow(params).getCrew_post_img();
+                if (currentImgFileName != null && !currentImgFileName.isEmpty()) {
+                    Path currentImgPath = Paths.get("src/main/resources/static/" + currentImgFileName);
+                    try {
+                        Files.deleteIfExists(currentImgPath);
+                        System.out.println("Old image deleted successfully: " + currentImgFileName);
+                    } catch (IOException e) {
+                        throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "기존 이미지 삭제 실패");
+                    }
+                }
+
+                // 새 이미지 파일 저장
                 String postFileName = System.currentTimeMillis() + "_post_" + ImgFile.getOriginalFilename();
                 Path postPath = Paths.get("src/main/resources/static/" + postFileName);
                 try {
@@ -450,6 +463,8 @@ public class CrewService {
                 } catch (IOException e) {
                     throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "게시물 이미지 업로드 실패");
                 }
+            } else {
+               System.out.println("debug>>> Service: updateCrewPost + 기존 이미지로 설정");
             }
             crewMapper.updateCrewPostRow(param);
         } else {
@@ -458,15 +473,21 @@ public class CrewService {
     }
 
     // 크루 게시물 삭제
-    public void deleteCrewPost(CrewPostRequestDTO param, Integer token_id) {
+    public void deleteCrewPost(int crew_id, int crew_post_id, int token_id) {
         System.out.println("debug>>> Service: deleteCrewPost + " + crewMapper);
-        System.out.println("debug>>> Service: deleteCrewPost + " + param);
+        System.out.println("debug>>> Service: deleteCrewPost + " + crew_id);
+        System.out.println("debug>>> Service: deleteCrewPost + " + crew_post_id);
         System.out.println("debug>>> Service: deleteCrewPost + " + token_id);
 
-        int writerId = param.getMember_id();
+        Map<String, Object> params = new HashMap<>();
+        params.put("crew_id", crew_id);
+        params.put("crew_post_id", crew_post_id);
+        params.put("member_id", token_id);
+        
+        int writerId = crewMapper.selectCrewPostRow(params).getMember_id();
 
         if(token_id == writerId) {
-            crewMapper.deleteCrewPostRow(param);
+            crewMapper.deleteCrewPostRow(params);
         } else {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "작성자만 게시물 삭제가 가능합니다.");
         }

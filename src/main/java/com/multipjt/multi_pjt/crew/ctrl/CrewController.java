@@ -492,6 +492,7 @@ public class CrewController {
 
         System.out.println("client endpoint: /crew/post/update");
         System.out.println("debug>>> updateCrewPost + " + param);
+        System.out.println("debug>>> updateCrewPost 이미지 파일+ " + ImgFile);
 
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             String token = authHeader.substring(7);
@@ -512,20 +513,21 @@ public class CrewController {
     }
 
     // 크루 게시물 삭제
-    @DeleteMapping("/post/delete")
+    @DeleteMapping("/post/delete/{crewId}/{crewPostId}")
     public ResponseEntity<?> deleteCrewPost(
             @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader,
-            @RequestBody CrewPostRequestDTO param) {
+            @PathVariable("crewId") int crewId,
+            @PathVariable("crewPostId") int crewPostId) {
 
         System.out.println("client endpoint: /crew/post/delete");
-        System.out.println("debug>>> deleteCrewPost + " + param);
+        System.out.println("debug>>> deleteCrewPost + crewId: " + crewId + ", crewPostId: " + crewPostId);
 
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             String token = authHeader.substring(7);
             int token_id = jwtTokenProvider.getUserIdFromToken(token);
 
             try {
-                crewService.deleteCrewPost(param, token_id);
+                crewService.deleteCrewPost(crewId, crewPostId, token_id);
                 return ResponseEntity.noContent().build();
             } catch (ResponseStatusException e) {
                 Map<String, Object> errorResponse = new HashMap<>();
