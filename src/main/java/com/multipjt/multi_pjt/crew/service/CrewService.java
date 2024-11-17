@@ -473,15 +473,21 @@ public class CrewService {
     }
 
     // 크루 게시물 삭제
-    public void deleteCrewPost(CrewPostRequestDTO param, Integer token_id) {
+    public void deleteCrewPost(int crew_id, int crew_post_id, int token_id) {
         System.out.println("debug>>> Service: deleteCrewPost + " + crewMapper);
-        System.out.println("debug>>> Service: deleteCrewPost + " + param);
+        System.out.println("debug>>> Service: deleteCrewPost + " + crew_id);
+        System.out.println("debug>>> Service: deleteCrewPost + " + crew_post_id);
         System.out.println("debug>>> Service: deleteCrewPost + " + token_id);
 
-        int writerId = param.getMember_id();
+        Map<String, Object> params = new HashMap<>();
+        params.put("crew_id", crew_id);
+        params.put("crew_post_id", crew_post_id);
+        params.put("member_id", token_id);
+        
+        int writerId = crewMapper.selectCrewPostRow(params).getMember_id();
 
         if(token_id == writerId) {
-            crewMapper.deleteCrewPostRow(param);
+            crewMapper.deleteCrewPostRow(params);
         } else {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "작성자만 게시물 삭제가 가능합니다.");
         }
