@@ -196,6 +196,8 @@ public class CrewService {
                 } catch (IOException e) {
                     throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "크루 소개 이미지 업로드 실패: ");
                 }
+            } else {
+                System.out.println("debug>>> Service: updateCrewIntro + 기존 이미지로 설정");
             }
             // 크루 소개 업데이트 로직 수행
             crewMapper.updateCrewIntroRow(param);
