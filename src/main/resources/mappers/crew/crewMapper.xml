@@ -143,8 +143,10 @@
             parameterType="com.multipjt.multi_pjt.crew.domain.crew.CrewRequestDTO">
         UPDATE Crew
         SET crew_intro_post = #{crew_intro_post},
-            crew_intro_img = #{crew_intro_img},
             crew_name = #{crew_name}
+        <if test="crew_intro_img != null">
+            , crew_intro_img = #{crew_intro_img}
+        </if>
         WHERE crew_id = #{crew_id}
     </update>
 
@@ -316,9 +318,11 @@
         UPDATE CrewPost
         SET crew_post_title = #{crew_post_title},
             crew_post_content = #{crew_post_content},
-            crew_post_img = #{crew_post_img},
             crew_post_like = #{crew_post_like},
             crew_post_state = #{crew_post_state}
+            <if test="crew_post_img != null">
+                , crew_post_img = #{crew_post_img}
+            </if>
         WHERE crew_id = #{crew_id} AND member_id = #{member_id} AND crew_post_id = #{crew_post_id};
     </update>
 
@@ -326,7 +330,7 @@
     <!-- 크루 게시물 삭제 --> 
 
     <delete id="deleteCrewPostRow"
-            parameterType="com.multipjt.multi_pjt.crew.domain.crew.CrewPostRequestDTO">
+            parameterType="map">
         DELETE FROM CrewPost
         WHERE crew_id = #{crew_id} AND member_id = #{member_id} AND crew_post_id = #{crew_post_id};
     </delete>
@@ -440,19 +444,29 @@
     <!-- 크루 게시글 댓글 조회 --> 
 
     <select id="selectCrewCommentsRow"
-            parameterType="com.multipjt.multi_pjt.crew.domain.crew.CrewCommentsRequestDTO"
+            parameterType="int"
             resultType="com.multipjt.multi_pjt.crew.domain.crew.CrewCommentsResponseDTO">
-        SELECT *
-        FROM CrewComments
-        WHERE crew_post_id = #{crew_post_id}
-        ORDER BY crew_comments_date ASC;
+        SELECT cc.*, m.nickname
+        FROM CrewComments cc
+        LEFT JOIN Member m ON cc.member_id = m.member_id
+        WHERE cc.crew_post_id = #{crew_post_id}
+        ORDER BY cc.crew_comments_date ASC;
+    </select>
+
+    <!-- 특정 크루 댓글 조회 -->
+    <select id="selectCrewCommentById"
+            parameterType="int"
+            resultType="com.multipjt.multi_pjt.crew.domain.crew.CrewCommentsResponseDTO">
+        SELECT cc.*, m.nickname
+        FROM CrewComments cc
+        LEFT JOIN Member m ON cc.member_id = m.member_id
+        WHERE cc.crew_comments_id = #{crew_comment_id};
     </select>
 
     <!-- 크루 댓글 삭제 --> 
-
     <delete id="deleteCrewCommentRow"
-            parameterType="com.multipjt.multi_pjt.crew.domain.crew.CrewCommentsResponseDTO">
+            parameterType="map">
         DELETE FROM CrewComments
-        WHERE crew_post_id = #{crew_post_id} AND member_id = #{member_id} AND crew_comments_id = #{crew_comments_id};
+        WHERE crew_comments_id = #{crew_comment_id} AND crew_post_id = #{crew_post_id} AND member_id = #{member_id};
     </delete>
 </mapper>

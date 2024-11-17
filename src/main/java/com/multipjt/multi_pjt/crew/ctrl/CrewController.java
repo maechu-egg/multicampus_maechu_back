@@ -513,20 +513,21 @@ public class CrewController {
     }
 
     // 크루 게시물 삭제
-    @DeleteMapping("/post/delete")
+    @DeleteMapping("/post/delete/{crewId}/{crewPostId}")
     public ResponseEntity<?> deleteCrewPost(
             @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader,
-            @RequestBody CrewPostRequestDTO param) {
+            @PathVariable("crewId") int crewId,
+            @PathVariable("crewPostId") int crewPostId) {
 
         System.out.println("client endpoint: /crew/post/delete");
-        System.out.println("debug>>> deleteCrewPost + " + param);
+        System.out.println("debug>>> deleteCrewPost + crewId: " + crewId + ", crewPostId: " + crewPostId);
 
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             String token = authHeader.substring(7);
             int token_id = jwtTokenProvider.getUserIdFromToken(token);
 
             try {
-                crewService.deleteCrewPost(param, token_id);
+                crewService.deleteCrewPost(crewId, crewPostId, token_id);
                 return ResponseEntity.noContent().build();
             } catch (ResponseStatusException e) {
                 Map<String, Object> errorResponse = new HashMap<>();
@@ -655,20 +656,22 @@ public class CrewController {
     }
 
     // 크루 댓글 삭제
-    @DeleteMapping("/comment/delete")
+    @DeleteMapping("/comment/delete/{crew_post_id}/{crew_comment_id}")
     public ResponseEntity<?> deleteCrewComment(
             @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader,
-            @RequestBody CrewCommentsRequestDTO param) {
+            @PathVariable("crew_comment_id") int crew_comment_id,
+            @PathVariable("crew_post_id") int crew_post_id) {
 
         System.out.println("client endpoint: /crew/comment/delete");
-        System.out.println("debug>>> deleteCrewComment + " + param);
+        System.out.println("debug>>> deleteCrewComment + " + crew_comment_id);
+        System.out.println("debug>>> deleteCrewComment + " + crew_post_id);
 
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             String token = authHeader.substring(7);
             int token_id = jwtTokenProvider.getUserIdFromToken(token);
 
             try {
-                crewService.deleteCrewComment(param, token_id);
+                crewService.deleteCrewComment(crew_comment_id, crew_post_id, token_id);
                 return ResponseEntity.noContent().build();
             } catch (ResponseStatusException e) {
                 Map<String, Object> errorResponse = new HashMap<>();

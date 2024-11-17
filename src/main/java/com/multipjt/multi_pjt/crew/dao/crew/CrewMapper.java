@@ -98,7 +98,7 @@ public interface CrewMapper {
     public void updateCrewPostRow(CrewPostRequestDTO param);
 
     // 크루 게시물 삭제
-    public void deleteCrewPostRow(CrewPostRequestDTO param);
+    public void deleteCrewPostRow(Map<String, Object> params);
 
     // --------- 크루 게시물 좋아요 ---------
 
@@ -134,9 +134,14 @@ public interface CrewMapper {
     // 크루 댓글 작성
     public void insertCrewCommentRow(CrewCommentsRequestDTO param);
 
-    // 크루 게시판 게시물 댓글 조회
+    // 크루 게시물 댓글 조회
     public List<CrewCommentsResponseDTO> selectCrewCommentsRow(int crew_post_id);
 
-    // 크루 게시판 게시물 댓글 삭제
-    public void deleteCrewCommentRow(CrewCommentsRequestDTO param);
+    // 특정 크루 댓글 조회
+    public CrewCommentsResponseDTO selectCrewCommentById(int crew_comment_id);
+
+    // 크루 게시물 댓글 삭제
+    public void deleteCrewCommentRow(Map<String, Object> params);
+
+    
 }
