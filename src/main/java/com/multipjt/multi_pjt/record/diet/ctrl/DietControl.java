@@ -154,19 +154,19 @@ public class DietControl {
             try {
                 String token = authHeader.substring(7); // "Bearer " 접두사 제거
                 Integer member_id = jwtTokenProvider.getUserIdFromToken(token); // 토큰에서 사용자 ID 추출
-    
+                Integer diet_id = null;
                 System.out.println("debug >>> member_id : " + member_id);
                 System.out.println("debug >>> token : " + token);
     
                 map.put("member_id", member_id);
     
                 // 1. 식단 조회
-                DietResponseDTO dietResult = dietService.dietFindAllRow(map);
+                DietResponseDTO dietResult = dietService.dietFindRow(map);
                 System.out.println("dietResult >> " + dietResult);
     
                 if (dietResult != null) {
                     // 2. 식품 조회
-                    Integer diet_id = dietResult.getDiet_id(); // diet_id 가져오기
+                    diet_id = dietResult.getDiet_id(); // diet_id 가져오기
                     Map<String,Object> result = new HashMap<>();
                     result.put("diet_id", diet_id);
                     List<ItemResponseDTO> itemsResult = dietService.itemFindAllRow(diet_id);
@@ -189,84 +189,31 @@ public class DietControl {
         }
     }
 
-    // @PostMapping("/get/diet")
-    // public ResponseEntity<Object> findDiet(@RequestBody Map<String,Object> map,
-    // @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
-    //     System.out.println("class endPoint >> " + "/record/diet/get/diet");
-
-    //     if (authHeader != null && authHeader.startsWith("Bearer ")) {
-    //             try{
-    //                 String token = authHeader.substring(7); // "Bearer " 접두사 제거
-    //                 Integer member_id = jwtTokenProvider.getUserIdFromToken(token); // 토큰에서 사용자 ID 추출
-
-    //                 System.out.println("debug >>> member_id : " + member_id);
-    //                 System.out.println("debug >>> token : " + token);
-    
-    //                 map.put("member_id",member_id);
-
-    //                 DietResponseDTO result = dietService.dietFindAllRow(map);
-    //                 System.out.println("result >>" + result);
-            
-    //                 if(result != null){
-    //                     // 값이 있을 때
-    //                     return new ResponseEntity<>(result,HttpStatus.OK);
-    //                 } else{
-    //                     // 값이 없을 때
-    //                     return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    //                 }
-    //             } catch(Exception e){
-    //                     // 서버 내부 오류 발생
-    //                     System.out.println("서버 오류 발생: " + e.getMessage());
-    //                     return new ResponseEntity<>("서버 오류 발생", HttpStatus.INTERNAL_SERVER_ERROR);
-    //             }
-    //     } else {
-    //         // 인증 실패
-    //         return new ResponseEntity<>("인증실패",HttpStatus.UNAUTHORIZED); 
-    //     }
-    // }
-
-    // // 식품 조회
-    // // 일일 식단 조회를 통해 식단 번호를 알고 있는 상태
-    // // 이 엔드포인트를 통해 식품 번호를 알 수 있게 됨
-    // @GetMapping("/get/items")
-    // public ResponseEntity<Object> findDietItems(@RequestParam(name = "diet_id") Integer diet_id) {
-    //     System.out.println("class endPoint >> " + "/record/diet/get/items");
-    //     List<ItemResponseDTO> result = dietService.itemFindAllRow(diet_id);
-    //     System.out.println("result >>" + result);
-    //     try{
-    //         if(!result.isEmpty()){
-    //             // 값이 있을 때
-    //             return new ResponseEntity<>(result,HttpStatus.OK);
-    //         } else{
-    //             // 값이 없을 때
-    //             return new ResponseEntity<>(result,HttpStatus.NOT_FOUND);
-    //         }
-    //     } catch(Exception e){
-    //             // 서버 내부 오류 발생
-    //             System.out.println("서버 오류 발생: " + e.getMessage());
-    //             return new ResponseEntity<>("서버 오류 발생", HttpStatus.INTERNAL_SERVER_ERROR);
-    //     }
-    // }
-
     // 식단 수정
     // 일일 식단 조회를 통해 식단 번호를 알고 있는 상태
     // 식사타입만 변경 가능
     // 식단 조회를 통해 식단 타입들을 알고 있는 상태
     @PutMapping("/update/meal")
-    public ResponseEntity<Object> mealUpdate(@RequestBody DietRequestDTO dietRequestDTO) {
+    public ResponseEntity<Object> mealUpdate(@RequestBody Map<String, Object> map) {
         System.out.println("class endPoint >> " + "/record/diet/update/meal");
-        int result = dietService.mealUpdateRow(dietRequestDTO);
-        System.out.println("result >>" + result);
-        if(result == 1){
-            // 수정 성공
-            return new ResponseEntity<>(result,HttpStatus.OK);
-        } else{
-            // 수정 실패
-            return new ResponseEntity<>("수정 실패",HttpStatus.BAD_REQUEST);
+    
+        List<DietResponseDTO> list = dietService.dietFindAllRow(map);
+    
+        for (DietResponseDTO i : list) {
+            if (i.getMeal_type().equalsIgnoreCase(map.get("meal_type").toString())) {
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT); // 동일한 meal_type이 있는 경우 중단
+            }
+        }
+    
+        int result = dietService.mealUpdateRow(map);
+        System.out.println("result >> " + result);
+    
+        if (result == 1) {
+            return new ResponseEntity<>(result, HttpStatus.OK); // 수정 성공
+        } else {
+            return new ResponseEntity<>("수정 실패", HttpStatus.BAD_REQUEST); // 수정 실패
         }
     }
-
-
 
     // 식품 수정, 사용자는 양만 변경 가능, 그러면 영양성분 또한 그대로 반영, 식품은 변경 불가능
     // 이거는 그냥 구해져있는 영양성분에 수정된 칼로리 / 현재 칼로리 한 비율 다 곱해주면 되겠네
@@ -315,7 +262,7 @@ public class DietControl {
             return new ResponseEntity<>(result,HttpStatus.OK);
         } else{
             // 삭제 실패
-            return new ResponseEntity<>(result,HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
     }
 
