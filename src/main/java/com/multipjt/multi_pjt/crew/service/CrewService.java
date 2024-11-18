@@ -12,6 +12,7 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -318,7 +319,8 @@ public class CrewService {
     }
 
     // 크루 게시물 전체 조회 (페이지네이션 적용)
-    public Page<CrewPostResponseDTO> getCrewPostList(Integer crewId, Integer token_id, Pageable pageable) {
+    // public Page<CrewPostResponseDTO> getCrewPostList(Integer crewId, Integer token_id, Pageable pageable) {
+    public Page<CrewPostResponseDTO> getCrewPostList(Integer crewId, Integer token_id, Integer offset, Integer size) {
         System.out.println("debug>>> Service: getCrewPostList + " + crewMapper);
         System.out.println("debug>>> Service: getCrewPostList + " + crewId);
         System.out.println("debug>>> Service: getCrewPostList + " + token_id);
@@ -329,17 +331,19 @@ public class CrewService {
         if (isActiveMember) {
             Map<String, Object> params = new HashMap<>();
             params.put("crew_id", crewId); // crew_id를 Map에 추가
-            params.put("pageable", pageable); // pageable을 Map에 추가
+            // params.put("pageable", pageable); // pageable을 Map에 추가
+            params.put("offset", offset);
+            params.put("size", size);
 
             List<CrewPostResponseDTO> crewPostList = crewMapper.selectCrewPostListRow(params);
-            
             // 이미지 URL 설정
             crewPostList.forEach(post -> {
                 if (post != null && post.getCrew_post_img() != null) {
                     post.setCrew_post_img(getImageUrl(post.getCrew_post_img()));
                 }
             });
-
+            int pageNumber = offset / size;
+            Pageable pageable = PageRequest.of(pageNumber, size);
             return new PageImpl<>(crewPostList, pageable, crewMapper.selectCrewPostListCountRow(crewId));
         } else {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "크루원만 게시물 조회가 가능합니다.");
