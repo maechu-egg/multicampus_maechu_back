@@ -542,12 +542,9 @@
         JOIN 
             Member m ON p.member_id = m.member_id
         WHERE
-            p.post_up_sport = #{post_up_sport}
-            AND 
              p.post_sports_keyword = #{post_sports_keyword}
         GROUP BY 
-            p.post_id, p.post_title, p.post_sport, p.post_sports_keyword, p.post_date, p.post_up_sport,
-            p.post_like_counts, p.post_views, m.nickname, m.member_id
+            p.post_id
         ORDER BY 
             p.post_date DESC
         LIMIT #{size} OFFSET #{offset}) Posts, (SELECT @rownum := 0 )r
@@ -594,7 +591,7 @@
             p.post_like_counts, p.post_views, m.nickname, m.member_id
         ORDER BY 
             p.post_like_counts DESC
-        LIMIT 4
+        LIMIT 10
     
     </select>
 
@@ -628,7 +625,7 @@
             p.post_like_counts, p.post_views, m.nickname, m.member_id
         ORDER BY 
             p.post_date DESC
-        LIMIT 4
+        LIMIT 10
     </select>
 
       <!-- 사용자 작성 게시글 -->
