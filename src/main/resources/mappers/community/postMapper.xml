@@ -235,11 +235,11 @@
     <select id="countPosts" parameterType="java.util.HashMap" resultType="int">
         SELECT COUNT(*)
         FROM Posts p
-        WHERE 1=1
-            <if test="post_up_sport != null">
+        WHERE  1=1 
+           <if test="post_up_sport != null and post_up_sport != ''">
                 AND p.post_up_sport= #{post_up_sport}
             </if>
-            <if test="post_sport != null">
+           <if test="post_sport != null and post_sport != ''">
                 AND p.post_sport = #{post_sport}
             </if> 
 

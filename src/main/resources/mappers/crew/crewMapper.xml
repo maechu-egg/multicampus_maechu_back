@@ -262,7 +262,7 @@
         LEFT JOIN Member m ON cp.member_id = m.member_id
         WHERE cp.crew_id = #{crew_id}
         ORDER BY cp.crew_post_date DESC
-        LIMIT #{pageable.pageSize} OFFSET #{pageable.offset};
+        LIMIT #{size} OFFSET #{offset};
     </select>
 
     <!-- 크루 게시판 게시물 전체 조회 개수 --> 

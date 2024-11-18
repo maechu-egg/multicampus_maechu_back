@@ -99,6 +99,7 @@ public class PostController {
             System.out.println("post_sport" + post_sport);
             List<PostResponseDTO> allList = postService.getAllPagePosts(map);
            
+            System.out.println(allList);
             int totalpage = postService.countPosts(map);
             
             System.out.println("totalpage = " + totalpage);
@@ -116,8 +117,8 @@ public class PostController {
 
 
         // 검색 기능
-        @GetMapping("/posts/search")
-        public ResponseEntity<Map<String, Object>> PostSearch(@RequestParam("keyword") String keyword,
+        @GetMapping("/posts/search/{searchTerm}")
+        public ResponseEntity<Map<String, Object>> PostSearch(@PathVariable("searchTerm") String keyword,
                                                                 @RequestParam(name="page" ,defaultValue = "1") int page,
                                                                 @RequestParam(name="size" , defaultValue = "10") int size,
                                                                 @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader
@@ -162,6 +163,7 @@ public class PostController {
                    
                 }
                 HttpStatus status = (searchList == null || searchList.isEmpty()) ? HttpStatus.NOT_FOUND : HttpStatus.OK;
+                response.put("status", status);
                 return new ResponseEntity<>(response, status);
         }
         
