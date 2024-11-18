@@ -391,13 +391,20 @@
     <!-- 회원 가입 / 활동 없는 회원 판단 -->
     <select id="isNewMember" parameterType="int" resultType="int">
         <![CDATA[
-            SELECT COUNT(*)
-            FROM Member m
-            LEFT JOIN UserActivity ua ON m.member_id = ua.member_id
-            WHERE m.member_id = #{member_id}
-                AND (m.regdate = CURDATE() 
-                    OR (ua.activity_date <= DATE_SUB(CURDATE(), INTERVAL 7 DAY) 
-                        OR ua.activity_date IS NULL))
+        SELECT COUNT(*)
+        FROM Member m
+        LEFT JOIN UserActivity ua ON m.member_id = ua.member_id
+        WHERE m.member_id = #{member_id}
+        AND (
+            m.regdate = CURDATE()
+            OR (
+                (SELECT MAX(ua_sub.activity_date)
+                FROM UserActivity ua_sub
+                WHERE ua_sub.member_id = #{member_id}
+                ) <= DATE_SUB(CURDATE(), INTERVAL 7 DAY)
+            )
+            OR ua.activity_date IS NULL
+        );
 
         ]]>
     </select>

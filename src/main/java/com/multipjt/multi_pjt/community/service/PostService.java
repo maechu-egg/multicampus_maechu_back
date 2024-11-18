@@ -193,7 +193,7 @@ public class PostService {
             System.out.println("size() = " + interestSport.size());
             System.out.println("관심 운동 1 - " + interestSport.get(0));
             RCS.put("post_sport", interestSport.get(0));
-            RCS.put("limit", 6);
+            RCS.put("limit", 5);
             recPosts = postMapper.newMemberRCPost(RCS);
            
         }else if(interestSport.size() == 2){
@@ -205,13 +205,13 @@ public class PostService {
             if(upPost1.equals(post_up_sport) && upPost2.equals(post_up_sport)){
                 RCS.put("limit", 3);
                 recPosts.addAll(postMapper.newMemberRCPost(RCS));
-                RCS.put("limit",3);
+                RCS.put("limit",2);
                 recPosts.addAll(postMapper.newMemberRCPost(RCS));
             }else if(upPost1.equals(post_up_sport)){
-                RCS.put("limit", 6);
+                RCS.put("limit", 5);
                 recPosts.addAll(postMapper.newMemberRCPost(RCS));
             }else if(upPost2.equals(post_up_sport)){
-                RCS.put("limit", 6);
+                RCS.put("limit", 5);
                 recPosts.addAll(postMapper.newMemberRCPost(RCS));
             }
             
@@ -223,7 +223,7 @@ public class PostService {
             if(upPost1.equals(post_up_sport) && upPost2.equals(post_up_sport) && upPost3.equals(post_up_sport)){
                 RCS.put("limit", 3);
                 recPosts.addAll(postMapper.newMemberRCPost(RCS));
-                RCS.put("limit",2);
+                RCS.put("limit",1);
                 recPosts.addAll(postMapper.newMemberRCPost(RCS));
                 RCS.put("limit",1);
                 recPosts.addAll(postMapper.newMemberRCPost(RCS));
@@ -231,26 +231,26 @@ public class PostService {
             }else if(upPost1.equals(post_up_sport) && upPost2.equals(post_up_sport)){
                 RCS.put("limit", 3);
                 recPosts.addAll(postMapper.newMemberRCPost(RCS));
-                RCS.put("limit",3);
+                RCS.put("limit",2);
                 recPosts.addAll(postMapper.newMemberRCPost(RCS));
             }else if(upPost2.equals(post_up_sport) && upPost3.equals(post_up_sport)){
                 RCS.put("limit", 3);
                 recPosts.addAll(postMapper.newMemberRCPost(RCS));
-                RCS.put("limit",3);
+                RCS.put("limit",2);
                 recPosts.addAll(postMapper.newMemberRCPost(RCS));
             }else if(upPost1.equals(post_up_sport) && upPost3.equals(post_up_sport)){
                 RCS.put("limit", 3);
                 recPosts.addAll(postMapper.newMemberRCPost(RCS));
-                RCS.put("limit",3);
+                RCS.put("limit",2);
                 recPosts.addAll(postMapper.newMemberRCPost(RCS));
             }else if(upPost1.equals(post_up_sport)){
-                RCS.put("limit", 6);
+                RCS.put("limit", 5);
                 recPosts.addAll(postMapper.newMemberRCPost(RCS));
             }else if(upPost2.equals(post_up_sport)){
-                RCS.put("limit", 6);
+                RCS.put("limit", 5);
                 recPosts.addAll(postMapper.newMemberRCPost(RCS));
             }else if(upPost3.equals(post_up_sport)){
-                RCS.put("limit", 6);
+                RCS.put("limit", 5);
                 recPosts.addAll(postMapper.newMemberRCPost(RCS));
             }
         }
@@ -324,17 +324,17 @@ public class PostService {
                 next.put("limit", 3);
                 recommendPost.addAll(postMapper.findRCPosts(next));
                 next.put("post_sport",soPost2 );
-                next.put("limit", 3);
+                next.put("limit", 2);
                 recommendPost.addAll(postMapper.findRCPosts(next));
             }else if(upPost1.equals(post_up_sport)){
                 next.put("post_sport",soPost1 );
                 next.put("post_up_sport",upPost1 );
-                next.put("limit", 6);
+                next.put("limit", 5);
                 recommendPost.addAll(postMapper.findRCPosts(next));
             }else if(upPost2.equals(post_up_sport)){
                 next.put("post_sport",soPost2 );
                 next.put("post_up_sport",upPost2 );
-                next.put("limit", 6);
+                next.put("limit", 5);
                 recommendPost.addAll(postMapper.findRCPosts(next));
             }
             
@@ -352,7 +352,7 @@ public class PostService {
                 next.put("limit", 3);
                 recommendPost.addAll(postMapper.findRCPosts(next));
                 next.put("post_sport",soPost2 );
-                next.put("limit", 2);
+                next.put("limit", 1);
                 recommendPost.addAll(postMapper.findRCPosts(next));
                 next.put("post_sport",soPost3 );
                 next.put("limit", 1);
@@ -364,7 +364,7 @@ public class PostService {
                 next.put("limit", 3);
                 recommendPost.addAll(postMapper.findRCPosts(next));
                 next.put("post_sport",soPost2 );
-                next.put("limit", 3);
+                next.put("limit", 2);
                 recommendPost.addAll(postMapper.findRCPosts(next));
 
             }else if(upPost2.equals(post_up_sport) && upPost3.equals(post_up_sport)){
@@ -373,7 +373,7 @@ public class PostService {
                 next.put("limit", 3);
                 recommendPost.addAll(postMapper.findRCPosts(next));
                 next.put("post_sport",soPost3 );
-                next.put("limit", 3);
+                next.put("limit", 2);
                 recommendPost.addAll(postMapper.findRCPosts(next));
             }else if(upPost1.equals(post_up_sport) && upPost3.equals(post_up_sport)){
                 next.put("post_sport",soPost1 );
@@ -381,22 +381,22 @@ public class PostService {
                 next.put("limit", 3);
                 recommendPost.addAll(postMapper.findRCPosts(next));
                 next.put("post_sport",soPost3 );
-                next.put("limit", 3);
+                next.put("limit", 2);
                 recommendPost.addAll(postMapper.findRCPosts(next));
             }else if(upPost1.equals(post_up_sport)){
                 next.put("post_sport",soPost1 );
                 next.put("post_up_sport",upPost1 );
-                next.put("limit", 6);
+                next.put("limit", 5);
                 recommendPost.addAll(postMapper.findRCPosts(next));
             }else if(upPost2.equals(post_up_sport)){
                 next.put("post_sport",soPost2 );
                 next.put("post_up_sport",upPost2 );
-                next.put("limit", 6);
+                next.put("limit", 5);
                 recommendPost.addAll(postMapper.findRCPosts(next));
             }else if(upPost3.equals(post_up_sport)){
                 next.put("post_sport",soPost3 );
                 next.put("post_up_sport",upPost3 );
-                next.put("limit", 6);
+                next.put("limit", 5);
                 recommendPost.addAll(postMapper.findRCPosts(next));
             }
 
