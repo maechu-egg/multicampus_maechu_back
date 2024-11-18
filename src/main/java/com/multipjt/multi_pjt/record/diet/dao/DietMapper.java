@@ -19,8 +19,12 @@ public interface DietMapper {
     public int itemInsert(ItemRequestDTO requestDTO);
     // diet_id 찾기
     public Integer findDietNumber(Map<String,Object> map);
+    // 특정 meal DietRecords 출력
+    public DietResponseDTO dietFind(Map<String,Object> map);
+
     // DietRecords 출력
-    public DietResponseDTO dietFindAll(Map<String,Object> map);
+    public List<DietResponseDTO> dietFindAll(Map<String,Object> map);
+
     // DietItems 출력
     public ArrayList<ItemResponseDTO> itemFindAll(Integer dietId);
     // DietRecords 삭제
@@ -34,7 +38,7 @@ public interface DietMapper {
 
 //    public Map<String,String> getMemberInfo(Integer memberId);
 
-    public int mealUpdate(DietRequestDTO dietRequestDTO);
+    public int mealUpdate(Map<String,Object> map);
 
     public List<Map<String,Object>> getMonthDiet(Map<String,Object> map);
 

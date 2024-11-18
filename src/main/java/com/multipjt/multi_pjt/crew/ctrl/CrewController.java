@@ -372,7 +372,10 @@ public class CrewController {
     public ResponseEntity<?> getCrewPostList(
             @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader,
             @PathVariable("crewId") Integer crewId,
-            @PageableDefault(size = 10) Pageable pageable) { // 기본 페이지 크기 설정
+            // @PageableDefault(size = 10) Pageable pageable,
+            @RequestParam(name ="currentPage") Integer page,
+            @RequestParam(name ="size") Integer size
+            ) { // 기본 페이지 크기 설정
 
         System.out.println("client endpoint: /crew/post/list/" + crewId);
         System.out.println("debug>>> getCrewPostList + " + crewId);
@@ -380,9 +383,11 @@ public class CrewController {
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             String token = authHeader.substring(7);
             int token_id = jwtTokenProvider.getUserIdFromToken(token);
-
+            
+            int offset = (page - 1 ) * size ;
             try {
-                Page<CrewPostResponseDTO> crewPostPage = crewService.getCrewPostList(crewId, token_id, pageable);
+                // Page<CrewPostResponseDTO> crewPostPage = crewService.getCrewPostList(crewId, token_id, pageable);
+                Page<CrewPostResponseDTO> crewPostPage = crewService.getCrewPostList(crewId, token_id, offset, size);
                 return ResponseEntity.ok(crewPostPage);
             } catch (ResponseStatusException e) {
                 Map<String, Object> errorResponse = new HashMap<>();

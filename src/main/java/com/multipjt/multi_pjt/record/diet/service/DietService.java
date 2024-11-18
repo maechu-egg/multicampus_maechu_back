@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.multipjt.multi_pjt.record.diet.dao.DietMapper;
-import com.multipjt.multi_pjt.record.diet.domain.DietRequestDTO;
 import com.multipjt.multi_pjt.record.diet.domain.DietResponseDTO;
 import com.multipjt.multi_pjt.record.diet.domain.ItemRequestDTO;
 import com.multipjt.multi_pjt.record.diet.domain.ItemResponseDTO;
@@ -32,10 +31,14 @@ public class DietService {
         return dietMapper.findDietNumber(map);
     }
 
-    public DietResponseDTO dietFindAllRow(Map<String,Object> map){
-        return dietMapper.dietFindAll(map);
+    public DietResponseDTO dietFindRow(Map<String,Object> map){
+        return dietMapper.dietFind(map);
     }
         
+    public List<DietResponseDTO> dietFindAllRow(Map<String,Object> map){
+        return dietMapper.dietFindAll(map);
+    }
+
     public List<ItemResponseDTO> itemFindAllRow(Integer diet_id){
         return dietMapper.itemFindAll(diet_id);
     }
@@ -56,8 +59,8 @@ public class DietService {
         return dietMapper.mealNutCheck(map);
     }
 
-    public int mealUpdateRow(DietRequestDTO dietRequestDTO){
-        return dietMapper.mealUpdate(dietRequestDTO);
+    public int mealUpdateRow(Map<String,Object> map){
+        return dietMapper.mealUpdate(map);
     }
     public List<Map<String,Object>> getMonthDietRow(Map<String,Object> map){
         return dietMapper.getMonthDiet(map);
