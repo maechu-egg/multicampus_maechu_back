@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.multipjt.multi_pjt.badge.dao.UserActivityRecordMapper;
 import com.multipjt.multi_pjt.jwt.JwtTokenProvider;
 import com.multipjt.multi_pjt.record.diet.domain.DietRequestDTO;
 import com.multipjt.multi_pjt.record.diet.domain.DietResponseDTO;
@@ -39,6 +40,8 @@ public class DietControl {
     @Autowired
     private JwtTokenProvider jwtTokenProvider;
 
+    @Autowired
+    private UserActivityRecordMapper userActivityRecordMapper;
 
     //규칙 : 한 끼에 같은 식품 중복 작성 불가, 하루에 끼니 유형은 하나씩만 가능
     // 식단 수정 기능은 넣지 않음, 식단 기입 여부는 식품 기록 여부에 따라 결정
@@ -60,7 +63,7 @@ public class DietControl {
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             String token = authHeader.substring(7); // "Bearer " 접두사 제거
             Integer member_id = jwtTokenProvider.getUserIdFromToken(token); // 토큰에서 사용자 ID 추출
-        
+                        
             Map<String,Object> map = new HashMap<>();
             map.put("member_id", member_id);
             map.put("meal_type", meal_type);
@@ -74,6 +77,16 @@ public class DietControl {
             System.out.println("debug >>> dietNumber : " + dietNumber);
 
             if(result == 1){
+
+                Map<String,Object> point = new HashMap<>();
+                System.out.println("debug >>> point insert start !!");
+                
+                point.put("activityType","diet");
+                point.put("memberId",member_id);
+                userActivityRecordMapper.insertActivityAndUpdatePoints(point);
+
+                System.out.println("debug >>> point insert end !!");
+                
                 // 추가 성공
                 return new ResponseEntity<>(dietNumber,HttpStatus.OK);
             } else{

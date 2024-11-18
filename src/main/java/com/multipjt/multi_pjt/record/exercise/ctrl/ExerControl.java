@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpHeaders;
 
+import com.multipjt.multi_pjt.badge.dao.UserActivityRecordMapper;
 import com.multipjt.multi_pjt.jwt.JwtTokenProvider;
 
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -42,8 +43,11 @@ public class ExerControl {
     @Autowired
     private JwtTokenProvider jwtTokenProvider;
 
-    //규칙 : 세트는 칼로리 계산에 포함되지 않음, 하루에 같은 운동 여러번 가능(운동 번호를 통해 순서 구분), 세트 기입은 선택 사항
+    @Autowired
+    private UserActivityRecordMapper userActivityRecordMapper;
 
+
+    //규칙 : 세트는 칼로리 계산에 포함되지 않음, 하루에 같은 운동 여러번 가능(운동 번호를 통해 순서 구분), 세트 기입은 선택 사항
 
     // 운동 추가
     @PostMapping("/insert/type")
@@ -52,12 +56,23 @@ public ResponseEntity<Object> exerInsert(@RequestBody ExerRequestDTO exerRequest
     System.out.println("class endPoint >> " + "/record/exercise/insert/type");
     if (authHeader != null && authHeader.startsWith("Bearer ")) {
         String token = authHeader.substring(7); // "Bearer " 접두사 제거
-        exerRequestDTO.setMember_id(jwtTokenProvider.getUserIdFromToken(token));
 
+        Integer member_id = jwtTokenProvider.getUserIdFromToken(token);        
+        exerRequestDTO.setMember_id(member_id);
+        
         try {
             Integer exerciseId = exerService.processExerciseInsertion(exerRequestDTO);
             
             System.out.println("debug >>> exerciseId : " + exerciseId);
+
+            Map<String,Object> point = new HashMap<>();
+            System.out.println("debug >>> point insert start !!");
+
+            point.put("activityType","exercise");
+            point.put("memberId",member_id);
+            userActivityRecordMapper.insertActivityAndUpdatePoints(point);
+
+            System.out.println("debug >>> point insert end !!");
 
             return new ResponseEntity<>(exerciseId, HttpStatus.OK);
         } catch (Exception e) {
