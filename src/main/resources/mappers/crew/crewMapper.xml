@@ -257,10 +257,12 @@
     <select id="selectCrewPostListRow"
             parameterType="map"
             resultType="com.multipjt.multi_pjt.crew.domain.crew.CrewPostResponseDTO">
-        SELECT cp.*, m.nickname
+        SELECT cp.*, m.nickname, COUNT(cc.crew_comments_id) AS comment_count
         FROM CrewPost cp
         LEFT JOIN Member m ON cp.member_id = m.member_id
+        LEFT JOIN CrewComments cc ON cp.crew_post_id = cc.crew_post_id
         WHERE cp.crew_id = #{crew_id}
+        GROUP BY cp.crew_post_id
         ORDER BY cp.crew_post_date DESC
         LIMIT #{size} OFFSET #{offset};
     </select>
