@@ -18,7 +18,6 @@ import com.multipjt.multi_pjt.user.domain.mypage.ProfileRequestDTO;
 import com.multipjt.multi_pjt.user.domain.mypage.ProfileResponseDTO;
 import com.multipjt.multi_pjt.user.service.ProfileService;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 
 @RestController
@@ -58,6 +57,7 @@ public class ProfileController {
             
             // 로그 출력
             logger.info("Extracted member_id from token: {}", userId);
+            logger.info("Extracted profileRequest from token: {}", profileRequestDTO);
 
             // 사용자 정보 수정 처리
             ResponseEntity<String> response = profileService.updateProfile(userId, profileRequestDTO); // 서비스 메서드 호출
@@ -66,14 +66,13 @@ public class ProfileController {
         }
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized");
     }
-    @GetMapping("/")
+    @GetMapping("/info")
     public ResponseEntity<ProfileResponseDTO> getProfile( @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             String token = authHeader.substring(7); // "Bearer " 접두사 제거
             int userId = jwtTokenProvider.getUserIdFromToken(token); // 토큰에서 사용자 ID 추출
+            System.out.println("프로필 get 요청 멤버아이디 : " + userId);
             
-            // 로그 출력
-            logger.info("Extracted member_id from token 프로필 조회시: {}", userId);
              // 사용자 정보 수정 처리
             ProfileResponseDTO response = profileService.getProfile(userId); // 서비스 메서드 호출
             if (response != null) {

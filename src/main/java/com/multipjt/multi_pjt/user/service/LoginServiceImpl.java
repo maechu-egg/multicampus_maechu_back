@@ -75,23 +75,6 @@ public class LoginServiceImpl implements UserDetailsService { // UserDetailsServ
 
     // 1. 회원가입 메서드 추가
     public ResponseEntity<String> registerUser(UserRequestDTO userRequestDTO, MultipartFile memberImgFile) {
-        // // 이메일 유효성 검사 프론트에서 처리함
-        // if (!isValidEmail(userRequestDTO.getEmail())) {
-        //     return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-        //                          .body("{\"Code\": \"INVALID_EMAIL\", \"Message\": \"유효하지 않은 이메일 형식입니다.\"}");
-        // }
-
-        // // 이메일 중복 확인
-        // if (existsByEmail(userRequestDTO.getEmail())) {
-        //     return ResponseEntity.status(HttpStatus.CONFLICT)
-        //                          .body("{\"Code\": \"EMAIL_ALREADY_EXISTS\", \"Message\": \"이미 존재하는 이메일입니다.\"}");
-        // }
-
-        // // 닉네임 중복 확인
-        // if (existsByNickname(userRequestDTO.getNickname())) {
-        //     return ResponseEntity.status(HttpStatus.CONFLICT)
-        //                          .body("{\"Code\": \"NICKNAME_ALREADY_EXISTS\", \"Message\": \"이미 존재하는 닉네임입니다.\"}");
-        // }
 
         // 비밀번호 암호화
         String encodedPassword = passwordEncoder.encode(userRequestDTO.getPassword());
@@ -357,17 +340,21 @@ public class LoginServiceImpl implements UserDetailsService { // UserDetailsServ
             logger.info("User info retrieved successfully for userId: {}", userId);
             // 이미지 URL 설정 (정적 파일 경로에 맞게 URL 생성)
             user.setMemberImg(getImageUrl(user.getMemberImg())); // 이미지 URL 설정
+            //user.setMemberImg(user.getMemberImg());
+            System.out.println(user);
         } else {
             logger.warn("User not found for userId: {}", userId);
         }
         return user;
     }
 
-    // 이미지 URL 생성 메서드
+    //이미지 URL 생성 메서드
     private String getImageUrl(String memberImg) {
-        return "/static/" + memberImg; // 정적 파일 경로에 맞게 URL 생성
+        if (memberImg != null && !memberImg.startsWith("/static/")) {
+            return "/static/" + memberImg; // 정적 파일 경로에 맞게 URL 생성
+        }
+        return memberImg; // 이미 경로가 포함된 경우 그대로 반환
     }
-
 
     
 

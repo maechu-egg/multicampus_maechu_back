@@ -54,13 +54,13 @@ public class ProfileService {
         }
     }
 
-    public ProfileResponseDTO getProfile(int member_id) {
-        ProfileResponseDTO profile = profileMapper.getUserById(member_id); 
+    public ProfileResponseDTO getProfile(int userId) {
+        ProfileResponseDTO profile = profileMapper.getUserById(userId); 
         if (profile != null) {
-            logger.info("User info retrieved successfully for userId: {}", member_id);
+            logger.info("User info retrieved successfully for userId: {}", userId);
             logger.info("User info retrieved successfully for profileUser: {}", profile);
         } else {
-            logger.warn("User not found for userId: {}", member_id);
+            logger.warn("User not found for userId: {}", userId);
         }
         return profile;
     }
