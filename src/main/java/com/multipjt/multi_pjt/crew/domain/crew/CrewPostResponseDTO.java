@@ -14,4 +14,5 @@ public class CrewPostResponseDTO {
     private int crew_id;
     private int member_id;
     private String nickname;
+    private int comment_count;
 }
