@@ -323,7 +323,7 @@ public class DietControl {
 
     // 특정 회원이 특정 날짜에 식사 타입별로 섭취한 영양성분 조회
     // record_date, member_id 필요
-    @GetMapping("/get/meal/nutrients")
+    @GetMapping("/get/day/nutrients")
         public ResponseEntity<Object> mealNutCheck(@RequestParam(name = "record_date") String record_date,
         @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
 
@@ -339,16 +339,86 @@ public class DietControl {
 
                 Map<String,Object> map = new HashMap<>();
                 map.put("member_id",member_id);
+                map.put("record_date",record_date);
+                
                 System.out.println("debug >>> map : " + map);
 
-                List<Map<String,Object>> result = dietService.mealNutCheckRow(map);
-                System.out.println("result >>" + result);
-                if(!result.isEmpty()){
+                // 1. TDEE와 권장 영양소 계산
+                Map<String, Object> recommendedNutrients = dietService.calculateTdeeRow((Integer)map.get("member_id"));
+                System.out.println("debug >>> recommendedNutrients " + recommendedNutrients);
+                System.out.println("TDEE 계산 완료");
+                
+                // 2. 오늘 섭취한 영양소 조회
+                List<Map<String, Object>> consumedNutrients = dietService.mealNutCheckRow(map);
+                System.out.println("debug >>> consumedNutrients " + consumedNutrients);
+                System.out.println("섭취한 영양소 조회 완료");
+
+                Map<String, Object> summary = new HashMap<>();
+                System.out.println("debug >>> summary " + summary);
+                System.out.println("결과 종합 시작");
+                // 권장 영양소 정보
+                summary.put("recommended", recommendedNutrients);
+                System.out.println("debug >>> summary " + summary);
+                System.out.println("권장 영양소 정보 추가 완료");
+
+                // 섭취한 영양소 총합 계산
+                int totalCalorie = 0;
+                int totalProtein = 0;
+                int totalFat = 0;
+                int totalCarb = 0;
+                int totalQuantity = 0;
+                if (consumedNutrients != null) {
+                    for (Map<String, Object> meal : consumedNutrients) {
+                        Object calories = meal.get("totalCalorie");
+                        Object protein = meal.get("totalProtein");
+                        Object fat = meal.get("totalFat");
+                        Object carb = meal.get("totalCarb");
+                        Object quantity = meal.get("totalQuantity");
+
+                        if (calories != null) totalCalorie += ((Number)calories).intValue();
+                        if (protein != null) totalProtein += ((Number)protein).intValue();
+                        if (fat != null) totalFat += ((Number)fat).intValue();
+                        if (carb != null) totalCarb += ((Number)carb).intValue();
+                        if (quantity != null) totalQuantity += ((Number)quantity).intValue();
+                    }
+                }
+                System.out.println("debug >>> totalCalorie " + totalCalorie);
+                System.out.println("debug >>> totalProtein " + totalProtein);
+                System.out.println("debug >>> totalFat " + totalFat);
+                System.out.println("debug >>> totalCarb " + totalCarb);
+                System.out.println("debug >>> totalQuantity " + totalQuantity);
+                System.out.println("섭취한 영양소 총합 계산 완료");
+                Map<String, Object> consumed = new HashMap<>();
+                consumed.put("calorie", totalCalorie);
+                consumed.put("protein", totalProtein);
+                consumed.put("fat", totalFat);
+                consumed.put("carb", totalCarb);
+                consumed.put("quantity", totalQuantity);
+                // 영양소 비율 계산 시작
+                if (totalCalorie > 0) {
+                    // 각 영양소가 기여하는 칼로리 계산
+                    double proteinCalories = totalProtein * 4.0;
+                    double fatCalories = totalFat * 9.0;
+                    double carbCalories = totalCarb * 4.0;
+                    
+                    // 비율 계산 (백분율)
+                    consumed.put("proteinRatio", (int)((proteinCalories / totalCalorie) * 100));
+                    consumed.put("fatRatio", (int)((fatCalories / totalCalorie) * 100));
+                    consumed.put("carbRatio", (int)((carbCalories / totalCalorie) * 100));
+                }
+                System.out.println("debug >>> consumed " + consumed);
+                System.out.println("영양소 비율 계산 완료");
+                summary.put("consumed", consumed);
+                System.out.println("debug >>> summary " + summary);
+                System.out.println("섭취한 영양소 총합 정보 추가 완료");
+
+
+                if(!summary.isEmpty()){
                     // 값이 있을 때
-                    return new ResponseEntity<>(result,HttpStatus.OK);
+                    return new ResponseEntity<>(summary,HttpStatus.OK);
                 } else{
                     // 값이 없을 때
-                    return new ResponseEntity<>(result,HttpStatus.NOT_FOUND);
+                    return new ResponseEntity<>(HttpStatus.NO_CONTENT);
                 }
             } catch(Exception e){
                 // 3. 서버 내부 오류 발생
