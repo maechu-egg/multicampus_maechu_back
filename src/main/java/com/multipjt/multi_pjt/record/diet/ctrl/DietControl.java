@@ -204,7 +204,7 @@ public class DietControl {
     }
 
     // 일일 식단 조회
-    @PostMapping("/get/diet")
+    @GetMapping("/get/diet")
     public ResponseEntity<Object> findDiet(
         @RequestParam(name = "record_date") String record_date,
         @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
