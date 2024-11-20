@@ -82,7 +82,7 @@ public class LoginServiceImpl implements UserDetailsService { // UserDetailsServ
 
         // 이미지 저장 로직 추가
         if (memberImgFile != null && !memberImgFile.isEmpty()) {
-            String fileName = System.currentTimeMillis() + "_" + memberImgFile.getOriginalFilename();
+            String fileName = System.currentTimeMillis() + "_" + memberImgFile.getOriginalFilename().replace(" ", "_");
             Path path = Paths.get("src/main/resources/static/" + fileName); // 정적 폴더 경로
             logger.info("Attempting to save image: {} at path: {}", fileName, path.toString()); // 파일 이름과 경로 로그
 

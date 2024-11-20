@@ -43,4 +43,6 @@ public class PostResponseDTO {
     private int comments_count;
 
     private boolean is_click;
+
+    private String member_img;
 }
