@@ -171,6 +171,7 @@ public class DietService {
         result.put("recommendedFat", recommendedFat);
         result.put("recommendedCarb", recommendedCarb);
         result.put("weight", Double.parseDouble(info.get("profile_weight").toString()));
+        result.put("height", Double.parseDouble(info.get("profile_height").toString()));
         result.put("goal", info.get("profile_goal").toString());
         result.put("proteinRate", proteinRate);
         result.put("fatRate", fatRate);
