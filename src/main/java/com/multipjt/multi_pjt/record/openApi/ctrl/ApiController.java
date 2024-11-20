@@ -8,9 +8,9 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.multipjt.multi_pjt.jwt.JwtTokenProvider;
-
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -28,6 +28,8 @@ import com.multipjt.multi_pjt.record.openApi.domain.NutirientDTO;
 import com.multipjt.multi_pjt.record.openApi.service.ApiService;
 
 import jakarta.validation.Valid;
+
+import org.apache.commons.text.similarity.LevenshteinDistance;
 
 @RestController
 @RequestMapping("record/api")
@@ -72,7 +74,7 @@ public class ApiController {
             System.out.println("params >>" + encodeFoodNm);
 
             String pageNo = "1";
-            String numOfRows = "10";
+            String numOfRows = "100";
 
             String requestUrl = callBackUrl 
                                 + "?serviceKey=" + serviceKey
@@ -118,7 +120,21 @@ public class ApiController {
                         }
                     }
                 }
-                return new ResponseEntity<>(list,HttpStatus.OK);
+
+            // 유사도 계산 후 상위 10개 식품 반환
+                LevenshteinDistance levenshtein = new LevenshteinDistance();
+                list.sort((a, b) -> {
+                    int distanceA = levenshtein.apply(foodNm, a.getFoodNm());
+                    int distanceB = levenshtein.apply(foodNm, b.getFoodNm());
+                    return Integer.compare(distanceA, distanceB);
+                });
+
+                List<NutirientDTO> top10List = list.stream()
+                                                .limit(30)
+                                                .collect(Collectors.toList());
+
+
+                return new ResponseEntity<>(top10List,HttpStatus.OK);
             }
         } else{
             return new ResponseEntity<>("인증실패",HttpStatus.UNAUTHORIZED);
