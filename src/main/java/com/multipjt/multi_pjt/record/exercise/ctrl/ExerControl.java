@@ -210,7 +210,7 @@ public ResponseEntity<Object> exerInsert(@RequestBody ExerRequestDTO exerRequest
     // 운동 종류 수정 -> 시간, 강도만 수정 가능, 둘 다 또는 하나만 수정 시 칼로리 자동 수정
     // exercise_id, duration, intensity 값만 넣어주면 met, calories 자동 수정
     @PutMapping("/update/exer")
-    public ResponseEntity<Integer> exerUpdate(@RequestBody Map<String,Object> updateExerInfo) {
+    public ResponseEntity<Object> exerUpdate(@RequestBody Map<String,Object> updateExerInfo) {
         System.out.println("class endPoint >> " + "/record/exercise/update/exer");
         System.out.println("변경 값 >> " + updateExerInfo);
 
@@ -241,10 +241,14 @@ public ResponseEntity<Object> exerInsert(@RequestBody ExerRequestDTO exerRequest
         updateExerInfo.put("calories", calories);
         System.out.println("수정 값 반영된 calories, met >> " + updateExerInfo);            
         int result = exerService.exerUpdateRow(updateExerInfo);
-        // 성공 -> 200, 실패 -> 400
-        return new ResponseEntity<>(result, result == 1 ? HttpStatus.OK : HttpStatus.BAD_REQUEST);
-    }
 
+        if(result == 1) {
+            ExerResponseDTO exer = exerService.exerGetRow(exerciseId);
+            return new ResponseEntity<>(exer,HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
     private Double calculateMet(ExerResponseDTO exerResponseDTO, Map<String,Object> updateExerInfo) {
         String newIntensity = updateExerInfo.get("intensity").toString();
         
