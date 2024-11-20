@@ -265,7 +265,16 @@ public class CrewService {
             .anyMatch(member -> member.getMember_id() == token_id && member.getCrew_member_state() == 1);
 
         if (isActiveMember) {
-            return crewMapper.selectCrewMemberRow(crewId);
+            List<CrewMemberResponseDTO> crewMembers = crewMapper.selectCrewMemberRow(crewId);
+
+            // 이미지 URL 설정
+            crewMembers.forEach(member -> {
+                if (member != null && member.getMember_img() != null) {
+                    member.setMember_img(getImageUrl(member.getMember_img()));
+                }
+            });
+
+            return crewMembers;
         } else {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "크루원만 조회가 가능합니다.");
         }
