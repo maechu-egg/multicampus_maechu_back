@@ -261,23 +261,16 @@ public class CrewService {
         System.out.println("debug>>> Service: getCrewMemberList + " + crewId);
         System.out.println("debug>>> Service: getCrewMemberList + " + token_id);
 
-        boolean isActiveMember = crewMapper.selectCrewMemberRow(crewId).stream()
-            .anyMatch(member -> member.getMember_id() == token_id && member.getCrew_member_state() == 1);
+        List<CrewMemberResponseDTO> crewMembers = crewMapper.selectCrewMemberRow(crewId);
 
-        if (isActiveMember) {
-            List<CrewMemberResponseDTO> crewMembers = crewMapper.selectCrewMemberRow(crewId);
+        // 이미지 URL 설정
+        crewMembers.forEach(member -> {
+            if (member != null && member.getMember_img() != null) {
+                member.setMember_img(getImageUrl(member.getMember_img()));
+            }
+        });
 
-            // 이미지 URL 설정
-            crewMembers.forEach(member -> {
-                if (member != null && member.getMember_img() != null) {
-                    member.setMember_img(getImageUrl(member.getMember_img()));
-                }
-            });
-
-            return crewMembers;
-        } else {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "크루원만 조회가 가능합니다.");
-        }
+        return crewMembers;
     }
 
     // 크루원 삭제
