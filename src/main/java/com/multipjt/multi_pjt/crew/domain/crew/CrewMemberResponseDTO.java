@@ -14,4 +14,5 @@ public class CrewMemberResponseDTO {
     private String badge_level;
     private String email;
     private String phone;
+    private String member_img;
 }
