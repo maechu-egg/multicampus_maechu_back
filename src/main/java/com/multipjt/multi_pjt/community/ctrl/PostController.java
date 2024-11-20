@@ -256,8 +256,36 @@ public class PostController {
                 
                 pdto.setPost_id(postId);
                 System.out.println("controller - pdto " + pdto);
-                
-                int result = postService.postUpdate(pdto);   
+                if(imageFiles != null && !imageFiles.isEmpty()){
+                    
+                    try{
+                        
+                        if(imageFiles.size() > 0 && !imageFiles.get(0).isEmpty()){
+                            String fileName = System.currentTimeMillis() + "_" + imageFiles.get(0).getOriginalFilename();
+                            Path filePath1 = Paths.get("src/main/resources/static/" + fileName); // 정적 폴더 경로
+                            logger.info("Attempting to save image: {} at path: {}", fileName, filePath1.toString()); // 파일 이름과 경로 로그
+                            Files.copy(imageFiles.get(0).getInputStream(), filePath1, StandardCopyOption.REPLACE_EXISTING);
+                            pdto.setPost_img1(fileName);
+                            System.out.println("posts image" + pdto.getPost_img1());
+                            logger.info("Image uploaded successfully: {}", filePath1); // 성공 로그
+                        }
+                        if(imageFiles.size() > 1 && !imageFiles.get(1).isEmpty()){
+                            String fileName = System.currentTimeMillis() + "_" + imageFiles.get(1).getOriginalFilename();
+                            Path filePath2 = Paths.get("src/main/resources/static/" + fileName); // 정적 폴더 경로
+                            logger.info("Attempting to save image: {} at path: {}", fileName, filePath2.toString()); // 파일 이름과 경로 로그
+                            Files.copy(imageFiles.get(1).getInputStream(), filePath2, StandardCopyOption.REPLACE_EXISTING);
+                            pdto.setPost_img2(fileName);
+                            System.out.println("posts image" + pdto.getPost_img2());
+                            logger.info("Image uploaded successfully: {}", filePath2); // 성공 로그
+                        }
+                    }catch(IOException e){
+                        e.printStackTrace();
+                        
+                        response =  new ResponseEntity<> (HttpStatus.INTERNAL_SERVER_ERROR);
+                    }
+                    
+                }
+                            int result = postService.postUpdate(pdto);   
                 
                 if (result == 1) {
                     upost = postService.updatePostResult(pdto);
