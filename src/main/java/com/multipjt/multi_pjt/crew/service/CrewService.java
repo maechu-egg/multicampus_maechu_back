@@ -1,13 +1,10 @@
 package com.multipjt.multi_pjt.crew.service;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -19,7 +16,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.multipjt.multi_pjt.config.FileService;
 import com.multipjt.multi_pjt.crew.dao.crew.CrewMapper;
 import com.multipjt.multi_pjt.crew.domain.crew.CrewCommentsRequestDTO;
@@ -31,8 +27,6 @@ import com.multipjt.multi_pjt.crew.domain.crew.CrewPostRequestDTO;
 import com.multipjt.multi_pjt.crew.domain.crew.CrewPostResponseDTO;
 import com.multipjt.multi_pjt.crew.domain.crew.CrewRequestDTO;
 import com.multipjt.multi_pjt.crew.domain.crew.CrewResponseDTO;
-
-import lombok.RequiredArgsConstructor;
 
 @Service
 public class CrewService {
@@ -69,23 +63,13 @@ public class CrewService {
 
         // 정확한 지역과 일치하는 크루 조회
         List<CrewResponseDTO> exactMatchCrews = crewMapper.selectCrewRow(token_id);
-
+        // 도 단위로 일치하는 크루 조회
+        List<CrewResponseDTO> regionMatchCrews = crewMapper.selectCrewByRegionRow(token_id);
+        // 정확한 지역과 일치하는 크루가 있으면 그 크루들만 조회
         if (!exactMatchCrews.isEmpty()) {
-            // 정확한 지역과 일치하는 크루가 있으면 그 크루들만 반환
-            exactMatchCrews.forEach(crew -> {
-                if (crew != null && crew.getCrew_intro_img() != null) {
-                    crew.setCrew_intro_img(getImageUrl(crew.getCrew_intro_img()));
-                }
-            });
             return exactMatchCrews;
+        // 정확한 지역과 일치하는 크루가 없으면 도 단위로 일치하는 크루 조회
         } else {
-            // 정확한 지역과 일치하는 크루가 없으면 도 단위로 일치하는 크루 조회
-            List<CrewResponseDTO> regionMatchCrews = crewMapper.selectCrewByRegionRow(token_id);
-            regionMatchCrews.forEach(crew -> {
-                if (crew != null && crew.getCrew_intro_img() != null) {
-                    crew.setCrew_intro_img(getImageUrl(crew.getCrew_intro_img()));
-                }
-            });
             return regionMatchCrews;
         }
     }
@@ -99,23 +83,22 @@ public class CrewService {
         List<CrewResponseDTO> exactMatchCrews = crewMapper.selectCrewForHomepageRow(token_id);
         // 도 단위로 일치하는 크루 조회
         List<CrewResponseDTO> regionMatchCrews = crewMapper.selectCrewByRegionRowForHomepage(token_id);
-
         try {
             // 정확한 지역과 일치하는 크루가 3개 미만일 경우, 도 단위로 일치하는 크루를 추가로 가져옴
             if (exactMatchCrews.size() < 3) {
+                // 이미 추가된 크루의 ID를 추적하기 위한 Set
+                Set<Integer> existingCrewIds = new HashSet<>();
+                exactMatchCrews.forEach(crew -> existingCrewIds.add(crew.getCrew_id()));
+
                 for (CrewResponseDTO crew : regionMatchCrews) {
                     if (exactMatchCrews.size() >= 3) break;
-                    exactMatchCrews.add(crew);
+                    // 중복되지 않는 경우에만 추가
+                    if (!existingCrewIds.contains(crew.getCrew_id())) {
+                        exactMatchCrews.add(crew);
+                        existingCrewIds.add(crew.getCrew_id());
+                    }
                 }
             }
-
-            // 이미지 URL 설정
-            exactMatchCrews.forEach(crew -> {
-                if (crew != null && crew.getCrew_intro_img() != null) {
-                    crew.setCrew_intro_img(getImageUrl(crew.getCrew_intro_img()));
-                }
-            });
-
             return exactMatchCrews;
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "가까운 지역에 크루 존재하지 않습니다.");
@@ -435,31 +418,19 @@ public class CrewService {
         if (token_id == writerId) {
             // 이미지 파일이 있는 경우에만 기존 이미지 파일 삭제 및 새 이미지 저장
             if (ImgFile != null && !ImgFile.isEmpty()) {
-                // 기존 이미지 파일 삭제
                 Map<String, Object> params = new HashMap<>();
                 params.put("crew_id", param.getCrew_id());
                 params.put("crew_post_id", param.getCrew_post_id());
+
+                // 기존 이미지 파일 삭제
                 String currentImgFileName = crewMapper.selectCrewPostRow(params).getCrew_post_img();
                 if (currentImgFileName != null && !currentImgFileName.isEmpty()) {
-                    Path currentImgPath = Paths.get("src/main/resources/static/" + currentImgFileName);
-                    try {
-                        Files.deleteIfExists(currentImgPath);
-                        System.out.println("Old image deleted successfully: " + currentImgFileName);
-                    } catch (IOException e) {
-                        throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "기존 이미지 삭제 실패");
-                    }
+                    fileService.deleteFileFromBucket(currentImgFileName);
                 }
-
-                // 새 이미지 파일 저장
-                String postFileName = System.currentTimeMillis() + "_post_" + ImgFile.getOriginalFilename();
-                Path postPath = Paths.get("src/main/resources/static/" + postFileName);
-                try {
-                    Files.copy(ImgFile.getInputStream(), postPath, StandardCopyOption.REPLACE_EXISTING);
-                    System.out.println("Image uploaded successfully: " + postFileName);
-                    param.setCrew_post_img(postFileName); // 파일 이름 설정
-                } catch (IOException e) {
-                    throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "게시물 이미지 업로드 실패");
-                }
+                // 버킷에 크루 게시물 이미지 저장 및 파일 이름 반환
+                String postFileName = fileService.putFileToBucket(ImgFile);
+                // DB에 파일 이름 설정
+                param.setCrew_post_img(postFileName);
             } else {
                System.out.println("debug>>> Service: updateCrewPost + 기존 이미지로 설정");
             }
