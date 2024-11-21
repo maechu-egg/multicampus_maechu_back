@@ -4,13 +4,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.UUID;
 
-
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 
@@ -38,8 +38,16 @@ public class FileService {
         metadata.setContentLength(file.getSize());
 
         try (InputStream inputStream = file.getInputStream()) {
-            // NCP 오브젝트 스토리지에 이미지 업로드
-            amazonS3Client.putObject(new PutObjectRequest(ncpStorageConfig.getBucketName(), fileName, inputStream, metadata));
+            // NCP 오브젝트 스토리지에 이미지 업로드 시 퍼블릭 읽기 권한 추가
+            PutObjectRequest putObjectRequest = new PutObjectRequest(
+                    ncpStorageConfig.getBucketName(),
+                    fileName,
+                    inputStream,
+                    metadata
+            ).withCannedAcl(CannedAccessControlList.PublicRead); // 퍼블릭 읽기 권한 설정
+
+            amazonS3Client.putObject(putObjectRequest);
+
             return fileName; // 업로드된 파일 이름 반환
         } catch (IOException e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Image upload failed: " + e.getMessage());
