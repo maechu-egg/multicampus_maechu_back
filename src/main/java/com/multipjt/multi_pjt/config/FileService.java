@@ -45,4 +45,13 @@ public class FileService {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Image upload failed: " + e.getMessage());
         }
     }
+
+    public void deleteFileFromBucket(String fileName) {
+        try {
+            // NCP 오브젝트 스토리지에서 이미지 삭제
+            amazonS3Client.deleteObject(ncpStorageConfig.getBucketName(), fileName);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Image deletion failed: " + e.getMessage());
+        }
+    }
 }

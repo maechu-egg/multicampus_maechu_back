@@ -182,21 +182,17 @@ public class CrewService {
         if (token_id == leaderId) {
             // 이미지 파일이 있는 경우에만 기존 이미지 파일 삭제 및 새 이미지 저장
             if (ImgFile != null && !ImgFile.isEmpty()) {
-                // // 기존 이미지 파일 삭제
-                // String currentImgFileName = crewMapper.selectCurrentCrewIntroImg(param.getCrew_id());
-                // if (currentImgFileName != null && !currentImgFileName.equals("CrewDefault")) {
-                //     String currentImgUrl = "/static/" + currentImgFileName;
-                //     fileService.deleteFileFromBucket(currentImgUrl, "static");
-                // }
-
-                // // 크루 소개 이미지 저장
-                // String introFileName = System.currentTimeMillis() + "_intro_" + ImgFile.getOriginalFilename();
-                // ObjectMetadata metadata = new ObjectMetadata();
-                // metadata.setContentLength(ImgFile.getSize());
-                // String imageUrl = fileService.putFileToBucket(ImgFile, introFileName, metadata);
-                // param.setCrewIntroImg(imageUrl); // CrewRequestDTO에 파일 URL 설정
+                // 기존 이미지 파일 삭제
+                String currentImgFileName = crewMapper.selectCurrentCrewIntroImg(param.getCrew_id());
+                if (currentImgFileName != null && !currentImgFileName.equals("CrewDefault")) {
+                    fileService.deleteFileFromBucket(currentImgFileName);
+                }
+                // 버킷에 크루 소개 이미지 저장 및 파일 이름 반환
+                String postFileName = fileService.putFileToBucket(ImgFile);
+                // db에 새 이미지 파일 저장
+                param.setCrew_intro_img(postFileName);
             } else {
-                    System.out.println("debug>>> Service: updateCrewIntro + 기존 이미지로 설정");
+                System.out.println("debug>>> Service: updateCrewIntro + 기존 이미지로 설정");
             }
             // 크루 소개 업데이트 로직 수행
             crewMapper.updateCrewIntroRow(param);

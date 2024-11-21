@@ -52,7 +52,7 @@ public interface CrewMapper {
     public void updateCrewIntroRow(CrewRequestDTO param);
 
     // 소개 수정 시 현재 크루 소개 이미지 조회
-    public String selectCurrentCrewIntroImg(Integer crew_id);
+    public String selectCurrentCrewIntroImg(int crew_id);
 
     // 크루장 조회
     public Integer selectCrewLeaderIdRow(Integer crew_id);
