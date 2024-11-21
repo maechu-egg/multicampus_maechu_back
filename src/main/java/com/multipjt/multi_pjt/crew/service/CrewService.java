@@ -128,18 +128,14 @@ public class CrewService {
 
         try {
             List<CrewResponseDTO> crewList = crewMapper.selectMyCrewRow(token_id);
-            
-            // 이미지 URL 설정
-            crewList.forEach(crew -> {
-                if (crew != null && crew.getCrew_intro_img() != null) {
-                    crew.setCrew_intro_img(getImageUrl(crew.getCrew_intro_img()));
-                }
-            });
-
             return crewList;
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "내가 속한 크루가 없습니다.");
         }
+    }
+
+    public String getImageUrl(String Img) {
+        return "/static/" + Img;
     }
 
     // --------- 크루 소개 ---------
