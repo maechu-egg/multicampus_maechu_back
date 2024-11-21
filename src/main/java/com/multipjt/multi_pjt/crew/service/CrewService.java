@@ -288,12 +288,6 @@ public class CrewService {
             params.put("size", size);
 
             List<CrewPostResponseDTO> crewPostList = crewMapper.selectCrewPostListRow(params);
-            // 이미지 URL 설정
-            crewPostList.forEach(post -> {
-                if (post != null && post.getCrew_post_img() != null) {
-                    post.setCrew_post_img(getImageUrl(post.getCrew_post_img()));
-                }
-            });
             int pageNumber = offset / size;
             Pageable pageable = PageRequest.of(pageNumber, size);
             return new PageImpl<>(crewPostList, pageable, crewMapper.selectCrewPostListCountRow(crewId));
