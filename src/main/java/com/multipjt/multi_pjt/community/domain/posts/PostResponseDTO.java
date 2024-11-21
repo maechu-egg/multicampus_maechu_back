@@ -45,4 +45,13 @@ public class PostResponseDTO {
     private boolean is_click;
 
     private String member_img;
+
+    private int current_points;
+    private int crew_current_points;
+
+    private String member_badge_level;
+    private String crew_badge_level;
+    
+    private int crew_battle_wins;
+
 }

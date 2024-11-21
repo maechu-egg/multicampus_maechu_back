@@ -24,4 +24,12 @@ public class CommentResponseDTO {
     private int     comment_like_counts;
     private int     comment_dislike_counts; 
 
+    private int current_points;
+    private int crew_current_points;
+
+    private String member_badge_level;
+    private String crew_badge_level;
+    
+    private int crew_battle_wins;
+
 }
