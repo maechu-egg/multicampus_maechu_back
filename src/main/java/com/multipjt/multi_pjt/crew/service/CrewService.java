@@ -19,6 +19,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.amazonaws.services.s3.model.ObjectMetadata;
+import com.multipjt.multi_pjt.config.FileService;
 import com.multipjt.multi_pjt.crew.dao.crew.CrewMapper;
 import com.multipjt.multi_pjt.crew.domain.crew.CrewCommentsRequestDTO;
 import com.multipjt.multi_pjt.crew.domain.crew.CrewCommentsResponseDTO;
@@ -30,11 +32,16 @@ import com.multipjt.multi_pjt.crew.domain.crew.CrewPostResponseDTO;
 import com.multipjt.multi_pjt.crew.domain.crew.CrewRequestDTO;
 import com.multipjt.multi_pjt.crew.domain.crew.CrewResponseDTO;
 
+import lombok.RequiredArgsConstructor;
+
 @Service
 public class CrewService {
     
     @Autowired
     private CrewMapper crewMapper;
+    
+    @Autowired
+    private FileService fileService; // FileService 주입
     
     // --------- 크루 찾기 ---------
 
@@ -175,30 +182,21 @@ public class CrewService {
         if (token_id == leaderId) {
             // 이미지 파일이 있는 경우에만 기존 이미지 파일 삭제 및 새 이미지 저장
             if (ImgFile != null && !ImgFile.isEmpty()) {
-                // 기존 이미지 파일 삭제
-                String currentImgFileName = crewMapper.selectCurrentCrewIntroImg(param.getCrew_id());
-                if (currentImgFileName != null && !currentImgFileName.equals("CrewDefault")) {
-                    Path currentImgPath = Paths.get("src/main/resources/static/" + currentImgFileName);
-                    try {
-                        Files.deleteIfExists(currentImgPath);
-                        System.out.println("Old image deleted successfully: " + currentImgFileName);
-                    } catch (IOException e) {
-                        throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "기존 이미지 삭제 실패: ");
-                    }
-                }
+                // // 기존 이미지 파일 삭제
+                // String currentImgFileName = crewMapper.selectCurrentCrewIntroImg(param.getCrew_id());
+                // if (currentImgFileName != null && !currentImgFileName.equals("CrewDefault")) {
+                //     String currentImgUrl = "/static/" + currentImgFileName;
+                //     fileService.deleteFileFromBucket(currentImgUrl, "static");
+                // }
 
-                // 크루 소개 이미지 저장
-                String introFileName = System.currentTimeMillis() + "_intro_" + ImgFile.getOriginalFilename();
-                Path introPath = Paths.get("src/main/resources/static/" + introFileName);
-                try {
-                    Files.copy(ImgFile.getInputStream(), introPath, StandardCopyOption.REPLACE_EXISTING);
-                    System.out.println("Image uploaded successfully: " + introFileName);
-                    param.setCrewIntroImg(introFileName); // CrewRequestDTO에 파일 이름 설정
-                } catch (IOException e) {
-                    throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "크루 소개 이미지 업로드 실패: ");
-                }
+                // // 크루 소개 이미지 저장
+                // String introFileName = System.currentTimeMillis() + "_intro_" + ImgFile.getOriginalFilename();
+                // ObjectMetadata metadata = new ObjectMetadata();
+                // metadata.setContentLength(ImgFile.getSize());
+                // String imageUrl = fileService.putFileToBucket(ImgFile, introFileName, metadata);
+                // param.setCrewIntroImg(imageUrl); // CrewRequestDTO에 파일 URL 설정
             } else {
-                System.out.println("debug>>> Service: updateCrewIntro + 기존 이미지로 설정");
+                    System.out.println("debug>>> Service: updateCrewIntro + 기존 이미지로 설정");
             }
             // 크루 소개 업데이트 로직 수행
             crewMapper.updateCrewIntroRow(param);
