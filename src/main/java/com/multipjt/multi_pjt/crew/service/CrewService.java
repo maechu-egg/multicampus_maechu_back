@@ -1,13 +1,10 @@
 package com.multipjt.multi_pjt.crew.service;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -19,7 +16,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.multipjt.multi_pjt.config.FileService;
 import com.multipjt.multi_pjt.crew.dao.crew.CrewMapper;
 import com.multipjt.multi_pjt.crew.domain.crew.CrewCommentsRequestDTO;
@@ -31,8 +27,6 @@ import com.multipjt.multi_pjt.crew.domain.crew.CrewPostRequestDTO;
 import com.multipjt.multi_pjt.crew.domain.crew.CrewPostResponseDTO;
 import com.multipjt.multi_pjt.crew.domain.crew.CrewRequestDTO;
 import com.multipjt.multi_pjt.crew.domain.crew.CrewResponseDTO;
-
-import lombok.RequiredArgsConstructor;
 
 @Service
 public class CrewService {
@@ -92,9 +86,17 @@ public class CrewService {
         try {
             // 정확한 지역과 일치하는 크루가 3개 미만일 경우, 도 단위로 일치하는 크루를 추가로 가져옴
             if (exactMatchCrews.size() < 3) {
+                // 이미 추가된 크루의 ID를 추적하기 위한 Set
+                Set<Integer> existingCrewIds = new HashSet<>();
+                exactMatchCrews.forEach(crew -> existingCrewIds.add(crew.getCrew_id()));
+
                 for (CrewResponseDTO crew : regionMatchCrews) {
                     if (exactMatchCrews.size() >= 3) break;
-                    exactMatchCrews.add(crew);
+                    // 중복되지 않는 경우에만 추가
+                    if (!existingCrewIds.contains(crew.getCrew_id())) {
+                        exactMatchCrews.add(crew);
+                        existingCrewIds.add(crew.getCrew_id());
+                    }
                 }
             }
             return exactMatchCrews;
