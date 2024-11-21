@@ -27,11 +27,20 @@
                 c.comment_like_counts,
                 c.comment_dislike_counts,
                 m.member_id, 
-                m.nickname AS c_nickname
+                m.nickname AS c_nickname,
+                mb.badge_level AS member_badge_level,
+                mb.current_points AS member_current_points,
+                cb.crew_current_points AS crew_current_points,
+                cb.badge_level AS crew_badge_level,
+                cb.crew_battle_wins AS crew_battle_wins
         FROM    
             Comments c
         Join 
             Member m ON c.member_id = m.member_id
+        LEFT JOIN 
+            MemberBadge mb ON c.member_id = mb.member_id
+        LEFT JOIN 
+            CrewBadge cb ON c.member_id = cb.member_id
         WHERE
             c.post_id = #{post_id}
     </select>
