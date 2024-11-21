@@ -111,10 +111,6 @@ public class CrewService {
         System.out.println("debug>>> Service: getCrewInfo + " + crewId);
         
         CrewResponseDTO crew = crewMapper.selectCrewInfoRow(crewId);
-        if (crew != null && crew.getCrew_intro_img() != null) {
-            // 이미지 URL 설정 (정적 파일 경로에 맞게 URL 생성)
-            crew.setCrew_intro_img(getImageUrl(crew.getCrew_intro_img()));
-        }
         return crew;
     }
 
