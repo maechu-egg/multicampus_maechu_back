@@ -24,8 +24,7 @@ repositories {
 }
 
 dependencies {
-    //s3 버킷 업로드
-    implementation 'io.awspring.cloud:spring-cloud-starter-aws:1.11.238'
+    //s3 
    implementation 'com.amazonaws:aws-java-sdk-s3:1.11.238'
     
 
