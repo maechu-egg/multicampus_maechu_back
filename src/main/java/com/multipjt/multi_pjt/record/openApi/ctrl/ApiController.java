@@ -61,6 +61,7 @@ public class ApiController {
             String token = authHeader.substring(7); // "Bearer " 접두사 제거
             Integer member_id = jwtTokenProvider.getUserIdFromToken(token); // 토큰에서 사용자 ID 추출
     
+            System.out.println("debug >>> member_id : " + member_id);
 
             if(foodNm == null || foodNm.isEmpty()){
                 return new ResponseEntity<>("식품명을 입력해주세요.",HttpStatus.BAD_REQUEST);
