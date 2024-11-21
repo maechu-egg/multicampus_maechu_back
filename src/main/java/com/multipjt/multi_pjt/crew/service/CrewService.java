@@ -19,6 +19,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.amazonaws.services.s3.model.ObjectMetadata;
+import com.multipjt.multi_pjt.config.FileService;
 import com.multipjt.multi_pjt.crew.dao.crew.CrewMapper;
 import com.multipjt.multi_pjt.crew.domain.crew.CrewCommentsRequestDTO;
 import com.multipjt.multi_pjt.crew.domain.crew.CrewCommentsResponseDTO;
@@ -30,11 +32,16 @@ import com.multipjt.multi_pjt.crew.domain.crew.CrewPostResponseDTO;
 import com.multipjt.multi_pjt.crew.domain.crew.CrewRequestDTO;
 import com.multipjt.multi_pjt.crew.domain.crew.CrewResponseDTO;
 
+import lombok.RequiredArgsConstructor;
+
 @Service
 public class CrewService {
     
     @Autowired
     private CrewMapper crewMapper;
+    
+    @Autowired
+    private FileService fileService; // FileService 주입
     
     // --------- 크루 찾기 ---------
 
@@ -178,25 +185,12 @@ public class CrewService {
                 // 기존 이미지 파일 삭제
                 String currentImgFileName = crewMapper.selectCurrentCrewIntroImg(param.getCrew_id());
                 if (currentImgFileName != null && !currentImgFileName.equals("CrewDefault")) {
-                    Path currentImgPath = Paths.get("src/main/resources/static/" + currentImgFileName);
-                    try {
-                        Files.deleteIfExists(currentImgPath);
-                        System.out.println("Old image deleted successfully: " + currentImgFileName);
-                    } catch (IOException e) {
-                        throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "기존 이미지 삭제 실패: ");
-                    }
+                    fileService.deleteFileFromBucket(currentImgFileName);
                 }
-
-                // 크루 소개 이미지 저장
-                String introFileName = System.currentTimeMillis() + "_intro_" + ImgFile.getOriginalFilename();
-                Path introPath = Paths.get("src/main/resources/static/" + introFileName);
-                try {
-                    Files.copy(ImgFile.getInputStream(), introPath, StandardCopyOption.REPLACE_EXISTING);
-                    System.out.println("Image uploaded successfully: " + introFileName);
-                    param.setCrewIntroImg(introFileName); // CrewRequestDTO에 파일 이름 설정
-                } catch (IOException e) {
-                    throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "크루 소개 이미지 업로드 실패: ");
-                }
+                // 버킷에 크루 소개 이미지 저장 및 파일 이름 반환
+                String postFileName = fileService.putFileToBucket(ImgFile);
+                // db에 새 이미지 파일 저장
+                param.setCrew_intro_img(postFileName);
             } else {
                 System.out.println("debug>>> Service: updateCrewIntro + 기존 이미지로 설정");
             }
@@ -303,15 +297,10 @@ public class CrewService {
 
         if (isActiveMember) {
             if (ImgFile != null && !ImgFile.isEmpty()) {
-                String postFileName = System.currentTimeMillis() + "_post_" + ImgFile.getOriginalFilename();
-                Path postPath = Paths.get("src/main/resources/static/" + postFileName);
-                try {
-                    Files.copy(ImgFile.getInputStream(), postPath, StandardCopyOption.REPLACE_EXISTING);
-                    System.out.println("Image uploaded successfully: " + postFileName);
-                    param.setCrew_post_img(postFileName); // CrewRequestDTO에 파일 이름 설정
-                } catch (IOException e) {
-                    throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "크루 게시물 이미지 업로드 실패: ");
-                }
+                // 버킷에 크루 게시물 이미지 저장 및 파일 이름 반환
+                String postFileName = fileService.putFileToBucket(ImgFile);
+                // CrewRequestDTO에 파일 이름 설정
+                param.setCrew_post_img(postFileName);
             }
             crewMapper.insertCrewPostRow(param);
         } else {
