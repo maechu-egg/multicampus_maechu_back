@@ -226,14 +226,6 @@ public class CrewService {
         System.out.println("debug>>> Service: getCrewMemberList + " + token_id);
 
         List<CrewMemberResponseDTO> crewMembers = crewMapper.selectCrewMemberRow(crewId);
-
-        // 이미지 URL 설정
-        crewMembers.forEach(member -> {
-            if (member != null && member.getMember_img() != null) {
-                member.setMember_img(getImageUrl(member.getMember_img()));
-            }
-        });
-
         return crewMembers;
     }
 
