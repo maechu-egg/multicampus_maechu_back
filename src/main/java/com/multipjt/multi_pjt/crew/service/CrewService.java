@@ -70,22 +70,13 @@ public class CrewService {
         // 정확한 지역과 일치하는 크루 조회
         List<CrewResponseDTO> exactMatchCrews = crewMapper.selectCrewRow(token_id);
 
+        // 정확한 지역과 일치하는 크루가 있으면 그 크루들만 반환
         if (!exactMatchCrews.isEmpty()) {
-            // 정확한 지역과 일치하는 크루가 있으면 그 크루들만 반환
-            exactMatchCrews.forEach(crew -> {
-                if (crew != null && crew.getCrew_intro_img() != null) {
-                    crew.setCrew_intro_img(getImageUrl(crew.getCrew_intro_img()));
-                }
-            });
             return exactMatchCrews;
+
+        // 정확한 지역과 일치하는 크루가 없으면 도 단위로 일치하는 크루 조회
         } else {
-            // 정확한 지역과 일치하는 크루가 없으면 도 단위로 일치하는 크루 조회
             List<CrewResponseDTO> regionMatchCrews = crewMapper.selectCrewByRegionRow(token_id);
-            regionMatchCrews.forEach(crew -> {
-                if (crew != null && crew.getCrew_intro_img() != null) {
-                    crew.setCrew_intro_img(getImageUrl(crew.getCrew_intro_img()));
-                }
-            });
             return regionMatchCrews;
         }
     }
