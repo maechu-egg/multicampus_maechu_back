@@ -435,31 +435,19 @@ public class CrewService {
         if (token_id == writerId) {
             // 이미지 파일이 있는 경우에만 기존 이미지 파일 삭제 및 새 이미지 저장
             if (ImgFile != null && !ImgFile.isEmpty()) {
-                // 기존 이미지 파일 삭제
                 Map<String, Object> params = new HashMap<>();
                 params.put("crew_id", param.getCrew_id());
                 params.put("crew_post_id", param.getCrew_post_id());
+
+                // 기존 이미지 파일 삭제
                 String currentImgFileName = crewMapper.selectCrewPostRow(params).getCrew_post_img();
                 if (currentImgFileName != null && !currentImgFileName.isEmpty()) {
-                    Path currentImgPath = Paths.get("src/main/resources/static/" + currentImgFileName);
-                    try {
-                        Files.deleteIfExists(currentImgPath);
-                        System.out.println("Old image deleted successfully: " + currentImgFileName);
-                    } catch (IOException e) {
-                        throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "기존 이미지 삭제 실패");
-                    }
+                    fileService.deleteFileFromBucket(currentImgFileName);
                 }
-
-                // 새 이미지 파일 저장
-                String postFileName = System.currentTimeMillis() + "_post_" + ImgFile.getOriginalFilename();
-                Path postPath = Paths.get("src/main/resources/static/" + postFileName);
-                try {
-                    Files.copy(ImgFile.getInputStream(), postPath, StandardCopyOption.REPLACE_EXISTING);
-                    System.out.println("Image uploaded successfully: " + postFileName);
-                    param.setCrew_post_img(postFileName); // 파일 이름 설정
-                } catch (IOException e) {
-                    throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "게시물 이미지 업로드 실패");
-                }
+                // 버킷에 크루 게시물 이미지 저장 및 파일 이름 반환
+                String postFileName = fileService.putFileToBucket(ImgFile);
+                // DB에 파일 이름 설정
+                param.setCrew_post_img(postFileName);
             } else {
                System.out.println("debug>>> Service: updateCrewPost + 기존 이미지로 설정");
             }
