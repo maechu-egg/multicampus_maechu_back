@@ -37,6 +37,9 @@ public interface UserMapper {
 
    // 비밀번호 변경 
    void updateUserPassword(UserResponseDTO userResponseDTO);
+
+    // 회원 아이디로 이미지 이름 조회
+    String getUserByImg(int memberId);
    
 }
 
