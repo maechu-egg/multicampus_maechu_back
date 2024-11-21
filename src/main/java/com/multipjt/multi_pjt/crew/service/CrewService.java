@@ -69,14 +69,13 @@ public class CrewService {
 
         // 정확한 지역과 일치하는 크루 조회
         List<CrewResponseDTO> exactMatchCrews = crewMapper.selectCrewRow(token_id);
-
-        // 정확한 지역과 일치하는 크루가 있으면 그 크루들만 반환
+        // 도 단위로 일치하는 크루 조회
+        List<CrewResponseDTO> regionMatchCrews = crewMapper.selectCrewByRegionRow(token_id);
+        // 정확한 지역과 일치하는 크루가 있으면 그 크루들만 조회
         if (!exactMatchCrews.isEmpty()) {
             return exactMatchCrews;
-
         // 정확한 지역과 일치하는 크루가 없으면 도 단위로 일치하는 크루 조회
         } else {
-            List<CrewResponseDTO> regionMatchCrews = crewMapper.selectCrewByRegionRow(token_id);
             return regionMatchCrews;
         }
     }
@@ -90,7 +89,6 @@ public class CrewService {
         List<CrewResponseDTO> exactMatchCrews = crewMapper.selectCrewForHomepageRow(token_id);
         // 도 단위로 일치하는 크루 조회
         List<CrewResponseDTO> regionMatchCrews = crewMapper.selectCrewByRegionRowForHomepage(token_id);
-
         try {
             // 정확한 지역과 일치하는 크루가 3개 미만일 경우, 도 단위로 일치하는 크루를 추가로 가져옴
             if (exactMatchCrews.size() < 3) {
@@ -99,14 +97,6 @@ public class CrewService {
                     exactMatchCrews.add(crew);
                 }
             }
-
-            // 이미지 URL 설정
-            exactMatchCrews.forEach(crew -> {
-                if (crew != null && crew.getCrew_intro_img() != null) {
-                    crew.setCrew_intro_img(getImageUrl(crew.getCrew_intro_img()));
-                }
-            });
-
             return exactMatchCrews;
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "가까운 지역에 크루 존재하지 않습니다.");
