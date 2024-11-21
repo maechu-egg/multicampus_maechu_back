@@ -297,15 +297,10 @@ public class CrewService {
 
         if (isActiveMember) {
             if (ImgFile != null && !ImgFile.isEmpty()) {
-                String postFileName = System.currentTimeMillis() + "_post_" + ImgFile.getOriginalFilename();
-                Path postPath = Paths.get("src/main/resources/static/" + postFileName);
-                try {
-                    Files.copy(ImgFile.getInputStream(), postPath, StandardCopyOption.REPLACE_EXISTING);
-                    System.out.println("Image uploaded successfully: " + postFileName);
-                    param.setCrew_post_img(postFileName); // CrewRequestDTO에 파일 이름 설정
-                } catch (IOException e) {
-                    throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "크루 게시물 이미지 업로드 실패: ");
-                }
+                // 버킷에 크루 게시물 이미지 저장 및 파일 이름 반환
+                String postFileName = fileService.putFileToBucket(ImgFile);
+                // CrewRequestDTO에 파일 이름 설정
+                param.setCrew_post_img(postFileName);
             }
             crewMapper.insertCrewPostRow(param);
         } else {
