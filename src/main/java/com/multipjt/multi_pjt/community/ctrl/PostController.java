@@ -416,15 +416,16 @@ public class PostController {
                 map.put("member_id", userId);
 
                 List<String> selectImgFile = postService.selectImgFiles(map);
-                        
-                if(selectImgFile.get(0) != null && selectImgFile.size() > 0  && !selectImgFile.get(0).isEmpty()){
-                    fileService.deleteFileFromBucket(selectImgFile.get(0));
-                }      
-                       
-                if(selectImgFile.get(1) != null && selectImgFile.size() > 1  && !selectImgFile.get(1).isEmpty()){
-                    fileService.deleteFileFromBucket(selectImgFile.get(1));
-                }      
-                   
+                System.out.println("selectImgFile" + selectImgFile);
+                if(selectImgFile != null && !selectImgFile.isEmpty()){      
+                        if(selectImgFile.size() > 0  && selectImgFile.get(0) != null &&  !selectImgFile.get(0).isEmpty()){
+                            fileService.deleteFileFromBucket(selectImgFile.get(0));
+                        }      
+                            
+                        if(selectImgFile.size() > 1 && selectImgFile.get(1) != null &&    !selectImgFile.get(1).isEmpty()){
+                            fileService.deleteFileFromBucket(selectImgFile.get(1));
+                        }      
+                }
                 postdelete = postService.postDelete(map); 
                 
                
