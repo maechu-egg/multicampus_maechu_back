@@ -1,8 +1,6 @@
 package com.multipjt.multi_pjt.record.diet.dao;
 
 import org.apache.ibatis.annotations.Mapper;
-
-import com.multipjt.multi_pjt.record.diet.domain.DietRequestDTO;
 import com.multipjt.multi_pjt.record.diet.domain.DietResponseDTO;
 import com.multipjt.multi_pjt.record.diet.domain.ItemRequestDTO;
 import com.multipjt.multi_pjt.record.diet.domain.ItemResponseDTO;

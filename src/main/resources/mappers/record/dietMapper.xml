@@ -56,7 +56,8 @@
 
     <select id="itemFindAll" parameterType="java.lang.Integer" resultType="com.multipjt.multi_pjt.record.diet.domain.ItemResponseDTO">
         select * from DietItems
-        where diet_id = #{diet_id};
+        where diet_id = #{diet_id}
+        order by item_id ASC;
     </select>
 
     <!-- itemUpdate --> 
