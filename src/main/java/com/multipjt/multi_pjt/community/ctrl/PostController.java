@@ -417,11 +417,11 @@ public class PostController {
 
                 List<String> selectImgFile = postService.selectImgFiles(map);
                         
-                if(selectImgFile.size() > 0  && !selectImgFile.get(0).isEmpty()){
+                if(selectImgFile.get(0) != null && selectImgFile.size() > 0  && !selectImgFile.get(0).isEmpty()){
                     fileService.deleteFileFromBucket(selectImgFile.get(0));
                 }      
                        
-                if(selectImgFile.size() > 1  && !selectImgFile.get(1).isEmpty()){
+                if(selectImgFile.get(1) != null && selectImgFile.size() > 1  && !selectImgFile.get(1).isEmpty()){
                     fileService.deleteFileFromBucket(selectImgFile.get(1));
                 }      
                    
