@@ -8,9 +8,9 @@ public class ItemResponseDTO {
     private Integer item_id;
     private String item_name;
     private Integer quantity;
-    private Integer carbs;
-    private Integer protein;
-    private Integer fat;
+    private Double carbs;
+    private Double protein;
+    private Double fat;
     private Integer calories;
     private Integer diet_id;    
 
