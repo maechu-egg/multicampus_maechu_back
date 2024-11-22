@@ -76,14 +76,10 @@ public class PostService {
 
     // 게시글 등록                              
     public int postInsert(PostRequestDTO pdto,Map<String, Object> map){
-        System.out.println("service - postInsert");
-        int result = postMapper.postInsert(pdto);
-
-            
+        System.out.println("service - postInsert");  
         userActivityRecordMapper.insertActivityAndUpdatePoints(map);
-
-
-
+        
+        int result = postMapper.postInsert(pdto); 
         if(result == 1){
             System.out.println("service : 게시글이 성공적으로 등록되었습니다.");
         }else{
@@ -92,13 +88,35 @@ public class PostService {
 
         return result;
     }
+
+
+    public List<String> selectImgFiles(Map<String, Integer> map){
+        System.out.println("selectImgFilse - post_id :   " + map.get("post_id"));
+        List<String> selectImgFile = postMapper.postImgsSelect(map);
+
+        if(selectImgFile != null && !selectImgFile.isEmpty()){
+            return selectImgFile;
+        }else if(selectImgFile == null){
+            return new ArrayList<>();
+        }else{
+            return new ArrayList<>();
+        }
+
+        
+    }
     
 
     // 게시글 수정
     public int postUpdate(PostRequestDTO pdto){
-    
+
         System.out.println("service : postUpdate");
-        return postMapper.postUpdate(pdto);
+        
+        int result = postMapper.postUpdate(pdto);
+        
+        System.out.println("수정  result " + result);
+
+
+        return result;
     
     }
 
