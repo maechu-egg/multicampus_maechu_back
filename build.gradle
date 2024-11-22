@@ -86,7 +86,7 @@ dependencies {
     // JSON 라이브러리
     implementation 'org.json:json:20210307'
 
-    //LevenshteinDistance 클래스를 사용하기 위해  Apache Commons Text 라이브러리를 의존성 추가
+    //LevenshteinDistance 클래스를 사용하기 위해  Apache Commons Text 라이브러리를 의존성 추가 11
     implementation 'org.apache.commons:commons-text:1.9'
 
 }
