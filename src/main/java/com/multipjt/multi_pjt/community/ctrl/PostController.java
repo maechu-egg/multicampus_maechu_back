@@ -11,7 +11,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +36,7 @@ import com.multipjt.multi_pjt.community.domain.posts.PostResponseDTO;
 import com.multipjt.multi_pjt.community.service.CommentService;
 import com.multipjt.multi_pjt.community.service.PostService;
 import com.multipjt.multi_pjt.community.service.UserActivityService;
+import com.multipjt.multi_pjt.config.FileService;
 import com.multipjt.multi_pjt.jwt.JwtTokenProvider;
 import com.multipjt.multi_pjt.user.service.LoginServiceImpl;
 
@@ -61,6 +61,9 @@ public class PostController {
 
         @Autowired
         private CommentService commentService;
+
+        @Autowired
+        private FileService fileService;
 
         // 전체 페이지 조회
         @GetMapping("/posts")
@@ -197,24 +200,16 @@ public class PostController {
                     try{
                         
                         if(imageFiles.size() > 0 && !imageFiles.get(0).isEmpty()){
-                            String fileName = System.currentTimeMillis() + "_" + imageFiles.get(0).getOriginalFilename();
-                            Path filePath1 = Paths.get("src/main/resources/static/" + fileName); // 정적 폴더 경로
-                            logger.info("Attempting to save image: {} at path: {}", fileName, filePath1.toString()); // 파일 이름과 경로 로그
-                            Files.copy(imageFiles.get(0).getInputStream(), filePath1, StandardCopyOption.REPLACE_EXISTING);
-                            pdto.setPost_img1(fileName);
+                            String  uniqueFileName1 = fileService.putFileToBucket(imageFiles.get(0));
+                            pdto.setPost_img1(uniqueFileName1);
                             System.out.println("posts image" + pdto.getPost_img1());
-                            logger.info("Image uploaded successfully: {}", filePath1); // 성공 로그
                         }
                         if(imageFiles.size() > 1 && !imageFiles.get(1).isEmpty()){
-                            String fileName = System.currentTimeMillis() + "_" + imageFiles.get(1).getOriginalFilename();
-                            Path filePath2 = Paths.get("src/main/resources/static/" + fileName); // 정적 폴더 경로
-                            logger.info("Attempting to save image: {} at path: {}", fileName, filePath2.toString()); // 파일 이름과 경로 로그
-                            Files.copy(imageFiles.get(1).getInputStream(), filePath2, StandardCopyOption.REPLACE_EXISTING);
-                            pdto.setPost_img2(fileName);
-                            System.out.println("posts image" + pdto.getPost_img2());
-                            logger.info("Image uploaded successfully: {}", filePath2); // 성공 로그
+                            String  uniqueFileName2 = fileService.putFileToBucket(imageFiles.get(1));
+                            pdto.setPost_img1(uniqueFileName2);
+                            System.out.println("posts image" + pdto.getPost_img1());
                         }
-                    }catch(IOException e){
+                    }catch(Exception e){
                         e.printStackTrace();
                         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("이미지 파일 업로드 중 오류가 발생했습니다.");
                     }
@@ -255,30 +250,35 @@ public class PostController {
                 pdto.setMember_id(userId);
                 
                 pdto.setPost_id(postId);
+
+                Map<String, Integer> smap = new HashMap<>();
+                smap.put("post_id", postId);
                 System.out.println("controller - pdto " + pdto);
                 if(imageFiles != null && !imageFiles.isEmpty()){
                     
                     try{
                         
+                        List<String> selectImgFile = postService.selectImgFiles(smap);
                         if(imageFiles.size() > 0 && !imageFiles.get(0).isEmpty()){
-                            String fileName = System.currentTimeMillis() + "_" + imageFiles.get(0).getOriginalFilename();
-                            Path filePath1 = Paths.get("src/main/resources/static/" + fileName); // 정적 폴더 경로
-                            logger.info("Attempting to save image: {} at path: {}", fileName, filePath1.toString()); // 파일 이름과 경로 로그
-                            Files.copy(imageFiles.get(0).getInputStream(), filePath1, StandardCopyOption.REPLACE_EXISTING);
-                            pdto.setPost_img1(fileName);
+                                if( selectImgFile.get(0) != null && selectImgFile.size() > 0   && !selectImgFile.get(0).isEmpty()){
+                                    fileService.deleteFileFromBucket(selectImgFile.get(0));
+                                }      
+                            String fileName1 = fileService.putFileToBucket(imageFiles.get(0));
+                            pdto.setPost_img1(fileName1);
                             System.out.println("posts image" + pdto.getPost_img1());
-                            logger.info("Image uploaded successfully: {}", filePath1); // 성공 로그
+                           
                         }
                         if(imageFiles.size() > 1 && !imageFiles.get(1).isEmpty()){
-                            String fileName = System.currentTimeMillis() + "_" + imageFiles.get(1).getOriginalFilename();
-                            Path filePath2 = Paths.get("src/main/resources/static/" + fileName); // 정적 폴더 경로
-                            logger.info("Attempting to save image: {} at path: {}", fileName, filePath2.toString()); // 파일 이름과 경로 로그
-                            Files.copy(imageFiles.get(1).getInputStream(), filePath2, StandardCopyOption.REPLACE_EXISTING);
-                            pdto.setPost_img2(fileName);
+                            if(selectImgFile.get(1) != null&&  selectImgFile.size() > 1  && !selectImgFile.get(1).isEmpty()){
+                                fileService.deleteFileFromBucket(selectImgFile.get(1));
+                            }      
+                            String fileName2 = fileService.putFileToBucket(imageFiles.get(1));
+
+                            pdto.setPost_img2(fileName2);
                             System.out.println("posts image" + pdto.getPost_img2());
-                            logger.info("Image uploaded successfully: {}", filePath2); // 성공 로그
+                         
                         }
-                    }catch(IOException e){
+                    }catch(Exception e){
                         e.printStackTrace();
                         
                         response =  new ResponseEntity<> (HttpStatus.INTERNAL_SERVER_ERROR);
@@ -414,7 +414,17 @@ public class PostController {
                 Map<String, Integer> map = new HashMap<>();
                 map.put("post_id", postId);
                 map.put("member_id", userId);
-               
+
+                List<String> selectImgFile = postService.selectImgFiles(map);
+                        
+                if(selectImgFile.size() > 0  && !selectImgFile.get(0).isEmpty()){
+                    fileService.deleteFileFromBucket(selectImgFile.get(0));
+                }      
+                       
+                if(selectImgFile.size() > 1  && !selectImgFile.get(1).isEmpty()){
+                    fileService.deleteFileFromBucket(selectImgFile.get(1));
+                }      
+                   
                 postdelete = postService.postDelete(map); 
                 
                
