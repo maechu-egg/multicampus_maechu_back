@@ -233,3 +233,5 @@ public ResponseEntity<Map<String, Object>> getBadgeIdPoint(@RequestHeader(HttpHe
 
 }
 // develop commit 용 주석
+// main commit 용 주석
+// ㅇㅇㅇㅇㅇㅇㅇㅇ
