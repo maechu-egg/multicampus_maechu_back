@@ -83,6 +83,16 @@
             post_id = #{post_id} 
             AND    member_id = #{member_id} 
     </update>
+
+    <!-- 기존 이미지 찾기 -->
+    <select id="postImgsSelect" parameterType="Map">
+        SELECT post_img1, post_img2
+        FROM Posts
+        WHERE post_id = #{post_id}
+    </select>
+
+
+
     <!-- 수정된 게시글 조회 -->
     <select id="updatePostResult" 
             parameterType="com.multipjt.multi_pjt.community.domain.posts.PostRequestDTO" 

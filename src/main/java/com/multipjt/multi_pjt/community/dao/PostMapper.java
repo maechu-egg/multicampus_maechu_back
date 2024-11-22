@@ -25,6 +25,9 @@ public interface PostMapper {
     // 게시글 수정
     public int postUpdate(PostRequestDTO pdto);
 
+    // 게시글 이미지 선택
+    public List<String> postImgsSelect(Map<String, Integer> map);
+
     // 게시글 수정 post 조회
     public PostResponseDTO updatePostResult(PostRequestDTO pdto);
 
