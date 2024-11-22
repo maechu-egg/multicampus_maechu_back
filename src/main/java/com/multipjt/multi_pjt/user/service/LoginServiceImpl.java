@@ -10,10 +10,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import com.multipjt.multi_pjt.badge.service.BadgeService;
 import com.multipjt.multi_pjt.badge.service.CrewBadgeManager;
+import com.multipjt.multi_pjt.config.NcpStorageConfig;
 import com.multipjt.multi_pjt.jwt.EmailProvider;
 import com.multipjt.multi_pjt.jwt.JwtTokenProvider;
 import com.multipjt.multi_pjt.user.dao.UserMapper;
@@ -36,8 +39,9 @@ import org.springframework.http.ResponseEntity;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-
+import java.util.UUID;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -45,8 +49,15 @@ import java.nio.file.StandardCopyOption;
 
 import org.springframework.web.multipart.MultipartFile;
 
+import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.model.ObjectMetadata;
+import com.amazonaws.services.s3.model.PutObjectRequest;
+
+import com.multipjt.multi_pjt.config.FileService;
+
 @Slf4j
 @Service 
+@RequiredArgsConstructor
 public class LoginServiceImpl implements UserDetailsService { // UserDetailsService 구현
 
     private static final Logger logger = LoggerFactory.getLogger(LoginServiceImpl.class);
@@ -69,10 +80,20 @@ public class LoginServiceImpl implements UserDetailsService { // UserDetailsServ
    @Autowired
    private CrewBadgeManager crewBadgeManager;
 
+   @Autowired
+   private NcpStorageConfig ncpStorageConfig;
+
+   @Autowired
+   private AmazonS3Client amazonS3Client; // NcpStorageConfig에서 생성된 AmazonS3Client를 주입받음
+
+   @Autowired
+   private FileService fileService; // FileService 주입
+
     private final ConcurrentHashMap<String, EmailCertificationCodeDTO> emailCertificationMap = new ConcurrentHashMap<>(); // 이메일과 인증 코드를 저장할 Map
 
     private final SecureRandom random = new SecureRandom();
 
+    
     // 1. 회원가입 메서드 추가
     public ResponseEntity<String> registerUser(UserRequestDTO userRequestDTO, MultipartFile memberImgFile) {
 
@@ -82,21 +103,11 @@ public class LoginServiceImpl implements UserDetailsService { // UserDetailsServ
 
         // 이미지 저장 로직 추가
         if (memberImgFile != null && !memberImgFile.isEmpty()) {
-            String fileName = System.currentTimeMillis() + "_" + memberImgFile.getOriginalFilename().replace(" ", "_");
-            Path path = Paths.get("src/main/resources/static/" + fileName); // 정적 폴더 경로
-            logger.info("Attempting to save image: {} at path: {}", fileName, path.toString()); // 파일 이름과 경로 로그
-
-            try {
-                Files.copy(memberImgFile.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
-                userRequestDTO.setMember_img(fileName); // DB에 저장할 파일 이름 설정
-                logger.info("Image uploaded successfully: {}", fileName); // 성공 로그
-            } catch (IOException e) {
-                logger.error("Image upload failed: {}", e.getMessage(), e);
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                                     .body("{\"Code\": \"IMAGE_UPLOAD_FAILED\", \"Message\": \"이미지 업로드 실패: " + e.getMessage() + "\"}");
-            }
+            String fileName = fileService.putFileToBucket(memberImgFile); // FileService를 사용하여 이미지 저장
+            userRequestDTO.setMemberImg(fileName); // DB에 저장할 파일 이름 설정
+            logger.info("Image uploaded successfully to NCP Object Storage: {}", fileName); // 성공 로그
         } else {
-            userRequestDTO.setMember_img(null); // 이미지가 없을 경우 null 설정
+            userRequestDTO.setMemberImg(null); // 이미지가 없을 경우 null 설정
         }
 
         // DB에 저장하기 전 UserRequestDTO 상태 로그
@@ -189,28 +200,28 @@ public class LoginServiceImpl implements UserDetailsService { // UserDetailsServ
         return isValid;
     }
 
+
     @Transactional
     public ResponseEntity<String> updateUser(int userId, UserUpdateRequestDTO userUpdateRequestDTO, MultipartFile memberImgFile) {
         // userId 값을 member_id에 설정
         userUpdateRequestDTO.setMemberId(userId);
     
+        // 기존 이미지 이름 조회
+        String existingImageName = userMapper.getUserByImg(userId);
+
         // 이미지 저장 로직
         if (memberImgFile != null && !memberImgFile.isEmpty()) {
-            String fileName = System.currentTimeMillis() + "_" + memberImgFile.getOriginalFilename();
-            Path path = Paths.get("src/main/resources/static/" + fileName); // 정적 폴더 경로
-            logger.info("Attempting to save image: {} at path: {}", fileName, path.toString());
-    
-            try {
-                Files.copy(memberImgFile.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
-                userUpdateRequestDTO.setMemberImg(fileName); // DB에 저장할 파일 이름 설정
-                logger.info("Image uploaded successfully: {}", fileName);
-            } catch (IOException e) {
-                logger.error("Image upload failed: {}", e.getMessage(), e);
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                                     .body("{\"Code\": \"IMAGE_UPLOAD_FAILED\", \"Message\": \"이미지 업로드 실패: " + e.getMessage() + "\"}");
+            // 기존 이미지 삭제
+            if (existingImageName != null) {
+                fileService.deleteFileFromBucket(existingImageName);
             }
+
+            // 새 이미지 업로드
+            String newFileName = fileService.putFileToBucket(memberImgFile);
+            userUpdateRequestDTO.setMemberImg(newFileName); // DB에 저장할 파일 이름 설정
+            logger.info("Image uploaded successfully to NCP Object Storage: {}", newFileName);
         }
-    
+
         // 로그로 업데이트할 객체 출력
         logger.info("Updating user with ID: {}, Data: {}", userId, userUpdateRequestDTO);
     
@@ -339,7 +350,7 @@ public class LoginServiceImpl implements UserDetailsService { // UserDetailsServ
         if (user != null) {
             logger.info("User info retrieved successfully for userId: {}", userId);
             // 이미지 URL 설정 (정적 파일 경로에 맞게 URL 생성)
-            user.setMemberImg(getImageUrl(user.getMemberImg())); // 이미지 URL 설정
+            user.setMemberImg(user.getMemberImg()); // 이미지 URL 설정
             //user.setMemberImg(user.getMemberImg());
             System.out.println(user);
         } else {
@@ -348,13 +359,7 @@ public class LoginServiceImpl implements UserDetailsService { // UserDetailsServ
         return user;
     }
 
-    //이미지 URL 생성 메서드
-    private String getImageUrl(String memberImg) {
-        if (memberImg != null && !memberImg.startsWith("/static/")) {
-            return "/static/" + memberImg; // 정적 파일 경로에 맞게 URL 생성
-        }
-        return memberImg; // 이미 경로가 포함된 경우 그대로 반환
-    }
+    
 
     
 
