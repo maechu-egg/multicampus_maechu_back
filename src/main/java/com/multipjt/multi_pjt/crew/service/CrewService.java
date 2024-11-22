@@ -332,14 +332,6 @@ public class CrewService {
             params.put("crew_id", crew_id);
             params.put("crew_post_state", crew_post_state);
             List<CrewPostResponseDTO> crewNoticePostList = crewMapper.selectCrewNoticePostRow(params);
-            
-            // 이미지 URL 설정
-            crewNoticePostList.forEach(post -> {
-                if (post != null && post.getCrew_post_img() != null) {
-                    post.setCrew_post_img(getImageUrl(post.getCrew_post_img()));
-                }
-            });
-
             return crewNoticePostList;
         } else {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "크루원만 게시물 조회가 가능합니다.");
