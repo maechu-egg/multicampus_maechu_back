@@ -111,16 +111,7 @@ public class CrewService {
         System.out.println("debug>>> Service: getCrewInfo + " + crewId);
         
         CrewResponseDTO crew = crewMapper.selectCrewInfoRow(crewId);
-        if (crew != null && crew.getCrew_intro_img() != null) {
-            // 이미지 URL 설정 (정적 파일 경로에 맞게 URL 생성)
-            crew.setCrew_intro_img(getImageUrl(crew.getCrew_intro_img()));
-        }
         return crew;
-    }
-
-    // 이미지 URL 생성 메서드
-    private String getImageUrl(String Img) {
-        return "/static/" + Img; // 정적 파일 경로에 맞게 URL 생성
     }
 
     // 크루원 신청
@@ -137,14 +128,6 @@ public class CrewService {
 
         try {
             List<CrewResponseDTO> crewList = crewMapper.selectMyCrewRow(token_id);
-            
-            // 이미지 URL 설정
-            crewList.forEach(crew -> {
-                if (crew != null && crew.getCrew_intro_img() != null) {
-                    crew.setCrew_intro_img(getImageUrl(crew.getCrew_intro_img()));
-                }
-            });
-
             return crewList;
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "내가 속한 크루가 없습니다.");
@@ -239,14 +222,6 @@ public class CrewService {
         System.out.println("debug>>> Service: getCrewMemberList + " + token_id);
 
         List<CrewMemberResponseDTO> crewMembers = crewMapper.selectCrewMemberRow(crewId);
-
-        // 이미지 URL 설정
-        crewMembers.forEach(member -> {
-            if (member != null && member.getMember_img() != null) {
-                member.setMember_img(getImageUrl(member.getMember_img()));
-            }
-        });
-
         return crewMembers;
     }
 
@@ -309,12 +284,6 @@ public class CrewService {
             params.put("size", size);
 
             List<CrewPostResponseDTO> crewPostList = crewMapper.selectCrewPostListRow(params);
-            // 이미지 URL 설정
-            crewPostList.forEach(post -> {
-                if (post != null && post.getCrew_post_img() != null) {
-                    post.setCrew_post_img(getImageUrl(post.getCrew_post_img()));
-                }
-            });
             int pageNumber = offset / size;
             Pageable pageable = PageRequest.of(pageNumber, size);
             return new PageImpl<>(crewPostList, pageable, crewMapper.selectCrewPostListCountRow(crewId));
@@ -338,13 +307,6 @@ public class CrewService {
             params.put("crew_id", crew_id);
             params.put("crew_post_state", crew_post_state);
             List<CrewPostResponseDTO> crewTopPostList = crewMapper.selectCrewTopPostRow(params);
-            
-            // 이미지 URL 설정
-            crewTopPostList.forEach(post -> {
-                if (post != null && post.getCrew_post_img() != null) {
-                    post.setCrew_post_img(getImageUrl(post.getCrew_post_img()));
-                }
-            });
             return crewTopPostList;
         } else {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "크루원만 게시물 조회가 가능합니다.");
@@ -366,14 +328,6 @@ public class CrewService {
             params.put("crew_id", crew_id);
             params.put("crew_post_state", crew_post_state);
             List<CrewPostResponseDTO> crewNoticePostList = crewMapper.selectCrewNoticePostRow(params);
-            
-            // 이미지 URL 설정
-            crewNoticePostList.forEach(post -> {
-                if (post != null && post.getCrew_post_img() != null) {
-                    post.setCrew_post_img(getImageUrl(post.getCrew_post_img()));
-                }
-            });
-
             return crewNoticePostList;
         } else {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "크루원만 게시물 조회가 가능합니다.");
@@ -395,11 +349,6 @@ public class CrewService {
             params.put("crew_id", crew_id);
             params.put("crew_post_id", crew_post_id);
             CrewPostResponseDTO crewPost = crewMapper.selectCrewPostRow(params);
-
-            // 이미지 URL 설정
-            if (crewPost != null && crewPost.getCrew_post_img() != null) {
-                crewPost.setCrew_post_img(getImageUrl(crewPost.getCrew_post_img()));
-            }
             return crewPost;
         } else {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "크루원만 게시물 조회가 가능합니다.");
