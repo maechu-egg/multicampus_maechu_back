@@ -134,10 +134,6 @@ public class CrewService {
         }
     }
 
-    public String getImageUrl(String Img) {
-        return "/static/" + Img;
-    }
-
     // --------- 크루 소개 ---------
 
     // 크루 소개 수정
