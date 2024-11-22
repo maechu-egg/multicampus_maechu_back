@@ -143,7 +143,7 @@ public class PostController {
                     response.put("message" ,"검색결과가 없습니다");
                     response.put("status", HttpStatus.NOT_FOUND);
                     response.put("posts", new ArrayList<>());
-                  
+                    return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
                 }else if(searchList != null) {
                     
                     totalpage = postService.countSearchPosts(map);
