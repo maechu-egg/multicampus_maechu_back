@@ -47,11 +47,11 @@ public class DietMapperApplicationTest {
  
          itemRequestDTO.setDiet_id(diet_id);
          itemRequestDTO.setCalories(300);
-         itemRequestDTO.setCarbs(30);
-         itemRequestDTO.setFat(30);
+         itemRequestDTO.setCarbs(30D);
+         itemRequestDTO.setFat(30D);
          itemRequestDTO.setItem_name("공기밥");
          itemRequestDTO.setQuantity(100);
-         itemRequestDTO.setProtein(30);
+         itemRequestDTO.setProtein(30D);
          //when : db에 값 insert
          int item = dietMapper.itemInsert(itemRequestDTO);
  
@@ -130,10 +130,10 @@ public class DietMapperApplicationTest {
         itemRequestDTO.setDiet_id(dietNumber);
         itemRequestDTO.setItem_name(itemRequestDTO.getItem_name());
         itemRequestDTO.setCalories(300);
-        itemRequestDTO.setCarbs(30);
-        itemRequestDTO.setFat(30);
+        itemRequestDTO.setCarbs(30D);
+        itemRequestDTO.setFat(30D);
         itemRequestDTO.setQuantity(200);
-        itemRequestDTO.setProtein(30);
+        itemRequestDTO.setProtein(30D);
         //then : 검증
         int item = dietMapper.itemUpdate(itemRequestDTO);
         
@@ -163,11 +163,11 @@ public class DietMapperApplicationTest {
         
         itemRequestDTO.setDiet_id(dietNumber);
         itemRequestDTO.setCalories(300);
-        itemRequestDTO.setCarbs(30);
-        itemRequestDTO.setFat(30);
+        itemRequestDTO.setCarbs(30D);
+        itemRequestDTO.setFat(30D);
         itemRequestDTO.setItem_name("공기밥");
         itemRequestDTO.setQuantity(100);
-        itemRequestDTO.setProtein(30);
+        itemRequestDTO.setProtein(30D);
         //when : db에 값 insert
         int item = dietMapper.itemInsert(itemRequestDTO);
  
@@ -196,11 +196,11 @@ public class DietMapperApplicationTest {
  
         itemRequestDTO.setDiet_id(dietNumber2);
         itemRequestDTO.setCalories(300);
-        itemRequestDTO.setCarbs(30);
-        itemRequestDTO.setFat(30);
+        itemRequestDTO.setCarbs(30D);
+        itemRequestDTO.setFat(30D);
         itemRequestDTO.setItem_name("공기밥");
         itemRequestDTO.setQuantity(100);
-        itemRequestDTO.setProtein(30);
+        itemRequestDTO.setProtein(30D);
         //when : db에 값 insert
         int item2 = dietMapper.itemInsert(itemRequestDTO);
 
