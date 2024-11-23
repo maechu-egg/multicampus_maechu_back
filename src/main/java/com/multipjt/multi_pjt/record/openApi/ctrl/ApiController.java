@@ -64,7 +64,7 @@ public class ApiController {
             System.out.println("debug >>> member_id : " + member_id);
 
             if(foodNm == null || foodNm.isEmpty()){
-                return new ResponseEntity<>("식품명을 입력해주세요.",HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>("식품명을 입력해주세요.",HttpStatus.NOT_FOUND);
             } else{    
             String encodeFoodNm = URLEncoder.encode(foodNm, "UTF-8");    
 
@@ -105,10 +105,10 @@ public class ApiController {
                     
                         System.out.println("api list >>> " + list);
                         if(list.isEmpty()){ 
-                            return new ResponseEntity<>("해당 식품이 없습니다.",HttpStatus.NOT_FOUND);
+                            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
                         } 
                     }else{ 
-                        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+                        return new ResponseEntity<>("응답 실패",HttpStatus.INTERNAL_SERVER_ERROR);
                     }
                 }catch(Exception e){
                     e.printStackTrace();

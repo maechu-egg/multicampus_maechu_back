@@ -737,5 +737,23 @@
                 p.post_date DESC
         </select>
 
+    <select id="selectPorofile"  parameterType="map" resultType="com.multipjt.multi_pjt.community.domain.posts.PostResponseDTO">
+        SELECT 
+            m.member_id AS member_id,
+            m.member_img AS member_img,
+            m.nickname AS post_nickname,
+            mb.current_points AS current_points,
+            mb.badge_level AS member_badge_level,
+            cb.crew_current_points AS crew_current_points,
+            cb.badge_level AS crew_badge_level,
+            cb.crew_battle_wins AS crew_battle_wins
+        FROM 
+            Member m
+        LEFT JOIN 
+            MemberBadge mb ON m.member_id = mb.member_id
+        LEFT JOIN 
+            CrewBadge cb ON m.member_id = cb.member_id
+        WHERE m.member_id = #{member_id};
 
+    </select>
 </mapper>
