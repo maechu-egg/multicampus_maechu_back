@@ -679,4 +679,30 @@ public class PostController {
 
         }
 
+
+        @GetMapping("/posts/showprofile")
+        public ResponseEntity<PostResponseDTO> showProfile(
+                                                @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader  ,
+                                                @RequestParam(name="member_id") int member_id  
+        ) {
+                System.out.println("Controller - posts/myPosts");
+                Map<String, Integer> map = new HashMap<>();
+
+            if (authHeader != null && authHeader.startsWith("Bearer ")) {
+                String token = authHeader.substring(7); // "Bearer " 접두사 제거
+                int userId = jwtTokenProvider.getUserIdFromToken(token); // 토큰에서 사용자 ID 추출 (int형으로 변경)
+            
+                map.put("member_id", member_id);
+                PostResponseDTO show = new PostResponseDTO();
+
+                show = postService.selectPorofile(map);
+                
+                return ResponseEntity.ok(show); 
+
+            }
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+
+
 }
