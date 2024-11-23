@@ -117,4 +117,7 @@ public interface PostMapper {
 
      // 사용자 본인 좋아요 게시글 검색 
      List<PostResponseDTO> myLikePosts(int member_id);
+
+     // nickname click  - show profile
+     PostResponseDTO selectPorofile(Map<String, Integer> map);
 }

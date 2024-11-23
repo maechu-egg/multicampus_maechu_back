@@ -643,4 +643,12 @@ public class PostService {
             return result;
         }
 
+
+        public PostResponseDTO selectPorofile(Map<String, Integer> map){
+            System.out.println("select Postfile - " + map);
+
+            return postMapper.selectPorofile(map);
+        }
+
+
 }
