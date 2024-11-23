@@ -24,9 +24,9 @@ public class FoodCalculateDTO {
         item.setItem_name(foodNm);
         item.setQuantity(inputQuantity);
         item.setCalories((int) Math.round(energy * ratio));
-        item.setCarbs((int) Math.round(carbs * ratio));
-        item.setProtein((int) Math.round(protein * ratio));
-        item.setFat((int) Math.round(fat * ratio));
+        item.setCarbs(carbs * ratio);
+        item.setProtein(protein * ratio);
+        item.setFat(fat * ratio);
         item.setDiet_id(diet_id);
         return item;
     }

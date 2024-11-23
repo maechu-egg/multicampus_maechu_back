@@ -416,15 +416,16 @@ public class PostController {
                 map.put("member_id", userId);
 
                 List<String> selectImgFile = postService.selectImgFiles(map);
-                        
-                if(selectImgFile.size() > 0  && !selectImgFile.get(0).isEmpty()){
-                    fileService.deleteFileFromBucket(selectImgFile.get(0));
-                }      
-                       
-                if(selectImgFile.size() > 1  && !selectImgFile.get(1).isEmpty()){
-                    fileService.deleteFileFromBucket(selectImgFile.get(1));
-                }      
-                   
+                System.out.println("selectImgFile" + selectImgFile);
+                if(selectImgFile != null && !selectImgFile.isEmpty()){      
+                        if(selectImgFile.size() > 0  && selectImgFile.get(0) != null &&  !selectImgFile.get(0).isEmpty()){
+                            fileService.deleteFileFromBucket(selectImgFile.get(0));
+                        }      
+                            
+                        if(selectImgFile.size() > 1 && selectImgFile.get(1) != null &&    !selectImgFile.get(1).isEmpty()){
+                            fileService.deleteFileFromBucket(selectImgFile.get(1));
+                        }      
+                }
                 postdelete = postService.postDelete(map); 
                 
                
@@ -677,5 +678,31 @@ public class PostController {
             return ResponseEntity.ok(map);
 
         }
+
+
+        @GetMapping("/posts/showprofile")
+        public ResponseEntity<PostResponseDTO> showProfile(
+                                                @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader  ,
+                                                @RequestParam(name="member_id") int member_id  
+        ) {
+                System.out.println("Controller - posts/myPosts");
+                Map<String, Integer> map = new HashMap<>();
+
+            if (authHeader != null && authHeader.startsWith("Bearer ")) {
+                String token = authHeader.substring(7); // "Bearer " 접두사 제거
+                int userId = jwtTokenProvider.getUserIdFromToken(token); // 토큰에서 사용자 ID 추출 (int형으로 변경)
+            
+                map.put("member_id", member_id);
+                PostResponseDTO show = new PostResponseDTO();
+
+                show = postService.selectPorofile(map);
+                
+                return ResponseEntity.ok(show); 
+
+            }
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+
 
 }

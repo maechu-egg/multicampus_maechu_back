@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cglib.core.Local;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,7 +14,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.multipjt.multi_pjt.badge.dao.UserActivityRecordMapper;
 import com.multipjt.multi_pjt.jwt.JwtTokenProvider;
-import com.multipjt.multi_pjt.record.diet.domain.DietRequestDTO;
 import com.multipjt.multi_pjt.record.diet.domain.DietResponseDTO;
 import com.multipjt.multi_pjt.record.diet.domain.ItemRequestDTO;
 import com.multipjt.multi_pjt.record.diet.domain.ItemResponseDTO;
