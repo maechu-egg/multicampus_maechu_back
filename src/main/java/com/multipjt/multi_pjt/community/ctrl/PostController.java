@@ -206,8 +206,8 @@ public class PostController {
                         }
                         if(imageFiles.size() > 1 && !imageFiles.get(1).isEmpty()){
                             String  uniqueFileName2 = fileService.putFileToBucket(imageFiles.get(1));
-                            pdto.setPost_img1(uniqueFileName2);
-                            System.out.println("posts image" + pdto.getPost_img1());
+                            pdto.setPost_img2(uniqueFileName2);
+                            System.out.println("posts image" + pdto.getPost_img2());
                         }
                     }catch(Exception e){
                         e.printStackTrace();
