@@ -119,11 +119,11 @@ public class DietService {
         // 다이어트 목표에 따른 칼로리 조정
     switch (info.get("profile_goal").toString().toLowerCase()) {
         case "다이어트":
-            recommendedCalories = (int) Math.round(tdee * 0.75);
+            recommendedCalories = (int) Math.round(tdee * 0.8);
 
-            carbRate = 0.3;
-            proteinRate = 0.5;
-            fatRate = 0.2;
+            carbRate = 0.4;
+            proteinRate = 0.3;
+            fatRate = 0.3;
 
             recommendedCarb = (int) Math.round(recommendedCalories * carbRate) / 4;
             recommendedProtein = (int) Math.round(recommendedCalories * proteinRate) / 4;
@@ -131,9 +131,9 @@ public class DietService {
             break;
         case "벌크업":
             recommendedCalories = (int) Math.round(tdee * 1.1);
-            carbRate = 0.6;
-            proteinRate = 0.3;
-            fatRate = 0.1;
+            carbRate = 0.55;
+            proteinRate = 0.25;
+            fatRate = 0.2;
 
             recommendedCarb = (int) Math.round(recommendedCalories * carbRate) / 4;
             recommendedProtein = (int) Math.round(recommendedCalories * proteinRate) / 4;
@@ -141,8 +141,8 @@ public class DietService {
             break;
         case "린매스업":
             recommendedCalories = (int) Math.round(tdee * 1.05);
-            carbRate = 0.4;
-            proteinRate = 0.4;
+            carbRate = 0.45;
+            proteinRate = 0.35;
             fatRate = 0.2;
 
             recommendedCarb = (int) Math.round(recommendedCalories * carbRate) / 4;
@@ -151,9 +151,9 @@ public class DietService {
             break;
         case "유지":
             recommendedCalories = tdee;
-            carbRate = 0.5;
+            carbRate = 0.4;
             proteinRate = 0.3;
-            fatRate = 0.2;
+            fatRate = 0.3;
 
             recommendedCarb = (int) Math.round(recommendedCalories * carbRate) / 4;
             recommendedProtein = (int) Math.round(recommendedCalories * proteinRate) / 4;
