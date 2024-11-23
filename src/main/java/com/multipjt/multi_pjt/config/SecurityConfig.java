@@ -55,7 +55,7 @@ public class SecurityConfig {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
-        config.addAllowedOrigin("https://web-workspace-front-m3sh9tqyf4462309.sel4.cloudtype.app"); // 프론트엔드 URL 지정
+        config.addAllowedOrigin("http://localhost:3000"); // 프론트엔드 URL 지정
         config.addAllowedHeader("*");
         config.addAllowedMethod("*");
         source.registerCorsConfiguration("/**", config);
