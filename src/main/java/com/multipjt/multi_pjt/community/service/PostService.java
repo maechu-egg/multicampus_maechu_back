@@ -649,6 +649,12 @@ public class PostService {
 
             return postMapper.selectPorofile(map);
         }
+        // 이미지 삭제
+        public void postImgDelete(Map<String, Object> imgName){
+            Integer result  = postMapper.postImgDelete(imgName);
 
+            System.out.println("service  -        image delete " + result);
+            
+        }
 
 }

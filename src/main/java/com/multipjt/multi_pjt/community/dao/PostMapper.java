@@ -120,4 +120,7 @@ public interface PostMapper {
 
      // nickname click  - show profile
      PostResponseDTO selectPorofile(Map<String, Integer> map);
+
+      // 이미지 삭제
+      Integer postImgDelete(Map<String, Object> map);
 }
