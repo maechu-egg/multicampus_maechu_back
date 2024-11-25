@@ -206,8 +206,8 @@ public class PostController {
                         }
                         if(imageFiles.size() > 1 && !imageFiles.get(1).isEmpty()){
                             String  uniqueFileName2 = fileService.putFileToBucket(imageFiles.get(1));
-                            pdto.setPost_img1(uniqueFileName2);
-                            System.out.println("posts image" + pdto.getPost_img1());
+                            pdto.setPost_img2(uniqueFileName2);
+                            System.out.println("posts image" + pdto.getPost_img2());
                         }
                     }catch(Exception e){
                         e.printStackTrace();
@@ -233,6 +233,7 @@ public class PostController {
                                             @ModelAttribute  PostRequestDTO pdto, 
                                             @PathVariable("postId") int postId,
                                             @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader,
+                                            @RequestParam(value = "existing_images", required = false) List<String> existingImages,
                                             @RequestParam(value = "images", required = false) List<MultipartFile> imageFiles           
                                             
          ){
@@ -254,11 +255,30 @@ public class PostController {
                 Map<String, Integer> smap = new HashMap<>();
                 smap.put("post_id", postId);
                 System.out.println("controller - pdto " + pdto);
+
+                List<String> selectImgFile = postService.selectImgFiles(smap);
+                Map<String, Object> imgname = new HashMap<>();
+                imgname.put("post_id", postId);
+             
+                     if(  selectImgFile.get(0) != null  || selectImgFile.get(1) != null ){  
+                        
+                     if (existingImages == null || existingImages.isEmpty()){   
+                      
+                        for(int i = 0; i < selectImgFile.size(); i++){
+                            if( selectImgFile.get(i) != null){
+                                fileService.deleteFileFromBucket(selectImgFile.get(i));
+                                imgname.put("post_img"+(i+1), selectImgFile.get(i));
+                            }
+                        }
+                        postService.postImgDelete(imgname);
+                    }
+                    
+                } 
+
                 if(imageFiles != null && !imageFiles.isEmpty()){
                     
                     try{
                         
-                        List<String> selectImgFile = postService.selectImgFiles(smap);
                         if(imageFiles.size() > 0 && !imageFiles.get(0).isEmpty()){
                                 if( selectImgFile.get(0) != null && selectImgFile.size() > 0   && !selectImgFile.get(0).isEmpty()){
                                     fileService.deleteFileFromBucket(selectImgFile.get(0));
@@ -278,6 +298,8 @@ public class PostController {
                             System.out.println("posts image" + pdto.getPost_img2());
                          
                         }
+                  
+                  
                     }catch(Exception e){
                         e.printStackTrace();
                         
