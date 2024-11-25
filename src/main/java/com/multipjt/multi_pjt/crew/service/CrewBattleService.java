@@ -1,10 +1,5 @@
 package com.multipjt.multi_pjt.crew.service;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -24,11 +19,14 @@ import com.multipjt.multi_pjt.crew.domain.battle.CrewBattleResponseDTO;
 import com.multipjt.multi_pjt.crew.domain.battle.CrewVoteRequestDTO;
 import com.multipjt.multi_pjt.crew.domain.battle.CrewBattleFeedRequestDTO;
 import com.multipjt.multi_pjt.crew.domain.battle.CrewBattleFeedResponseDTO;
-
+import com.multipjt.multi_pjt.config.FileService;
 @Service
 public class CrewBattleService {
     @Autowired
     private CrewBattleMapper crewBattleMapper;
+
+    @Autowired
+    private FileService fileService;
 
     @Autowired
     private CrewMapper crewMapper;
@@ -152,17 +150,12 @@ public class CrewBattleService {
             if (param.getMember_id() == token_id) {
                 // 이미지 저장
                 if (ImgFile != null && !ImgFile.isEmpty()) {
-                    String feedFileName = System.currentTimeMillis() + "_feed_" + ImgFile.getOriginalFilename();
-                    Path feedPath = Paths.get("src/main/resources/static/" + feedFileName);
-                    try {
-                        Files.copy(ImgFile.getInputStream(), feedPath, StandardCopyOption.REPLACE_EXISTING);
-                        System.out.println("Image uploaded successfully: " + feedFileName);
-                        param.setFeed_img(feedFileName);
-                    } catch (IOException e) {
-                        throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "피드 이미지 업로드 실패");
-                    }
-                    
+                    // 버킷에 피드 이미지 저장 및 파일 이름 반환
+                    String feedFileName = fileService.putFileToBucket(ImgFile);
+                    // CrewBattleFeedRequestDTO에 파일 이름 설정
+                    param.setFeed_img(feedFileName);
                 }
+                // 피드 생성
                 crewBattleMapper.createCrewBattleFeedRow(param);
             } else {
                 throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "자신의 피드만 작성이 가능합니다.");
