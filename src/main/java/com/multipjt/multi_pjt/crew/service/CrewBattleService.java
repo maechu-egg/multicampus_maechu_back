@@ -130,21 +130,28 @@ public class CrewBattleService {
         .anyMatch(member -> member.getMember_id() == token_id && member.getCrew_member_state() == 1);
 
         if (isActiveMember) {
-            return crewBattleMapper.selectBattleMemberRow(battle_id);
+            List<BattleMemberResponseDTO> members = crewBattleMapper.selectBattleMemberRow(battle_id);
+            System.out.println("debug>>> Members size: " + members.size());
+            for (BattleMemberResponseDTO member : members) {
+                System.out.println("debug>>> Member ID: " + member.getMember_id());
+            }
+            return members;
         } else {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "크루원만 배틀 참가 멤버 조회가 가능합니다.");
         }
     }
 
     // 피드 작성
-    public void createCrewBattleFeed(CrewBattleFeedRequestDTO param, int token_id, MultipartFile ImgFile) {
-        System.out.println("debug>>> Service: createCrewBattleFeed + " + crewBattleMapper);
-        System.out.println("debug>>> Service: createCrewBattleFeed + " + param);
-        System.out.println("debug>>> Service: createCrewBattleFeed + " + token_id);
-        System.out.println("debug>>> Service: createCrewBattleFeed + " + ImgFile);
+    public void createCrewBattleFeed(CrewBattleFeedRequestDTO param, Integer token_id, MultipartFile ImgFile) {
+        System.out.println("debug>>> Service: crewBattleMapper + " + crewBattleMapper);
+        System.out.println("debug>>> Service: param + " + param);
+        System.out.println("debug>>> Service: token_id + " + token_id);
+        System.out.println("debug>>> Service: ImgFile + " + ImgFile);
 
         boolean isBattleMember = crewBattleMapper.selectBattleMemberRow(param.getBattle_id()).stream()
             .anyMatch(member -> member.getMember_id() == token_id);
+        System.out.println("debug>>> Service: isBattleMember + " + isBattleMember);
+        System.out.println("debug>>> Service: param.getMember_id() + " + param.getMember_id());
 
         if (isBattleMember) {
             if (param.getMember_id() == token_id) {
