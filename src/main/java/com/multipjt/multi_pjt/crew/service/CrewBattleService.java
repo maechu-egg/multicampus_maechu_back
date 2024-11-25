@@ -186,11 +186,6 @@ public class CrewBattleService {
 
         if (isActiveMember) {
             List<CrewBattleFeedResponseDTO> crewBattleFeedList = crewBattleMapper.selectCrewBattleFeedRow(param);
-            for (CrewBattleFeedResponseDTO feed : crewBattleFeedList) {
-                if (feed != null && feed.getFeed_img() != null) {
-                    feed.setFeed_img(getImageUrl(feed.getFeed_img()));
-                }
-            }
             return crewBattleFeedList;
         } else {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "크루원만 피드 조회가 가능합니다.");
