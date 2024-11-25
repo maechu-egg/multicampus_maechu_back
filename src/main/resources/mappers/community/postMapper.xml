@@ -85,12 +85,27 @@
     </update>
 
     <!-- 기존 이미지 찾기 -->
-    <select id="postImgsSelect" parameterType="Map">
-        SELECT post_img1, post_img2
+    <select id="postImgsSelect" parameterType="Map" resultType="string">
+        SELECT post_img1
+        FROM Posts
+        WHERE post_id = #{post_id}
+        UNION ALL
+        SELECT post_img2
         FROM Posts
         WHERE post_id = #{post_id}
     </select>
 
+    <!-- 이미지 수정 -->
+    <update id="postImgDelete" parameterType="map"  >
+        Update  Posts
+        <if test="post_img1 != null and post_img1 != ''">
+            Set post_img1 = null
+        </if>
+        <if test="post_img2 != null and post_img2 != ''">
+            , post_img2 = null
+        </if>
+        WHERE post_id = #{post_id}
+    </update>
 
 
     <!-- 수정된 게시글 조회 -->

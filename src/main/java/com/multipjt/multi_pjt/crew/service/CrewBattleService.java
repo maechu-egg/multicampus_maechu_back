@@ -1,10 +1,5 @@
 package com.multipjt.multi_pjt.crew.service;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -24,11 +19,14 @@ import com.multipjt.multi_pjt.crew.domain.battle.CrewBattleResponseDTO;
 import com.multipjt.multi_pjt.crew.domain.battle.CrewVoteRequestDTO;
 import com.multipjt.multi_pjt.crew.domain.battle.CrewBattleFeedRequestDTO;
 import com.multipjt.multi_pjt.crew.domain.battle.CrewBattleFeedResponseDTO;
-
+import com.multipjt.multi_pjt.config.FileService;
 @Service
 public class CrewBattleService {
     @Autowired
     private CrewBattleMapper crewBattleMapper;
+
+    @Autowired
+    private FileService fileService;
 
     @Autowired
     private CrewMapper crewMapper;
@@ -132,7 +130,12 @@ public class CrewBattleService {
         .anyMatch(member -> member.getMember_id() == token_id && member.getCrew_member_state() == 1);
 
         if (isActiveMember) {
-            return crewBattleMapper.selectBattleMemberRow(battle_id);
+            List<BattleMemberResponseDTO> members = crewBattleMapper.selectBattleMemberRow(battle_id);
+            System.out.println("debug>>> Members size: " + members.size());
+            for (BattleMemberResponseDTO member : members) {
+                System.out.println("debug>>> Member ID: " + member.getMember_id());
+            }
+            return members;
         } else {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "크루원만 배틀 참가 멤버 조회가 가능합니다.");
         }
@@ -140,29 +143,27 @@ public class CrewBattleService {
 
     // 피드 작성
     public void createCrewBattleFeed(CrewBattleFeedRequestDTO param, int token_id, MultipartFile ImgFile) {
-        System.out.println("debug>>> Service: createCrewBattleFeed + " + crewBattleMapper);
-        System.out.println("debug>>> Service: createCrewBattleFeed + " + param);
-        System.out.println("debug>>> Service: createCrewBattleFeed + " + token_id);
-        System.out.println("debug>>> Service: createCrewBattleFeed + " + ImgFile);
+        System.out.println("debug>>> Service: crewBattleMapper + " + crewBattleMapper);
+        System.out.println("debug>>> Service: param + " + param);
+        System.out.println("debug>>> Service: token_id + " + token_id);
+        System.out.println("debug>>> Service: ImgFile + " + ImgFile);
 
         boolean isBattleMember = crewBattleMapper.selectBattleMemberRow(param.getBattle_id()).stream()
             .anyMatch(member -> member.getMember_id() == token_id);
+
+        System.out.println("debug>>> Service: isBattleMember + " + isBattleMember);
+        System.out.println("debug>>> Service: param.getMember_id() + " + param.getMember_id());
 
         if (isBattleMember) {
             if (param.getMember_id() == token_id) {
                 // 이미지 저장
                 if (ImgFile != null && !ImgFile.isEmpty()) {
-                    String feedFileName = System.currentTimeMillis() + "_feed_" + ImgFile.getOriginalFilename();
-                    Path feedPath = Paths.get("src/main/resources/static/" + feedFileName);
-                    try {
-                        Files.copy(ImgFile.getInputStream(), feedPath, StandardCopyOption.REPLACE_EXISTING);
-                        System.out.println("Image uploaded successfully: " + feedFileName);
-                        param.setFeed_img(feedFileName);
-                    } catch (IOException e) {
-                        throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "피드 이미지 업로드 실패");
-                    }
-                    
+                    // 버킷에 피드 이미지 저장 및 파일 이름 반환
+                    String feedFileName = fileService.putFileToBucket(ImgFile);
+                    // CrewBattleFeedRequestDTO에 파일 이름 설정
+                    param.setFeed_img(feedFileName);
                 }
+                // 피드 생성
                 crewBattleMapper.createCrewBattleFeedRow(param);
             } else {
                 throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "자신의 피드만 작성이 가능합니다.");
@@ -185,11 +186,6 @@ public class CrewBattleService {
 
         if (isActiveMember) {
             List<CrewBattleFeedResponseDTO> crewBattleFeedList = crewBattleMapper.selectCrewBattleFeedRow(param);
-            for (CrewBattleFeedResponseDTO feed : crewBattleFeedList) {
-                if (feed != null && feed.getFeed_img() != null) {
-                    feed.setFeed_img(getImageUrl(feed.getFeed_img()));
-                }
-            }
             return crewBattleFeedList;
         } else {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "크루원만 피드 조회가 가능합니다.");

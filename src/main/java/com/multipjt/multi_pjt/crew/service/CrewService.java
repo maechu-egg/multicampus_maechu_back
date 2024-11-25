@@ -260,6 +260,7 @@ public class CrewService {
                 // CrewRequestDTO에 파일 이름 설정
                 param.setCrew_post_img(postFileName);
             }
+            // 크루 게시물 생성
             crewMapper.insertCrewPostRow(param);
         } else {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "크루원만 게시물 등록이 가능합니다.");
