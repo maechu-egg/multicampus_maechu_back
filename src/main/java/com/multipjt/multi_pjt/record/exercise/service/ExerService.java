@@ -86,7 +86,7 @@ public class ExerService {
             case HIGH:
                 return tempMet * 1.5;
             default:
-                return 5.0; // 기본값 설정
+                return tempMet; // 기본값 설정
         }
     }
 
