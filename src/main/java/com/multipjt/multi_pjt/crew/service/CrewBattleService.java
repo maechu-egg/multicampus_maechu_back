@@ -142,7 +142,7 @@ public class CrewBattleService {
     }
 
     // 피드 작성
-    public void createCrewBattleFeed(CrewBattleFeedRequestDTO param, Integer token_id, MultipartFile ImgFile) {
+    public void createCrewBattleFeed(CrewBattleFeedRequestDTO param, int token_id, MultipartFile ImgFile) {
         System.out.println("debug>>> Service: crewBattleMapper + " + crewBattleMapper);
         System.out.println("debug>>> Service: param + " + param);
         System.out.println("debug>>> Service: token_id + " + token_id);
@@ -150,6 +150,7 @@ public class CrewBattleService {
 
         boolean isBattleMember = crewBattleMapper.selectBattleMemberRow(param.getBattle_id()).stream()
             .anyMatch(member -> member.getMember_id() == token_id);
+
         System.out.println("debug>>> Service: isBattleMember + " + isBattleMember);
         System.out.println("debug>>> Service: param.getMember_id() + " + param.getMember_id());
 
