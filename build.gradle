@@ -86,7 +86,6 @@ dependencies {
 
     // Spring Boot 의존성
     implementation 'org.springframework.boot:spring-boot-starter'
-    implementation 'org.springframework.boot:spring-boot-devtools'
 
     // JSON 라이브러리
     implementation 'org.json:json:20210307'
