@@ -491,7 +491,7 @@ public class DietControl {
                     return new ResponseEntity<>(result, HttpStatus.OK);
                 } else{
                     // 기록이 없을 때
-                    return new ResponseEntity<>(result, HttpStatus.NOT_FOUND);
+                    return new ResponseEntity<>(HttpStatus.NO_CONTENT);
                 }
             } catch(Exception e){
                 // 3. 서버 내부 오류 발생
