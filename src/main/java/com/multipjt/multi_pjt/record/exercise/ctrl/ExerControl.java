@@ -6,6 +6,7 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpHeaders;
 
@@ -378,7 +379,7 @@ public ResponseEntity<Object> exerInsert(@RequestBody ExerRequestDTO exerRequest
                     return new ResponseEntity<>(list, HttpStatus.OK);
                 } else {
                     // 값이 없을 경우
-                    return new ResponseEntity<>(list, HttpStatus.BAD_REQUEST);
+                    return new ResponseEntity<>(HttpStatus.NO_CONTENT);
                 }
             } catch(Exception e){
                 // 서버 에러
@@ -415,7 +416,7 @@ public ResponseEntity<Object> exerInsert(@RequestBody ExerRequestDTO exerRequest
                     return new ResponseEntity<>(result, HttpStatus.OK);
                 } else {
                     // 값이 없을 때
-                    return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
+                    return new ResponseEntity<>(HttpStatus.NO_CONTENT);
                 }
             } catch(Exception e){
                 // 서버 에러
