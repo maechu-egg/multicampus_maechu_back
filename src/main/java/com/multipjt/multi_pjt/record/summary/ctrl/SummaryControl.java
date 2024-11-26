@@ -133,7 +133,13 @@ public class SummaryControl {
                 System.out.println("debug >>> summary " + summary);
                 System.out.println("소모한 칼로리 정보 추가 완료");
                 // 성공
-                return new ResponseEntity<>(summary, HttpStatus.OK);
+                if(!summary.isEmpty()){
+                    // 값이 있을 때
+                    return new ResponseEntity<>(summary,HttpStatus.OK);
+                } else{
+                    // 값이 없을 때
+                    return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+                }
                 
             } catch (Exception e) {
                 // 서버오류 발생

@@ -379,7 +379,7 @@ public ResponseEntity<Object> exerInsert(@RequestBody ExerRequestDTO exerRequest
                     return new ResponseEntity<>(list, HttpStatus.OK);
                 } else {
                     // 값이 없을 경우
-                    return new ResponseEntity<>(list, HttpStatus.BAD_REQUEST);
+                    return new ResponseEntity<>(HttpStatus.NO_CONTENT);
                 }
             } catch(Exception e){
                 // 서버 에러
