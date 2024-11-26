@@ -140,7 +140,7 @@ public class DietControl {
                     return new ResponseEntity<>(result,HttpStatus.OK);
                 } else{
                     // 값이 없을 때
-                    return new ResponseEntity<>(result,HttpStatus.NOT_FOUND);
+                    return new ResponseEntity<>(HttpStatus.NO_CONTENT);
                 }
             } catch(Exception e){
                 // 서버 내부 오류 발생
@@ -306,7 +306,7 @@ public class DietControl {
     // 식단 삭제
     // 일일 식단 조회를 통해 식단 번호를 알고 있는 상태
     @DeleteMapping("/delete/meal")
-    public ResponseEntity<Integer> deleteRecord(@RequestParam(name = "diet_id") Integer diet_id) {
+    public ResponseEntity<Object> deleteRecord(@RequestParam(name = "diet_id") Integer diet_id) {
         System.out.println("class endPoint >> " + "/record/diet/delete/meal");
         int result = dietService.deleteRecordRow(diet_id);
         System.out.println("result >>" + result);
@@ -315,7 +315,7 @@ public class DietControl {
             return new ResponseEntity<>(result,HttpStatus.OK);
         } else{
             // 삭제 실패
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            return new ResponseEntity<>("삭제 실패",HttpStatus.BAD_REQUEST);
         }
     }
 
