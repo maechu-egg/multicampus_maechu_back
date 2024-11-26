@@ -114,7 +114,14 @@ public class SummaryControl {
                     consumed.put("proteinRatio", (int)((proteinCalories / totalCalorie) * 100));
                     consumed.put("fatRatio", (int)((fatCalories / totalCalorie) * 100));
                     consumed.put("carbRatio", (int)((carbCalories / totalCalorie) * 100));
+                } else {
+
+                    consumed.put("proteinRatio", 0);
+                    consumed.put("fatRatio", 0);
+                    consumed.put("carbRatio", 0);
+
                 }
+
                 System.out.println("debug >>> consumed " + consumed);
                 System.out.println("영양소 비율 계산 완료");
                 summary.put("consumed", consumed);
