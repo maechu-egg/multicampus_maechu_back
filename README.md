@@ -74,4 +74,4 @@
 
 ## 아키텍처
 
-<img src="/Users/leeyeonju/Documents/GitHub/multicampus_maechu_back/src/main/resources/readme/_workspace 다이어그램.png" width="40%"/>
+![logo](/src/main/resources/readme/dia.png)
