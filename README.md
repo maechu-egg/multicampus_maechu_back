@@ -117,5 +117,11 @@
 <br/> 
 <br/> 
 
+## frontend git link
+https://github.com/maechu-egg/multicampus_maechu_front
+
+<br/>
+<br/>
+
 ## 시연 영상 
 https://www.youtube.com/watch?v=roMHHzFvCP4
