@@ -81,6 +81,16 @@
 ## 아키텍처
 
 ![logo](/src/main/resources/readme/dia.png)
+
+- 프론트엔드는 typescript와 react를 활용해 구현을 하였으며 Styled-componentes를 적용해 스타일을 구현했습니다. 유저 정보에 대한 상태관리는 React-context api를 활용하며
+  axios를 통한 백엔드와 통신을 하였습니다
+- 백엔드는 springboot와 gradle을 사용하였고 mybatis를 활용해 orm을 적용하였고, 디비는 mysql을 사용했습니다.
+- 배포는 ncp(naver cloud platform) 에서 제공해주는 cloud db for mysql을 활용해 데이터베이스 배포를 하였으며, 이미지와 같은 정적리소스는 ncp의 object storage를 활용해 저장하였습니다.
+- 백엔드와 프론트 서버는 https 인증서 자동발급과 git 저장소를 활용하는 cloudtype을 활용해 배포하였습니다.
+- 사용자 인증/인가 시 jwt를 활용한 토큰을 발급하였고 브라우저의 localstorage에 토큰을 저장하는 방식을 사용하며, goole smtp 이메일 인증을 적용하였습니다.
+- 운동 및 식단기록, 추천 기능은 공공데이터 포털에서 제공해주는 open api를 사용하였습니다.
+
+  
 <br/>
 <br/> 
 ## erd 
