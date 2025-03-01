@@ -72,6 +72,20 @@
 </table>
 <br/>
 
+
 ## 아키텍처
 
-<img src="/Users/leeyeonju/Documents/GitHub/multicampus_maechu_back/src/main/resources/readme/_workspace 다이어그램.png" width="40%"/>
+![logo](/src/main/resources/readme/dia.png)
+<br/>
+
+## erd 
+
+
+## 주요 기능 
+#### 1. 사용자 맞춤형 서비스 
+- 회원가입 필수 정책 : 사용자 맞춤형 운동 프로필로 최적화된 정보 매칭 및 추천
+- jwt + spring security
+
+#### 2. 맞춤형 운동/식단 기록 및 추천 
+- 
+
